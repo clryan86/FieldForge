@@ -5,6 +5,9 @@
 The desktop application's **Knowledge Library** tab browses and searches installed
 articles, filters by category or bookmarks, displays provenance and safety metadata,
 and saves private notes locally. It can import and export JSON knowledge packs.
+**Find passages** opens a question search with exact excerpts and source details;
+**Open full article** highlights the retrieved passage in the reader. See
+[Offline evidence retrieval](OFFLINE_EVIDENCE.md).
 Pack I/O runs in a worker so the interface stays responsive; all Tk updates remain
 on the UI thread. Notes save on article/search/tab navigation and normal window close.
 
@@ -71,13 +74,10 @@ python -m fieldforge.knowledge --database restore-test.db import private-knowled
 These are unencrypted JSON files. Protect private backups; do not publish them.
 The GUI has a separate private-notes checkbox and export confirmation.
 
-**Important: the existing `fieldforge backup` household JSON format is not a full
-application backup and does not include knowledge articles/notes. Keep both the
-household export and a private knowledge export until a unified, transactional
-whole-application backup is implemented.** Do not copy a live SQLite file as a
-substitute for a supported consistent backup. Large libraries exceeding pack
-limits need a properly implemented SQLite snapshot-backup workflow, which this
-feature does not yet provide.
+The legacy `fieldforge backup` household JSON format covers only household,
+inventory, and waypoints. Use **`fieldforge backup-full`** for a consistent snapshot
+of the complete local database, including articles, private notes, and incidents.
+See [Full backup and restore](FULL_BACKUP.md) for limits and restoration instructions.
 
 ## Import behavior
 
@@ -136,9 +136,10 @@ pytest tests/test_knowledge_extended.py
 xvfb-run -a pytest tests/test_knowledge_ui.py  # Linux virtual-display smoke tests
 ```
 
-GUI tests skip when Tk or a display is unavailable; passing headless CI alone does
-not prove that the interface was exercised. Windows, macOS, iOS, and Android
+GUI tests skip when Tk or a display is unavailable locally. CI also runs them under
+Xvfb with `FIELDFORGE_REQUIRE_GUI=1`, which fails if a display or Tk is missing.
+Windows, macOS, iOS, and Android
 hardware/build verification is not claimed here. On-device AI/RAG, mobile clients,
-installers, reviewed content packs, offline maps and a unified backup are separate
+installers, reviewed content packs, and offline maps are separate
 remaining milestones. This document describes this feature; it does not replace
 Codex's architecture/master-roadmap workstream.

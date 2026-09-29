@@ -50,3 +50,29 @@ def test_context_cli_is_offline_and_bounded(tmp_path, capsys, monkeypatch):
     assert "Never export" not in capsys.readouterr().out
     with pytest.raises(SystemExit):
         main(["--database", str(path), "context", "offline", "--limit", "21"])
+
+
+def test_best_passage_can_be_late_in_a_long_article(tmp_path):
+    library = KnowledgeLibrary(tmp_path / "library.db")
+    body = ("alpha " + "filler " * 80) * 25 + "\nalpha beta gamma: the relevant section."
+    library.upsert(KnowledgeArticle("long", "Long article", body, "reference"))
+    result = retrieve_evidence(library, "alpha beta gamma", passage_chars=120)[0]
+    assert "beta gamma" in result.passage
+    assert result.start_offset > 10_000
+    assert body[result.start_offset:result.end_offset] == result.passage
+
+
+def test_long_unbroken_text_cannot_exceed_the_passage_budget(tmp_path):
+    library = KnowledgeLibrary(tmp_path / "library.db")
+    body = "alpha " + "x" * 10_000
+    library.upsert(KnowledgeArticle("long", "Long token", body, "reference"))
+    result = retrieve_evidence(library, "alpha", passage_chars=120)[0]
+    assert len(result.passage) <= 120
+    assert body[result.start_offset:result.end_offset] == result.passage
+
+
+def test_question_does_not_drop_terms_after_the_twelfth(tmp_path):
+    library = KnowledgeLibrary(tmp_path / "library.db")
+    library.upsert(KnowledgeArticle("last", "Last term", "Zebras are striped.", "reference"))
+    question = "amber blue cedar delta elm fern green hazel iris jade kelp lemon zebras"
+    assert retrieve_evidence(library, question)[0].slug == "last"

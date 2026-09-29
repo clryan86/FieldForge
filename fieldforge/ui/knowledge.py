@@ -8,8 +8,9 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
-from fieldforge.knowledge import KnowledgeLibrary
+from fieldforge.knowledge import Evidence, KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
+from fieldforge.ui.evidence import EvidenceWindow
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
 _PAGE_SIZE = 50
@@ -22,6 +23,7 @@ class KnowledgeTab(ttk.Frame):
         self.slug: str | None = None
         self.offset = 0
         self.busy = False
+        self.evidence_window: EvidenceWindow | None = None
         self._saved = (False, "")
         self._worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fieldforge-pack")
         self.bind("<Destroy>", self._destroyed, add=True)
@@ -43,6 +45,7 @@ class KnowledgeTab(ttk.Frame):
         search.pack(side="left", fill="x", expand=True, padx=(0, 6))
         search.bind("<Return>", lambda _event: self.refresh())
         ttk.Button(tools, text="Search / Browse", command=self.refresh).pack(side="left")
+        ttk.Button(tools, text="Find passages", command=self._evidence).pack(side="left", padx=(6, 0))
         self.categories = ttk.Combobox(tools, state="readonly", textvariable=self.category, width=20)
         self.categories.pack(side="left", padx=6)
         self.categories.bind("<<ComboboxSelected>>", lambda _event: self.refresh())
@@ -114,6 +117,7 @@ class KnowledgeTab(ttk.Frame):
         self.note.delete("1.0", "end")
         self.body.configure(state="normal")
         self.body.delete("1.0", "end")
+        self.body.tag_remove("evidence", "1.0", "end")
         self.body.configure(state="disabled")
         self.metadata.set("Select an article. No bundled survival corpus or AI model is installed by this feature.")
 
@@ -158,10 +162,16 @@ class KnowledgeTab(ttk.Frame):
             if previous and self.results.exists(previous):
                 self.results.selection_set(previous)
             return
+        self._load_article(selection[0])
+
+    def _load_article(self, slug: str, evidence: Evidence | None = None) -> bool:
         try:
-            article = self.library.get(selection[0])
+            article = self.library.get(slug)
             if article is None:
-                return
+                raise ValueError("This article is no longer installed. Search again.")
+            if evidence and (article.checksum != evidence.checksum or
+                             article.body[evidence.start_offset:evidence.end_offset] != evidence.passage):
+                raise ValueError("This article changed after the search. Search again for a current passage.")
             annotation = self.library.annotation(article.slug)
             self._clear()
             self.slug = article.slug
@@ -176,8 +186,38 @@ class KnowledgeTab(ttk.Frame):
             self.body.configure(state="normal")
             self.body.insert("1.0", article.body)
             self.body.configure(state="disabled")
+            if evidence:
+                start = self.tk.call("string", "length", article.body[:evidence.start_offset])
+                end = self.tk.call("string", "length", article.body[:evidence.end_offset])
+                self.body.tag_configure("evidence", background="#ffe8a3", foreground="#1c261d")
+                self.body.tag_add("evidence", f"1.0+{start}c", f"1.0+{end}c")
+                self.body.see(f"1.0+{start}c")
+            return True
         except _ERRORS as exc:
             messagebox.showerror("Could not open article", str(exc), parent=self)
+            return False
+
+    def _evidence(self) -> None:
+        if self.busy:
+            return
+        if self.evidence_window is not None and self.evidence_window.winfo_exists():
+            self.evidence_window.lift()
+            return
+        self.evidence_window = EvidenceWindow(self, self.library, self._open_evidence)
+        self.evidence_window.query.set(self.query.get())
+
+    def _open_evidence(self, evidence: Evidence) -> bool:
+        if self.busy or not self.save_current():
+            return False
+        if not self._load_article(evidence.slug, evidence):
+            return False
+        # An evidence result may be outside the current browse filter or page.
+        if not self.results.exists(evidence.slug):
+            self.results.insert("", "end", iid=evidence.slug, values=(evidence.title, "Search result"))
+        self.results.selection_set(evidence.slug)
+        self.results.see(evidence.slug)
+        self.status.set("Showing the full source article. The retrieved passage is highlighted.")
+        return True
 
     def _start(self, operation, *args, **kwargs) -> None:
         if not self.save_current():
