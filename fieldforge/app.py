@@ -9,6 +9,7 @@ from fieldforge.core.models import HouseholdMember, InventoryCategory, Inventory
 from fieldforge.core.readiness import ReadinessScore, readiness_score
 from fieldforge.db.database import FieldForgeDatabase
 from fieldforge.navigation.geo import Waypoint
+from fieldforge.knowledge import KnowledgeArticle, KnowledgeLibrary
 from fieldforge.planners.evacuation import (
     DestinationPlan,
     EvacuationAssessment,
@@ -22,6 +23,16 @@ from fieldforge.scenarios.engine import available_scenarios, scenario_actions
 class FieldForgeApp:
     def __init__(self, database_path: str | Path) -> None:
         self.db = FieldForgeDatabase(database_path)
+        self.knowledge = KnowledgeLibrary(database_path)
+
+    def add_knowledge_article(self, article: KnowledgeArticle) -> None:
+        self.knowledge.upsert(article)
+
+    def search_knowledge(self, query: str, limit: int = 20) -> list[dict[str, object]]:
+        return [result.__dict__ for result in self.knowledge.search(query, limit)]
+
+    def knowledge_article(self, slug: str) -> KnowledgeArticle | None:
+        return self.knowledge.get(slug)
 
     def add_member(self, member: HouseholdMember) -> HouseholdMember:
         return self.db.add_member(member)
@@ -115,4 +126,5 @@ class FieldForgeApp:
             "food": food,
             "alerts": alerts,
             "available_scenarios": list(self.scenario_names()),
+            "knowledge_articles": self.knowledge.count(),
         }
