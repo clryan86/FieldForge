@@ -11,8 +11,8 @@ from pathlib import Path
 from fieldforge.app import FieldForgeApp
 from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
-from fieldforge.navigation.geo import Waypoint
 from fieldforge.knowledge import KnowledgeArticle
+from fieldforge.navigation.geo import Waypoint
 from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
 from fieldforge.planners.resources import (
     battery_runtime_hours,

@@ -26,6 +26,8 @@ def run() -> None:
     import tkinter as tk
     from tkinter import messagebox, ttk
 
+    from fieldforge.ui.knowledge import KnowledgeTab
+
     app = FieldForgeApp(_database_path())
     root = tk.Tk()
     root.title("FieldForge — Offline Emergency Operations")
@@ -50,6 +52,21 @@ def run() -> None:
     notebook.add(inventory_tab, text="Inventory")
     notebook.add(planners_tab, text="Power Planner")
     notebook.add(emergency_tab, text="Emergency Mode")
+    knowledge_tab = KnowledgeTab(notebook, app.knowledge)
+    notebook.add(knowledge_tab, text="Knowledge Library")
+    notebook.bind("<<NotebookTabChanged>>", lambda _event: knowledge_tab.save_current(), add=True)
+
+    def close_application() -> None:
+        if knowledge_tab.busy:
+            messagebox.showinfo(
+                "Pack operation in progress",
+                "Finish the local knowledge-pack operation before closing.",
+                parent=root,
+            )
+        elif knowledge_tab.save_current():
+            root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", close_application)
 
     # Dashboard -------------------------------------------------------------
     ttk.Label(dashboard_tab, text="FieldForge Readiness Dashboard", style="Header.TLabel").pack(

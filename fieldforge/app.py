@@ -8,8 +8,8 @@ from pathlib import Path
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
 from fieldforge.core.readiness import ReadinessScore, readiness_score
 from fieldforge.db.database import FieldForgeDatabase
-from fieldforge.navigation.geo import Waypoint
 from fieldforge.knowledge import KnowledgeArticle, KnowledgeLibrary
+from fieldforge.navigation.geo import Waypoint
 from fieldforge.planners.evacuation import (
     DestinationPlan,
     EvacuationAssessment,
