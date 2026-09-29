@@ -194,6 +194,118 @@ def test_destroyed_search_window_releases_tk_objects_on_ui_thread(reader):
     assert reference() is None
 
 
+def test_local_ai_model_selection_draft_and_source_navigation(reader, monkeypatch):
+    from fieldforge.knowledge import retrieve_evidence
+    from fieldforge.knowledge.assistant import AssistantResult
+
+    root, frame, library, _errors = reader
+    received = []
+    monkeypatch.setattr("fieldforge.ui.evidence.OllamaClient.list_models",
+                        lambda *_args, **_kwargs: ["test:small"])
+
+    def draft(_library, question, model, client, *, cancel):
+        received.append((question, model, client.port))
+        return AssistantResult(question, model, "First reference. [S1]",
+                               tuple(retrieve_evidence(library, question)),
+                               ("S1",), ("AI draft: check its sources.",))
+
+    monkeypatch.setattr("fieldforge.ui.evidence.draft_answer", draft)
+    frame._evidence()
+    window = frame.evidence_window
+    window.query.set("first")
+    window.draft()
+    assert "Load models" in window.status.get()
+    window.load_models()
+    wait_for_search(root, window)
+    assert window.model.get() == "test:small"
+    window.draft()
+    wait_for_search(root, window)
+    assert received == [("first", "test:small", 11434)]
+    assert "AI draft: check its sources." in window.answer.get("1.0", "end-1c")
+    assert window.pages.select() == str(window.answer_page)
+    assert window.results.item("0", "values")[0] == "[S1] Article A"
+    window.geometry("660x600")
+    window.pages.select(window.sources_page)
+    root.update()
+    assert window.open_button.winfo_ismapped()
+    assert (window.open_button.winfo_rooty() + window.open_button.winfo_height()
+            <= window.sources_page.winfo_rooty() + window.sources_page.winfo_height())
+    window.open_selected()
+    assert frame.slug == "a"
+    assert frame.evidence_window is window
+    assert window.state() == "withdrawn"
+    frame._evidence()
+    root.update()
+    assert window.state() == "normal"
+    assert "First reference. [S1]" in window.answer.get("1.0", "end-1c")
+
+
+def test_local_ai_errors_leave_search_available_and_clear_old_draft(reader, monkeypatch):
+    from fieldforge.knowledge.assistant import LocalModelError
+
+    root, frame, _library, _errors = reader
+    frame._evidence()
+    window = frame.evidence_window
+    window.port.set("bad")
+    window.load_models()
+    assert "port" in window.status.get()
+    window.port.set("11434")
+
+    def unavailable(*_args, **_kwargs):
+        raise LocalModelError("Start local Ollama")
+
+    monkeypatch.setattr("fieldforge.ui.evidence.draft_answer", unavailable)
+    window.model.set("test")
+    window.query.set("first")
+    window._answer_text("Old draft must not linger")
+    window.draft()
+    wait_for_search(root, window)
+    assert "Start local Ollama" in window.status.get()
+    assert window.answer.get("1.0", "end-1c") == ""
+    assert window.draft_button.instate(["!disabled"])
+    window.search()
+    wait_for_search(root, window)
+    assert window.evidence[0].slug == "a"
+    assert window.pages.select() == str(window.sources_page)
+
+
+@pytest.mark.parametrize("close", [False, True])
+def test_local_ai_cancel_or_close_signals_worker(reader, monkeypatch, close):
+    import threading
+
+    from fieldforge.knowledge.assistant import GenerationCancelled
+
+    root, frame, _library, _errors = reader
+    started, finished = threading.Event(), threading.Event()
+
+    def wait_for_cancel(*_args, cancel, **_kwargs):
+        started.set()
+        assert cancel.wait(3)
+        finished.set()
+        raise GenerationCancelled("Cancelled. No draft was saved.")
+
+    monkeypatch.setattr("fieldforge.ui.evidence.draft_answer", wait_for_cancel)
+    frame._evidence()
+    window = frame.evidence_window
+    window.model.set("test")
+    window.query.set("first")
+    window.draft()
+    assert started.wait(2)
+    if close:
+        window.destroy()
+        assert frame.evidence_window is None
+        assert window._poll_id is None
+        assert window.answer is None
+    else:
+        window.cancel()
+        wait_for_search(root, window)
+        assert "Cancelled" in window.status.get()
+        assert window.cancel_button.instate(["disabled"])
+        assert window.draft_button.instate(["!disabled"])
+    assert finished.wait(2)
+    root.update()
+
+
 def test_notebook_teardown_can_finish_pending_save_callbacks(reader):
     from tkinter import ttk
 
