@@ -26,6 +26,8 @@ jobs:
         run: ruff check .
       - name: Tests
         run: pytest
+      - name: Desktop GUI tests
+        run: xvfb-run -a env FIELDFORGE_REQUIRE_GUI=1 pytest tests/test_knowledge_ui.py
       - name: Package smoke test
         run: |
           python -m build --wheel --outdir dist || pip install build && python -m build --wheel --outdir dist

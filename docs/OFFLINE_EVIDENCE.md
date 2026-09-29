@@ -2,6 +2,15 @@
 
 Ask for relevant passages from articles already installed in the local library:
 
+In the desktop **Knowledge Library**, choose **Find passages**, enter a question,
+and select a result to inspect its source information. **Open full article** opens
+the source in the reader and highlights the exact passage. Unsaved private notes
+are saved before navigation. If an article changed after the search, search again
+to obtain a passage from the new version. Search runs in a worker so the window
+remains responsive.
+
+The same operation is available from the command line:
+
 ```bash
 fieldforge --database fieldforge.db knowledge-context "How do I store potable water?"
 python -m fieldforge.knowledge --database fieldforge.db context "potable water"
@@ -18,7 +27,10 @@ advice. Author-provided source and review fields may be incomplete or wrong.
 Especially for high-stakes topics, inspect the full article, its original source,
 and current expert guidance before acting. Personal notes are never searched or
 included in this context output. The passage limit is 20; each passage is at most
-about 1200 characters, with a small extension to avoid cutting a word.
+1200 characters (360 by default). Retrieval considers up to 100 candidate articles,
+ranked by distinct query-term matches. It scans overlapping windows through each
+candidate's body, including late sections. This is lexical retrieval, so synonyms
+or paraphrases without matching words can still be missed.
 
 The output is a stable starting interface for a future on-device answer engine:
 that engine must cite returned article IDs and avoid presenting unsupported claims.
