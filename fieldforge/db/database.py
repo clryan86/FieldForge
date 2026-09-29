@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import Iterator
 
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
+from fieldforge.navigation.geo import Waypoint
 
-_SCHEMA_VERSION = 1
+_SCHEMA_VERSION = 2
 
 
 class FieldForgeDatabase:
@@ -69,6 +70,23 @@ class FieldForgeDatabase:
                     ON inventory_items(category);
                 CREATE INDEX IF NOT EXISTS idx_inventory_expiry
                     ON inventory_items(expires_on);
+                CREATE TABLE IF NOT EXISTS waypoints (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    latitude REAL NOT NULL,
+                    longitude REAL NOT NULL,
+                    kind TEXT NOT NULL DEFAULT 'waypoint',
+                    notes TEXT NOT NULL DEFAULT ''
+                );
+                CREATE INDEX IF NOT EXISTS idx_waypoints_kind ON waypoints(kind);
+                CREATE TABLE IF NOT EXISTS incident_entries (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    severity TEXT NOT NULL,
+                    message TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS idx_incident_created_at
+                    ON incident_entries(created_at);
                 CREATE TABLE IF NOT EXISTS app_events (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -184,6 +202,66 @@ class FieldForgeDatabase:
             ).fetchall()
         return [self._row_to_inventory_item(row) for row in rows]
 
+    def add_waypoint(self, waypoint: Waypoint) -> Waypoint:
+        with self.connect() as connection:
+            cursor = connection.execute(
+                """INSERT INTO waypoints(name, latitude, longitude, kind, notes)
+                VALUES (?, ?, ?, ?, ?)""",
+                (
+                    waypoint.name,
+                    waypoint.latitude,
+                    waypoint.longitude,
+                    waypoint.kind,
+                    waypoint.notes,
+                ),
+            )
+            return Waypoint(**{**waypoint.as_dict(), "id": int(cursor.lastrowid)})
+
+    def list_waypoints(self, kind: str | None = None) -> list[Waypoint]:
+        query = "SELECT * FROM waypoints"
+        parameters: tuple[str, ...] = ()
+        if kind is not None:
+            query += " WHERE kind = ?"
+            parameters = (kind,)
+        query += " ORDER BY name, id"
+        with self.connect() as connection:
+            rows = connection.execute(query, parameters).fetchall()
+        return [
+            Waypoint(
+                id=row["id"],
+                name=row["name"],
+                latitude=row["latitude"],
+                longitude=row["longitude"],
+                kind=row["kind"],
+                notes=row["notes"],
+            )
+            for row in rows
+        ]
+
+    def add_incident_entry(self, severity: str, message: str) -> int:
+        severity = severity.strip().lower()
+        if severity not in {"info", "warning", "critical"}:
+            raise ValueError("severity must be info, warning, or critical")
+        if not message.strip():
+            raise ValueError("incident message cannot be empty")
+        with self.connect() as connection:
+            cursor = connection.execute(
+                "INSERT INTO incident_entries(severity, message) VALUES (?, ?)",
+                (severity, message.strip()),
+            )
+            return int(cursor.lastrowid)
+
+    def list_incident_entries(self, limit: int = 100) -> list[dict[str, object]]:
+        if limit <= 0:
+            raise ValueError("limit must be positive")
+        with self.connect() as connection:
+            rows = connection.execute(
+                """SELECT id, created_at, severity, message
+                FROM incident_entries ORDER BY id DESC LIMIT ?""",
+                (limit,),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
     def log_event(self, event_type: str, payload: dict[str, object]) -> None:
         if not event_type.strip():
             raise ValueError("event_type cannot be empty")
@@ -192,6 +270,25 @@ class FieldForgeDatabase:
                 "INSERT INTO app_events(event_type, payload_json) VALUES (?, ?)",
                 (event_type, json.dumps(payload, sort_keys=True)),
             )
+
+    def list_events(self, limit: int = 100) -> list[dict[str, object]]:
+        if limit <= 0:
+            raise ValueError("limit must be positive")
+        with self.connect() as connection:
+            rows = connection.execute(
+                """SELECT id, created_at, event_type, payload_json
+                FROM app_events ORDER BY id DESC LIMIT ?""",
+                (limit,),
+            ).fetchall()
+        return [
+            {
+                "id": row["id"],
+                "created_at": row["created_at"],
+                "event_type": row["event_type"],
+                "payload": json.loads(row["payload_json"]),
+            }
+            for row in rows
+        ]
 
     @staticmethod
     def _row_to_inventory_item(row: sqlite3.Row) -> InventoryItem:
