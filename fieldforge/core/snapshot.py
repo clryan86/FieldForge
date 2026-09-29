@@ -105,7 +105,8 @@ def export_snapshot(database_path: str | Path, destination: str | Path) -> Path:
                                                         "version": 1, "sha256": digest}))
             bundle.write(snapshot, "database.sqlite3")
         archive.chmod(0o600)
-        with archive.open("rb") as stream:
+        # Windows _commit/FlushFileBuffers requires a writable handle.
+        with archive.open("r+b") as stream:
             os.fsync(stream.fileno())
         _protect_live_database(source, output)
         os.replace(archive, output)

@@ -194,6 +194,24 @@ def test_destroyed_search_window_releases_tk_objects_on_ui_thread(reader):
     assert reference() is None
 
 
+def test_notebook_teardown_can_finish_pending_save_callbacks(reader):
+    from tkinter import ttk
+
+    from fieldforge.ui.knowledge import KnowledgeTab
+
+    root, _frame, library, _errors = reader
+    notebook = ttk.Notebook(root)
+    pane = KnowledgeTab(notebook, library)
+    notebook.add(pane, text="Library")
+    notebook.bind("<<NotebookTabChanged>>", lambda _event: pane.save_current())
+    notebook.pack()
+    root.update()
+    notebook.destroy()
+    root.update()
+    assert pane._closed
+    assert pane.save_current()
+
+
 def test_desktop_backup_verify_and_restore_copy(reader, tmp_path, monkeypatch):
     from fieldforge.core.snapshot import inspect_snapshot
     from fieldforge.db.database import FieldForgeDatabase

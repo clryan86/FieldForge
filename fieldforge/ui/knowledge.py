@@ -24,6 +24,7 @@ class KnowledgeTab(ttk.Frame):
         self.slug: str | None = None
         self.offset = 0
         self.busy = False
+        self._closed = False
         self.evidence_window: EvidenceWindow | None = None
         self._poll_id: str | None = None
         self._saved = (False, "")
@@ -94,6 +95,7 @@ class KnowledgeTab(ttk.Frame):
 
     def _destroyed(self, event: tk.Event) -> None:
         if event.widget is self:
+            self._closed = True
             if self._poll_id is not None:
                 self.after_cancel(self._poll_id)
                 self._poll_id = None
@@ -102,6 +104,8 @@ class KnowledgeTab(ttk.Frame):
             release_tk_references(self)
 
     def save_current(self) -> bool:
+        if self._closed:
+            return True
         if self.busy:
             return False
         if self.slug is None:
@@ -129,7 +133,7 @@ class KnowledgeTab(ttk.Frame):
         self.metadata.set("Select an article. No bundled survival corpus or AI model is installed by this feature.")
 
     def refresh(self, *, reset: bool = True) -> None:
-        if self.busy or not self.save_current():
+        if self._closed or self.busy or not self.save_current():
             return
         if reset:
             self.offset = 0
@@ -161,6 +165,8 @@ class KnowledgeTab(ttk.Frame):
         self.refresh(reset=False)
 
     def _select(self, _event: tk.Event | None = None) -> None:
+        if self._closed:
+            return
         selection = self.results.selection()
         if self.busy or not selection or selection[0] == self.slug:
             return
@@ -205,7 +211,7 @@ class KnowledgeTab(ttk.Frame):
             return False
 
     def _evidence(self) -> None:
-        if self.busy:
+        if self._closed or self.busy:
             return
         if self.evidence_window is not None and self.evidence_window.winfo_exists():
             self.evidence_window.lift()
@@ -221,7 +227,7 @@ class KnowledgeTab(ttk.Frame):
             self.evidence_window = None
 
     def _open_evidence(self, evidence: Evidence) -> bool:
-        if self.busy or not self.save_current():
+        if self._closed or self.busy or not self.save_current():
             return False
         if not self._load_article(evidence.slug, evidence):
             return False
@@ -234,7 +240,7 @@ class KnowledgeTab(ttk.Frame):
         return True
 
     def _start(self, operation, *args, **kwargs) -> None:
-        if not self.save_current():
+        if self._closed or not self.save_current():
             return
         self.busy = True
         self.note.configure(state="disabled")
@@ -244,6 +250,8 @@ class KnowledgeTab(ttk.Frame):
 
     def _poll(self, future: Future) -> None:
         self._poll_id = None
+        if self._closed:
+            return
         if not future.done():
             self._poll_id = self.after(100, self._poll, future)
             return
@@ -260,7 +268,7 @@ class KnowledgeTab(ttk.Frame):
             self.status.set("Operation failed; see the error. Failed imports roll back all records.")
 
     def _import(self) -> None:
-        if self.busy:
+        if self._closed or self.busy:
             return
         path = filedialog.askopenfilename(parent=self, title="Import local knowledge pack",
                                           filetypes=[("Knowledge pack", "*.json"), ("All files", "*")])
@@ -272,7 +280,7 @@ class KnowledgeTab(ttk.Frame):
             self._start(import_pack, self.library, path, replace=self.replace.get(), restore_personal=self.personal.get())
 
     def _export(self) -> None:
-        if self.busy:
+        if self._closed or self.busy:
             return
         if self.personal.get() and not messagebox.askyesno(
             "Export private notes?", "This unencrypted JSON file will contain your private notes and bookmarks. Continue?", parent=self
