@@ -11,6 +11,8 @@ from pathlib import Path
 from fieldforge.app import FieldForgeApp
 from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
+from fieldforge.navigation.geo import Waypoint
+from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
 from fieldforge.planners.resources import (
     battery_runtime_hours,
     generator_runtime_hours,
@@ -92,6 +94,32 @@ def _parser() -> argparse.ArgumentParser:
     readiness.add_argument("--go-bag", type=_fraction, default=0.0)
     readiness.add_argument("--communications", type=_fraction, default=0.0)
     readiness.add_argument("--evacuation", type=_fraction, default=0.0)
+
+    waypoint_add = sub.add_parser("waypoint-add", help="Store an offline waypoint or rendezvous point")
+    waypoint_add.add_argument("name")
+    waypoint_add.add_argument("latitude", type=float)
+    waypoint_add.add_argument("longitude", type=float)
+    waypoint_add.add_argument("--kind", default="waypoint")
+    waypoint_add.add_argument("--notes", default="")
+
+    waypoint_list = sub.add_parser("waypoints", help="List stored offline waypoints")
+    waypoint_list.add_argument("--kind")
+
+    incident_add = sub.add_parser("incident-add", help="Append an entry to the local incident journal")
+    incident_add.add_argument("severity", choices=["info", "warning", "critical"])
+    incident_add.add_argument("message")
+
+    incident_list = sub.add_parser("incidents", help="List recent incident-journal entries")
+    incident_list.add_argument("--limit", type=int, default=100)
+
+    evacuate = sub.add_parser("evacuation-check", help="Assess one vehicle/destination evacuation plan")
+    evacuate.add_argument("vehicle_name")
+    evacuate.add_argument("seats", type=int)
+    evacuate.add_argument("range_km", type=_finite_nonnegative)
+    evacuate.add_argument("destination_name")
+    evacuate.add_argument("distance_km", type=_finite_nonnegative)
+    evacuate.add_argument("--vehicle-readiness", type=_fraction, default=1.0)
+    evacuate.add_argument("--destination-confirmed", action="store_true")
 
     battery = sub.add_parser("battery-runtime", help="Estimate battery runtime")
     battery.add_argument("watt_hours", type=_finite_nonnegative)
@@ -184,6 +212,38 @@ def main(argv: list[str] | None = None) -> int:
                     evacuation_plan_fraction=args.evacuation,
                 ).as_dict()
             )
+        elif args.command == "waypoint-add":
+            waypoint = app.add_waypoint(
+                Waypoint(
+                    args.name,
+                    args.latitude,
+                    args.longitude,
+                    kind=args.kind,
+                    notes=args.notes,
+                )
+            )
+            _emit(waypoint.as_dict())
+        elif args.command == "waypoints":
+            _emit([waypoint.as_dict() for waypoint in app.waypoints(args.kind)])
+        elif args.command == "incident-add":
+            _emit({"id": app.add_incident(args.severity, args.message), "status": "recorded"})
+        elif args.command == "incidents":
+            _emit(app.incidents(args.limit))
+        elif args.command == "evacuation-check":
+            assessment = app.assess_evacuation(
+                VehiclePlan(
+                    args.vehicle_name,
+                    seats_available=args.seats,
+                    estimated_range_km=args.range_km,
+                    readiness_fraction=args.vehicle_readiness,
+                ),
+                DestinationPlan(
+                    args.destination_name,
+                    distance_km=args.distance_km,
+                    confirmed_available=args.destination_confirmed,
+                ),
+            )
+            _emit(assessment.as_dict())
         elif args.command == "battery-runtime":
             _emit(
                 {
