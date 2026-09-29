@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 from datetime import date
 from pathlib import Path
@@ -56,7 +57,7 @@ def restore_backup(database: FieldForgeDatabase, source: str | Path) -> dict[str
     expected_checksum = payload.get("checksum")
     if not isinstance(expected_checksum, str) or not expected_checksum:
         raise ValueError("backup checksum is missing")
-    if not hashlib.compare_digest(_checksum(data), expected_checksum):
+    if not hmac.compare_digest(_checksum(data), expected_checksum):
         raise ValueError("backup integrity check failed")
 
     members = data.get("members")
@@ -65,7 +66,6 @@ def restore_backup(database: FieldForgeDatabase, source: str | Path) -> dict[str
     if not isinstance(members, list) or not isinstance(inventory, list) or not isinstance(waypoints, list):
         raise ValueError("backup members, inventory, and waypoints must be arrays")
 
-    # Validate all records before mutating the target database.
     parsed_members = [
         HouseholdMember(
             name=str(raw["name"]),
