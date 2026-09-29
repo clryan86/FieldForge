@@ -8,6 +8,13 @@ from pathlib import Path
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
 from fieldforge.core.readiness import ReadinessScore, readiness_score
 from fieldforge.db.database import FieldForgeDatabase
+from fieldforge.navigation.geo import Waypoint
+from fieldforge.planners.evacuation import (
+    DestinationPlan,
+    EvacuationAssessment,
+    VehiclePlan,
+    assess_evacuation,
+)
 from fieldforge.planners.resources import ResourceRunway, food_runway, water_runway
 from fieldforge.scenarios.engine import available_scenarios, scenario_actions
 
@@ -27,6 +34,18 @@ class FieldForgeApp:
 
     def inventory(self, category: InventoryCategory | None = None) -> list[InventoryItem]:
         return self.db.list_inventory(category)
+
+    def add_waypoint(self, waypoint: Waypoint) -> Waypoint:
+        return self.db.add_waypoint(waypoint)
+
+    def waypoints(self, kind: str | None = None) -> list[Waypoint]:
+        return self.db.list_waypoints(kind)
+
+    def add_incident(self, severity: str, message: str) -> int:
+        return self.db.add_incident_entry(severity, message)
+
+    def incidents(self, limit: int = 100) -> list[dict[str, object]]:
+        return self.db.list_incident_entries(limit)
 
     def water_status(self, reserve_fraction: float = 0.10) -> ResourceRunway:
         return water_runway(self.members(), self.inventory(), reserve_fraction=reserve_fraction)
@@ -57,6 +76,13 @@ class FieldForgeApp:
     def scenario_names(self) -> tuple[str, ...]:
         return available_scenarios()
 
+    def assess_evacuation(
+        self,
+        vehicle: VehiclePlan,
+        destination: DestinationPlan,
+    ) -> EvacuationAssessment:
+        return assess_evacuation(len(self.members()), vehicle, destination)
+
     def readiness(
         self,
         *,
@@ -83,6 +109,8 @@ class FieldForgeApp:
         return {
             "household_members": len(self.members()),
             "inventory_items": len(self.inventory()),
+            "waypoints": len(self.waypoints()),
+            "incident_entries": len(self.incidents()),
             "water": water,
             "food": food,
             "alerts": alerts,
