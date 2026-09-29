@@ -26,6 +26,7 @@ def run() -> None:
     import tkinter as tk
     from tkinter import messagebox, ttk
 
+    from fieldforge.ui.backups import BackupsTab
     from fieldforge.ui.knowledge import KnowledgeTab
 
     app = FieldForgeApp(_database_path())
@@ -54,13 +55,15 @@ def run() -> None:
     notebook.add(emergency_tab, text="Emergency Mode")
     knowledge_tab = KnowledgeTab(notebook, app.knowledge)
     notebook.add(knowledge_tab, text="Knowledge Library")
+    backups_tab = BackupsTab(notebook, app.db.path, knowledge_tab.save_current)
+    notebook.add(backups_tab, text="Backups")
     notebook.bind("<<NotebookTabChanged>>", lambda _event: knowledge_tab.save_current(), add=True)
 
     def close_application() -> None:
-        if knowledge_tab.busy:
+        if knowledge_tab.busy or backups_tab.busy:
             messagebox.showinfo(
-                "Pack operation in progress",
-                "Finish the local knowledge-pack operation before closing.",
+                "Local file operation in progress",
+                "Finish the local file operation before closing.",
                 parent=root,
             )
         elif knowledge_tab.save_current():
