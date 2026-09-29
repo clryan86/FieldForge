@@ -1,5 +1,7 @@
+import gc
 import os
 import time
+import weakref
 
 import pytest
 
@@ -9,6 +11,9 @@ from fieldforge.knowledge.packs import export_pack, import_pack
 
 @pytest.fixture
 def reader(tmp_path, monkeypatch):
+    # Consecutive tests create separate Tcl interpreters. Collect destroyed test
+    # roots on the UI thread before starting a worker in the next test.
+    gc.collect()
     if os.environ.get("FIELDFORGE_REQUIRE_GUI") == "1":
         import tkinter as tk
     else:
@@ -110,6 +115,7 @@ def test_evidence_search_opens_full_source_and_saves_note(reader):
     window.open_selected()
     root.update()
     assert not window.winfo_exists()
+    assert frame.evidence_window is None
     assert frame.slug == "a"
     assert library.annotation("b")["note"] == "Unsaved private note"
     highlight = frame.body.tag_ranges("evidence")
@@ -172,3 +178,98 @@ def test_close_evidence_window_during_search(reader, monkeypatch):
     assert finished.wait(2)
     root.update()
     assert window._poll_id is None
+
+
+def test_destroyed_search_window_releases_tk_objects_on_ui_thread(reader):
+    root, frame, _library, _errors = reader
+    frame._evidence()
+    window = frame.evidence_window
+    root.update()
+    reference = weakref.ref(window)
+    window.destroy()
+    assert frame.evidence_window is None
+    assert window.query is None
+    assert window.status is None
+    del window
+    assert reference() is None
+
+
+def test_notebook_teardown_can_finish_pending_save_callbacks(reader):
+    from tkinter import ttk
+
+    from fieldforge.ui.knowledge import KnowledgeTab
+
+    root, _frame, library, _errors = reader
+    notebook = ttk.Notebook(root)
+    pane = KnowledgeTab(notebook, library)
+    notebook.add(pane, text="Library")
+    notebook.bind("<<NotebookTabChanged>>", lambda _event: pane.save_current())
+    notebook.pack()
+    root.update()
+    notebook.destroy()
+    root.update()
+    assert pane._closed
+    assert pane.save_current()
+
+
+def test_desktop_backup_verify_and_restore_copy(reader, tmp_path, monkeypatch):
+    from fieldforge.core.snapshot import inspect_snapshot
+    from fieldforge.db.database import FieldForgeDatabase
+    from fieldforge.ui.backups import BackupsTab
+
+    root, frame, library, _errors = reader
+    FieldForgeDatabase(library.database_path)
+    select(root, frame, "a")
+    frame.note.insert("1.0", "Saved before backup")
+    panel = BackupsTab(root, library.database_path, frame.save_current)
+    panel.pack()
+    archive = tmp_path / "full.zip"
+    monkeypatch.setattr("fieldforge.ui.backups.filedialog.asksaveasfilename",
+                        lambda **kwargs: str(archive))
+    panel.backup_button.invoke()
+    wait_for_search(root, panel)
+    assert "Full backup created" in panel.status.get()
+    assert library.annotation("a")["note"] == "Saved before backup"
+    assert inspect_snapshot(archive)["records"]["knowledge_articles"] == 2
+    monkeypatch.setattr("fieldforge.ui.backups.filedialog.askopenfilename",
+                        lambda **kwargs: str(archive))
+    panel.verify_button.invoke()
+    wait_for_search(root, panel)
+    assert "Backup verified" in panel.status.get()
+    assert "Knowledge articles: 2" in panel.details.get("1.0", "end-1c")
+    recovered = tmp_path / "recovered.db"
+    monkeypatch.setattr("fieldforge.ui.backups.filedialog.asksaveasfilename",
+                        lambda **kwargs: str(recovered))
+    panel.restore_button.invoke()
+    wait_for_search(root, panel)
+    assert "Recovered copy created" in panel.status.get()
+    assert KnowledgeLibrary(recovered).annotation("a")["note"] == "Saved before backup"
+    assert frame.slug == "a"
+    panel.destroy()
+
+
+def test_desktop_backup_failures_restore_controls_and_preserve_data(reader, tmp_path, monkeypatch):
+    from fieldforge.core.snapshot import export_snapshot
+    from fieldforge.db.database import FieldForgeDatabase
+    from fieldforge.ui.backups import BackupsTab
+
+    root, frame, library, _errors = reader
+    FieldForgeDatabase(library.database_path)
+    archive = export_snapshot(library.database_path, tmp_path / "full.zip")
+    panel = BackupsTab(root, library.database_path, frame.save_current)
+    panel.pack()
+    monkeypatch.setattr("fieldforge.ui.backups.filedialog.askopenfilename",
+                        lambda **kwargs: str(archive))
+    monkeypatch.setattr("fieldforge.ui.backups.filedialog.asksaveasfilename",
+                        lambda **kwargs: str(library.database_path))
+    panel.restore_button.invoke()
+    wait_for_search(root, panel)
+    assert "Operation failed" in panel.status.get()
+    assert "live database" in panel.details.get("1.0", "end-1c")
+    assert panel.restore_button.instate(["!disabled"])
+    assert library.count() == 2
+    panel.prepare = lambda: False
+    panel.backup_button.invoke()
+    assert not panel.busy
+    assert "save your note" in panel.status.get()
+    panel.destroy()

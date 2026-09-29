@@ -11,7 +11,7 @@ from pathlib import Path
 from fieldforge.app import FieldForgeApp
 from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
-from fieldforge.core.snapshot import export_snapshot, restore_snapshot
+from fieldforge.core.snapshot import export_snapshot, inspect_snapshot, restore_snapshot
 from fieldforge.knowledge import KnowledgeArticle
 from fieldforge.knowledge.retrieval import retrieve_evidence
 from fieldforge.navigation.geo import Waypoint
@@ -176,6 +176,8 @@ def _parser() -> argparse.ArgumentParser:
     full_restore = sub.add_parser("restore-full", help="Restore a complete database backup")
     full_restore.add_argument("source", type=Path)
     full_restore.add_argument("--replace", action="store_true", help="Replace existing database")
+    inspect = sub.add_parser("backup-inspect", help="Verify a full backup and show record counts")
+    inspect.add_argument("source", type=Path)
 
     return parser
 
@@ -188,6 +190,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "backup-full":
+            _emit({"backup": str(export_snapshot(args.database, args.destination))})
+            return 0
+        if args.command == "backup-inspect":
+            _emit(inspect_snapshot(args.source))
+            return 0
         if args.command == "restore-full":
             _emit({"database": str(restore_snapshot(args.database, args.source,
                                                      replace=args.replace))})
@@ -335,8 +343,6 @@ def main(argv: list[str] | None = None) -> int:
             )
         elif args.command == "backup":
             _emit({"backup": str(export_backup(app.db, args.destination))})
-        elif args.command == "backup-full":
-            _emit({"backup": str(export_snapshot(args.database, args.destination))})
         elif args.command == "restore":
             _emit(restore_backup(app.db, args.source))
         else:  # pragma: no cover
