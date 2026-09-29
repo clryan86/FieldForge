@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from typing import Any
 
 _EARTH_RADIUS_M = 6_371_008.8
 
@@ -13,6 +14,9 @@ class Waypoint:
     name: str
     latitude: float
     longitude: float
+    kind: str = "waypoint"
+    notes: str = ""
+    id: int | None = None
 
     def __post_init__(self) -> None:
         if not self.name.strip():
@@ -21,6 +25,11 @@ class Waypoint:
             raise ValueError("latitude must be between -90 and 90")
         if not -180.0 <= self.longitude <= 180.0:
             raise ValueError("longitude must be between -180 and 180")
+        if not self.kind.strip():
+            raise ValueError("waypoint kind cannot be empty")
+
+    def as_dict(self) -> dict[str, Any]:
+        return asdict(self)
 
 
 def distance_m(a: Waypoint, b: Waypoint) -> float:
