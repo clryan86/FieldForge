@@ -55,9 +55,12 @@ def test_cli_builds_household_inventory_and_dashboard(tmp_path, capsys):
     assert dashboard["alerts"]["low_stock"][0]["name"] == "Stored water"
 
 
-def test_cli_scenario_and_power_tools(tmp_path, capsys):
+def test_cli_scenario_power_navigation_incident_and_evacuation_tools(tmp_path, capsys):
     db = tmp_path / "fieldforge.db"
     prefix = ["--database", str(db)]
+    _run(prefix + ["add-member", "A"], capsys)
+    _run(prefix + ["add-member", "B"], capsys)
+
     scenario = _run(prefix + ["scenario", "evacuation"], capsys)
     assert scenario["scenario"] == "evacuation"
     assert scenario["actions"]
@@ -67,3 +70,32 @@ def test_cli_scenario_and_power_tools(tmp_path, capsys):
 
     solar = _run(prefix + ["solar", "400", "5"], capsys)
     assert solar["daily_energy_wh"] == 1500.0
+
+    waypoint = _run(
+        prefix + ["waypoint-add", "Meetup", "39.5", "-75.5", "--kind", "rendezvous"],
+        capsys,
+    )
+    assert waypoint["kind"] == "rendezvous"
+    waypoints = _run(prefix + ["waypoints", "--kind", "rendezvous"], capsys)
+    assert waypoints[0]["name"] == "Meetup"
+
+    incident = _run(prefix + ["incident-add", "warning", "Fuel below target"], capsys)
+    assert incident["status"] == "recorded"
+    incidents = _run(prefix + ["incidents"], capsys)
+    assert incidents[0]["severity"] == "warning"
+
+    evacuation = _run(
+        prefix
+        + [
+            "evacuation-check",
+            "SUV",
+            "5",
+            "500",
+            "Family meetup",
+            "120",
+            "--destination-confirmed",
+        ],
+        capsys,
+    )
+    assert evacuation["feasible"] is True
+    assert evacuation["seat_margin"] == 3
