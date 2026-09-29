@@ -214,6 +214,7 @@ class KnowledgeTab(ttk.Frame):
         if self._closed or self.busy:
             return
         if self.evidence_window is not None and self.evidence_window.winfo_exists():
+            self.evidence_window.deiconify()
             self.evidence_window.lift()
             return
         self.evidence_window = EvidenceWindow(self, self.library, self._open_evidence)

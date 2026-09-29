@@ -13,6 +13,7 @@ from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
 from fieldforge.core.snapshot import export_snapshot, inspect_snapshot, restore_snapshot
 from fieldforge.knowledge import KnowledgeArticle
+from fieldforge.knowledge.assistant import OllamaClient, draft_answer
 from fieldforge.knowledge.retrieval import retrieve_evidence
 from fieldforge.navigation.geo import Waypoint
 from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
@@ -113,6 +114,13 @@ def _parser() -> argparse.ArgumentParser:
     knowledge_context = sub.add_parser("knowledge-context", help="Find cited offline passages")
     knowledge_context.add_argument("question")
     knowledge_context.add_argument("--limit", type=int, default=5)
+    models = sub.add_parser("local-models", help="List local Ollama models (cloud must be disabled)")
+    models.add_argument("--port", type=int, default=11434)
+    ask = sub.add_parser("ask", help="Draft an answer using a local model and installed evidence")
+    ask.add_argument("question")
+    ask.add_argument("--model", required=True)
+    ask.add_argument("--port", type=int, default=11434)
+    ask.add_argument("--timeout", type=float, default=120)
 
     scenario = sub.add_parser("scenario", help="Generate prioritized actions for a scenario")
     scenario.add_argument("name")
@@ -190,6 +198,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "local-models":
+            _emit({"models": OllamaClient(port=args.port).list_models()})
+            return 0
         if args.command == "backup-full":
             _emit({"backup": str(export_snapshot(args.database, args.destination))})
             return 0
@@ -267,6 +278,9 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "knowledge-context":
             _emit({"question": args.question, "evidence": [item.as_dict() for item in
                    retrieve_evidence(app.knowledge, args.question, limit=args.limit)]})
+        elif args.command == "ask":
+            _emit(draft_answer(app.knowledge, args.question, args.model,
+                              OllamaClient(port=args.port, timeout=args.timeout)).as_dict())
         elif args.command == "scenario":
             _emit(app.scenario(args.name))
         elif args.command == "readiness":

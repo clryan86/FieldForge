@@ -49,6 +49,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - SQLite local database
 - [Full local backup and restore](docs/FULL_BACKUP.md) for the complete database
 - [Offline evidence retrieval](docs/OFFLINE_EVIDENCE.md) with cited passages from installed articles
+- [Optional local AI drafts](docs/LOCAL_ASSISTANT.md) using an installed Ollama model with cloud features disabled
 - JSON backup/export format
 - Integrity checks
 - Future optional encrypted personal vault

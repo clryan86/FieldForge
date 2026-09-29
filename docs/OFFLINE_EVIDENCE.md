@@ -32,5 +32,7 @@ ranked by distinct query-term matches. It scans overlapping windows through each
 candidate's body, including late sections. This is lexical retrieval, so synonyms
 or paraphrases without matching words can still be missed.
 
-The output is a stable starting interface for a future on-device answer engine:
-that engine must cite returned article IDs and avoid presenting unsupported claims.
+An [optional local assistant](LOCAL_ASSISTANT.md) can now draft answers from these
+passages using an installed Ollama model with cloud features disabled. It shows
+the source excerpts beside the draft and flags missing or unknown citation labels.
+This does not verify the generated claims.

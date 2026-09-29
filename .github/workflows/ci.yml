@@ -30,7 +30,9 @@ jobs:
       - name: Ruff
         run: ruff check .
       - name: Tests
-        run: pytest
+        env:
+          FIELDFORGE_REQUIRE_GUI: ${{ runner.os == 'Windows' && '1' || '0' }}
+        run: pytest -ra -W error::pytest.PytestUnraisableExceptionWarning
       - name: Desktop GUI tests
         if: runner.os == 'Linux'
         run: xvfb-run -a env FIELDFORGE_REQUIRE_GUI=1 pytest tests/test_knowledge_ui.py -W error::pytest.PytestUnraisableExceptionWarning
