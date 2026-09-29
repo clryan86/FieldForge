@@ -104,6 +104,7 @@ def export_snapshot(database_path: str | Path, destination: str | Path) -> Path:
             bundle.writestr("manifest.json", json.dumps({"format": "fieldforge-full-backup",
                                                         "version": 1, "sha256": digest}))
             bundle.write(snapshot, "database.sqlite3")
+        archive.chmod(0o600)
         with archive.open("rb") as stream:
             os.fsync(stream.fileno())
         _protect_live_database(source, output)
@@ -195,6 +196,7 @@ def restore_snapshot(database_path: str | Path, source: str | Path, *, replace: 
         if protected_database is not None:
             _protect_live_database(Path(protected_database).expanduser().resolve(), target)
         _restore_target(target, archive, replace)
+        staged.chmod(0o600)
         if replace:
             os.replace(staged, target)
         else:

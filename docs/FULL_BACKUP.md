@@ -16,6 +16,9 @@ The desktop application's **Backups** tab offers three actions:
 
 File operations run in a worker. Normal app close is blocked while an operation
 is active. Treat full backups as private: they are unencrypted and include notes.
+On Unix systems, exported archives and recovered database files use owner-only
+permissions. On Windows, protect the destination folder with appropriate access
+permissions.
 
 ## Command line
 

@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import sqlite3
+import stat
 import zipfile
 from contextlib import closing
 from pathlib import Path
@@ -263,3 +264,11 @@ def test_restore_rejects_unusable_database_before_replacing(snapshot_source, tmp
     with pytest.raises(ValueError, match=error):
         restore_snapshot(snapshot_source, archive, replace=True)
     assert snapshot_source.read_bytes() == before
+
+
+@pytest.mark.skipif(os.name != "posix", reason="Unix file permission bits")
+def test_backup_and_recovery_files_are_owner_only(snapshot_source, tmp_path):
+    archive = export_snapshot(snapshot_source, tmp_path / "backup.zip")
+    recovered = restore_snapshot(tmp_path / "recovered.db", archive)
+    assert stat.S_IMODE(archive.stat().st_mode) == 0o600
+    assert stat.S_IMODE(recovered.stat().st_mode) == 0o600
