@@ -2,6 +2,11 @@ import pytest
 
 from fieldforge.core.readiness import readiness_score
 from fieldforge.navigation.geo import Waypoint, distance_m, initial_bearing_degrees, pace_count
+from fieldforge.planners.evacuation import (
+    DestinationPlan,
+    VehiclePlan,
+    assess_evacuation,
+)
 from fieldforge.scenarios.engine import available_scenarios, scenario_actions
 
 
@@ -54,3 +59,23 @@ def test_invalid_waypoints_are_rejected():
         Waypoint("bad", 91.0, 0.0)
     with pytest.raises(ValueError):
         Waypoint("bad", 0.0, 181.0)
+
+
+def test_evacuation_assessment_reports_transport_and_range_margin():
+    vehicle = VehiclePlan("SUV", seats_available=5, estimated_range_km=500, readiness_fraction=0.9)
+    destination = DestinationPlan("Family meetup", distance_km=160, confirmed_available=True)
+    result = assess_evacuation(4, vehicle, destination)
+    assert result.feasible is True
+    assert result.seat_margin == 1
+    assert result.range_margin_km == pytest.approx(240.0)
+    assert result.score >= 90
+
+
+def test_evacuation_assessment_flags_unconfirmed_or_unreachable_plan():
+    vehicle = VehiclePlan("Car", seats_available=2, estimated_range_km=100, readiness_fraction=0.5)
+    destination = DestinationPlan("Far shelter", distance_km=120, confirmed_available=False)
+    result = assess_evacuation(4, vehicle, destination)
+    assert result.feasible is False
+    assert result.seat_margin < 0
+    assert result.range_margin_km < 0
+    assert len(result.recommendations) >= 3
