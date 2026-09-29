@@ -11,6 +11,7 @@ from tkinter.scrolledtext import ScrolledText
 from typing import Callable
 
 from fieldforge.core.snapshot import export_snapshot, inspect_snapshot, restore_snapshot
+from fieldforge.ui.lifecycle import release_tk_references
 
 _LABELS = {
     "household_members": "Household members", "inventory_items": "Inventory items",
@@ -63,6 +64,8 @@ class BackupsTab(ttk.Frame):
                 self.after_cancel(self._poll_id)
                 self._poll_id = None
             self._worker.shutdown(wait=False, cancel_futures=True)
+            self.prepare = lambda: False
+            release_tk_references(self)
 
     def _source(self) -> str:
         return filedialog.askopenfilename(parent=self, title="Choose a full FieldForge backup",

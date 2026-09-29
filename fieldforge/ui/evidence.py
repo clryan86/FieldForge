@@ -9,6 +9,7 @@ from tkinter.scrolledtext import ScrolledText
 from typing import Callable
 
 from fieldforge.knowledge import Evidence, KnowledgeLibrary, retrieve_evidence
+from fieldforge.ui.lifecycle import release_tk_references
 
 
 class EvidenceWindow(tk.Toplevel):
@@ -74,6 +75,8 @@ class EvidenceWindow(tk.Toplevel):
                 self.after_cancel(self._poll_id)
                 self._poll_id = None
             self._worker.shutdown(wait=False, cancel_futures=True)
+            self.open_article = lambda _evidence: False
+            release_tk_references(self)
 
     def _text(self, value: str) -> None:
         self.passage.configure(state="normal")

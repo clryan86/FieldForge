@@ -12,6 +12,7 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.10", "3.12"]
@@ -32,7 +33,7 @@ jobs:
         run: pytest
       - name: Desktop GUI tests
         if: runner.os == 'Linux'
-        run: xvfb-run -a env FIELDFORGE_REQUIRE_GUI=1 pytest tests/test_knowledge_ui.py
+        run: xvfb-run -a env FIELDFORGE_REQUIRE_GUI=1 pytest tests/test_knowledge_ui.py -W error::pytest.PytestUnraisableExceptionWarning
       - name: Package smoke test
         shell: bash
         run: |

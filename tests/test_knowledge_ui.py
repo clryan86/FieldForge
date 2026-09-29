@@ -1,5 +1,7 @@
+import gc
 import os
 import time
+import weakref
 
 import pytest
 
@@ -9,6 +11,9 @@ from fieldforge.knowledge.packs import export_pack, import_pack
 
 @pytest.fixture
 def reader(tmp_path, monkeypatch):
+    # Consecutive tests create separate Tcl interpreters. Collect destroyed test
+    # roots on the UI thread before starting a worker in the next test.
+    gc.collect()
     if os.environ.get("FIELDFORGE_REQUIRE_GUI") == "1":
         import tkinter as tk
     else:
@@ -110,6 +115,7 @@ def test_evidence_search_opens_full_source_and_saves_note(reader):
     window.open_selected()
     root.update()
     assert not window.winfo_exists()
+    assert frame.evidence_window is None
     assert frame.slug == "a"
     assert library.annotation("b")["note"] == "Unsaved private note"
     highlight = frame.body.tag_ranges("evidence")
@@ -172,6 +178,20 @@ def test_close_evidence_window_during_search(reader, monkeypatch):
     assert finished.wait(2)
     root.update()
     assert window._poll_id is None
+
+
+def test_destroyed_search_window_releases_tk_objects_on_ui_thread(reader):
+    root, frame, _library, _errors = reader
+    frame._evidence()
+    window = frame.evidence_window
+    root.update()
+    reference = weakref.ref(window)
+    window.destroy()
+    assert frame.evidence_window is None
+    assert window.query is None
+    assert window.status is None
+    del window
+    assert reference() is None
 
 
 def test_desktop_backup_verify_and_restore_copy(reader, tmp_path, monkeypatch):

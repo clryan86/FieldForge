@@ -11,6 +11,7 @@ from tkinter.scrolledtext import ScrolledText
 from fieldforge.knowledge import Evidence, KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
 from fieldforge.ui.evidence import EvidenceWindow
+from fieldforge.ui.lifecycle import release_tk_references
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
 _PAGE_SIZE = 50
@@ -24,6 +25,7 @@ class KnowledgeTab(ttk.Frame):
         self.offset = 0
         self.busy = False
         self.evidence_window: EvidenceWindow | None = None
+        self._poll_id: str | None = None
         self._saved = (False, "")
         self._worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fieldforge-pack")
         self.bind("<Destroy>", self._destroyed, add=True)
@@ -92,7 +94,12 @@ class KnowledgeTab(ttk.Frame):
 
     def _destroyed(self, event: tk.Event) -> None:
         if event.widget is self:
+            if self._poll_id is not None:
+                self.after_cancel(self._poll_id)
+                self._poll_id = None
+            self.evidence_window = None
             self._worker.shutdown(wait=False, cancel_futures=True)
+            release_tk_references(self)
 
     def save_current(self) -> bool:
         if self.busy:
@@ -204,7 +211,14 @@ class KnowledgeTab(ttk.Frame):
             self.evidence_window.lift()
             return
         self.evidence_window = EvidenceWindow(self, self.library, self._open_evidence)
+        self.evidence_window.bind("<Destroy>", self._evidence_closed, add=True)
         self.evidence_window.query.set(self.query.get())
+
+    def _evidence_closed(self, event: tk.Event) -> None:
+        if event.widget is self.evidence_window:
+            # Break parent/window/callback cycles on the Tk thread. Otherwise a
+            # later worker allocation can collect Tk variables on the wrong thread.
+            self.evidence_window = None
 
     def _open_evidence(self, evidence: Evidence) -> bool:
         if self.busy or not self.save_current():
@@ -226,11 +240,12 @@ class KnowledgeTab(ttk.Frame):
         self.note.configure(state="disabled")
         self.status.set("Processing local knowledge pack…")
         future = self._worker.submit(operation, *args, **kwargs)
-        self.after(100, self._poll, future)
+        self._poll_id = self.after(100, self._poll, future)
 
     def _poll(self, future: Future) -> None:
+        self._poll_id = None
         if not future.done():
-            self.after(100, self._poll, future)
+            self._poll_id = self.after(100, self._poll, future)
             return
         self.busy = False
         self.note.configure(state="normal")
