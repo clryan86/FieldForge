@@ -12,6 +12,7 @@ from fieldforge.app import FieldForgeApp
 from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
 from fieldforge.navigation.geo import Waypoint
+from fieldforge.knowledge import KnowledgeArticle
 from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
 from fieldforge.planners.resources import (
     battery_runtime_hours,
@@ -85,6 +86,27 @@ def _parser() -> argparse.ArgumentParser:
     sub.add_parser("water", help="Calculate current household water runway")
     sub.add_parser("food", help="Calculate current household food/calorie runway")
     sub.add_parser("alerts", help="List low-stock and expiring inventory alerts")
+
+    knowledge_add = sub.add_parser("knowledge-add", help="Add or update an offline knowledge article")
+    knowledge_add.add_argument("slug")
+    knowledge_add.add_argument("title")
+    knowledge_add.add_argument("body")
+    knowledge_add.add_argument("category")
+    knowledge_add.add_argument("--tags", default="")
+    knowledge_add.add_argument("--source-title", default="")
+    knowledge_add.add_argument("--source-url", default="")
+    knowledge_add.add_argument("--source-publisher", default="")
+    knowledge_add.add_argument("--reviewed-on", default="")
+    knowledge_add.add_argument(
+        "--safety-level", choices=["reference", "caution", "high_stakes"], default="reference"
+    )
+
+    knowledge_search = sub.add_parser("knowledge-search", help="Search the offline knowledge library")
+    knowledge_search.add_argument("query")
+    knowledge_search.add_argument("--limit", type=int, default=20)
+
+    knowledge_show = sub.add_parser("knowledge-show", help="Show one offline knowledge article")
+    knowledge_show.add_argument("slug")
 
     scenario = sub.add_parser("scenario", help="Generate prioritized actions for a scenario")
     scenario.add_argument("name")
@@ -201,6 +223,23 @@ def main(argv: list[str] | None = None) -> int:
             _emit(app.food_status().as_dict())
         elif args.command == "alerts":
             _emit(app.alerts())
+        elif args.command == "knowledge-add":
+            article = KnowledgeArticle(
+                slug=args.slug, title=args.title, body=args.body, category=args.category,
+                tags=tuple(tag.strip() for tag in args.tags.split(",") if tag.strip()),
+                source_title=args.source_title, source_url=args.source_url,
+                source_publisher=args.source_publisher, reviewed_on=args.reviewed_on,
+                safety_level=args.safety_level,
+            )
+            app.add_knowledge_article(article)
+            _emit({"slug": article.slug, "checksum": article.checksum, "status": "stored"})
+        elif args.command == "knowledge-search":
+            _emit(app.search_knowledge(args.query, args.limit))
+        elif args.command == "knowledge-show":
+            article = app.knowledge_article(args.slug)
+            if article is None:
+                raise KeyError(f"knowledge article {args.slug!r} not found")
+            _emit(article.__dict__)
         elif args.command == "scenario":
             _emit(app.scenario(args.name))
         elif args.command == "readiness":
