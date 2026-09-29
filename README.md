@@ -47,6 +47,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 ### Privacy and resilience
 - SQLite local database
+- [Full local backup and restore](docs/FULL_BACKUP.md) for the complete database
 - JSON backup/export format
 - Integrity checks
 - Future optional encrypted personal vault
