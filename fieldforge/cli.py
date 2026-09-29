@@ -13,6 +13,7 @@ from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
 from fieldforge.core.snapshot import export_snapshot, restore_snapshot
 from fieldforge.knowledge import KnowledgeArticle
+from fieldforge.knowledge.retrieval import retrieve_evidence
 from fieldforge.navigation.geo import Waypoint
 from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
 from fieldforge.planners.resources import (
@@ -108,6 +109,10 @@ def _parser() -> argparse.ArgumentParser:
 
     knowledge_show = sub.add_parser("knowledge-show", help="Show one offline knowledge article")
     knowledge_show.add_argument("slug")
+
+    knowledge_context = sub.add_parser("knowledge-context", help="Find cited offline passages")
+    knowledge_context.add_argument("question")
+    knowledge_context.add_argument("--limit", type=int, default=5)
 
     scenario = sub.add_parser("scenario", help="Generate prioritized actions for a scenario")
     scenario.add_argument("name")
@@ -251,6 +256,9 @@ def main(argv: list[str] | None = None) -> int:
             if article is None:
                 raise KeyError(f"knowledge article {args.slug!r} not found")
             _emit(article.__dict__)
+        elif args.command == "knowledge-context":
+            _emit({"question": args.question, "evidence": [item.as_dict() for item in
+                   retrieve_evidence(app.knowledge, args.question, limit=args.limit)]})
         elif args.command == "scenario":
             _emit(app.scenario(args.name))
         elif args.command == "readiness":

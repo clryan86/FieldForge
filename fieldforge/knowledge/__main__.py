@@ -11,6 +11,7 @@ from pathlib import Path
 
 from fieldforge.knowledge import KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
+from fieldforge.knowledge.retrieval import retrieve_evidence
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -32,6 +33,9 @@ def main(argv: list[str] | None = None) -> int:
     save.add_argument("destination", type=Path)
     save.add_argument("--include-personal", action="store_true")
     sub.add_parser("gui", help="Open the offline knowledge window")
+    context = sub.add_parser("context", help="Find cited local passages for a question")
+    context.add_argument("question")
+    context.add_argument("--limit", type=int, default=5)
     args = parser.parse_args(argv)
     try:
         library = KnowledgeLibrary(args.database)
@@ -45,6 +49,9 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "export":
             result = {"path": str(export_pack(library, args.destination,
                                                include_personal=args.include_personal))}
+        elif args.command == "context":
+            result = {"question": args.question, "evidence": [item.as_dict() for item in
+                      retrieve_evidence(library, args.question, limit=args.limit)]}
         else:
             from fieldforge.ui.knowledge import run
 
