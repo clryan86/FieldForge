@@ -12,10 +12,15 @@ authors = [{name = "Christopher Ryan"}]
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<10", "ruff>=0.16,<0.17"]
+dev = [
+  "build>=1.2,<2",
+  "pytest>=8,<10",
+  "ruff>=0.16,<0.17",
+]
 
 [project.scripts]
 fieldforge = "fieldforge.cli:main"
+fieldforge-gui = "fieldforge.ui.desktop:run"
 
 [tool.setuptools.packages.find]
 include = ["fieldforge*"]
