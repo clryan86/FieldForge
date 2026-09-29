@@ -9,24 +9,37 @@ from fieldforge.knowledge import KnowledgeArticle, KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
 
 
-@pytest.fixture
-def reader(tmp_path, monkeypatch):
-    # Consecutive tests create separate Tcl interpreters. Collect destroyed test
-    # roots on the UI thread before starting a worker in the next test.
+@pytest.fixture(scope="module")
+def tk_root():
+    # Match the application's single Tcl interpreter. Repeated Tk() creation
+    # can fail to reload Tcl scripts on Windows even after root.destroy().
     gc.collect()
     if os.environ.get("FIELDFORGE_REQUIRE_GUI") == "1":
         import tkinter as tk
     else:
         tk = pytest.importorskip("tkinter")
-    from fieldforge.ui.knowledge import KnowledgeTab
     try:
         root = tk.Tk()
     except tk.TclError:
         if os.environ.get("FIELDFORGE_REQUIRE_GUI") == "1":
             raise
         pytest.skip("Tk display unavailable; use xvfb-run for GUI smoke tests")
+    root.withdraw()
+    yield root
+    root.destroy()
+    gc.collect()
+
+
+@pytest.fixture
+def reader(tk_root, tmp_path, monkeypatch):
+    import tkinter as tk
+
+    from fieldforge.ui.knowledge import KnowledgeTab
+
+    gc.collect()
+    root = tk.Toplevel(tk_root)
     errors = []
-    root.report_callback_exception = lambda *args: errors.append(args)
+    tk_root.report_callback_exception = lambda *args: errors.append(args)
     monkeypatch.setattr("fieldforge.ui.knowledge.messagebox.showerror",
                         lambda title, text, **kwargs: errors.append((title, text)))
     library = KnowledgeLibrary(tmp_path / "ui.db")
