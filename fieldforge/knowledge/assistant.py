@@ -7,9 +7,11 @@ it does not use proxies, follow redirects, pull models, or execute model tools.
 from __future__ import annotations
 
 import http.client
+import io
 import json
 import math
 import re
+import select
 import socket
 import threading
 import time
@@ -72,17 +74,81 @@ def _check(cancel: threading.Event, deadline: float) -> None:
         raise LocalModelError("Local model timed out. Try a smaller model or a longer timeout.")
 
 
-def _interrupt_socket(sock: socket.socket, cancel: threading.Event,
-                      finished: threading.Event, deadline: float) -> None:
-    # Socket shutdown interrupts headers AND a stalled/slow response body. A
-    # socket inactivity timeout alone would not bound a trickling response.
-    while not finished.wait(0.05):
-        if cancel.is_set() or time.monotonic() >= deadline:
+class _ResponseReader(io.RawIOBase):
+    def __init__(self, transport: _CancellableSocket) -> None:
+        super().__init__()
+        self.transport = transport
+
+    def readable(self) -> bool:
+        return True
+
+    def readinto(self, buffer) -> int:
+        while True:
+            self.transport.wait(read=True)
             try:
-                sock.shutdown(socket.SHUT_RDWR)
-            except OSError:
-                pass
-            return
+                return self.transport.sock.recv_into(buffer)
+            except (BlockingIOError, InterruptedError):
+                continue
+
+    def close(self) -> None:
+        if not self.closed:
+            self.transport.readers -= 1
+            self.transport.close_if_unused()
+        super().close()
+
+
+class _CancellableSocket:
+    """The small socket interface used by HTTPConnection/HTTPResponse.
+
+Keep HTTP parsing in the standard library, but poll nonblocking I/O so cancel
+works on Windows too. Closing/shutting down a socket in a different thread does
+not reliably wake Windows' select-based Python socket timeout waits.
+"""
+
+    def __init__(self, sock: socket.socket, cancel: threading.Event, deadline: float) -> None:
+        self.sock, self.cancel, self.deadline = sock, cancel, deadline
+        self.readers = 0
+        self.closed = False
+        sock.setblocking(False)
+
+    def wait(self, *, read: bool) -> None:
+        while True:
+            _check(self.cancel, self.deadline)
+            timeout = min(0.05, max(0, self.deadline - time.monotonic()))
+            ready_read, ready_write, _ = select.select(
+                [self.sock] if read else [], [] if read else [self.sock], [], timeout
+            )
+            if ready_read or ready_write:
+                _check(self.cancel, self.deadline)
+                return
+
+    def sendall(self, data: bytes) -> None:
+        remaining = memoryview(data)
+        while remaining:
+            self.wait(read=False)
+            try:
+                sent = self.sock.send(remaining)
+            except (BlockingIOError, InterruptedError):
+                continue
+            if not sent:
+                raise ConnectionError("Local connection closed while sending the request.")
+            remaining = remaining[sent:]
+
+    def makefile(self, mode: str) -> io.BufferedReader:
+        if mode != "rb":
+            raise ValueError("Only response reads are supported.")
+        self.readers += 1
+        return io.BufferedReader(_ResponseReader(self))
+
+    def close_if_unused(self) -> None:
+        # HTTPConnection may close immediately after headers for HTTP/1.0 or
+        # Connection: close. Its response reader still owns the socket then.
+        if self.closed and not self.readers:
+            self.sock.close()
+
+    def close(self) -> None:
+        self.closed = True
+        self.close_if_unused()
 
 
 class OllamaClient:
@@ -101,16 +167,9 @@ class OllamaClient:
         connection = http.client.HTTPConnection(
             "127.0.0.1", self.port, timeout=min(1.0, max(0.01, deadline - time.monotonic()))
         )
-        finished = threading.Event()
-        watchdog = None
         try:
             connection.connect()
-            connection.sock.settimeout(max(0.01, deadline - time.monotonic()))
-            watchdog = threading.Thread(
-                target=_interrupt_socket, args=(connection.sock, cancel, finished, deadline),
-                daemon=True, name="fieldforge-model-deadline",
-            )
-            watchdog.start()
+            connection.sock = _CancellableSocket(connection.sock, cancel, deadline)
             _check(cancel, deadline)
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8") if payload is not None else None
             connection.request("POST" if payload is not None else "GET", path, body=body,
@@ -141,10 +200,7 @@ class OllamaClient:
                 "Start Ollama with cloud features disabled; the library works without it."
             ) from exc
         finally:
-            finished.set()
             connection.close()
-            if watchdog is not None:
-                watchdog.join()
 
     def _require_local(self, cancel: threading.Event, deadline: float) -> None:
         status = self._request("/api/status", None, cancel, deadline)

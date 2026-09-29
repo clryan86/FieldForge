@@ -37,6 +37,7 @@ def server():
         release = threading.Event()
         stall = None
         stall_body = False
+        chunked = False
         responses = {
             "/api/status": {"cloud": {"disabled": True}},
             "/api/tags": {"models": [{"name": "example:small", "details": {"format": "gguf"}}]},
@@ -46,6 +47,8 @@ def server():
         codes = {}
 
     class Handler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+
         def handle_request(self):
             raw = self.rfile.read(int(self.headers.get("Content-Length", 0)))
             State.requests.append((self.path, json.loads(raw) if raw else None))
@@ -57,7 +60,11 @@ def server():
                 response = response()
             body = response if isinstance(response, bytes) else json.dumps(response).encode()
             self.send_response(State.codes.get(self.path, 200))
-            self.send_header("Content-Length", str(len(body)))
+            if State.chunked:
+                self.send_header("Transfer-Encoding", "chunked")
+                body = f"{len(body):x}\r\n".encode() + body + b"\r\n0\r\n\r\n"
+            else:
+                self.send_header("Content-Length", str(len(body)))
             self.send_header("Location", "http://example.invalid/should-never-be-contacted")
             self.end_headers()
             try:
@@ -68,7 +75,7 @@ def server():
                     State.release.wait(5)
                     body = body[1:]
                 self.wfile.write(body)
-            except (BrokenPipeError, ConnectionResetError):
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 pass
 
         do_GET = handle_request
@@ -124,6 +131,12 @@ def test_no_evidence_never_contacts_model(library, monkeypatch):
     assert result.status == "no_evidence"
     assert result.model is None
     assert result.evidence == ()
+
+
+def test_chunked_http_responses_are_supported(server, library):
+    server.chunked = True
+    result = draft_answer(library, "inventory", "example:small", client(server))
+    assert result.answer == "Keep a printed inventory. [S1]"
 
 
 @pytest.mark.parametrize("status", [{}, {"cloud": None}, {"cloud": {"disabled": False}},
