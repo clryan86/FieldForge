@@ -35,6 +35,7 @@ def run() -> None:
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
     from fieldforge.ui.recovery import add_recovery_tab
+    from fieldforge.ui.recreation import add_recreation_tab
     from fieldforge.ui.supplies import SuppliesTab
 
     app = FieldForgeApp(_database_path())
@@ -67,6 +68,7 @@ def run() -> None:
     pathways_tab = add_pathways_tab(notebook, knowledge_tab)
     add_ask_library_tab(notebook, app.knowledge)
     recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
+    add_recreation_tab(notebook, app.db.path)
 
     def close_application() -> None:
         if (not supplies_panel.can_close() or not household_panel.can_close()

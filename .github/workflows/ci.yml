@@ -46,9 +46,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
           python -m pip install -e ".[dev,pdf]"
-      - name: Run local workflows, emergency and binder UI integration
+      - name: Run local workflows, emergency, binder and recreation UI integration
         run: |
-          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py'
+          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py'
 
   windows-recovery:
     runs-on: windows-latest
@@ -62,5 +62,23 @@ jobs:
         run: python -m pip install -e ".[dev,pdf]"
       - name: Require functioning Tk
         run: python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()"
-      - name: Windows local-data, emergency and binder workflow tests
-        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py
+      - name: Windows local-data, emergency, binder and recreation workflow tests
+        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation.py tests/test_recreation_ui.py tests/test_recreation_integration.py
+
+  source-bundle:
+    needs: [test, text-import-gui, windows-recovery]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Archive the tested source commit, not runtime data
+        run: |
+          git archive --format=zip --prefix=FieldForge/ --output="$RUNNER_TEMP/FieldForge-Development.zip" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/FieldForge-Source-Commit.txt"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: FieldForge-Development-Source
+          path: |
+            ${{ runner.temp }}/FieldForge-Development.zip
+            ${{ runner.temp }}/FieldForge-Source-Commit.txt
+          if-no-files-found: error
+          retention-days: 14
