@@ -5,7 +5,6 @@ import pytest
 from test_supplies import seed_database, water
 
 
-
 @pytest.fixture
 def screen(tmp_path, monkeypatch):
     gc.collect()

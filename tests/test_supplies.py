@@ -11,7 +11,13 @@ from datetime import date
 import pytest
 
 from fieldforge.core.models import InventoryCategory, InventoryItem
-from fieldforge.core.supplies import SuppliesService, SupplyConflict, amount, flags, item_from_fields
+from fieldforge.core.supplies import (
+    SuppliesService,
+    SupplyConflict,
+    amount,
+    flags,
+    item_from_fields,
+)
 
 
 def seed_database(path):
