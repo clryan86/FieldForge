@@ -55,7 +55,8 @@ class TextImportDialog(tk.Toplevel):
         self.rowconfigure(2, weight=1)
         header = ttk.Frame(self, padding=(16, 12))
         header.grid(row=0, column=0, sticky="ew")
-        ttk.Label(header, text="Bring your documents into FieldForge", font=("TkDefaultFont", 18, "bold")).pack(anchor="w")
+        self.heading = ttk.Label(header, text="Bring your documents into FieldForge", font=("TkDefaultFont", 18, "bold"))
+        self.heading.pack(anchor="w")
         ttk.Label(header, text="Select → preview → label the source → add to your offline library").pack(anchor="w", pady=(4, 8))
         self.choose_button = ttk.Button(header, text="Choose text file…", command=self.choose)
         self.choose_button.pack(anchor="w")
@@ -98,6 +99,7 @@ class TextImportDialog(tk.Toplevel):
         bottom = ttk.Frame(self, padding=(16, 10, 16, 12))
         bottom.grid(row=3, column=0, sticky="ew")
         notice = ttk.Label(bottom, text=IMPORT_NOTICE, wraplength=890, justify="left")
+        self.import_notice = notice
         notice.pack(fill="x")
         self.consent = ttk.Checkbutton(bottom,
                                       text="I have permission to store this text and understand the export/privacy notice.",
@@ -206,16 +208,19 @@ class TextImportDialog(tk.Toplevel):
         try:
             values = {name: variable.get() for name, variable in self.fields.items()}
             values["tags"] = tuple(tag.strip() for tag in values["tags"].split(",") if tag.strip())
-            article = prepare_article(self.document, **values)
+            article = self.prepare_document(values)
         except ValueError as exc:
             self.status.set("Check article details: " + str(exc))
             self.tabs.select(1)
             return
         self._start("saving", commit_document, self.library, article, acknowledged=True)
 
+    def prepare_document(self, values):
+        return prepare_article(self.document, **values)
+
     def close(self) -> None:
         if self._busy == "saving":
-            self.status.set("Wait for the database operation to finish before closing.")
+            self.status.set("Wait for the database operation to finish before closing.",)
             return
         self.destroy()
 
@@ -233,7 +238,7 @@ class TextImportDialog(tk.Toplevel):
             self._on_close(self.result)
 
 
-def open_document_import(knowledge_tab) -> TextImportDialog | None:
+def open_document_import(knowledge_tab, *, dialog_type=TextImportDialog) -> TextImportDialog | None:
     """Respect existing note-save and application-close guards during the dialog."""
     if knowledge_tab.busy or not knowledge_tab.save_current():
         return None
@@ -259,7 +264,7 @@ def open_document_import(knowledge_tab) -> TextImportDialog | None:
             pass  # The application itself may be being destroyed.
 
     try:
-        return TextImportDialog(knowledge_tab, knowledge_tab.library, finished)
+        return dialog_type(knowledge_tab, knowledge_tab.library, finished)
     except Exception:
         knowledge_tab.busy = False
         raise
@@ -270,6 +275,13 @@ def add_document_import(knowledge_tab) -> ttk.Button:
     row.pack(fill="x", pady=(0, 8))
     button = ttk.Button(row, text="Import Text Document…", command=lambda: open_document_import(knowledge_tab))
     button.pack(side="left", padx=(0, 8))
-    ttk.Label(row, text="Add UTF-8 text or Markdown you already have. Preview first; no overwriting.",
-              wraplength=620).pack(side="left", fill="x", expand=True)
+    from fieldforge.ui.pdf_import import PDFImportDialog
+
+    knowledge_tab.pdf_import_button = ttk.Button(
+        row, text="Import PDF Text…",
+        command=lambda: open_document_import(knowledge_tab, dialog_type=PDFImportDialog),
+    )
+    knowledge_tab.pdf_import_button.pack(side="left", padx=(0, 8))
+    ttk.Label(row, text="Preview local text first. PDF extraction does not preserve diagrams.",
+              wraplength=430).pack(side="left", fill="x", expand=True)
     return button

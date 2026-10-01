@@ -12,6 +12,7 @@ authors = [{name = "Christopher Ryan"}]
 dependencies = []
 
 [project.optional-dependencies]
+pdf = ["pypdf>=6.19.0,<7"]
 dev = [
   "build>=1.2,<2",
   "pytest>=8,<10",
