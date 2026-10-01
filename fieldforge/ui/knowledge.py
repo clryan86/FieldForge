@@ -11,6 +11,7 @@ from tkinter.scrolledtext import ScrolledText
 from fieldforge.knowledge import KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
 from fieldforge.knowledge.starter import STARTER_ARTICLE_COUNT, install_starter
+from fieldforge.ui.documents import add_document_import
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
 _PAGE_SIZE = 50
@@ -49,6 +50,7 @@ class KnowledgeTab(ttk.Frame):
             text=f"{STARTER_ARTICLE_COUNT} introductory articles. Offline, source-labeled, not specialist-reviewed.",
             wraplength=640,
         ).pack(side="left", fill="x", expand=True)
+        self.text_import_button = add_document_import(self)
         tools = ttk.Frame(self)
         tools.pack(fill="x")
         search = ttk.Entry(tools, textvariable=self.query)
@@ -164,6 +166,7 @@ class KnowledgeTab(ttk.Frame):
                     "START YOUR LIBRARY\n\nClick Load Starter Library above to add a small collection "
                     "of practical references and worksheets. Nothing is downloaded. Existing articles "
                     "and private notes are never replaced by that button.\n\n"
+                    "Have a text or Markdown file? Use Import Text Document above.\n\n"
                     "Already have a JSON knowledge pack? Use Import Pack below.\n\n"
                     "This is introductory, AI-drafted material, not the complete survival corpus."
                     if not total else
