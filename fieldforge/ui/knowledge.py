@@ -10,6 +10,7 @@ from tkinter.scrolledtext import ScrolledText
 
 from fieldforge.knowledge import KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
+from fieldforge.knowledge.starter import STARTER_ARTICLE_COUNT, install_starter
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
 _PAGE_SIZE = 50
@@ -37,6 +38,17 @@ class KnowledgeTab(ttk.Frame):
         ttk.Label(self, text="Offline Knowledge Library", font=("TkDefaultFont", 18, "bold")).pack(anchor="w")
         ttk.Label(self, text="No cloud connection. Sources and review dates are supplied by the article author; they are not verification.",
                   wraplength=900).pack(anchor="w", pady=(4, 10))
+        starter_row = ttk.Frame(self)
+        starter_row.pack(fill="x", pady=(0, 8))
+        self.starter_button = ttk.Button(
+            starter_row, text="Load Starter Library", command=self._starter
+        )
+        self.starter_button.pack(side="left", padx=(0, 8))
+        ttk.Label(
+            starter_row,
+            text=f"{STARTER_ARTICLE_COUNT} introductory articles. Offline, source-labeled, not specialist-reviewed.",
+            wraplength=640,
+        ).pack(side="left", fill="x", expand=True)
         tools = ttk.Frame(self)
         tools.pack(fill="x")
         search = ttk.Entry(tools, textvariable=self.query)
@@ -115,7 +127,7 @@ class KnowledgeTab(ttk.Frame):
         self.body.configure(state="normal")
         self.body.delete("1.0", "end")
         self.body.configure(state="disabled")
-        self.metadata.set("Select an article. No bundled survival corpus or AI model is installed by this feature.")
+        self.metadata.set("Select an article. Introductory references and worksheets; no local AI model is included.")
 
     def refresh(self, *, reset: bool = True) -> None:
         if self.busy or not self.save_current():
@@ -139,7 +151,28 @@ class KnowledgeTab(ttk.Frame):
             self.next.configure(state="normal" if len(found) > _PAGE_SIZE else "disabled")
             mode = "FTS5" if self.library.fts_enabled else "literal fallback"
             count = min(len(found), _PAGE_SIZE)
-            self.status.set(f"Showing {count} article(s), page {self.offset // _PAGE_SIZE + 1}. Local search: {mode}.")
+            total = self.library.count()
+            self.status.set(
+                f"Showing {count} article(s); {total} installed. "
+                f"Page {self.offset // _PAGE_SIZE + 1}. Local search: {mode}."
+            )
+            if not found:
+                self.metadata.set(
+                    "No articles installed yet." if not total else "No articles match this view."
+                )
+                message = (
+                    "START YOUR LIBRARY\n\nClick Load Starter Library above to add a small collection "
+                    "of practical references and worksheets. Nothing is downloaded. Existing articles "
+                    "and private notes are never replaced by that button.\n\n"
+                    "Already have a JSON knowledge pack? Use Import Pack below.\n\n"
+                    "This is introductory, AI-drafted material, not the complete survival corpus."
+                    if not total else
+                    "Your installed articles are still present. Clear the search, select All categories, "
+                    "and turn off Bookmarks only to browse everything."
+                )
+                self.body.configure(state="normal")
+                self.body.insert("1.0", message)
+                self.body.configure(state="disabled")
         except _ERRORS as exc:
             messagebox.showerror("Library error", str(exc), parent=self)
 
@@ -183,6 +216,7 @@ class KnowledgeTab(ttk.Frame):
         if not self.save_current():
             return
         self.busy = True
+        self.starter_button.configure(state="disabled")
         self.note.configure(state="disabled")
         self.status.set("Processing local knowledge pack…")
         future = self._worker.submit(operation, *args, **kwargs)
@@ -193,6 +227,7 @@ class KnowledgeTab(ttk.Frame):
             self.after(100, self._poll, future)
             return
         self.busy = False
+        self.starter_button.configure(state="normal")
         self.note.configure(state="normal")
         try:
             result = future.result()
@@ -203,6 +238,15 @@ class KnowledgeTab(ttk.Frame):
         except Exception as exc:
             messagebox.showerror("Knowledge pack failed", str(exc), parent=self)
             self.status.set("Operation failed; see the error. Failed imports roll back all records.")
+
+    def _starter(self) -> None:
+        if self.busy or not self.save_current():
+            return
+        # Reset filters so a successful install cannot look like an empty library.
+        self.query.set("")
+        self.category.set("All categories")
+        self.favorites.set(False)
+        self._start(install_starter, self.library)
 
     def _import(self) -> None:
         if self.busy:
