@@ -11,6 +11,7 @@ from pathlib import Path
 from fieldforge.app import FieldForgeApp
 from fieldforge.core.backup import export_backup, restore_backup
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
+from fieldforge.core.snapshot import export_snapshot, restore_snapshot
 from fieldforge.knowledge import KnowledgeArticle
 from fieldforge.navigation.geo import Waypoint
 from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
@@ -165,6 +166,19 @@ def _parser() -> argparse.ArgumentParser:
     restore = sub.add_parser("restore", help="Restore a portable JSON backup into this database")
     restore.add_argument("source", type=Path)
 
+    snapshot = sub.add_parser(
+        "snapshot", help="Back up the complete FieldForge database, including knowledge and private notes"
+    )
+    snapshot.add_argument("destination", type=Path)
+
+    snapshot_restore = sub.add_parser(
+        "snapshot-restore", help="Restore a complete FieldForge snapshot"
+    )
+    snapshot_restore.add_argument("source", type=Path)
+    snapshot_restore.add_argument(
+        "--overwrite", action="store_true", help="Replace the target database after validation"
+    )
+
     return parser
 
 
@@ -318,6 +332,10 @@ def main(argv: list[str] | None = None) -> int:
             _emit({"backup": str(export_backup(app.db, args.destination))})
         elif args.command == "restore":
             _emit(restore_backup(app.db, args.source))
+        elif args.command == "snapshot":
+            _emit({"snapshot": str(export_snapshot(args.database, args.destination))})
+        elif args.command == "snapshot-restore":
+            _emit(restore_snapshot(args.source, args.database, overwrite=args.overwrite))
         else:  # pragma: no cover
             parser.error("unknown command")
     except (KeyError, OSError, ValueError) as exc:
