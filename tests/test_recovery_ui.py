@@ -3,9 +3,9 @@ import threading
 import time
 
 import pytest
+from test_recovery import seed
 
 from fieldforge.core.recovery import create_verified_backup
-from test_recovery import seed
 
 
 @pytest.fixture
