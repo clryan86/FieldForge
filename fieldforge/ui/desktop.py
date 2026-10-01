@@ -27,12 +27,13 @@ def run() -> None:
     from tkinter import messagebox, ttk
 
     from fieldforge.ui.knowledge import KnowledgeTab
+    from fieldforge.ui.pathways import add_pathways_tab
 
     app = FieldForgeApp(_database_path())
     root = tk.Tk()
     root.title("FieldForge — Offline Emergency Operations")
-    root.geometry("1100x720")
-    root.minsize(900, 620)
+    root.geometry("1240x800")
+    root.minsize(1000, 700)
 
     style = ttk.Style(root)
     if "clam" in style.theme_names():
@@ -54,7 +55,7 @@ def run() -> None:
     notebook.add(emergency_tab, text="Emergency Mode")
     knowledge_tab = KnowledgeTab(notebook, app.knowledge)
     notebook.add(knowledge_tab, text="Knowledge Library")
-    notebook.bind("<<NotebookTabChanged>>", lambda _event: knowledge_tab.save_current(), add=True)
+    pathways_tab = add_pathways_tab(notebook, knowledge_tab)
 
     def close_application() -> None:
         if knowledge_tab.busy:
@@ -63,7 +64,7 @@ def run() -> None:
                 "Finish the local knowledge-pack operation before closing.",
                 parent=root,
             )
-        elif knowledge_tab.save_current():
+        elif knowledge_tab.save_current() and pathways_tab.save_current():
             root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", close_application)
