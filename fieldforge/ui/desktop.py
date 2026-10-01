@@ -26,6 +26,7 @@ def run() -> None:
     import tkinter as tk
     from tkinter import messagebox, ttk
 
+    from fieldforge.ui.assistant import add_ask_library_tab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
 
@@ -56,6 +57,7 @@ def run() -> None:
     knowledge_tab = KnowledgeTab(notebook, app.knowledge)
     notebook.add(knowledge_tab, text="Knowledge Library")
     pathways_tab = add_pathways_tab(notebook, knowledge_tab)
+    add_ask_library_tab(notebook, app.knowledge)
 
     def close_application() -> None:
         if knowledge_tab.busy:
