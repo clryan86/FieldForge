@@ -17,12 +17,13 @@ from fieldforge.knowledge.pathways import (
     LearningProgress,
     PathwayStore,
 )
+from fieldforge.ui.reading_links import ReadingLinksDialog
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
 _VIEWS = {
     "All topics": "all",
     "Reading installed": "reading_available",
-    "Reading not installed": "reading_missing",
+    "Reading missing / changed": "reading_missing",
     "Guides still needed": "guide_needed",
     "Next to explore": "next",
 }
@@ -33,6 +34,7 @@ class PathwaysTab(ttk.Frame):
     def __init__(self, parent: tk.Misc, store: PathwayStore) -> None:
         super().__init__(parent, padding=16)
         self.store = store
+        self.reading_dialog = None
         self.slug: str | None = None
         self._saved = LearningProgress()
         self._rows = {}
@@ -125,6 +127,8 @@ class PathwaysTab(ttk.Frame):
         self.reading_notice = tk.StringVar()
         ttk.Label(reading, textvariable=self.reading_notice, wraplength=530,
                   justify="left").pack(fill="x", pady=(0, 8))
+        self.manage_reading_button = ttk.Button(reading, text="Manage reading links…", command=self.manage_reading)
+        self.manage_reading_button.pack(anchor="w", pady=(0, 8))
         self.reading = ttk.Treeview(reading, columns=(), show="tree", selectmode="browse", height=8)
         self.reading.column("#0", width=360)
         self.reading.pack(fill="both", expand=True)
@@ -163,6 +167,8 @@ class PathwaysTab(ttk.Frame):
         return reverse[self.status.get()], self.note.get("1.0", "end-1c")
 
     def save_current(self) -> bool:
+        if self.reading_dialog is not None:
+            return False
         if self.slug is None:
             return True
         try:
@@ -194,7 +200,7 @@ class PathwaysTab(ttk.Frame):
         self.note.delete("1.0", "end")
         self.note.configure(state="disabled")
         self.status_box.configure(state="disabled")
-        for button in (self.save_button, self.reload_button, self.step_button, self.open_button):
+        for button in (self.save_button, self.reload_button, self.step_button, self.open_button, self.manage_reading_button):
             button.configure(state="disabled")
         self.plan.delete(*self.plan.get_children())
         self.reading.delete(*self.reading.get_children())
@@ -254,7 +260,7 @@ class PathwaysTab(ttk.Frame):
         self.note.configure(state="normal")
         self.note.delete("1.0", "end")
         self.note.insert("1.0", progress.note)
-        for button in (self.save_button, self.reload_button, self.step_button):
+        for button in (self.save_button, self.reload_button, self.step_button, self.manage_reading_button):
             button.configure(state="normal")
         self.open_button.configure(state="normal" if row.installed_articles else "disabled")
         pending = "\n".join("• " + self.store.catalog.get(dep).title for dep in row.pending_prerequisites)
@@ -275,19 +281,36 @@ class PathwaysTab(ttk.Frame):
                              values=(STATUS_LABELS[recorded],))
         self.reading.delete(*self.reading.get_children())
         for article_slug, title in row.installed_articles:
-            self.reading.insert("", "end", iid=article_slug, text=title)
+            origin = "[Your link] " if any(link.article_slug == article_slug for link in row.user_links) else "[Starter] "
+            self.reading.insert("", "end", iid=article_slug, text=origin + title)
         if row.installed_articles:
             self.reading.selection_set(row.installed_articles[0][0])
-        missing = len(goal.articles) - len(row.installed_articles)
-        self.reading_notice.set(
-            f"{len(row.installed_articles)} related introductory article(s) installed; {missing} linked article(s) missing. "
-            "Opening them does not mark practice complete. Source labels are not independent review."
-            if goal.articles else
-            "No dedicated guide is linked in this version of the map. This planning goal is not an installed lesson. "
-            "Use Knowledge Library search to find other material you may have imported."
-        )
+        installed_ids = {article_slug for article_slug, _ in row.installed_articles}
+        missing = sum(article_slug not in installed_ids for article_slug in goal.articles)
+        issues = sum(link.state != "current" for link in row.user_links)
+        if goal.articles or row.user_links:
+            self.reading_notice.set(
+                f"{len(row.installed_articles)} readings available; {missing} starter articles not installed. "
+                f"{len(row.user_links)} personal links; {issues} missing/changed sources to check. "
+                "Your links are not independent source review and do not mark practice complete."
+            )
+        else:
+            self.reading_notice.set(
+                "No dedicated guide is linked in this version of the map. This planning goal is not an installed lesson. "
+                "Use Manage reading links to choose relevant documents from your installed library."
+            )
         if goal.articles and not row.installed_articles:
             self.reading_notice.set(self.reading_notice.get() + " Load the Starter Library from the Knowledge Library tab.")
+
+    def manage_reading(self):
+        if self.slug is None or self.reading_dialog is not None or not self.save_current():
+            return
+        def closed():
+            self.reading_dialog = None
+            # Parent widgets can still exist while their children are being destroyed.
+            if self.winfo_exists() and self.note.winfo_exists() and self.tree.winfo_exists():
+                self.refresh()
+        self.reading_dialog = ReadingLinksDialog(self, self.store.reading_links, self.slug, on_close=closed)
 
     def _select(self, _event=None):
         selected = self.tree.selection()
@@ -346,7 +369,10 @@ class PathwaysTab(ttk.Frame):
         if not selected:
             return None
         try:
-            article = self.store.library.get(selected[0])
+            row = self._rows.get(self.slug)
+            linked = next((link for link in row.user_links if link.article_slug == selected[0]), None) if row else None
+            article = (self.store.reading_links.open_link(linked.id, expected_revision=linked.revision)
+                       if linked else self.store.library.get(selected[0]))
             if article is None:
                 messagebox.showinfo("Article not installed", "Refresh the map to update local availability.", parent=self)
                 return None

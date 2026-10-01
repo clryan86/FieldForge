@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from types import MappingProxyType
 
 from fieldforge.knowledge import KnowledgeLibrary
+from fieldforge.knowledge.reading_links import ReadingLink, ReadingLinks
 
 CATALOG_VERSION = "2026-10-01.1"
 STAGES = (
@@ -253,16 +254,23 @@ class GoalView:
     progress: LearningProgress
     installed_articles: tuple[tuple[str, str], ...]
     pending_prerequisites: tuple[str, ...]
+    user_links: tuple[ReadingLink, ...] = ()
 
     @property
     def reading_state(self) -> str:
+        if any(link.state != "current" for link in self.user_links):
+            return "Check reading links"
+        if self.user_links:
+            return "User reading linked"
         if self.installed_articles:
             return "Intro available"
         return "Intro not installed" if self.goal.articles else "Guide needed"
 
     @property
     def next_to_explore(self) -> bool:
-        return bool(self.installed_articles) and not self.pending_prerequisites and (
+        return bool(self.installed_articles) and not self.pending_prerequisites and not any(
+            link.state != "current" for link in self.user_links
+        ) and (
             self.progress.status in {"not_started", "exploring", "needs_review"}
         )
 
@@ -277,6 +285,7 @@ class PathwayStore:
     def __init__(self, library: KnowledgeLibrary, catalog: LearningCatalog | None = None) -> None:
         self.library = library
         self.catalog = default_catalog() if catalog is None else catalog
+        self.reading_links = ReadingLinks(library, self.catalog)
         with library.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             version = db.execute(
@@ -284,6 +293,7 @@ class PathwayStore:
             ).fetchone()
             if version is not None and version[0] != "1":
                 raise ValueError("unsupported pathway progress schema; use a compatible FieldForge version")
+            self.reading_links.initialize(db)
             db.execute("""CREATE TABLE IF NOT EXISTS pathway_progress (
                 slug TEXT PRIMARY KEY,
                 status TEXT NOT NULL CHECK(status IN
@@ -349,6 +359,9 @@ class PathwayStore:
             progress = {row["slug"]: self._progress(row) for row in db.execute(
                 "SELECT * FROM pathway_progress"
             )}
+            user_links = {}
+            for link in self.reading_links.snapshot(db):
+                user_links.setdefault(link.goal_slug, []).append(link)
             references = sorted({article for goal in self.catalog.goals for article in goal.articles})
             titles = {}
             # Batched exact matches; don't load or scan an entire large article corpus.
@@ -368,13 +381,17 @@ class PathwayStore:
             current = progress.get(goal.slug, LearningProgress())
             pending = tuple(item.slug for item in self.catalog.plan(goal.slug) if item.slug != goal.slug
                             and progress.get(item.slug, LearningProgress()).status != "practiced")
-            view = GoalView(goal, current, tuple((slug, titles[slug]) for slug in goal.articles
-                                                if slug in titles), pending)
+            links = tuple(user_links.get(goal.slug, ()))
+            installed = dict((slug, titles[slug]) for slug in goal.articles if slug in titles)
+            installed.update((link.article_slug, link.current_title) for link in links if link.state == "current")
+            view = GoalView(goal, current, tuple(installed.items()), pending, links)
             if content == "reading_available" and not view.installed_articles:
                 continue
-            if content == "reading_missing" and (not goal.articles or view.installed_articles):
+            if content == "reading_missing" and not (
+                any(link.state != "current" for link in links) or (goal.articles and not view.installed_articles)
+            ):
                 continue
-            if content == "guide_needed" and goal.articles:
+            if content == "guide_needed" and (goal.articles or links):
                 continue
             if content == "next" and not view.next_to_explore:
                 continue
