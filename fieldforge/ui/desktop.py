@@ -29,6 +29,7 @@ def run() -> None:
     from fieldforge.ui.assistant import add_ask_library_tab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
+    from fieldforge.ui.recovery import add_recovery_tab
 
     app = FieldForgeApp(_database_path())
     root = tk.Tk()
@@ -58,8 +59,11 @@ def run() -> None:
     notebook.add(knowledge_tab, text="Knowledge Library")
     pathways_tab = add_pathways_tab(notebook, knowledge_tab)
     add_ask_library_tab(notebook, app.knowledge)
+    recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
 
     def close_application() -> None:
+        if not recovery_tab.can_close():
+            return
         if knowledge_tab.busy:
             messagebox.showinfo(
                 "Pack operation in progress",
