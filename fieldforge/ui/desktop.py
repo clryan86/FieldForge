@@ -7,8 +7,8 @@ import sqlite3
 from pathlib import Path
 
 from fieldforge.app import FieldForgeApp
-from fieldforge.core.models import HouseholdMember
-from fieldforge.core.supplies import SuppliesService, amount
+from fieldforge.core.household import HouseholdService
+from fieldforge.core.supplies import SuppliesService
 from fieldforge.planners.resources import battery_runtime_hours, solar_daily_energy_wh
 
 
@@ -29,6 +29,7 @@ def run() -> None:
     from tkinter import messagebox, ttk
 
     from fieldforge.ui.assistant import add_ask_library_tab
+    from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
     from fieldforge.ui.recovery import add_recovery_tab
@@ -66,7 +67,7 @@ def run() -> None:
     recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
 
     def close_application() -> None:
-        if not supplies_panel.can_close() or not recovery_tab.can_close():
+        if not supplies_panel.can_close() or not household_panel.can_close() or not recovery_tab.can_close():
             return
         if knowledge_tab.busy:
             messagebox.showinfo(
@@ -98,7 +99,7 @@ def run() -> None:
     water_value = tk.StringVar(value="—")
     food_value = tk.StringVar(value="—")
     metric_specs = (
-        ("Household", member_value),
+        ("Household profiles", member_value),
         ("Inventory", item_value),
         ("Water estimate", water_value),
         ("Food estimate", food_value),
@@ -139,7 +140,7 @@ def run() -> None:
             if value["warnings"]:
                 lines.extend(["", resource.upper() + " INPUTS NEED REVIEW", *value["warnings"]])
         if not snapshot["household_members"]:
-            lines.extend(["", "Add household members and their planning allowances from Inventory."])
+            lines.extend(["", "Add or edit household planning allowances in Inventory → Household."])
         low_stock, dated = snapshot["low_stock"], snapshot["dated"]
         if low_stock:
             lines.extend(["", "LOW STOCK"])
@@ -155,33 +156,19 @@ def run() -> None:
     ttk.Button(dashboard_tab, text="Refresh", command=refresh_dashboard).pack(anchor="e")
 
     # Inventory -------------------------------------------------------------
-    supplies_panel = SuppliesTab(inventory_tab, supplies, on_change=refresh_dashboard)
-    supplies_panel.pack(fill="both", expand=True)
-    household = ttk.LabelFrame(inventory_tab, text="Quick household setup — planning allowances, not personal advice", padding=10)
-    household.pack(fill="x", pady=(10, 0))
-    member_name_var = tk.StringVar()
-    member_water_var = tk.StringVar(value="3.78541")
-    member_calories_var = tk.StringVar(value="2000")
-    for column, (label, variable, width) in enumerate((("Name", member_name_var, 24),
-                                                     ("Liters/day", member_water_var, 12),
-                                                     ("kcal/day", member_calories_var, 12))):
-        ttk.Label(household, text=label).grid(row=0, column=column, sticky="w")
-        ttk.Entry(household, textvariable=variable, width=width).grid(row=1, column=column, sticky="ew", padx=(0, 8))
-    household.columnconfigure(0, weight=1)
+    inventory_pages = ttk.Notebook(inventory_tab)
+    inventory_pages.pack(fill="both", expand=True)
+    supplies_panel = SuppliesTab(inventory_pages, supplies, on_change=refresh_dashboard)
+    household_panel = HouseholdTab(inventory_pages, HouseholdService(app.db.path), on_change=refresh_dashboard)
+    inventory_pages.add(supplies_panel, text="Supplies")
+    inventory_pages.add(household_panel, text="Household")
+    original_backup_guard = recovery_tab.before_backup
 
-    def add_member() -> None:
-        try:
-            liters = amount(member_water_var.get(), "daily water allowance")
-            calories = int(member_calories_var.get())
-            amount(calories, "daily calorie allowance")
-            app.add_member(HouseholdMember(member_name_var.get(), daily_water_liters=liters, daily_calories=calories))
-        except (ValueError, OSError, sqlite3.Error) as exc:
-            messagebox.showerror("Invalid household input or storage error", str(exc))
-            return
-        member_name_var.set("")
-        refresh_dashboard()
+    def save_before_backup() -> bool:
+        return (supplies_panel.can_close() and household_panel.can_close()
+                and original_backup_guard())
 
-    ttk.Button(household, text="Add Household Member", command=add_member).grid(row=1, column=3, sticky="e")
+    recovery_tab.before_backup = save_before_backup
 
     # Power planner ---------------------------------------------------------
     ttk.Label(planners_tab, text="Emergency Power Planner", style="Header.TLabel").pack(anchor="w")
