@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 from pathlib import Path
 
 from fieldforge.app import FieldForgeApp
-from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
+from fieldforge.core.models import HouseholdMember
+from fieldforge.core.supplies import SuppliesService, amount
 from fieldforge.planners.resources import battery_runtime_hours, solar_daily_energy_wh
 
 
@@ -30,8 +32,10 @@ def run() -> None:
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
     from fieldforge.ui.recovery import add_recovery_tab
+    from fieldforge.ui.supplies import SuppliesTab
 
     app = FieldForgeApp(_database_path())
+    supplies = SuppliesService(app.db.path)
     root = tk.Tk()
     root.title("FieldForge — Offline Emergency Operations")
     root.geometry("1240x800")
@@ -62,7 +66,7 @@ def run() -> None:
     recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
 
     def close_application() -> None:
-        if not recovery_tab.can_close():
+        if not supplies_panel.can_close() or not recovery_tab.can_close():
             return
         if knowledge_tab.busy:
             messagebox.showinfo(
@@ -81,7 +85,7 @@ def run() -> None:
     )
     ttk.Label(
         dashboard_tab,
-        text="All values are calculated locally from your stored household and inventory data.",
+        text="Local planning estimates: recorded stock, 10% reserve, and saved household daily allowances.",
     ).pack(anchor="w", pady=(2, 16))
 
     metrics = ttk.Frame(dashboard_tab)
@@ -96,15 +100,15 @@ def run() -> None:
     metric_specs = (
         ("Household", member_value),
         ("Inventory", item_value),
-        ("Water runway", water_value),
-        ("Food runway", food_value),
+        ("Water estimate", water_value),
+        ("Food estimate", food_value),
     )
     for column, (label, variable) in enumerate(metric_specs):
         box = ttk.LabelFrame(metrics, text=label, padding=14)
         box.grid(row=0, column=column, sticky="nsew", padx=4)
         ttk.Label(box, textvariable=variable, style="Metric.TLabel").pack()
 
-    alert_box = ttk.LabelFrame(dashboard_tab, text="Readiness alerts", padding=10)
+    alert_box = ttk.LabelFrame(dashboard_tab, text="Planning inputs and stock alerts", padding=10)
     alert_box.pack(fill="both", expand=True, pady=(16, 8))
     alert_text = tk.Text(alert_box, height=16, wrap="word", state="disabled")
     alert_text.pack(fill="both", expand=True)
@@ -116,114 +120,68 @@ def run() -> None:
         widget.configure(state="disabled")
 
     def refresh_dashboard() -> None:
-        snapshot = app.dashboard_snapshot()
+        try:
+            snapshot = supplies.dashboard()
+        except (ValueError, OSError, sqlite3.Error) as exc:
+            for variable in (member_value, item_value, water_value, food_value):
+                variable.set("Check data")
+            _set_text(alert_text, "Could not calculate from current records. No stale estimate is shown.\n\n" + str(exc))
+            return
         member_value.set(str(snapshot["household_members"]))
         item_value.set(str(snapshot["inventory_items"]))
-        water = snapshot["water"]["days_remaining"]
-        food = snapshot["food"]["days_remaining"]
-        water_value.set("—" if water is None else f"{water:.1f} days")
-        food_value.set("—" if food is None else f"{food:.1f} days")
-        lines: list[str] = []
-        low_stock = snapshot["alerts"]["low_stock"]
-        expiring = snapshot["alerts"]["expiring"]
+        water_value.set(snapshot["water"]["label"])
+        food_value.set(snapshot["food"]["label"])
+        lines = ["PLANNING ASSUMPTIONS", "The estimates are arithmetic, not a safety or nutrition assessment.",
+                 "Stock is multiplied by its amount per unit, with a 10% reserve held back."]
+        for resource in ("water", "food"):
+            value = snapshot[resource]
+            lines.append(f"{resource.title()}: saved daily allowance = {value['daily_need']:g} {value['unit']}/day.")
+            if value["warnings"]:
+                lines.extend(["", resource.upper() + " INPUTS NEED REVIEW", *value["warnings"]])
+        if not snapshot["household_members"]:
+            lines.extend(["", "Add household members and their planning allowances from Inventory."])
+        low_stock, dated = snapshot["low_stock"], snapshot["dated"]
         if low_stock:
-            lines.append("LOW STOCK")
-            lines.extend(f"  • {item['name']}: {item['quantity']} {item['unit']}" for item in low_stock)
-        if expiring:
-            if lines:
-                lines.append("")
-            lines.append("EXPIRING WITHIN 30 DAYS")
-            lines.extend(f"  • {item['name']}: {item['expires_on']}" for item in expiring)
-        if not lines:
-            lines.append("No current low-stock or 30-day expiration alerts.")
+            lines.extend(["", "LOW STOCK"])
+            lines.extend(f"• {item.name}: {item.quantity:g} {item.unit} (threshold {item.minimum_quantity:g})" for item in low_stock)
+        if dated:
+            lines.extend(["", "RECORDED DATES PASSED OR WITHIN 30 DAYS"])
+            lines.extend(f"• {item.name}: {item.expires_on}" for item in dated)
+        lines.extend(["", "Review inputs hides the headline estimate when amounts are missing or a recorded date has passed.",
+                      "A missing or future date does not establish stock safety. Keep unusable stock out of recorded usable quantities.",
+                      "No alerts is not proof of complete preparedness. Refresh to pick up changes from other windows."])
         _set_text(alert_text, "\n".join(lines))
 
     ttk.Button(dashboard_tab, text="Refresh", command=refresh_dashboard).pack(anchor="e")
 
     # Inventory -------------------------------------------------------------
-    top_inventory = ttk.Frame(inventory_tab)
-    top_inventory.pack(fill="x")
-    ttk.Label(top_inventory, text="Inventory", style="Header.TLabel").pack(side="left")
-
-    columns = ("id", "name", "category", "quantity", "unit", "location")
-    tree = ttk.Treeview(inventory_tab, columns=columns, show="headings", height=16)
-    for col, width in (("id", 55), ("name", 260), ("category", 120), ("quantity", 90), ("unit", 90), ("location", 180)):
-        tree.heading(col, text=col.replace("_", " ").title())
-        tree.column(col, width=width, anchor="w")
-    tree.pack(fill="both", expand=True, pady=(12, 8))
-
-    form = ttk.LabelFrame(inventory_tab, text="Add supply", padding=10)
-    form.pack(fill="x")
-    name_var = tk.StringVar()
-    category_var = tk.StringVar(value=InventoryCategory.OTHER.value)
-    quantity_var = tk.StringVar(value="1")
-    unit_var = tk.StringVar(value="each")
-    location_var = tk.StringVar()
-
-    ttk.Label(form, text="Name").grid(row=0, column=0, sticky="w")
-    ttk.Entry(form, textvariable=name_var, width=28).grid(row=1, column=0, padx=(0, 8), sticky="ew")
-    ttk.Label(form, text="Category").grid(row=0, column=1, sticky="w")
-    ttk.Combobox(
-        form,
-        textvariable=category_var,
-        values=[category.value for category in InventoryCategory],
-        state="readonly",
-        width=16,
-    ).grid(row=1, column=1, padx=(0, 8), sticky="ew")
-    ttk.Label(form, text="Quantity").grid(row=0, column=2, sticky="w")
-    ttk.Entry(form, textvariable=quantity_var, width=10).grid(row=1, column=2, padx=(0, 8))
-    ttk.Label(form, text="Unit").grid(row=0, column=3, sticky="w")
-    ttk.Entry(form, textvariable=unit_var, width=12).grid(row=1, column=3, padx=(0, 8))
-    ttk.Label(form, text="Location").grid(row=0, column=4, sticky="w")
-    ttk.Entry(form, textvariable=location_var, width=18).grid(row=1, column=4, padx=(0, 8))
-    form.columnconfigure(0, weight=1)
-
-    def refresh_inventory() -> None:
-        for node in tree.get_children():
-            tree.delete(node)
-        for item in app.inventory():
-            tree.insert(
-                "",
-                "end",
-                values=(item.id, item.name, item.category.value, item.quantity, item.unit, item.location),
-            )
-        refresh_dashboard()
-
-    def add_inventory() -> None:
-        try:
-            item = InventoryItem(
-                name=name_var.get(),
-                category=InventoryCategory(category_var.get()),
-                quantity=float(quantity_var.get()),
-                unit=unit_var.get(),
-                location=location_var.get(),
-            )
-            app.add_item(item)
-        except ValueError as exc:
-            messagebox.showerror("Invalid supply", str(exc))
-            return
-        name_var.set("")
-        quantity_var.set("1")
-        location_var.set("")
-        refresh_inventory()
-
-    ttk.Button(form, text="Add Supply", command=add_inventory).grid(row=1, column=5, sticky="e")
-
-    household = ttk.LabelFrame(inventory_tab, text="Quick household setup", padding=10)
-    household.pack(fill="x", pady=(8, 0))
+    supplies_panel = SuppliesTab(inventory_tab, supplies, on_change=refresh_dashboard)
+    supplies_panel.pack(fill="both", expand=True)
+    household = ttk.LabelFrame(inventory_tab, text="Quick household setup — planning allowances, not personal advice", padding=10)
+    household.pack(fill="x", pady=(10, 0))
     member_name_var = tk.StringVar()
-    ttk.Entry(household, textvariable=member_name_var, width=30).pack(side="left", padx=(0, 8))
+    member_water_var = tk.StringVar(value="3.78541")
+    member_calories_var = tk.StringVar(value="2000")
+    for column, (label, variable, width) in enumerate((("Name", member_name_var, 24),
+                                                     ("Liters/day", member_water_var, 12),
+                                                     ("kcal/day", member_calories_var, 12))):
+        ttk.Label(household, text=label).grid(row=0, column=column, sticky="w")
+        ttk.Entry(household, textvariable=variable, width=width).grid(row=1, column=column, sticky="ew", padx=(0, 8))
+    household.columnconfigure(0, weight=1)
 
     def add_member() -> None:
         try:
-            app.add_member(HouseholdMember(member_name_var.get()))
-        except ValueError as exc:
-            messagebox.showerror("Invalid household member", str(exc))
+            liters = amount(member_water_var.get(), "daily water allowance")
+            calories = int(member_calories_var.get())
+            amount(calories, "daily calorie allowance")
+            app.add_member(HouseholdMember(member_name_var.get(), daily_water_liters=liters, daily_calories=calories))
+        except (ValueError, OSError, sqlite3.Error) as exc:
+            messagebox.showerror("Invalid household input or storage error", str(exc))
             return
         member_name_var.set("")
         refresh_dashboard()
 
-    ttk.Button(household, text="Add Household Member", command=add_member).pack(side="left")
+    ttk.Button(household, text="Add Household Member", command=add_member).grid(row=1, column=3, sticky="e")
 
     # Power planner ---------------------------------------------------------
     ttk.Label(planners_tab, text="Emergency Power Planner", style="Header.TLabel").pack(anchor="w")
@@ -302,7 +260,7 @@ def run() -> None:
         command=load_scenario,
     ).pack(side="left")
 
-    refresh_inventory()
+    refresh_dashboard()
     load_scenario()
     root.mainloop()
 
