@@ -7,6 +7,7 @@ import sqlite3
 from pathlib import Path
 
 from fieldforge.app import FieldForgeApp
+from fieldforge.core.emergency import EmergencyStore
 from fieldforge.core.household import HouseholdService
 from fieldforge.core.supplies import SuppliesService
 from fieldforge.planners.resources import battery_runtime_hours, solar_daily_energy_wh
@@ -29,6 +30,7 @@ def run() -> None:
     from tkinter import messagebox, ttk
 
     from fieldforge.ui.assistant import add_ask_library_tab
+    from fieldforge.ui.emergency import EmergencyTab
     from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
@@ -67,7 +69,8 @@ def run() -> None:
     recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
 
     def close_application() -> None:
-        if not supplies_panel.can_close() or not household_panel.can_close() or not recovery_tab.can_close():
+        if (not supplies_panel.can_close() or not household_panel.can_close()
+                or not emergency_panel.can_close() or not recovery_tab.can_close()):
             return
         if knowledge_tab.busy:
             messagebox.showinfo(
@@ -166,7 +169,7 @@ def run() -> None:
 
     def save_before_backup() -> bool:
         return (supplies_panel.can_close() and household_panel.can_close()
-                and original_backup_guard())
+                and emergency_panel.can_close() and original_backup_guard())
 
     recovery_tab.before_backup = save_before_backup
 
@@ -210,45 +213,10 @@ def run() -> None:
     ttk.Label(planner_grid, textvariable=solar_var, style="Metric.TLabel").grid(row=6, column=0, columnspan=3, sticky="w", pady=6)
 
     # Emergency mode --------------------------------------------------------
-    ttk.Label(emergency_tab, text="Emergency Mode", style="Header.TLabel").pack(anchor="w")
-    ttk.Label(
-        emergency_tab,
-        text="Use this as a local checklist. Official warnings, evacuation orders, and emergency services take precedence.",
-        wraplength=900,
-    ).pack(anchor="w", pady=(2, 12))
-
-    scenario_row = ttk.Frame(emergency_tab)
-    scenario_row.pack(fill="x")
-    scenario_var = tk.StringVar(value=app.scenario_names()[0])
-    scenario_picker = ttk.Combobox(
-        scenario_row,
-        textvariable=scenario_var,
-        values=list(app.scenario_names()),
-        state="readonly",
-        width=28,
-    )
-    scenario_picker.pack(side="left", padx=(0, 8))
-    emergency_text = tk.Text(emergency_tab, height=24, wrap="word", state="disabled")
-    emergency_text.pack(fill="both", expand=True, pady=(10, 0))
-
-    def load_scenario() -> None:
-        payload = app.scenario(scenario_var.get())
-        lines = [payload["notice"], ""]
-        for index, action in enumerate(payload["actions"], start=1):
-            lines.append(f"{index}. [{action['priority'].upper()}] {action['title']}")
-            lines.append(f"   {action['reason']}")
-            lines.append("")
-        _set_text(emergency_text, "\n".join(lines))
-
-    ttk.Button(
-        scenario_row,
-        text="LOAD EMERGENCY CHECKLIST",
-        style="Emergency.TButton",
-        command=load_scenario,
-    ).pack(side="left")
+    emergency_panel = EmergencyTab(emergency_tab, EmergencyStore(app.db.path))
+    emergency_panel.pack(fill="both", expand=True)
 
     refresh_dashboard()
-    load_scenario()
     root.mainloop()
 
 
