@@ -7,7 +7,7 @@ import sqlite3
 from pathlib import Path
 
 from fieldforge.app import FieldForgeApp
-from fieldforge.core.emergency import EmergencyStore
+from fieldforge.core.emergency_actions import ActionStore
 from fieldforge.core.household import HouseholdService
 from fieldforge.core.supplies import SuppliesService
 from fieldforge.planners.resources import battery_runtime_hours, solar_daily_energy_wh
@@ -30,7 +30,7 @@ def run() -> None:
     from tkinter import messagebox, ttk
 
     from fieldforge.ui.assistant import add_ask_library_tab
-    from fieldforge.ui.emergency import EmergencyTab
+    from fieldforge.ui.emergency_actions import ActionWorkspace
     from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
@@ -213,7 +213,7 @@ def run() -> None:
     ttk.Label(planner_grid, textvariable=solar_var, style="Metric.TLabel").grid(row=6, column=0, columnspan=3, sticky="w", pady=6)
 
     # Emergency mode --------------------------------------------------------
-    emergency_panel = EmergencyTab(emergency_tab, EmergencyStore(app.db.path))
+    emergency_panel = ActionWorkspace(emergency_tab, ActionStore(app.db.path))
     emergency_panel.pack(fill="both", expand=True)
 
     refresh_dashboard()
