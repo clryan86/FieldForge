@@ -190,6 +190,10 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "snapshot-restore":
+            _emit(restore_snapshot(args.source, args.database, overwrite=args.overwrite))
+            return 0
+
         app = FieldForgeApp(args.database)
 
         if args.command == "init":
@@ -334,8 +338,6 @@ def main(argv: list[str] | None = None) -> int:
             _emit(restore_backup(app.db, args.source))
         elif args.command == "snapshot":
             _emit({"snapshot": str(export_snapshot(args.database, args.destination))})
-        elif args.command == "snapshot-restore":
-            _emit(restore_snapshot(args.source, args.database, overwrite=args.overwrite))
         else:  # pragma: no cover
             parser.error("unknown command")
     except (KeyError, OSError, ValueError) as exc:
