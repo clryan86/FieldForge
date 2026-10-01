@@ -41,6 +41,7 @@ def test_actual_desktop_has_playable_recreation_and_normal_close_retains_moves(t
     gc.collect()
     tk = pytest.importorskip("tkinter")
     from tkinter import ttk
+
     from fieldforge.ui import desktop
     from fieldforge.ui.recreation import RecreationTab
     try:
