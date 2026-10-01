@@ -11,6 +11,7 @@ from tkinter.scrolledtext import ScrolledText
 from fieldforge.knowledge import KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
 from fieldforge.knowledge.starter import STARTER_ARTICLE_COUNT, install_starter
+from fieldforge.ui.binder import open_binder
 from fieldforge.ui.documents import add_document_import
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
@@ -95,6 +96,8 @@ class KnowledgeTab(ttk.Frame):
         ttk.Label(paging, textvariable=self.status, wraplength=700).pack(side="left", padx=8)
         files = ttk.Frame(self)
         files.pack(fill="x", pady=(10, 0))
+        self.binder_button = ttk.Button(files, text="Field Binder…", command=lambda: open_binder(self))
+        self.binder_button.pack(side="left", padx=(0, 6))
         ttk.Button(files, text="Import Pack", command=self._import).pack(side="left")
         ttk.Button(files, text="Export Pack", command=self._export).pack(side="left", padx=6)
         ttk.Checkbutton(files, text="Include / restore private notes", variable=self.personal).pack(side="left")

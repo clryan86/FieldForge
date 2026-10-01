@@ -46,9 +46,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
           python -m pip install -e ".[dev]"
-      - name: Run local workflows and emergency UI integration
+      - name: Run local workflows, emergency and binder UI integration
         run: |
-          xvfb-run -a sh -c 'python -c "import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py'
+          xvfb-run -a sh -c 'python -c "import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py'
 
   windows-recovery:
     runs-on: windows-latest
@@ -62,5 +62,5 @@ jobs:
         run: python -m pip install -e ".[dev]"
       - name: Require functioning Tk
         run: python -c "import tkinter as tk; root = tk.Tk(); root.destroy()"
-      - name: Windows local-data and emergency workflow tests
-        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py
+      - name: Windows local-data, emergency and binder workflow tests
+        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py
