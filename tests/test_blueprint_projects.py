@@ -1,8 +1,8 @@
 import copy
 import json
-import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import pytest
 from blueprint_fixtures import document
@@ -127,7 +127,9 @@ def test_atomic_replace_failure_preserves_complete_project(tmp_path, monkeypatch
     def fail(*_args, **_kwargs):
         raise OSError("Simulated disk failure")
 
-    monkeypatch.setattr(os, "replace", fail)
+    # Patch the operation used by the writer: Python 3.10's pathlib caches
+    # os.replace in an accessor, so patching os.replace misses this failure.
+    monkeypatch.setattr(Path, "replace", fail)
     with pytest.raises(OSError, match="disk failure"):
         append_revision(path, changed(), expected_head=head(project))
     assert path.read_bytes() == before
