@@ -112,6 +112,16 @@ The core package intentionally avoids internet APIs. Optional integrations must 
 
 FieldForge is under active construction. The first goal is not a flashy demo; it is a dependable offline core with tests, reproducible calculations, durable local storage, and a clean path to a full desktop application.
 
+## Portable Pocket Library
+
+In the desktop Knowledge Library, use **Pocket Reader…** to export the open
+article or your bookmarked articles as a phone-friendly, self-contained HTML
+reading copy. It offers local search and category/reading-size controls in
+compatible browsers, with static full text as a no-script fallback. Private
+article notes are always excluded. This is a read-only export, not a native
+mobile app or the complete reference corpus. See [Pocket Library](docs/POCKET_LIBRARY.md)
+for device/file-opening limitations, size bounds and privacy details.
+
 ## License
 
 A project license will be selected before the first release.

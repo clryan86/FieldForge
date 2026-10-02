@@ -19,6 +19,9 @@ from fieldforge.knowledge.binder import (
 
 
 class BinderDialog(tk.Toplevel):
+    default_filename = "FieldForge-Binder.html"
+    save_dialog_title = "Save a NEW offline field binder"
+
     def __init__(self, parent, database, current_slug=None, *, on_close=None):
         super().__init__(parent)
         self.database, self.current_slug, self.on_close = database, current_slug, on_close
@@ -45,13 +48,15 @@ class BinderDialog(tk.Toplevel):
         self._controls = []
         header = ttk.Frame(self, padding=(16, 14))
         header.grid(row=0, column=0, sticky="ew")
-        ttk.Label(header, text="Take your references off-screen", font=("TkDefaultFont", 20, "bold")).pack(anchor="w")
+        self.heading = ttk.Label(header, text="Take your references off-screen", font=("TkDefaultFont", 20, "bold"))
+        self.heading.pack(anchor="w")
         self.notice = ttk.Label(header, text=NOTICE, wraplength=870, justify="left")
         self.notice.pack(fill="x", pady=(6, 0))
         options = ttk.LabelFrame(self, text="Build a captured reference collection", padding=12)
         options.grid(row=1, column=0, sticky="ew", padx=16)
         options.columnconfigure(1, weight=1)
-        ttk.Label(options, text="Binder title").grid(row=0, column=0, sticky="w", padx=(0, 8))
+        self.title_label = ttk.Label(options, text="Binder title")
+        self.title_label.grid(row=0, column=0, sticky="w", padx=(0, 8))
         title = ttk.Entry(options, textvariable=self.binder_title)
         title.grid(row=0, column=1, sticky="ew", columnspan=2)
         self._controls.append((title, "normal"))
@@ -160,7 +165,7 @@ class BinderDialog(tk.Toplevel):
         if self.mode.get() == "current" and not self.current_slug:
             self.status.set("Open an article in the library first, or choose bookmarks.")
             return
-        self._start("preview", capture_binder, self.database,
+        self._start("preview", self.capture_snapshot, self.database,
                     slugs=(self.current_slug,) if self.mode.get() == "current" else None,
                     bookmarks=self.mode.get() == "bookmarks", include_notes=self.notes.get(),
                     title=self.binder_title.get())
@@ -215,12 +220,18 @@ class BinderDialog(tk.Toplevel):
     def save(self):
         if self.busy or self.binder is None or not self.permission.get():
             return
-        path = filedialog.asksaveasfilename(parent=self, title="Save a NEW offline field binder",
-                                           initialfile="FieldForge-Binder.html", defaultextension=".html",
+        path = filedialog.asksaveasfilename(parent=self, title=self.save_dialog_title,
+                                           initialfile=self.default_filename, defaultextension=".html",
                                            filetypes=[("Offline HTML binder", "*.html")])
         if path:
             self.saved = None
-            self._start("save", save_binder, self.binder, path, acknowledged=True)
+            self._start("save", self.save_snapshot, self.binder, path, acknowledged=True)
+
+    def capture_snapshot(self, *args, **kwargs):
+        return capture_binder(*args, **kwargs)
+
+    def save_snapshot(self, *args, **kwargs):
+        return save_binder(*args, **kwargs)
 
     def open_saved(self):
         if self.busy or self.saved is None:
@@ -255,7 +266,7 @@ class BinderDialog(tk.Toplevel):
             self.on_close()
 
 
-def open_binder(knowledge_tab):
+def open_binder(knowledge_tab, *, dialog_type=BinderDialog):
     """Save the current article note and retain the existing modal/close guards."""
     if knowledge_tab.busy or not knowledge_tab.save_current():
         return None
@@ -265,7 +276,7 @@ def open_binder(knowledge_tab):
         knowledge_tab.busy = False
 
     try:
-        return BinderDialog(knowledge_tab, knowledge_tab.library.database_path,
+        return dialog_type(knowledge_tab, knowledge_tab.library.database_path,
                             knowledge_tab.slug, on_close=finished)
     except Exception:
         knowledge_tab.busy = False

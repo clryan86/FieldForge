@@ -254,10 +254,16 @@ def save_binder(binder: FieldBinder, destination: str | Path, *, acknowledged: b
     """
     if acknowledged is not True:
         raise ValueError("confirm copying rights and the unencrypted export/privacy notice")
+    return _save_html(render_binder(binder), destination)
+
+
+def _save_html(encoded: bytes, destination: str | Path) -> SavedBinder:
+    """Shared exclusive-create writer for fixed-template binder/pocket HTML."""
+    if not isinstance(encoded, bytes) or not 0 < len(encoded) <= MAX_HTML_BYTES:
+        raise ValueError("invalid or oversized rendered HTML")
     path = Path(destination).expanduser().absolute()
     if path.suffix.lower() not in {".html", ".htm"}:
-        raise ValueError("choose a NEW .html filename for the field binder")
-    encoded = render_binder(binder)
+        raise ValueError("choose a NEW .html filename for the reading copy")
     identity = None
     try:
         with path.open("xb") as stream:

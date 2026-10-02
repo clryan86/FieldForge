@@ -13,6 +13,7 @@ from fieldforge.knowledge.packs import export_pack, import_pack
 from fieldforge.knowledge.starter import STARTER_ARTICLE_COUNT, install_starter
 from fieldforge.ui.binder import open_binder
 from fieldforge.ui.documents import add_document_import
+from fieldforge.ui.pocket import open_pocket
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
 _PAGE_SIZE = 50
@@ -98,6 +99,8 @@ class KnowledgeTab(ttk.Frame):
         files.pack(fill="x", pady=(10, 0))
         self.binder_button = ttk.Button(files, text="Field Binder…", command=lambda: open_binder(self))
         self.binder_button.pack(side="left", padx=(0, 6))
+        self.pocket_button = ttk.Button(files, text="Pocket Reader…", command=lambda: open_pocket(self))
+        self.pocket_button.pack(side="left", padx=(0, 6))
         ttk.Button(files, text="Import Pack", command=self._import).pack(side="left")
         ttk.Button(files, text="Export Pack", command=self._export).pack(side="left", padx=6)
         ttk.Checkbutton(files, text="Include / restore private notes", variable=self.personal).pack(side="left")

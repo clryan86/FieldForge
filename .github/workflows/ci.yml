@@ -48,7 +48,7 @@ jobs:
           python -m pip install -e ".[dev,pdf]"
       - name: Run local workflows, emergency, binder and recreation UI integration
         run: |
-          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py'
+          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket_ui.py'
 
   windows-recovery:
     runs-on: windows-latest
@@ -63,10 +63,32 @@ jobs:
       - name: Require functioning Tk
         run: python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()"
       - name: Windows local-data, emergency, binder and recreation workflow tests
-        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py
+        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket.py tests/test_pocket_ui.py
+
+  pocket-browser:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install browser test tools (not application dependencies)
+        run: python -m pip install -e ".[dev]" "playwright==1.57.0"
+      - name: Install the selected browser and system dependencies
+        run: python -m playwright install --with-deps ${{ matrix.browser }}
+      - name: Require offline local-file reader behavior
+        env:
+          FIELDFORGE_BROWSER_TESTS: "1"
+          FIELDFORGE_BROWSER: ${{ matrix.browser }}
+          FIELDFORGE_BROWSER_MODE: "file"
+        run: python -m pytest -o addopts='' -q -ra tests/test_pocket_browser.py
 
   source-bundle:
-    needs: [test, text-import-gui, windows-recovery]
+    needs: [test, text-import-gui, windows-recovery, pocket-browser]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
