@@ -10,11 +10,31 @@ from fieldforge.blueprints.render import _atomic, esc, normalized_document, save
 
 
 def _table(headers, rows):
-    return ('<div class="table"><table><thead><tr>' +
+    return (f'<div class="table" role="region" tabindex="0" '
+            f'aria-label="{esc(headers[0])} comparison; scroll horizontally if needed"><table><thead><tr>' +
             "".join(f'<th scope="col">{esc(cell)}</th>' for cell in headers) +
             '</tr></thead><tbody>' + "".join('<tr>' +
             "".join(f'<td>{esc(cell)}</td>' for cell in row) + '</tr>' for row in rows) +
             '</tbody></table></div>')
+
+
+def _rule_text(rule):
+    if rule is None:
+        return "Absent"
+    value = str(rule["value"]).replace("_", " ") if rule["metric"] == "pair.relation" else str(rule["value"])
+    unit = "" if rule["unit"] == "text" else " " + rule["unit"]
+    return f'{rule["label"]}: {rule["metric"]} {rule["target"]} {rule["operator"]} {value}{unit}'
+
+
+def _actual_text(row):
+    if row["actual"] is None:
+        return row["status"] + ": " + row["detail"]
+    value = str(row["actual"])
+    if row["metric"] == "pair.relation":
+        value = value.replace("_", " ")
+    approx = "approximately " if row.get("actual_is_rounded") else ""
+    unit = "" if row["unit"] == "text" else " " + row["unit"]
+    return f'{row["status"]}: {approx}{value}{unit}'
 
 
 def _overview(result):
@@ -32,15 +52,14 @@ def _overview(result):
             (f'{row["id"]} — {row["rule"]["label"]}',
              f'{row["rule"]["metric"]} {row["rule"]["target"]} {row["rule"]["operator"]} '
              f'{row["rule"]["value"]} {row["rule"]["unit"]}',
-             f'{row["before"]["status"]}: {row["before"]["detail"]}',
-             f'{row["after"]["status"]}: {row["after"]["detail"]}', row["outcome"].replace("_", " "))
+             _actual_text(row["before"]), _actual_text(row["after"]), row["outcome"].replace("_", " "))
             for row in acceptance["fixed_baseline"]))
     else:
         body += '<p>No baseline limits were recorded. No acceptance improvement can be established.</p>'
     body += '</section><section aria-labelledby="rules"><h2 id="rules">Rule changes</h2>'
     body += ('<p>Removed or changed rules remain in the fixed baseline above.</p>' +
              _table(("ID", "Change", "Before", "After"), (
-                 (row["id"], row["change"].replace("_", " "), row["before"], row["after"])
+                 (row["id"], row["change"].replace("_", " "), _rule_text(row["before"]), _rule_text(row["after"]))
                  for row in acceptance["rule_changes"])) if acceptance["rule_changes"] else '<p>No rule changes.</p>')
     body += '</section>'
     if "geometry" not in result:
@@ -92,10 +111,11 @@ def export_comparison(before, after, destination):
             'pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;border-left:4px solid #38698a;padding:1rem}'
             'a{color:#125486}code{overflow-wrap:anywhere}h1{font-size:2rem}h2{margin-top:2rem}'
             '.counts{display:flex;flex-wrap:wrap;gap:1rem}.counts p{background:#edf3f7;padding:1rem;margin:0;min-width:7rem}'
-            '.counts strong{display:block;font-size:2rem}.table{overflow:auto}table{border-collapse:collapse;width:100%;margin:1rem 0;table-layout:fixed}'
+            '.counts strong{display:block;font-size:2rem}.table{overflow:auto}.table:focus{outline:2px solid #125486;outline-offset:2px}'
+            '.scroll-hint{display:none}table{border-collapse:collapse;width:100%;margin:1rem 0;table-layout:fixed}'
             'th,td{text-align:left;vertical-align:top;padding:.65rem;border-bottom:1px solid #c5d2dc;overflow-wrap:anywhere}'
             'th{background:#edf3f7}summary{cursor:pointer;font-weight:bold;padding:1rem 0}'
-            '@media(max-width:600px){body{padding:1rem}table{min-width:580px}.counts{gap:.5rem}.counts p{min-width:5rem}}'
+            '@media(max-width:600px){body{padding:1rem}table{min-width:580px}.scroll-hint{display:block}.counts{gap:.5rem}.counts p{min-width:5rem}}'
             '@media print{body{padding:0}a{color:inherit}thead{display:table-header-group}tr{break-inside:avoid}}'
             '</style><main><h1>FieldForge revision comparison</h1>'
             '<p>Offline, deterministic checks. Design drafts require review.</p>'
@@ -105,7 +125,9 @@ def export_comparison(before, after, destination):
             '<a href="comparison.json">Complete comparison JSON</a></p>'
             f'<p>Before snapshot SHA-256: <code>{esc(result["before"]["snapshot_sha256"])}</code><br>'
             f'After snapshot SHA-256: <code>{esc(result["after"]["snapshot_sha256"])}</code></p>'
-            f'<p>{esc(result["scope"])}</p>{_overview(result)}'
+            f'<p>{esc(result["scope"])}</p>'
+            '<p class="scroll-hint">Tables scroll sideways to reveal all columns. Swipe, or focus a table and use the arrow keys.</p>'
+            f'{_overview(result)}'
             '<details><summary>Full readable comparison: dimensions, gaps, checks and field changes</summary>'
             f'<pre>{esc(comparison_text(result))}</pre></details></main></html>')
     _atomic(destination / "README.txt",

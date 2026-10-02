@@ -191,6 +191,7 @@ def test_portable_export_escapes_content_recomputes_hashes_and_refuses_overwrite
     report = (destination / "report.html").read_text(encoding="utf-8")
     assert "<script" not in report and "&lt;script" in report
     assert "default-src 'none'" in report and 'href="comparison.json"' in report
+    assert 'role="region" tabindex="0"' in report and "Tables scroll sideways" in report
     original = {p.name: p.read_bytes() for p in destination.iterdir()}
     with pytest.raises(FileExistsError):
         export_comparison(before, after, destination)
