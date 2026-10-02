@@ -17,6 +17,7 @@ import sys
 import tempfile
 import time
 import zlib
+from contextlib import closing
 from pathlib import Path
 
 from fieldforge.runtime import build_identity, desktop_command, desktop_environment, packaged
@@ -159,7 +160,7 @@ def verify_installation() -> dict[str, object]:
         _require(b"FieldForge package check" in pocket, "Pocket export missing text")
         checks.append("Offline HTML reader rendered from recovered article")
         map_path = root_path / "synthetic.mbtiles"
-        with sqlite3.connect(map_path) as db:
+        with closing(sqlite3.connect(map_path)) as db, db:
             db.execute("CREATE TABLE metadata(name TEXT,value TEXT)")
             db.execute("CREATE TABLE tiles(zoom_level INTEGER,tile_column INTEGER,tile_row INTEGER,tile_data BLOB)")
             db.execute("CREATE UNIQUE INDEX tile_index ON tiles(zoom_level,tile_column,tile_row)")

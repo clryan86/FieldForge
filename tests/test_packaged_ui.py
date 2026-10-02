@@ -2,6 +2,7 @@
 
 import gc
 import os
+import sqlite3
 
 import pytest
 
@@ -71,7 +72,20 @@ def test_source_diagnostics_use_scratch_data_and_real_parser_not_user_database(r
     sentinel.write_bytes(b"user sentinel - not SQL")
     monkeypatch.setenv("FIELDFORGE_DB", str(sentinel))
     before = dict(os.environ)
+    closed = []
+    original_connect = sqlite3.connect
+    class TrackedMapConnection(sqlite3.Connection):
+        def close(self):
+            super().close()
+            closed.append(True)
+    def connect(database, *args, **kwargs):
+        # Only track the diagnostic fixture writer, not production read-only URIs.
+        if str(database).endswith("synthetic.mbtiles"):
+            kwargs["factory"] = TrackedMapConnection
+        return original_connect(database, *args, **kwargs)
+    monkeypatch.setattr(sqlite3, "connect", connect)
     report = package_checks.verify_installation()
+    assert closed == [True]  # A transaction context alone does not close SQLite.
     assert report["status"] == "passed" and not report["packaged"]
     assert "Not attempted" in report["desktop"]
     assert len(report["checks"]) == 5
