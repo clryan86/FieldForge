@@ -3,7 +3,13 @@ import gc
 import pytest
 
 from fieldforge.app import FieldForgeApp
-from fieldforge.navigation.gpx import capture_export, commit_import, parse_gpx, preview_import, render_gpx
+from fieldforge.navigation.gpx import (
+    capture_export,
+    commit_import,
+    parse_gpx,
+    preview_import,
+    render_gpx,
+)
 from fieldforge.navigation.places import PlaceStore, make_place
 
 

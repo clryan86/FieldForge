@@ -7,7 +7,13 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
-from fieldforge.navigation.places import NOTICE, PlaceStore, coordinate_text, describe_leg, make_place
+from fieldforge.navigation.places import (
+    NOTICE,
+    PlaceStore,
+    coordinate_text,
+    describe_leg,
+    make_place,
+)
 from fieldforge.ui.place_exchange import PlaceExchangeDialog
 
 _ERRORS = (OSError, ValueError, sqlite3.Error)
