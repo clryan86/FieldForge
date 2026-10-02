@@ -84,9 +84,11 @@ def check_design(mode, design, source_ids, acceptance_rules=None):
         issue("Open questions must be resolved before relying on this design.")
     phase_schedule = []
     geometry = None
+    pairs = None
     if mode == "engineering":
         parts = design["parts"]
-        geometry = analyze_envelopes(parts)["summary"]
+        analysis = analyze_envelopes(parts)
+        geometry, pairs = analysis["summary"], analysis["pairs"]
         if geometry["overlap_pairs"]:
             issue(f'{geometry["overlap_pairs"]} envelope pairs intersect. Inspect the geometry; '
                   'an enclosing volume may overlap intentionally.', "warning")
@@ -156,7 +158,7 @@ def check_design(mode, design, source_ids, acceptance_rules=None):
                 issue("Connection references an unknown component.")
         issue("Architecture checks validate graph structure, not implementation security.", "warning")
     acceptance = evaluate_rules(mode, design, [] if acceptance_rules is None else acceptance_rules,
-                                phase_schedule, geometry=geometry)
+                                phase_schedule, geometry=geometry, pairs=pairs)
     for row in acceptance:
         if row["status"] != "passed":
             issue(f"Acceptance {row['id']} ({row['label']}) {row['status']}: {row['detail']}")

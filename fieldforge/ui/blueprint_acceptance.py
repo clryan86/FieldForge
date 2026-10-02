@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from fieldforge.blueprints.acceptance import METRICS, validate_rules
+from fieldforge.blueprints.geometry import RELATIONS
 from fieldforge.ui.lifecycle import release_tk_references
 
 
@@ -17,6 +18,7 @@ class AcceptanceLimits(ttk.Frame):
         self._widgets = []
         self.metric = tk.StringVar()
         self.target = tk.StringVar()
+        self.second_target = tk.StringVar()
         self.operator = tk.StringVar(value="<=")
         self.value = tk.StringVar(value="1")
         self.label = tk.StringVar()
@@ -38,15 +40,19 @@ class AcceptanceLimits(ttk.Frame):
         self.measurements.bind("<<ComboboxSelected>>", self._metric_changed)
         self.target_label = ttk.Label(form, text="Target ID")
         self.target_label.grid(row=1, column=0, sticky="w")
-        self.target_entry = ttk.Entry(form, textvariable=self.target, width=18)
+        self.target_entry = ttk.Combobox(form, textvariable=self.target, width=18)
         self.target_entry.grid(row=1, column=1, sticky="ew", pady=3)
-        ttk.Label(form, text="Comparison").grid(row=1, column=2, padx=8)
+        self.second_label = ttk.Label(form, text="Part B")
+        self.second_label.grid(row=1, column=2, padx=8)
+        self.second_entry = ttk.Combobox(form, textvariable=self.second_target, width=18)
+        self.second_entry.grid(row=1, column=3, sticky="ew", pady=3)
+        ttk.Label(form, text="Comparison").grid(row=2, column=0, sticky="w")
         self.operators = ttk.Combobox(form, textvariable=self.operator, width=6, state="readonly")
-        self.operators.grid(row=1, column=3, sticky="ew")
-        ttk.Label(form, text="Limit").grid(row=2, column=0, sticky="w")
-        value_entry = ttk.Entry(form, textvariable=self.value)
-        value_entry.grid(row=2, column=1, sticky="ew", pady=3)
-        ttk.Label(form, textvariable=self.unit).grid(row=2, column=2, sticky="w", padx=8)
+        self.operators.grid(row=2, column=1, sticky="ew")
+        self.value_label = ttk.Label(form, text="Limit")
+        self.value_label.grid(row=2, column=2, padx=8)
+        self.value_entry = ttk.Combobox(form, textvariable=self.value)
+        self.value_entry.grid(row=2, column=3, sticky="ew", pady=3)
         ttk.Label(form, text="Label").grid(row=3, column=0, sticky="w")
         label_entry = ttk.Entry(form, textvariable=self.label)
         label_entry.grid(row=3, column=1, columnspan=3, sticky="ew", pady=3)
@@ -57,7 +63,7 @@ class AcceptanceLimits(ttk.Frame):
             button = ttk.Button(actions, text=text, command=command)
             button.pack(side="left", padx=(0, 6))
             self._widgets.append(button)
-        self._widgets.extend([value_entry, label_entry])
+        self._widgets.append(label_entry)
         tree_frame = ttk.Frame(self)
         tree_frame.pack(fill="both", expand=True)
         self.rows = ttk.Treeview(tree_frame, columns=("label", "limit", "target"), show="headings", height=4)
@@ -90,7 +96,29 @@ class AcceptanceLimits(ttk.Frame):
         key = self.choices[self.metric.get()]
         spec = METRICS[key]
         self.unit.set(spec[1])
-        self.target_label.configure(text=spec[2] or "Whole design")
+        is_pair = key.startswith("pair.")
+        self.target_label.configure(text="Part A" if is_pair else spec[2] or "Whole design")
+        self.value_label.configure(text="Relation" if key == "pair.relation" else f"Limit ({spec[1]})")
+        if is_pair:
+            self.second_label.grid()
+            self.second_entry.grid()
+        else:
+            self.second_label.grid_remove()
+            self.second_entry.grid_remove()
+            self.second_target.set("")
+        self.notice.configure(text=("Set limits checked on every design and revision. Missing targets fail the check. " +
+            ("Choose two distinct parts. Clearance is shortest box distance; axis gaps measure projections. "
+             "Contact does not establish a physical joint or usable access path." if is_pair else
+             "These checks do not verify real-world performance.")))
+        if key == "pair.relation":
+            choices = [value.replace("_", " ") for value in RELATIONS]
+            self.value_entry.configure(values=choices)
+            if self.value.get() not in choices:
+                self.value.set("face contact")
+        else:
+            self.value_entry.configure(values=())
+            if self.value.get() in [value.replace("_", " ") for value in RELATIONS]:
+                self.value.set("")
         if not spec[2]:
             self.target.set("")
         allowed = ("=",) if spec[4] == "string" or key.endswith(".exists") else ("<=", "=", ">=")
@@ -107,8 +135,11 @@ class AcceptanceLimits(ttk.Frame):
             widget.configure(state="disabled" if busy else "normal")
         for widget in (self.measurements, self.operators):
             widget.configure(state="disabled" if busy else "readonly")
-        needs_target = METRICS[self.choices[self.metric.get()]][2]
+        metric = self.choices[self.metric.get()]
+        needs_target = METRICS[metric][2]
         self.target_entry.configure(state="normal" if needs_target and not busy else "disabled")
+        self.second_entry.configure(state="normal" if metric.startswith("pair.") and not busy else "disabled")
+        self.value_entry.configure(state="disabled" if busy else "readonly" if metric == "pair.relation" else "normal")
 
     def get_rules(self):
         validate_rules(self.maker.mode, self.rules)
@@ -117,6 +148,10 @@ class AcceptanceLimits(ttk.Frame):
     def set_rules(self, rules):
         validate_rules(self.maker.mode, rules)
         self.rules = copy.deepcopy(rules)
+        blueprint = self.maker.blueprint
+        ids = [part["id"] for part in blueprint["design"].get("parts", [])] if blueprint else []
+        self.target_entry.configure(values=ids)
+        self.second_entry.configure(values=ids)
         self.refresh()
 
     def refresh(self):
@@ -143,10 +178,15 @@ class AcceptanceLimits(ttk.Frame):
             value = self.value.get().strip()
             if spec[4] == "number":
                 value = float(value)
+            elif metric == "pair.relation":
+                value = value.replace(" ", "_")
             ids = {row["id"] for row in self.rules}
             index = next(i for i in range(1, 32) if f"L{i}" not in ids)
+            target = self.target.get().strip()
+            if metric.startswith("pair."):
+                target += "/" + self.second_target.get().strip()
             rule = {"id": f"L{index}", "label": self.label.get().strip() or spec[3], "metric": metric,
-                    "target": self.target.get().strip(), "operator": self.operator.get(), "value": value,
+                    "target": target, "operator": self.operator.get(), "value": value,
                     "unit": spec[1]}
             updated = self.get_rules() + [rule]
             validate_rules(self.maker.mode, updated)

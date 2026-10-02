@@ -9,9 +9,10 @@ from fieldforge.ui.lifecycle import release_tk_references
 
 
 class GeometryInspector(ttk.Frame):
-    def __init__(self, parent, show_parts):
+    def __init__(self, parent, show_parts, configure_clearance=None):
         super().__init__(parent, padding=8)
         self.show_parts = show_parts
+        self.configure_clearance = configure_clearance
         self.analysis = None
         self.filter = tk.StringVar(value="All relations")
         self.summary = tk.StringVar(value="Open an engineering design to inspect its envelopes.")
@@ -27,6 +28,10 @@ class GeometryInspector(ttk.Frame):
         self.show_button = ttk.Button(toolbar, text="Show pair in drawing", command=self.highlight, state="disabled")
         self.show_button.pack(side="left", padx=8)
         ttk.Button(toolbar, text="Clear highlight", command=lambda: self.show_parts([])).pack(side="left")
+        self.limit_button = ttk.Button(self, text="Set clearance limit for selected pair",
+                                       command=self.prepare_limit, state="disabled")
+        if configure_clearance is not None:
+            self.limit_button.pack(anchor="w", pady=4)
         frame = ttk.Frame(self)
         frame.pack(fill="both", expand=True, pady=6)
         self.rows = ttk.Treeview(frame, columns=("a", "b", "relation"), show="headings", height=5)
@@ -61,6 +66,7 @@ class GeometryInspector(ttk.Frame):
     def refresh(self, _event=None):
         self.rows.delete(*self.rows.get_children())
         self.show_button.configure(state="disabled")
+        self.limit_button.configure(state="disabled")
         if self.analysis is None:
             return
         summary = self.analysis["summary"]
@@ -80,15 +86,22 @@ class GeometryInspector(ttk.Frame):
     def selected(self, _event=None):
         selection = self.rows.selection()
         self.show_button.configure(state="normal" if selection else "disabled")
+        self.limit_button.configure(state="normal" if selection and self.configure_clearance else "disabled")
         if not selection:
             return
         row = self.analysis["pairs"][int(selection[0])]
         self._details(" / ".join(row["part_ids"]) + ": " + row["relation"].replace("_", " ") +
                       "\nOverlap XYZ (mm): " + " / ".join(row["overlap_mm"]) +
                       "\nGap XYZ (mm): " + " / ".join(row["gap_mm"]) +
+                      "\nShortest clearance (mm): " + ("approximately " if row["clearance_is_rounded"] else "") + row["clearance_mm"] +
                       "\n\nPositive overlap on one axis alone is not a volume intersection. " + self.analysis["summary"]["scope"])
 
     def highlight(self):
         selection = self.rows.selection()
         if selection:
             self.show_parts(self.analysis["pairs"][int(selection[0])]["part_ids"])
+
+    def prepare_limit(self):
+        selection = self.rows.selection()
+        if selection and self.configure_clearance is not None:
+            self.configure_clearance(self.analysis["pairs"][int(selection[0])]["part_ids"])

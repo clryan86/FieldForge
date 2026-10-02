@@ -41,6 +41,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - Offline source preview and passage-level evidence ranking with repeatable retrieval regression measurements
 - Engineering assembly views, isometric wireframes, dimensioned part sheets and offline parts/materials CSV exports
 - Offline envelope inspection with pair highlighting, contact/gap reports and user-owned geometry acceptance limits
+- Pair-specific clearance, axis-gap and contact requirements with exact comparisons across edits and AI revisions
 - Searchable local field-guide library
 - Topic tags, bookmarks, favorites, and notes
 - Source/provenance metadata

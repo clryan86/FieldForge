@@ -143,6 +143,62 @@ The command exits 0 when analysis completed (even if intersections were found),
 1 for unresolved geometry and 2 for invalid input or another maker. Use `check`
 to obtain the overall draft/needs-revision result including your acceptance limits.
 
+### Preserve clearance between specific parts
+
+Choose a pair in **Geometry inspector → Set clearance limit for selected pair**.
+This opens the acceptance form with Part A and Part B filled in. Enter the required
+distance yourself, then **Add limit** and **Apply limits to design**. The shortcut
+does not invent a minimum, apply a rule, or modify a project. You can also choose
+part IDs from the editable form lists, or type intended IDs before generation.
+
+Pair rules use a target such as `P1/P2`: two distinct, case-sensitive part IDs.
+Either order identifies the same pair. The five measurements are:
+
+| Metric | Unit | Meaning |
+| --- | --- | --- |
+| `pair.clearance` | mm | Shortest 3D Euclidean distance between the two rectangular envelopes; zero for contact or overlap |
+| `pair.gap_x` | mm | Nonnegative gap between their X-axis projections |
+| `pair.gap_y` | mm | Nonnegative gap between their Y-axis projections |
+| `pair.gap_z` | mm | Nonnegative gap between their Z-axis projections |
+| `pair.relation` | text | Exact `overlap`, `face_contact`, `edge_contact`, `point_contact` or `separated` |
+
+Numeric pair rules support `<=`, `=` and `>=`; relation rules require `=`.
+Missing, renamed or ambiguous target parts, or unresolved envelope analysis, cannot
+satisfy a rule. User-owned rules persist through generation, repair, refinement,
+manual edits, saving, exporting and project restoration. Failed/unresolved rules
+remain blocking regardless of a favorable model critique.
+
+For example, two boxes with 3 mm and 4 mm gaps along X and Y have 5 mm shortest
+clearance. This is geometric distance only: it does not prove an accessible route,
+usable maintenance volume, thermal/electrical isolation or a suitable physical joint.
+No recommended minimum is inferred from a material, hazard or source title.
+A zero axis gap can mean overlapping projections; use `pair.relation` when a
+particular kind of contact is required. Contact alone does not verify fastening.
+
+```json
+[
+  {"id":"C1","label":"User-specified service gap","metric":"pair.clearance",
+   "target":"P1/P2","operator":">=","value":5,"unit":"mm"},
+  {"id":"C2","label":"Expected face contact","metric":"pair.relation",
+   "target":"P1/P3","operator":"=","value":"face_contact","unit":"text"}
+]
+```
+
+Pair numeric comparisons use exact decimal values without the legacy arithmetic
+epsilon. Shortest clearances are compared as squared distances, avoiding square-root
+rounding at a threshold. The displayed square root uses up to 17 significant digits
+and is labeled approximate when rounded. Pair numeric `actual` values are decimal
+**strings** in computed results; shortest clearance also includes
+`actual_squared_mm2` and `actual_is_rounded`. For example, a displayed approximate
+1 mm can still fail `<= 1 mm` when its exact square exceeds 1 mm².
+
+The geometry inspector displays shortest clearance. Each JSON/CSV pair record adds
+`clearance_mm`, `clearance_squared_mm2` and `clearance_is_rounded`; CSV data rows
+retain the existing columns. The HTML report places a compact acceptance summary
+before drawing sheets and retains full recomputed comparison details below them.
+Original version-1 design/project files need no migration; older builds cannot
+validate the newly introduced rule metrics.
+
 ### Inspect source evidence without a model
 
 The source preview searches the brief, constraints, resources, evidence keywords,
@@ -404,7 +460,7 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,evidence,engine,engineering,geometry,geometry_report,render,projects}.py` contains the
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,evidence,engine,engineering,geometry,geometry_report,render,projects}.py` contains the
 headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.

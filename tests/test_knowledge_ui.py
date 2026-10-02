@@ -550,6 +550,68 @@ def test_geometry_inspector_filters_highlights_and_recomputes_after_edit(reader)
         preview.destroy()
 
 
+def test_clearance_limit_from_inspector_requires_user_value_and_survives_apply(reader):
+    import copy
+
+    from test_blueprint_geometry import pair
+
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    studio.geometry("760x650")
+    maker = studio.makers["engineering"]
+    studio.pages.select(maker)
+    try:
+        maker.show_blueprint(pair((13, 14, 0)), dirty=False)
+        before = copy.deepcopy(maker.blueprint)
+        maker.pages.select(maker.preview)
+        inspector = maker.preview.inspector
+        maker.preview.pages.select(inspector)
+        inspector.rows.selection_set("0")
+        inspector.selected()
+        assert "Shortest clearance (mm): 5" in inspector.details.get("1.0", "end")
+        inspector.prepare_limit()
+        root.update()
+        form = maker.acceptance
+        assert maker.requirement_pages.select() == str(form)
+        assert form.target.get() == "P1" and form.second_target.get() == "P2"
+        assert form.metric.get() == "Pair clearance" and form.operator.get() == ">="
+        assert form.value.get() == "" and not form.rules
+        assert not maker.has_unsaved_changes() and maker.blueprint == before
+        assert set(form.second_entry.cget("values")) == {"P1", "P2"}
+        assert form.second_entry.winfo_ismapped()
+        assert form.details.winfo_rooty() + form.details.winfo_height() <= maker.winfo_rooty() + maker.winfo_height()
+        form.add()
+        assert not form.rules and "not added" in maker.status.get()
+        form.value.set("6")
+        form.add()
+        assert form.rules[0]["target"] == "P1/P2" and form.rules[0]["value"] == 6
+        assert maker.has_unsaved_changes()
+        maker.apply_limits()
+        assert maker.blueprint["validation"]["acceptance"][0]["status"] == "failed"
+        assert maker.blueprint["validation"]["acceptance"][0]["actual"] == "5"
+        form.metric.set("Pair relation")
+        form._metric_changed()
+        assert form.value_entry.instate(["readonly"]) and form.operator.get() == "="
+        form.value.set("separated")
+        form.add()
+        maker.apply_limits()
+        assert maker.blueprint["request"]["acceptance_rules"][1]["value"] == "separated"
+        assert maker.blueprint["validation"]["acceptance"][1]["status"] == "passed"
+        maker._input_state("disabled")
+        assert form.target_entry.instate(["disabled"]) and form.second_entry.instate(["disabled"])
+        assert form.value_entry.instate(["disabled"])
+        maker._input_state("normal")
+        assert form.value_entry.instate(["readonly"])
+        form.metric.set("Overall X span")
+        form._metric_changed()
+        root.update()
+        assert not form.second_entry.winfo_ismapped() and form.second_target.get() == ""
+    finally:
+        studio.destroy()
+
+
 def test_blueprint_studio_cancel_and_destroy_release_workers(reader, monkeypatch):
     import threading
 

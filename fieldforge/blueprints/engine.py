@@ -48,6 +48,15 @@ enclosing volumes. Neither contact nor a connected group proves a joint or load
 path. Respect explicit geometry acceptance limits; do not move or remove required
 parts merely to hide a conflict. Record unknown connection details as questions."""
 
+SYSTEM += """ Pair acceptance rules target two distinct IDs as A/B. pair.clearance is
+the shortest 3D distance between rectangular envelopes (zero for contact or overlap).
+pair.gap_x/y/z are nonnegative projection gaps on the selected axis, not access
+paths. pair.relation requires exactly overlap, face_contact, edge_contact,
+point_contact or separated. Pair distance limits use exact decimal comparisons,
+with squared distances for 3D clearance; displayed rounding cannot make a limit
+pass. Preserve both target IDs during revisions. Never invent a required clearance
+or claim that geometric separation alone establishes safe maintenance access."""
+
 
 @dataclass(frozen=True)
 class BlueprintRequest:

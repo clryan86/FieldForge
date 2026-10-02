@@ -12,7 +12,7 @@ from fieldforge.ui.blueprint_geometry import GeometryInspector
 
 
 class DrawingPreview(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, configure_clearance=None):
         super().__init__(parent)
         self.images = {}
         self.highlighted = set()
@@ -35,7 +35,7 @@ class DrawingPreview(ttk.Frame):
         self.pages.pack(fill="both", expand=True)
         frame = self.sheet = ttk.Frame(self.pages)
         self.pages.add(frame, text="Sheets")
-        self.inspector = GeometryInspector(self.pages, self.highlight_parts)
+        self.inspector = GeometryInspector(self.pages, self.highlight_parts, configure_clearance)
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
         self.canvas = tk.Canvas(frame, background="#102239", highlightthickness=0, takefocus=True)

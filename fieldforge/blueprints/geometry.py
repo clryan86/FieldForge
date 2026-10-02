@@ -5,6 +5,7 @@ from __future__ import annotations
 from decimal import Decimal, localcontext
 from itertools import combinations
 
+from fieldforge.blueprints.clearance import clearance_measurement
 from fieldforge.blueprints.schema import blueprint_schema, validate
 
 RELATIONS = ("overlap", "face_contact", "edge_contact", "point_contact", "separated")
@@ -63,9 +64,10 @@ def analyze_envelopes(parts):
                 relation = ("overlap", "face_contact", "edge_contact", "point_contact")[overlap.count(0)]
                 adjacency[a].add(b)
                 adjacency[b].add(a)
+            gaps = [_text(max(-v, 0)) for v in overlap]
             result["pairs"].append({"part_ids": [a, b], "relation": relation,
                                     "overlap_mm": [_text(max(v, 0)) for v in overlap],
-                                    "gap_mm": [_text(max(-v, 0)) for v in overlap]})
+                                    "gap_mm": gaps, **clearance_measurement(gaps)})
             summary[relation + "_pairs"] += 1
     remaining = set(adjacency)
     while remaining:

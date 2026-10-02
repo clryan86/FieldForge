@@ -202,6 +202,27 @@ def report_html(blueprint):
         "<p>Status: <strong>" + esc(blueprint["status"].replace("_", " ")) + "</strong></p>",
         "<h2>Request and constraints</h2>" + _content_html(blueprint["request"]),
     ]
+    if validation.get("acceptance"):
+        sections.append('<h2>Acceptance results</h2><div class="schedule"><table>'
+                        '<caption>User-owned limits</caption><thead><tr>'
+                        '<th scope="col">Limit</th><th scope="col">Target</th>'
+                        '<th scope="col">Required</th><th scope="col">Measured</th>'
+                        '<th scope="col">Result</th></tr></thead><tbody>')
+        for row in validation["acceptance"]:
+            actual = "Unresolved" if row["actual"] is None else str(row["actual"])
+            expected = str(row["value"])
+            if row["metric"] == "pair.relation":
+                actual, expected = actual.replace("_", " "), expected.replace("_", " ")
+            unit = "" if row["unit"] == "text" else " " + row["unit"]
+            if row["actual"] is not None:
+                actual += unit
+            if row.get("actual_is_rounded"):
+                actual = "Approximately " + actual
+            cells = (row["id"] + ": " + row["label"], row["target"] or "Whole design",
+                     f'{row["operator"]} {expected}{unit}', actual, row["status"])
+            sections.append('<tr>' + ''.join('<td>' + esc(v) + '</td>' for v in cells) + '</tr>')
+        sections.append('</tbody></table></div><p>Rounded display values do not determine pair clearance results. '
+                        'Full comparison details appear in the recomputed checks.</p>')
     if blueprint["request"]["mode"] == "engineering":
         sections.append(schedule_html(design))
         sections.append(geometry_html(analyze_envelopes(design["parts"])))

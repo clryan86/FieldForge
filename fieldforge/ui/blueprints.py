@@ -92,7 +92,7 @@ class BlueprintMaker(ttk.Frame):
         self.evidence = BlueprintEvidence(self.requirement_pages, self)
         self.requirement_pages.add(self.evidence, text="Source evidence")
         self.pages.add(result_page, text="Blueprint and checks")
-        self.preview = DrawingPreview(self.pages)
+        self.preview = DrawingPreview(self.pages, self.prepare_clearance_limit)
         self.pages.add(self.preview, text="Drawings")
         self.pages.add(edit_page, text="Edit design")
         refine_page = ttk.Frame(self.pages, padding=8)
@@ -324,6 +324,22 @@ class BlueprintMaker(ttk.Frame):
             self.history.after_change("edited", "Update user acceptance limits")
         except (ValueError, OSError) as exc:
             self.status.set("Limits not applied: " + str(exc))
+
+    def prepare_clearance_limit(self, ids):
+        if self.busy or self.blueprint is None:
+            return
+        form = self.acceptance
+        form.metric.set("Pair clearance")
+        form._metric_changed()
+        form.target.set(ids[0])
+        form.second_target.set(ids[1])
+        form.operator.set(">=")
+        form.value.set("")
+        form.label.set(f"Clearance {ids[0]} / {ids[1]}")
+        self.pages.select(0)
+        self.requirement_pages.select(form)
+        form.value_entry.focus_set()
+        self.status.set("Enter the required clearance, then Add limit and Apply limits to design.")
 
     def apply_edits(self):
         if self.busy or self.blueprint is None:

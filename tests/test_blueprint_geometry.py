@@ -54,8 +54,12 @@ def limit(metric, value):
 ])
 def test_all_pair_relations_and_exact_axes(position, relation, overlap, gap, groups):
     analysis = analyze_envelopes(pair(position)["design"]["parts"])
-    assert analysis["pairs"] == [{"part_ids": ["P1", "P2"], "relation": relation,
-                                   "overlap_mm": overlap, "gap_mm": gap}]
+    assert len(analysis["pairs"]) == 1
+    row = analysis["pairs"][0]
+    assert {k: row[k] for k in ("part_ids", "relation", "overlap_mm", "gap_mm")} == {
+        "part_ids": ["P1", "P2"], "relation": relation, "overlap_mm": overlap, "gap_mm": gap}
+    assert row["clearance_mm"] == ("5" if gap == ["3", "4", "0"] else gap[0])
+    assert not row["clearance_is_rounded"]
     assert analysis["summary"][relation + "_pairs"] == 1
     assert analysis["summary"]["connected_groups"] == groups
 
