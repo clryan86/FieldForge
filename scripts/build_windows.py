@@ -14,6 +14,7 @@ import json
 import platform
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -75,8 +76,11 @@ def main() -> None:
     parser.add_argument("--branch-commit", required=True)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
-    if sys.platform != "win32" or platform.machine().lower() not in {"amd64", "x86_64"}:
+    if (sys.platform != "win32" or platform.machine().lower() not in {"amd64", "x86_64"}
+            or struct.calcsize("P") != 8):
         parser.error("Build on Windows x64 with an x64 Python interpreter")
+    if sys.version_info[:3] != (3, 13, 16):
+        parser.error("Use the tested Python 3.13.16 runtime for this Windows development bundle")
     for value in (args.source_commit, args.branch_commit):
         if re.fullmatch(r"[0-9a-f]{40}", value) is None:
             parser.error("Commit identifiers must be exact SHA-1 hex IDs")

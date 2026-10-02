@@ -79,9 +79,13 @@ an explicit failure, never fallback to an unknown Python installation.
 Existing parser input/output/time limits and cancellation remain in effect.
 Packaged recovery starts an independent graphical process.
 
-The build uses PyInstaller 6.22.3 on Windows x64 with Python 3.12. The installed
+The build uses PyInstaller 6.22.3 on Windows x64 with Python 3.13.16. The installed
 pypdf comes from the project's declared >=6.19.0,<7 optional range. Build-only
-packages are not new application requirements for source users. Component
+packages are not new application requirements for source users. Python 3.13.16
+is the September 30, 2026 maintenance/security release; the Windows 3.12 source
+compatibility job does not supply the runtime distributed in this archive.
+Both source compatibility on Windows 3.13.16 and the frozen binary smoke test
+are required. No fallback to an older packaged interpreter is allowed. Component
 license texts are included under THIRD-PARTY-NOTICES. This milestone does not
 choose or change the FieldForge project's redistribution license.
 
@@ -104,3 +108,6 @@ https://pyinstaller.org/en/stable/runtime-information.html
 https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html
 https://pyinstaller.org/en/stable/spec-files.html
 https://pyinstaller.org/en/stable/license.html
+
+Pinned Python runtime reference:
+https://www.python.org/downloads/release/python-31316/
