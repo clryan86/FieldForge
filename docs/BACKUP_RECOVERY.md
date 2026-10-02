@@ -144,3 +144,12 @@ Technical references consulted: Python's sqlite3 connection/backup documentation
 (https://docs.python.org/3.13/library/sqlite3.html) and the existing FieldForge
 snapshot implementation. No third-party domain content or new runtime dependency
 is added by this milestone. No merge or release is implied by the draft PR.
+
+## Explicitly stored original PDFs
+
+The Original PDFs workflow can store complete file bytes in this same database.
+Full snapshots therefore include those files and their article associations;
+recovery previews show optional original-file/reference counts when present.
+External PDFs that were merely text-imported or never stored are still excluded.
+Archive/SQLite checks do not validate every original-PDF hash: use Verify bytes
+or a verified export after recovery. See [Original PDFs](ORIGINAL_PDFS.md).

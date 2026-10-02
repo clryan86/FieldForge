@@ -112,6 +112,16 @@ The core package intentionally avoids internet APIs. Optional integrations must 
 
 FieldForge is under active construction. The first goal is not a flashy demo; it is a dependable offline core with tests, reproducible calculations, durable local storage, and a clean path to a full desktop application.
 
+## Original PDF preservation
+
+**Knowledge Library → Original PDFs…** stores unchanged local PDFs (including
+scans and diagrams) independently of text extraction. Optionally associate a file
+with the open article, verify its stored bytes, and export a new byte-identical
+PDF for your own viewer. Nothing opens automatically. Full SQLite backups include
+these originals; article JSON/HTML exports do not. This is unencrypted storage,
+not a malware scanner, PDF renderer or source-review service. See
+[Original PDFs](docs/ORIGINAL_PDFS.md) for limits and the separate capture/consent step.
+
 ## Bundled Foundations learning pack
 
 **Knowledge Library → Foundations Pack…** contains 20 original lessons and 40

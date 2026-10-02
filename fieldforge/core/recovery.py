@@ -22,8 +22,8 @@ from fieldforge.core.snapshot import export_snapshot, restore_snapshot
 
 NOTICE = (
     "Backups are unencrypted and include private household records, articles, notes, and learning "
-    "progress stored in this database. They do not include Python, external documents, models, "
-    "maps, or media. A successful integrity check is not content review or proof of authorship."
+    "progress and original PDFs explicitly stored in this database. External files not stored here, "
+    "Python, models and map packs are not included. An integrity check is not content review or proof of authorship."
 )
 # Fixed identifiers only: an archive can never supply a SQL identifier to query.
 _TABLES = (
@@ -98,6 +98,20 @@ def _summarize(database: Path) -> tuple[tuple[tuple[str, int | None], ...], tupl
                 if not required <= columns(table):
                     raise ValueError(f"unrecognized columns in {table}; use a compatible FieldForge build")
                 counts.append((label, db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]))
+            originals = {
+                "knowledge_original_blobs": ("Stored original PDF files", {"sha256", "byte_count", "payload"}),
+                "knowledge_original_refs": ("Original PDF references", {"id", "file_sha256", "article_slug"}),
+            }
+            if set(originals).intersection(objects):
+                for table, (label, required) in originals.items():
+                    if table not in objects or not required <= columns(table):
+                        raise ValueError("incomplete original PDF storage schema in backup")
+                    counts.append((label, db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]))
+                if "knowledge_state" not in objects or not {"key", "value"} <= columns("knowledge_state"):
+                    raise ValueError("missing original PDF version marker in backup")
+                version = db.execute("SELECT value FROM knowledge_state WHERE key='original_files_schema'").fetchone()
+                if version is None or version[0] != "1":
+                    raise ValueError("unsupported original PDF storage version in backup")
             if not {"household_members", "knowledge_articles"}.intersection(objects):
                 raise ValueError("archive contains SQLite data, but no recognized FieldForge records")
             warnings = []
@@ -111,7 +125,7 @@ def _summarize(database: Path) -> tuple[tuple[tuple[str, int | None], ...], tupl
                         raise ValueError("unsupported database schema version; use a compatible FieldForge build")
             if any(count is None for _, count in counts):
                 warnings.append("Some record tables are absent. This may be an older or library-only database, not a full app backup.")
-            warnings.append("Checks cover archive bytes and SQLite structure, not every record's meaning or individual article hashes.")
+            warnings.append("Checks cover archive bytes and SQLite structure, not every record's meaning, individual article hashes or original-PDF hashes. Verify original PDF bytes after recovery.")
             return tuple(counts), tuple(warnings)
         finally:
             db.set_progress_handler(None, 0)

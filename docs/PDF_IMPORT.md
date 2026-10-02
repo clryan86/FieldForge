@@ -1,5 +1,12 @@
 # Preview-first PDF text import
 
+## Original files can now be preserved separately
+
+**Knowledge Library → Original PDFs…** is a separate, explicit storage operation
+that can keep original bytes, including diagrams and scans, in the database and
+full snapshots. The PDF text-import operation described below is unchanged: it
+does not automatically archive the file. See [Original PDFs](ORIGINAL_PDFS.md).
+
 ## Delivered
 
 The Knowledge Library's import row now has **Import PDF Text…** alongside the

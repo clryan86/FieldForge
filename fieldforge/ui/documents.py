@@ -275,6 +275,7 @@ def add_document_import(knowledge_tab) -> ttk.Button:
     row.pack(fill="x", pady=(0, 8))
     button = ttk.Button(row, text="Import Text Document…", command=lambda: open_document_import(knowledge_tab))
     button.pack(side="left", padx=(0, 8))
+    from fieldforge.ui.originals import open_originals
     from fieldforge.ui.pdf_import import PDFImportDialog
 
     knowledge_tab.pdf_import_button = ttk.Button(
@@ -282,6 +283,9 @@ def add_document_import(knowledge_tab) -> ttk.Button:
         command=lambda: open_document_import(knowledge_tab, dialog_type=PDFImportDialog),
     )
     knowledge_tab.pdf_import_button.pack(side="left", padx=(0, 8))
-    ttk.Label(row, text="Preview local text first. PDF extraction does not preserve diagrams.",
-              wraplength=430).pack(side="left", fill="x", expand=True)
+    knowledge_tab.originals_button = ttk.Button(row, text="Original PDFs…",
+                                                 command=lambda: open_originals(knowledge_tab))
+    knowledge_tab.originals_button.pack(side="left", padx=(0, 8))
+    ttk.Label(row, text="Text import and unchanged original PDFs are separate operations.",
+              wraplength=310).pack(side="left", fill="x", expand=True)
     return button
