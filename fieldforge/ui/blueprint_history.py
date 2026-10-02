@@ -7,11 +7,12 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 from tkinter.scrolledtext import ScrolledText
 
+from fieldforge.blueprints.comparison import compare_results, comparison_text
+from fieldforge.blueprints.comparison_report import export_comparison
 from fieldforge.blueprints.engine import digest
 from fieldforge.blueprints.projects import (
     append_revision,
     checkout,
-    compare_designs,
     create_project,
     head,
     load_project,
@@ -41,6 +42,12 @@ class ProjectHistory(ttk.Frame):
         self.notice = ttk.Label(self, text="Open projects automatically record generated, refined and applied "
                                 "edits. Project files are separate from database backups.", wraplength=950)
         self.notice.pack(fill="x")
+        comparison_actions = ttk.Frame(self)
+        comparison_actions.pack(fill="x", pady=(4, 0))
+        self.export_button = ttk.Button(comparison_actions, text="Export selected comparison",
+                                        command=self.export_selected)
+        self.export_button.pack(side="left")
+        ttk.Label(comparison_actions, text="Selected revision → current applied draft").pack(side="left", padx=8)
         self.bind("<Configure>", self._resize)
         panes = ttk.Panedwindow(self, orient="vertical")
         panes.pack(fill="both", expand=True, pady=6)
@@ -69,18 +76,13 @@ class ProjectHistory(ttk.Frame):
             self.notice.configure(wraplength=max(200, event.width - 24))
 
     def _show_changes(self, before, after, heading=""):
-        difference = compare_designs(before, after)
-        lines = [f"{row['path']}\nBefore: {row['before']}\nAfter: {row['after']}"
-                 for row in difference["changes"]]
-        if difference["truncated"]:
-            lines.append("More changes omitted. Inspect the full revisions before relying on them.")
-        if not lines:
-            lines.append("No design, request, source or critique changes.")
-        if heading:
-            lines.insert(0, heading)
+        try:
+            text = comparison_text(compare_results(before, after))
+        except ValueError as exc:
+            text = "Comparison unavailable: " + str(exc)
         self.changes.configure(state="normal")
         self.changes.delete("1.0", "end")
-        self.changes.insert("1.0", "\n\n".join(lines))
+        self.changes.insert("1.0", (heading + "\n\n" if heading else "") + text)
         self.changes.configure(state="disabled")
 
     def refresh(self):
@@ -181,6 +183,27 @@ class ProjectHistory(ttk.Frame):
             row = self.project["revisions"][number - 1]
             heading = f"Revision {number} ({row['kind']}) — {row['created_at']}\nNote: {row['note']}"
             self._show_changes(checkout(self.project, number), self.maker.blueprint, heading)
+
+    def export_selected(self):
+        if not self.ready():
+            return
+        selection = self.rows.selection()
+        if not selection or self.project is None:
+            self.maker.status.set("Select a saved revision to compare with the current applied draft.")
+            return
+        parent = filedialog.askdirectory(parent=self, title="Choose a parent folder for the comparison")
+        if not parent:
+            return
+        from pathlib import Path
+        number = int(selection[0])
+        destination = Path(parent) / f"comparison-revision-{number}-to-draft"
+        try:
+            # Recompute now, never export cached text from a previously selected revision.
+            export_comparison(checkout(self.project, number), self.maker.blueprint, destination)
+            self.compare_selected()
+            self.maker.status.set(f"Comparison exported to {destination}")
+        except (OSError, ValueError) as exc:
+            self.maker.status.set(str(exc))
 
     def restore(self):
         selection = self.rows.selection()

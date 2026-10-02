@@ -256,6 +256,67 @@ are **separate from FieldForge's database snapshot backups**. The neighboring `.
 file has no project content and need not be transferred; OS locks release when a
 process exits, even if the empty sidecar remains.
 
+### Compare engineering outcomes across revisions
+
+In **Project history**, select a revision to compare it with the current applied
+draft. The comparison recomputes checks locally, without a model or internet
+connection. It shows dimensions, materials and positions by stable part ID;
+overall XYZ spans; envelope intersections and contacts; and exact changes in
+pair clearances and axis gaps. Reordering parts does not change their identity.
+Duplicate IDs make part matching unresolved. Empty or degenerate geometry makes
+pair comparison unresolved, so it cannot appear to have eliminated collisions.
+
+Every acceptance rule from the selected **baseline** is evaluated unchanged on
+both designs. `regressed` means a previously passing rule now fails or cannot be
+resolved. `now passes` means a previously failing or unresolved rule passes the
+same criterion. Changed, removed and newly added rules appear separately, along
+with results under the current rules. Lowering a minimum clearance from 5 mm to
+2 mm cannot hide a revision that reduced the actual clearance from 5 mm to 2 mm:
+it still regresses against the fixed 5 mm baseline. Changing a rule's label or reversing
+the order of a pair target does not alter its criterion.
+
+Clearance direction uses exact squared distances, including changes too small to
+show in the rounded distance label. Changes in contact type remain visible even
+when both clearances are zero. Spans use decimal arithmetic on recorded geometry.
+Other acceptance metrics retain their existing evaluator behavior, including the
+documented numeric epsilon. A larger gap or fewer contacts is not automatically
+better; only explicit requirements establish the desired outcome. Checks cover
+recorded envelopes and supported measurements, not structural performance.
+
+**Export selected comparison** chooses a parent folder and creates
+`comparison-revision-N-to-draft/`, refusing an existing folder. It checks pending
+edits and recomputes from the selected revision and the applied draft at export
+time. The original project is unchanged. The folder contains:
+
+- `report.html`: readable offline report, requiring no JavaScript or remote assets.
+- `comparison.json`: full computed results and all changed geometry pairs.
+- `before.json` and `after.json`: complete, reopenable snapshots with freshly
+  computed validation and canonical JSON SHA-256 identities in the report.
+- `README.txt`: interpretation, hashing and completeness notes.
+
+The readable view shows at most 200 changed pairs; the JSON retains them all
+(up to 3,540 when two 60-part designs have entirely different IDs). Recorded
+field differences are bounded to 200 entries and 2,000 characters per value;
+both complete snapshots are supplied for inspection. An interrupted export may
+leave an incomplete folder; retry with a new destination. The report compares
+both snapshots with the current checker version, not historical checker behavior.
+
+Project and software makers also receive fixed-baseline acceptance comparisons
+and freshly computed validation. No aggregate quality score is inferred when
+limits are absent, and passing checks never changes a draft into a certification.
+
+```bash
+# Preserve the original raw-field comparison unless --results or --output is used.
+fieldforge-blueprints compare before.json after.json --results
+fieldforge-blueprints compare before.json after.json --output revision-comparison
+# Compare two immutable saved revisions directly, without a database or model.
+fieldforge-blueprints project-compare shelf.ffproject.json 1 3 --output saved-comparison
+```
+
+These commands exit 0 when the comparison completes, even if it finds regressions;
+inspect `acceptance.outcomes` and unresolved results. Invalid input exits 2.
+Use `check` for the existing current-design acceptance exit status.
+
 ### Acceptance limits checked by the app
 
 Open **Requirements → Acceptance limits** to add numeric limits or exact text
@@ -460,7 +521,7 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,evidence,engine,engineering,geometry,geometry_report,render,projects}.py` contains the
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report}.py` contains the
 headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.

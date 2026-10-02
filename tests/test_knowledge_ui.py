@@ -741,6 +741,74 @@ def test_blueprint_project_refine_compare_edit_restore_and_reopen(reader, monkey
         studio.destroy()
 
 
+def test_history_comparison_export_uses_selected_revision_and_current_applied_draft(reader, monkeypatch, tmp_path):
+    import copy
+    import json
+
+    from test_blueprint_clearance import limit
+    from test_blueprint_geometry import pair
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.blueprints.projects import create_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    before, after = pair((15, 0, 0)), pair((12, 0, 0))
+    before["request"]["acceptance_rules"] = [limit()]
+    after["request"]["acceptance_rules"] = [limit(value=2)]
+    path = tmp_path / "design.ffproject.json"
+    project = create_project(path, "Comparison", before)
+    original = path.read_bytes()
+    destinations = []
+
+    def choose_folder(**_kwargs):
+        destinations.append(tmp_path)
+        return str(tmp_path)
+
+    monkeypatch.setattr("fieldforge.ui.blueprint_history.filedialog.askdirectory", choose_folder)
+    try:
+        maker.show_blueprint(after)
+        maker.load_request(maker.blueprint)
+        maker.history.project, maker.history.path = project, path
+        maker.history.refresh()
+        maker.history.rows.selection_set("1")
+        maker.history.compare_selected()
+        assert "regressed" in maker.history.changes.get("1.0", "end")
+        # Recompute at export time instead of exporting the cached regression above.
+        current = copy.deepcopy(after)
+        current["design"]["parts"][1]["position_mm"] = [20, 0, 0]
+        current["design_sha256"] = digest(current["design"])
+        maker.show_blueprint(current)
+        maker.load_request(maker.blueprint)
+        maker.busy = True
+        maker.history.export_selected()
+        assert not destinations
+        maker.busy = False
+        maker.editor.insert("end", "unapplied edit")
+        maker.history.export_selected()
+        assert not destinations
+        maker.show_blueprint(current)
+        studio.pages.select(maker)
+        maker.pages.select(maker.history)
+        studio.geometry("760x650")
+        root.update()
+        assert maker.history.export_button.winfo_ismapped()
+        assert maker.history.export_button.winfo_rootx() + maker.history.export_button.winfo_width() <= (
+            studio.winfo_rootx() + studio.winfo_width())
+        maker.history.export_selected()
+        result = json.loads((tmp_path / "comparison-revision-1-to-draft" / "comparison.json").read_text(encoding="utf-8"))
+        assert result["acceptance"]["outcomes"] == {"still_passed": 1}
+        assert result["geometry"]["pairs"][0]["after"]["clearance_mm"] == "10"
+        assert path.read_bytes() == original
+        assert "still passed" in maker.history.changes.get("1.0", "end")
+        maker.history.export_selected()
+        assert path.read_bytes() == original  # Existing comparison never overwrites history.
+    finally:
+        studio.destroy()
+
+
 def test_project_save_conflict_keeps_new_draft_and_external_revision(reader, monkeypatch, tmp_path):
     import copy
 

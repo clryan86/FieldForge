@@ -11,6 +11,8 @@ import threading
 from pathlib import Path
 
 from fieldforge.blueprints.acceptance import METRICS, validate_rules
+from fieldforge.blueprints.comparison import compare_results
+from fieldforge.blueprints.comparison_report import export_comparison
 from fieldforge.blueprints.engine import BlueprintRequest, _json, digest, generate_blueprint
 from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
 from fieldforge.blueprints.geometry import analyze_envelopes
@@ -92,6 +94,13 @@ def main(argv=None):
     compare = commands.add_parser("compare")
     compare.add_argument("before", type=Path)
     compare.add_argument("after", type=Path)
+    compare.add_argument("--results", action="store_true", help="Recompute outcomes against fixed baseline limits")
+    compare.add_argument("--output", type=Path, help="Export computed comparison and snapshots to a new directory")
+    project_compare = commands.add_parser("project-compare", help="Compare saved revisions without changing history")
+    project_compare.add_argument("project", type=Path)
+    project_compare.add_argument("before", type=int)
+    project_compare.add_argument("after", type=int)
+    project_compare.add_argument("--output", type=Path)
     project_init = commands.add_parser("project-init")
     project_init.add_argument("source", type=Path)
     project_init.add_argument("destination", type=Path)
@@ -143,7 +152,16 @@ def main(argv=None):
         elif args.command == "export":
             result = {"directory": str(export_blueprint(load_blueprint(args.source), args.destination))}
         elif args.command == "compare":
-            result = compare_designs(load_blueprint(args.before), load_blueprint(args.after))
+            before, after = load_blueprint(args.before), load_blueprint(args.after)
+            result = compare_results(before, after) if args.results or args.output else compare_designs(before, after)
+            if args.output:
+                result["directory"] = str(export_comparison(before, after, args.output))
+        elif args.command == "project-compare":
+            project = load_project(args.project)
+            before, after = checkout(project, args.before), checkout(project, args.after)
+            result = compare_results(before, after)
+            if args.output:
+                result["directory"] = str(export_comparison(before, after, args.output))
         elif args.command.startswith("project-"):
             if args.command == "project-init":
                 value = load_blueprint(args.source)
