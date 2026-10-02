@@ -373,6 +373,141 @@ def test_desktop_backup_verify_and_restore_copy(reader, tmp_path, monkeypatch):
     panel.destroy()
 
 
+def test_empty_desktop_library_installs_offline_references(tk_root, tmp_path):
+    import tkinter as tk
+
+    from fieldforge.ui.knowledge import KnowledgeTab
+
+    window = tk.Toplevel(tk_root)
+    library = KnowledgeLibrary(tmp_path / "empty.db")
+    frame = KnowledgeTab(window, library)
+    frame.pack()
+    try:
+        wait_for_search(window, frame)
+        assert library.count() >= 250
+        assert len(frame.results.get_children()) == 50
+        assert "water-sanitation" in frame.categories["values"]
+    finally:
+        window.destroy()
+
+
+@pytest.mark.parametrize("mode", ["engineering", "project", "software"])
+def test_blueprint_studios_preview_edit_save_and_open(reader, monkeypatch, tmp_path, mode):
+    import json
+
+    from blueprint_fixtures import document
+
+    from fieldforge.blueprints.render import load_blueprint
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    assert set(studio.makers) == {"engineering", "project", "software"}
+    maker = studio.makers[mode]
+    studio.pages.select(maker)
+    try:
+        maker.generate()
+        assert "Load models" in maker.status.get()
+        monkeypatch.setattr("fieldforge.ui.blueprints.OllamaClient.list_models",
+                            lambda *args, **kwargs: ["fixture:local"])
+        monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint",
+                            lambda *args, **kwargs: document(mode))
+        maker.load_models()
+        wait_for_search(root, maker)
+        maker.generate()
+        wait_for_search(root, maker)
+        maker.pages.select(maker.preview)
+        root.update()
+        assert maker.preview.canvas.find_all()
+        assert "SOURCE EVIDENCE" in maker.result.get("1.0", "end-1c")
+        value = maker.blueprint["design"]
+        value = {**value, "title": "Manually revised design"}
+        maker.editor.delete("1.0", "end")
+        maker.editor.insert("1.0", json.dumps(value))
+        maker.save()
+        assert "Apply your design edits" in maker.status.get()
+        maker.apply_edits()
+        assert maker.blueprint["review"] is None
+        assert maker.blueprint["status"] == "needs_revision"
+        target = tmp_path / (mode + ".json")
+        monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.asksaveasfilename",
+                            lambda **kwargs: str(target))
+        maker.save()
+        assert load_blueprint(target)["design"]["title"] == "Manually revised design"
+        assert not maker.has_unsaved_changes()
+        monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.askopenfilename",
+                            lambda **kwargs: str(target))
+        maker.open_saved()
+        assert maker.brief.get("1.0", "end-1c") == maker.blueprint["request"]["brief"]
+        assert not maker.has_unsaved_changes()
+        maker.editor.insert("end", " ")
+        monkeypatch.setattr("fieldforge.ui.blueprints.messagebox.askyesno", lambda *a, **kw: False)
+        studio.close()
+        assert studio.winfo_exists()
+    finally:
+        studio.destroy()
+
+
+def test_blueprint_studio_cancel_and_destroy_release_workers(reader, monkeypatch):
+    import threading
+
+    from fieldforge.knowledge.assistant import GenerationCancelled
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    started, finished = threading.Event(), threading.Event()
+
+    def blocked(*args, cancel, **kwargs):
+        started.set()
+        assert cancel.wait(3)
+        finished.set()
+        raise GenerationCancelled("Blueprint cancelled")
+
+    monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", blocked)
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    maker.model.set("fixture:local")
+    maker.generate()
+    assert started.wait(2)
+    maker._cancel.set()
+    wait_for_search(root, maker)
+    assert "cancelled" in maker.status.get()
+    assert finished.wait(2)
+    assert maker.generate_button.instate(["!disabled"])
+    started.clear()
+    finished.clear()
+    maker.generate()
+    assert started.wait(2)
+    studio.destroy()
+    assert finished.wait(2)
+    root.update()
+    assert maker._poll_id is None
+    assert maker.status is None
+
+
+def test_blueprint_studio_failure_preserves_previous_draft(reader, monkeypatch):
+    from blueprint_fixtures import document
+
+    from fieldforge.knowledge.assistant import LocalModelError
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["project"]
+    maker.show_blueprint(document("project"), dirty=False)
+    maker.model.set("fixture:local")
+
+    def fail(*args, **kwargs):
+        raise LocalModelError("Local model unavailable")
+
+    monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", fail)
+    maker.generate()
+    wait_for_search(root, maker)
+    assert "unavailable" in maker.status.get()
+    assert maker.blueprint["design"]["title"] == "Example design"
+    studio.destroy()
+
+
 def test_desktop_backup_failures_restore_controls_and_preserve_data(reader, tmp_path, monkeypatch):
     from fieldforge.core.snapshot import export_snapshot
     from fieldforge.db.database import FieldForgeDatabase

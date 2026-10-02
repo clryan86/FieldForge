@@ -226,7 +226,20 @@ class OllamaClient:
                             time.monotonic() + min(self.timeout, 10))
 
     def generate(self, model: str, messages: list[dict[str, str]], *,
-                 cancel: threading.Event) -> tuple[str, bool]:
+                 cancel: threading.Event, schema: dict | None = None,
+                 max_tokens: int = 768) -> tuple[str, bool]:
+        if type(max_tokens) is not int or not 128 <= max_tokens <= 8192:
+            raise ValueError("max_tokens must be between 128 and 8192.")
+        if schema is not None and not isinstance(schema, dict):
+            raise ValueError("schema must be a JSON schema object.")
+        context_size = 8192
+        if schema is not None:
+            # A byte-based upper bound avoids silent context truncation without
+            # depending on a particular model tokenizer. Leave room for chat tokens.
+            prompt_bound = len(json.dumps(messages, ensure_ascii=False).encode("utf-8"))
+            context_size = max(16384, ((prompt_bound + max_tokens + 2047) // 1024) * 1024)
+            if context_size > 65536:
+                raise LocalModelError("Blueprint context exceeds 64K. Use a shorter brief or a smaller design.")
         if not isinstance(model, str) or not _MODEL_NAME.fullmatch(model):
             raise ValueError("Choose the exact name of an installed local model.")
         deadline = time.monotonic() + self.timeout
@@ -239,19 +252,31 @@ class OllamaClient:
                 or not isinstance(info.get("details"), dict)
                 or info["details"].get("format") != "gguf"):
             raise LocalModelError("Selected model must support local text completion; remote models are not allowed.")
+        if schema is not None and isinstance(info.get("model_info"), dict):
+            capacities = [value for key, value in info["model_info"].items()
+                          if key.endswith(".context_length") and type(value) is int and value > 0]
+            if capacities and context_size > min(capacities):
+                raise LocalModelError("This design exceeds the model's declared context capacity. "
+                                      "Choose a larger-context model or shorten the request.")
         # Recheck immediately before disclosing the question or any article text.
         self._require_local(cancel, deadline)
-        reply = self._request("/api/chat", {
+        payload = {
             "model": model, "messages": messages, "stream": False, "think": False,
-            "keep_alive": 0, "options": {"temperature": 0, "num_predict": 768, "num_ctx": 8192},
-        }, cancel, deadline)
+            "keep_alive": 0,
+            "options": {"temperature": 0, "num_predict": max_tokens,
+                        "num_ctx": context_size},
+        }
+        if schema is not None:
+            payload["format"] = schema
+        reply = self._request("/api/chat", payload, cancel, deadline)
         message = reply.get("message")
         if (reply.get("remote_host") or reply.get("remote_model") or reply.get("done") is not True
                 or not isinstance(message, dict) or message.get("role") != "assistant"
                 or message.get("tool_calls")):
             raise LocalModelError("Local model returned an unsupported or incomplete answer.")
         answer = message.get("content")
-        if not isinstance(answer, str) or not answer.strip() or len(answer) > _MAX_ANSWER:
+        maximum = 120_000 if schema else _MAX_ANSWER
+        if not isinstance(answer, str) or not answer.strip() or len(answer) > maximum:
             raise LocalModelError("Local model returned an empty or oversized answer.")
         return answer.strip(), reply.get("done_reason") == "length"
 

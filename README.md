@@ -34,6 +34,8 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - Go-bag and vehicle-kit readiness scoring
 
 ### Offline knowledge
+- [Bundled reference library](docs/REFERENCE_LIBRARY.md): 267 attributed articles across 14 categories, available without downloads
+- [Three AI blueprint makers](docs/BLUEPRINT_MAKERS.md): engineering designs, project guides, and software architecture using optional local models
 - Searchable local field-guide library
 - Topic tags, bookmarks, favorites, and notes
 - Source/provenance metadata
@@ -64,6 +66,8 @@ fieldforge/
   planners/      water, food, power, evacuation and kit calculators
   scenarios/     scenario definitions and action generation
   knowledge/     offline guide/search engine
+  blueprints/    structured design generation, checks, diagrams and exports
+  content/       attributed offline reference pack
   navigation/    geospatial helpers and map-pack interfaces
   ui/            desktop UI
   cli.py          command-line interface

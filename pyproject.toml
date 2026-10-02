@@ -21,9 +21,13 @@ dev = [
 [project.scripts]
 fieldforge = "fieldforge.cli:main"
 fieldforge-gui = "fieldforge.ui.desktop:run"
+fieldforge-blueprints = "fieldforge.blueprints.__main__:main"
 
 [tool.setuptools.packages.find]
 include = ["fieldforge*"]
+
+[tool.setuptools.package-data]
+"fieldforge.content" = ["packs/*.json", "LICENSE_CONTENT.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

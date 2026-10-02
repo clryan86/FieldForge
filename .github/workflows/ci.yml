@@ -42,3 +42,16 @@ jobs:
           python -m build --wheel --outdir dist
           fieldforge --database "$RUNNER_TEMP/fieldforge-ci.db" init
           fieldforge --database "$RUNNER_TEMP/fieldforge-ci.db" scenario power_outage
+      - name: Installed wheel reference library
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/fieldforge-wheel"
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            PY="$RUNNER_TEMP/fieldforge-wheel/Scripts/python.exe"
+          else
+            PY="$RUNNER_TEMP/fieldforge-wheel/bin/python"
+          fi
+          "$PY" -m pip install --no-deps dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$PY" -I -m fieldforge.blueprints --database fieldforge-packaged.db install-library
+          "$PY" -I -c 'import sqlite3; db=sqlite3.connect("fieldforge-packaged.db"); assert db.execute("select count(*) from knowledge_articles").fetchone()[0] >= 250'
