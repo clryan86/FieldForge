@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 
 from fieldforge.blueprints.acceptance import evaluate_rules
+from fieldforge.blueprints.geometry import analyze_envelopes
 from fieldforge.blueprints.schema import blueprint_schema, validate
 
 FORMULAS = {
@@ -82,8 +83,16 @@ def check_design(mode, design, source_ids, acceptance_rules=None):
     if design["questions"]:
         issue("Open questions must be resolved before relying on this design.")
     phase_schedule = []
+    geometry = None
     if mode == "engineering":
         parts = design["parts"]
+        geometry = analyze_envelopes(parts)["summary"]
+        if geometry["overlap_pairs"]:
+            issue(f'{geometry["overlap_pairs"]} envelope pairs intersect. Inspect the geometry; '
+                  'an enclosing volume may overlap intentionally.', "warning")
+        if geometry["connected_groups"] is not None and geometry["connected_groups"] > 1:
+            issue(f'{geometry["connected_groups"]} separate envelope groups have no geometric contact. '
+                  'Confirm whether separate assemblies or missing connections explain the gaps.', "warning")
         if not parts:
             issue("No dimensioned parts were supplied; drawings cannot be produced.")
         if len({p["id"] for p in parts}) != len(parts):
@@ -146,13 +155,16 @@ def check_design(mode, design, source_ids, acceptance_rules=None):
             if connection["source"] not in components or connection["target"] not in components:
                 issue("Connection references an unknown component.")
         issue("Architecture checks validate graph structure, not implementation security.", "warning")
-    acceptance = evaluate_rules(mode, design, [] if acceptance_rules is None else acceptance_rules, phase_schedule)
+    acceptance = evaluate_rules(mode, design, [] if acceptance_rules is None else acceptance_rules,
+                                phase_schedule, geometry=geometry)
     for row in acceptance:
         if row["status"] != "passed":
             issue(f"Acceptance {row['id']} ({row['label']}) {row['status']}: {row['detail']}")
     result = {"issues": issues, "calculations": calculations, "schedule": phase_schedule,
             "status": "needs_revision" if any(i["severity"] == "blocking" for i in issues) else "draft"}
-    # Keep the canonical normalization of older projects stable when no rules exist.
+    # Omit empty acceptance results for compatibility with older consumers.
     if acceptance:
         result["acceptance"] = acceptance
+    if geometry is not None:
+        result["geometry"] = geometry
     return result

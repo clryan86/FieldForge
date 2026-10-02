@@ -12,6 +12,8 @@ from pathlib import Path
 from fieldforge.blueprints.checks import check_design
 from fieldforge.blueprints.engine import BlueprintRequest, digest
 from fieldforge.blueprints.engineering import engineering_drawings, schedule_csvs, schedule_html
+from fieldforge.blueprints.geometry import analyze_envelopes
+from fieldforge.blueprints.geometry_report import geometry_csv, geometry_html
 from fieldforge.blueprints.schema import REVIEW_SCHEMA, validate
 
 
@@ -202,6 +204,7 @@ def report_html(blueprint):
     ]
     if blueprint["request"]["mode"] == "engineering":
         sections.append(schedule_html(design))
+        sections.append(geometry_html(analyze_envelopes(design["parts"])))
     sections.append('<h2>Drawing sheets</h2><nav aria-label="Drawing sheets"><ul>' +
                     ''.join(f'<li><a href="#drawing-{esc(name)}">{esc(name)}</a></li>'
                             for name in images) + '</ul></nav>')
@@ -308,6 +311,12 @@ def export_blueprint(blueprint, destination):
         if blueprint["request"]["mode"] == "engineering":
             for filename, content in schedule_csvs(blueprint["design"]).items():
                 _atomic(target / filename, content)
+            analysis = analyze_envelopes(blueprint["design"]["parts"])
+            _atomic(target / "geometry.csv", geometry_csv(analysis))
+            _atomic(target / "geometry.json", json.dumps({
+                "format": "fieldforge-envelope-analysis", "version": 1,
+                "design_sha256": digest(blueprint["design"]), **analysis,
+            }, ensure_ascii=False, indent=2, allow_nan=False))
         _atomic(target / "README.txt",
                 "Open report.html in a browser; all content and drawings work offline.\n"
                 "blueprint.json is the editable canonical design; SVG files are vector drawings.\n"
@@ -316,6 +325,9 @@ def export_blueprint(blueprint, destination):
                 "Formula-like CSV text is prefixed with an apostrophe for spreadsheet safety;\n"
                 "blueprint.json retains the exact original text. CSV files are not import files.\n"
                 "Part sheets describe rectangular envelopes, not stock sizes or a cut list.\n"
+                "geometry.json and geometry.csv contain recomputed envelope-pair relations.\n"
+                "An unresolved or single-part CSV has an explicit status row instead of pairs.\n"
+                "Contact does not prove a physical joint or structural support.\n"
                 "After editing JSON, use the studio's Apply edits command to revalidate/recompute.\n"
                 "These files contain the project brief and selected source excerpts.\n")
     except Exception as exc:

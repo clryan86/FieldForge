@@ -11,8 +11,9 @@ import threading
 from pathlib import Path
 
 from fieldforge.blueprints.acceptance import METRICS, validate_rules
-from fieldforge.blueprints.engine import BlueprintRequest, _json, generate_blueprint
+from fieldforge.blueprints.engine import BlueprintRequest, _json, digest, generate_blueprint
 from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
+from fieldforge.blueprints.geometry import analyze_envelopes
 from fieldforge.blueprints.projects import (
     append_revision,
     checkout,
@@ -86,6 +87,8 @@ def main(argv=None):
     metrics.add_argument("mode", choices=MODES)
     check = commands.add_parser("check", help="Recompute saved checks; exit 1 if the design needs revision")
     check.add_argument("source", type=Path)
+    geometry = commands.add_parser("geometry", help="Inspect engineering envelope pairs without a model")
+    geometry.add_argument("source", type=Path)
     compare = commands.add_parser("compare")
     compare.add_argument("before", type=Path)
     compare.add_argument("after", type=Path)
@@ -113,6 +116,15 @@ def main(argv=None):
         if args.command == "acceptance-metrics":
             result = {key: {"unit": spec[1], "target": spec[2], "label": spec[3], "type": spec[4]}
                       for key, spec in METRICS.items() if spec[0] in (args.mode, "all")}
+        elif args.command == "geometry":
+            value = load_blueprint(args.source)
+            if value["request"]["mode"] != "engineering":
+                raise ValueError("Geometry inspection requires an engineering blueprint.")
+            result = {"format": "fieldforge-envelope-analysis", "version": 1,
+                      "design_sha256": digest(value["design"]),
+                      **analyze_envelopes(value["design"]["parts"])}
+            print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+            return 0 if result["summary"]["status"] == "analyzed" else 1
         elif args.command == "check":
             value = load_blueprint(args.source)
             print(json.dumps({"status": value["status"], "validation": value["validation"],

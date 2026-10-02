@@ -8,12 +8,14 @@ import xml.etree.ElementTree as ET
 from tkinter import ttk
 
 from fieldforge.blueprints.render import drawings
+from fieldforge.ui.blueprint_geometry import GeometryInspector
 
 
 class DrawingPreview(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.images = {}
+        self.highlighted = set()
         self.selection = tk.StringVar()
         toolbar = ttk.Frame(self)
         toolbar.pack(fill="x", pady=4)
@@ -29,8 +31,11 @@ class DrawingPreview(ttk.Frame):
         ttk.Label(self, text="Drawings are illustrative. The Blueprint and checks tab contains "
                   "the complete text equivalent; exported SVGs retain full vector detail.",
                   wraplength=900).pack(fill="x", pady=4)
-        frame = ttk.Frame(self)
-        frame.pack(fill="both", expand=True)
+        self.pages = ttk.Notebook(self)
+        self.pages.pack(fill="both", expand=True)
+        frame = self.sheet = ttk.Frame(self.pages)
+        self.pages.add(frame, text="Sheets")
+        self.inspector = GeometryInspector(self.pages, self.highlight_parts)
         frame.rowconfigure(0, weight=1)
         frame.columnconfigure(0, weight=1)
         self.canvas = tk.Canvas(frame, background="#102239", highlightthickness=0, takefocus=True)
@@ -55,8 +60,23 @@ class DrawingPreview(ttk.Frame):
 
     def show(self, blueprint):
         self.images = drawings(blueprint)
+        self.highlighted.clear()
+        if blueprint["request"]["mode"] == "engineering":
+            self.inspector.show(blueprint["design"]["parts"])
+            if str(self.inspector) not in self.pages.tabs():
+                self.pages.add(self.inspector, text="Geometry inspector")
+        elif str(self.inspector) in self.pages.tabs():
+            self.pages.forget(self.inspector)
         self.choices.configure(values=list(self.images))
         self.selection.set(next(iter(self.images)))
+        self.reset_view()
+        self.redraw()
+
+    def highlight_parts(self, ids):
+        self.highlighted = set(ids)
+        if ids:
+            self.selection.set("isometric.svg")
+        self.pages.select(self.sheet)
         self.reset_view()
         self.redraw()
 
@@ -74,17 +94,22 @@ class DrawingPreview(ttk.Frame):
         self.canvas.configure(background="#ffffff" if light else "#102239")
         ink = "#18344c" if light else "#eff6ff"
         outline = "#426986" if light else "#91caff"
-        for element in root:
+        # Draw selected envelopes last so other parts cannot hide the highlight.
+        elements = sorted(root, key=lambda element: element.attrib.get("data-part") in self.highlighted)
+        for element in elements:
             tag = element.tag.rsplit("}", 1)[-1]
             a = element.attrib
+            selected = a.get("data-part") in self.highlighted
+            colour = "#b04400" if selected else outline
+            line_width = 3 if selected else 1
             if tag == "rect" and a.get("class") == "part":
                 x, y, w, h = (float(a.get(key, 0)) for key in ("x", "y", "width", "height"))
                 self.canvas.create_rectangle(x * scale, y * scale, (x + w) * scale,
                                              (y + h) * scale, fill="#dceaf3" if light else "#28496a",
-                                             outline=outline)
+                                             outline=colour, width=line_width)
             elif tag == "polygon" and a.get("class") == "part":
                 coordinates = [float(v) * scale for v in re.split(r"[ ,]+", a["points"].strip())]
-                self.canvas.create_polygon(*coordinates, fill="", outline=outline)
+                self.canvas.create_polygon(*coordinates, fill="", outline=colour, width=line_width)
             elif tag == "line":
                 coordinates = [float(a[key]) * scale for key in ("x1", "y1", "x2", "y2")]
                 self.canvas.create_line(*coordinates, fill=a.get("stroke", outline))

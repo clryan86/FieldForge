@@ -64,7 +64,8 @@ Engineering exports derive every drawing and schedule from the same saved design
   corner is reported separately; translating an assembly does not add unused
   origin space to its dimensions. Acceptance span checks use the same bounds.
 - `isometric.svg`: a wireframe overview of all rectangular envelopes. Obscured
-  edges remain visible; this is not hidden-surface removal or collision analysis.
+  edges remain visible; this is not hidden-surface removal. A separate envelope
+  inspector reports intersections and contact without inferring physical solids.
 - `part-001.svg` through `part-060.svg`, as needed: one sheet per recorded part,
   three independently fitted projections, XYZ size and minimum-corner position,
   material, source IDs and a design checksum prefix. The numeric filename follows
@@ -92,6 +93,55 @@ exporting them regenerates the new sheets without changing the saved design.
 This package does not introduce tolerances, joints, fastening details, machining
 operations, nesting, stock allowances, structural analysis or fabrication CAD.
 Those require additional structured geometry and independently reviewed rules.
+
+### Inspect envelope intersections and contact
+
+In **Drawings → Geometry inspector**, filter pairs by overlap, face contact,
+edge contact, point contact or separation. Select a pair to read its per-axis
+overlap and gap lengths. **Show pair in drawing** highlights both envelopes in
+the isometric view; **Clear highlight** removes the selection. Inspection does
+not edit the design, change its evidence or add a project revision. Applying an
+edit, opening a design or restoring a revision recomputes the analysis.
+
+All pairs are checked, up to 1,770 for the 60-part limit. Classification uses
+decimal arithmetic on the recorded numeric values, with no assumed fabrication
+tolerance. A part ending at `0.1 + 0.2` mm touches one starting at `0.3` mm;
+a recorded start at `0.30000000000000004` mm retains the tiny positive gap.
+Results are deterministic by part ID. Missing parts, duplicate IDs or zero-size
+parts make the whole analysis **unresolved**; partial results cannot look clean.
+
+Positive overlap on all three axes is an envelope intersection. Zero overlap on
+one, two or three axes gives face, edge or point contact respectively, provided
+no axis has a gap. Groups include chains of any contact or intersection. This
+does not prove a physical connection, joint, load path, strength or stability.
+Bounding volumes can intentionally intersect, and separate groups can describe
+separate assemblies, so these observations are warnings by default.
+
+Add explicit limits under **Requirements → Acceptance limits** when the intended
+design requires them. Supported count metrics are `geometry.overlap_pairs`,
+`geometry.connected_groups` and `geometry.face_contact_pairs`. For example,
+`geometry.overlap_pairs = 0` requires no intersecting envelopes; a connected-group
+limit of 1 requires one touching/overlapping group, not a verified structure.
+These user-owned limits persist through refinement, trigger the bounded repair
+pass when failed, and remain blocking if failed or unresolved. A favorable model
+critique cannot override them.
+
+Every engineering export includes `geometry.json`, with the design checksum,
+scope, summary, groups and all pair relations, and `geometry.csv`, with exact
+decimal-string overlap/gap lengths in millimetres. An unresolved or single-part
+CSV contains an explicit status row instead of pair rows. The HTML report shows
+the summary, groups and all touching/overlapping pairs. These derived files are
+recomputed on export, never trusted as saved checks and never imported as designs.
+
+Inspect an existing blueprint without a library database, model or network:
+
+```bash
+fieldforge-blueprints geometry shelf-draft/blueprint.json
+```
+
+The command exits 0 when analysis completed (even if intersections were found),
+1 for unresolved geometry and 2 for invalid input or another maker. Use `check`
+to obtain the overall draft/needs-revision result including your acceptance limits.
 
 ### Inspect source evidence without a model
 
@@ -354,8 +404,8 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,evidence,engine,engineering,render,projects}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,evidence,engine,engineering,geometry,geometry_report,render,projects}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 

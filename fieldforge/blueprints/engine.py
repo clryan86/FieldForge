@@ -40,6 +40,14 @@ record the conflict as a question instead of claiming that it passed. Envelope
 spans measure max(position + size) minus min(position) on each axis. Schedule
 limits use dependency-only relative days; text comparisons are case-sensitive."""
 
+SYSTEM += """ Geometry metrics classify rectangular envelope pairs. Positive overlap
+on all axes is an intersection; exactly one zero overlap axis is face contact.
+Touching/overlapping groups include face, edge, point contact and intersections.
+Separate groups can represent separate assemblies; intersections can represent
+enclosing volumes. Neither contact nor a connected group proves a joint or load
+path. Respect explicit geometry acceptance limits; do not move or remove required
+parts merely to hide a conflict. Record unknown connection details as questions."""
+
 
 @dataclass(frozen=True)
 class BlueprintRequest:

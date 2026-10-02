@@ -492,6 +492,64 @@ def test_engineering_preview_detail_sheets_zoom_pan_and_colour(reader):
         preview.destroy()
 
 
+def test_geometry_inspector_filters_highlights_and_recomputes_after_edit(reader):
+    import copy
+
+    from test_blueprint_geometry import pair
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.ui.blueprint_preview import DrawingPreview
+
+    root, frame, _library, _errors = reader
+    frame.pack_forget()
+    root.geometry("760x650")
+    preview = DrawingPreview(root)
+    preview.pack(fill="both", expand=True)
+    root.update()
+    value = pair()
+    before = copy.deepcopy(value)
+    try:
+        preview.show(value)
+        preview.pages.select(preview.inspector)
+        root.update()
+        inspector = preview.inspector
+        assert inspector.analysis["summary"]["overlap_pairs"] == 1
+        assert len(inspector.rows.get_children()) == 1
+        inspector.filter.set("separated")
+        inspector.refresh()
+        assert not inspector.rows.get_children()
+        inspector.filter.set("overlap")
+        inspector.refresh()
+        inspector.rows.selection_set("0")
+        inspector.selected()
+        assert "Overlap XYZ (mm): 5 / 5 / 5" in inspector.details.get("1.0", "end")
+        assert inspector.show_button.instate(["!disabled"])
+        inspector.highlight()
+        root.update()
+        assert preview.pages.select() == str(preview.sheet)
+        assert preview.selection.get() == "isometric.svg"
+        assert preview.highlighted == {"P1", "P2"}
+        polygons = [item for item in preview.canvas.find_all() if preview.canvas.type(item) == "polygon"]
+        assert len(polygons) == 12
+        assert all(preview.canvas.itemcget(item, "outline") == "#b04400" for item in polygons)
+        assert value == before
+        value["design"]["parts"][1]["position_mm"] = [15, 0, 0]
+        value["design_sha256"] = digest(value["design"])
+        preview.show(value)
+        assert not preview.highlighted
+        assert inspector.analysis["summary"]["connected_groups"] == 2
+        inspector.rows.selection_set("0")
+        inspector.selected()
+        assert "Gap XYZ (mm): 5 / 0 / 0" in inspector.details.get("1.0", "end")
+        value["design"]["parts"][1]["size_mm"] = [0, 1, 1]
+        preview.show(value)
+        assert "unresolved" in inspector.summary.get()
+        assert not inspector.rows.get_children()
+        assert inspector.show_button.instate(["disabled"])
+    finally:
+        preview.destroy()
+
+
 def test_blueprint_studio_cancel_and_destroy_release_workers(reader, monkeypatch):
     import threading
 

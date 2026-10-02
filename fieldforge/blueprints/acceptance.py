@@ -6,6 +6,7 @@ import math
 import re
 
 from fieldforge.blueprints.engineering import bounds
+from fieldforge.blueprints.geometry import analyze_envelopes
 
 # metric: (maker or all, unit, target description, label, value type)
 METRICS = {
@@ -19,6 +20,9 @@ METRICS = {
     "part.size_z": ("engineering", "mm", "Part ID", "Part Z size", "number"),
     "part.material": ("engineering", "text", "Part ID", "Part material", "string"),
     "part.count": ("engineering", "count", "", "Number of parts", "number"),
+    "geometry.overlap_pairs": ("engineering", "count", "", "Overlapping envelope pairs", "number"),
+    "geometry.connected_groups": ("engineering", "count", "", "Touching/overlapping groups", "number"),
+    "geometry.face_contact_pairs": ("engineering", "count", "", "Face-contact envelope pairs", "number"),
     "project.duration": ("project", "day", "", "Dependency schedule duration", "number"),
     "phase.duration": ("project", "day", "Phase ID", "Phase duration", "number"),
     "phase.finish": ("project", "day", "Phase ID", "Phase finish day", "number"),
@@ -71,7 +75,11 @@ def _unique(items, target):
     return found[0]
 
 
-def _measure(design, metric, target, phase_schedule):
+def _measure(design, metric, target, phase_schedule, geometry):
+    if metric.startswith("geometry."):
+        if geometry["status"] != "analyzed":
+            raise ValueError("Envelope analysis unresolved: " + " ".join(geometry["problems"]))
+        return geometry[metric.split(".")[1]]
     if metric in ("requirement.exists", "step.exists", "component.exists"):
         collection = {"requirement.exists": "requirements", "step.exists": "steps",
                       "component.exists": "components"}[metric]
@@ -106,14 +114,16 @@ def _measure(design, metric, target, phase_schedule):
     return component[metric.split(".")[1]]
 
 
-def evaluate_rules(mode, design, rules, phase_schedule):
+def evaluate_rules(mode, design, rules, phase_schedule, *, geometry=None):
     """Return pass/fail/unresolved results; callers turn non-passes into blockers."""
     validate_rules(mode, rules)
+    if geometry is None and any(rule["metric"].startswith("geometry.") for rule in rules):
+        geometry = analyze_envelopes(design["parts"])["summary"]
     results = []
     for rule in rules:
         row = {**rule, "actual": None, "status": "unresolved", "detail": ""}
         try:
-            actual = _measure(design, rule["metric"], rule["target"], phase_schedule)
+            actual = _measure(design, rule["metric"], rule["target"], phase_schedule, geometry)
             row["actual"] = actual
             expected = rule["value"]
             if isinstance(expected, str):
