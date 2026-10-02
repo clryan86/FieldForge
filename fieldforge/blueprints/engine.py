@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
+import re
 import threading
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 
 from fieldforge.blueprints.checks import FORMULAS, check_design
@@ -38,17 +40,22 @@ class BlueprintRequest:
     constraints: str = ""
     resources: str = ""
     evidence_query: str = ""
+    revision_instructions: str = ""
+    revision_of: str = ""
 
     def __post_init__(self):
         if self.mode not in MODES:
             raise ValueError("Choose engineering, project or software.")
         for key, maximum in (("brief", 6000), ("constraints", 4000),
-                             ("resources", 4000), ("evidence_query", 512)):
+                             ("resources", 4000), ("evidence_query", 512),
+                             ("revision_instructions", 4000), ("revision_of", 64)):
             value = getattr(self, key)
             if not isinstance(value, str) or len(value) > maximum or "\x00" in value:
                 raise ValueError(f"Invalid {key}.")
         if len(self.brief.strip()) < 10:
             raise ValueError("Describe the intended result in at least 10 characters.")
+        if self.revision_of and not re.fullmatch("[0-9a-f]{64}", self.revision_of):
+            raise ValueError("Invalid prior blueprint fingerprint.")
 
 
 def _json(text):
@@ -71,8 +78,55 @@ def digest(value):
                                     separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 
+def _sources(library, request, instructions, checkpoint):
+    # Each part of the brief gets a bounded search; constraints/resources used to
+    # be ignored. Fuse per-query ranks rather than keeping only the earliest hits.
+    fields = [request.evidence_query, instructions or request.revision_instructions, request.brief,
+              request.constraints, request.resources]
+    scores, evidence, queries = {}, {}, set()
+    for field in fields:
+        words = re.findall(r"\w+", field)[:48]
+        for offset in range(0, len(words), 24):
+            question = " ".join(words[offset:offset + 24])[:512]
+            if not question or question in queries:
+                continue
+            checkpoint("Retrieving local evidence")
+            queries.add(question)
+            for rank, item in enumerate(retrieve_evidence(
+                    library, question, limit=4, passage_chars=1200), 1):
+                scores[item.slug] = scores.get(item.slug, 0) + 1 / (20 + rank)
+                evidence.setdefault(item.slug, item.as_dict())
+    ordered = sorted(evidence, key=lambda slug: (-scores[slug], slug))[:8]
+    return [{"id": f"S{index}", **evidence[slug]} for index, slug in enumerate(ordered, 1)]
+
+
+def _prior_context(previous, sources):
+    fresh = {(s["checksum"], s["passage"]): s["id"] for s in sources}
+    mapping = {s["id"]: fresh.get((s["checksum"], s["passage"])) for s in previous["sources"]}
+    design = copy.deepcopy(previous["design"])
+
+    def remap(value):
+        if isinstance(value, dict):
+            if "source_ids" in value:
+                value["source_ids"] = [mapping[s] for s in value["source_ids"] if mapping.get(s)]
+            for child in value.values():
+                remap(child)
+        elif isinstance(value, list):
+            for child in value:
+                remap(child)
+
+    remap(design)
+    return {"design": design,
+            "citations_removed": [key for key, value in mapping.items() if value is None],
+            "instruction": "Revise this existing draft, preserving unaffected requirements and IDs. "
+            "Previous citations were remapped only when current excerpts match exactly. "
+            "Removed citations provide no current support; re-establish support from the supplied "
+            "sources or record unresolved questions. Previous design claims are not evidence."}
+
+
 def generate_blueprint(library: KnowledgeLibrary, request: BlueprintRequest, model: str,
-                       client: OllamaClient, *, cancel=None, progress=None):
+                       client: OllamaClient, *, cancel=None, progress=None,
+                       previous=None, instructions=""):
     cancel = cancel if cancel is not None else threading.Event()
     progress = progress or (lambda _message: None)
 
@@ -82,17 +136,18 @@ def generate_blueprint(library: KnowledgeLibrary, request: BlueprintRequest, mod
         progress(message)
 
     checkpoint("Retrieving local evidence")
-    # Several bounded queries avoid dropping later requirements from a long brief.
-    query = request.evidence_query or request.brief
-    import re
-    words = re.findall(r"\w+", query)[:96]
-    evidence = {}
-    for offset in range(0, len(words), 24):
-        question = " ".join(words[offset:offset + 24])[:512]
-        for item in retrieve_evidence(library, question, limit=4, passage_chars=1200):
-            evidence.setdefault(item.slug, item.as_dict())
-    sources = [{"id": f"S{index}", **item} for index, item in enumerate(
-        list(evidence.values())[:8], 1)]
+    if previous is not None:
+        from fieldforge.blueprints.render import normalized_document
+        previous = normalized_document(copy.deepcopy(previous))
+        if previous["request"]["mode"] != request.mode:
+            raise ValueError("A revision must use the same blueprint maker.")
+        if (not isinstance(instructions, str) or not 5 <= len(instructions.strip()) <= 4000
+                or "\x00" in instructions):
+            raise ValueError("Describe the requested changes in 5 to 4000 characters.")
+        request = replace(request, revision_instructions=instructions, revision_of=digest(previous))
+    elif instructions:
+        raise ValueError("Refinement instructions require an existing design.")
+    sources = _sources(library, request, instructions, checkpoint)
     if not sources:
         raise ValueError("No matching local references. Install the bundled library or choose "
                          "more specific evidence keywords before generating a blueprint.")
@@ -103,6 +158,9 @@ def generate_blueprint(library: KnowledgeLibrary, request: BlueprintRequest, mod
         "available_calculations": {key: {"inputs": value[0], "output_unit": value[1]}
                                    for key, value in FORMULAS.items()},
     }
+    if previous is not None:
+        context["previous_draft"] = _prior_context(previous, sources)
+        context["requested_changes"] = instructions
     messages = [{"role": "system", "content": SYSTEM},
                 {"role": "user", "content": json.dumps(context, ensure_ascii=False)}]
     attempts = []
@@ -141,6 +199,8 @@ def generate_blueprint(library: KnowledgeLibrary, request: BlueprintRequest, mod
         {"role": "user", "content": json.dumps({
             "request": asdict(request), "sources": sources, "design": design,
             "validation": validation, "response_schema": REVIEW_SCHEMA,
+            "requested_changes": instructions,
+            "previous_draft": context.get("previous_draft"),
         }, ensure_ascii=False)},
     ]
     review = None

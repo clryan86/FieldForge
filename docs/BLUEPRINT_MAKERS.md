@@ -51,6 +51,49 @@ library, saved designs, manual editing and exports available.
    `blueprint.json`, SVG drawings and a README. Reports print from a browser and
    work entirely offline, with no scripts, fonts, images or assets fetched remotely.
 
+### Refine and preserve a project
+
+After generating or opening a design, choose **Project and revisions → New project**
+and save a `.ffproject.json` file. The first design becomes revision 1. While that
+project is open, successful generation, AI refinement and applied manual edits
+automatically append revisions. A draft already changed in memory is preserved
+before the next change. **Save revision** can also record the current design.
+
+Use **Refine with AI** to describe a change such as “reduce the width to 600 mm” or
+“add a backup verification phase.” The current Requirements fields and existing
+design enter the request. The model is instructed to preserve unaffected IDs and
+requirements, but that behavior still requires review. The new result goes through
+the same schema checks, bounded repair and critique as an initial design. It also
+records the requested change and a canonical SHA-256 fingerprint of the previous
+blueprint in its request metadata; older saved blueprints remain readable.
+
+The comparison view lists changed fields, matching parts, phases and components by
+ID rather than array position. Select a saved revision to compare it with the current
+draft. **Restore selected** appends a new revision containing that design; history
+is retained. **Undo last draft change** returns to the preceding in-memory draft,
+also recording a new revision when a project is open. It requires no model.
+
+Project records contain the complete design, original source excerpts, request,
+model critique, timestamp, change note and linked checksums. Invalid history is
+rejected. Reopening recomputes validation; hashes detect accidental modification,
+not authenticity or expert approval. A restored historical design is not checked
+against newly edited library articles until another AI generation/refinement.
+
+Saving uses an atomic replacement, an advisory OS file lock and an expected-head
+check. Two FieldForge windows cannot silently overwrite each other's newer revisions.
+If a save conflicts or fails, the new draft remains in memory and the existing
+project file remains intact. Save that draft separately, then reopen the project
+or create a new project. Cooperating local processes and ordinary local filesystems
+are the supported concurrency case; externally edited files and network filesystem
+locking are not guaranteed. Power-loss durability still depends on the filesystem.
+
+A project is limited to 100 revisions and 32 MiB; individual designs remain limited
+to 2 MB. At the limit, start another project from the current design. Copy the
+`.ffproject.json` file to back up or transfer its entire history. These project files
+are **separate from FieldForge's database snapshot backups**. The neighboring `.lock`
+file has no project content and need not be transferred; OS locks release when a
+process exits, even if the empty sidecar remains.
+
 Saved files include the brief and selected excerpts; treat them as project records.
 Saved status and calculation results are recomputed when loaded. Checksums detect
 accidental changes, not authorship or malicious tampering. Saving may replace a
@@ -65,6 +108,13 @@ fieldforge-blueprints --database fieldforge.db generate engineering "Design a wo
 fieldforge-blueprints --database fieldforge.db generate project "Plan a community workshop with three volunteers over ten days" --evidence-query "project scope schedule risk" --model YOUR_LOCAL_MODEL --output workshop-plan
 fieldforge-blueprints --database fieldforge.db generate software "Design an offline inventory system with SQLite and recoverable backups" --evidence-query "software file systems data" --model YOUR_LOCAL_MODEL --output inventory-architecture
 fieldforge-blueprints export shelf-draft/blueprint.json shelf-copy
+fieldforge-blueprints --database fieldforge.db refine shelf-draft/blueprint.json "Reduce the width to 600 mm and explain the changed assumptions" --model YOUR_LOCAL_MODEL --output shelf-revised
+fieldforge-blueprints compare shelf-draft/blueprint.json shelf-revised/blueprint.json
+fieldforge-blueprints project-init shelf-draft/blueprint.json shelf.ffproject.json
+fieldforge-blueprints project-history shelf.ffproject.json
+fieldforge-blueprints project-add shelf.ffproject.json shelf-revised/blueprint.json --expect HEAD_CHECKSUM_FROM_HISTORY --note "Width revision"
+fieldforge-blueprints project-restore shelf.ffproject.json 1 --expect CURRENT_HEAD_CHECKSUM
+fieldforge-blueprints project-export shelf.ffproject.json restored-report --revision 1
 ```
 
 `python -m fieldforge.blueprints` is equivalent. Options include `--constraints`,
@@ -75,8 +125,12 @@ closes FieldForge's request; Ollama may take additional time to release its GPU.
 ## Generation and validation pipeline
 
 1. Retrieve up to eight matching, checksum-checked local excerpts, at most 1,200
-   characters each. Retrieval reuses the existing FTS/literal search and preserves
+   characters each. Brief, constraints, resources, evidence keywords and requested
+   changes each contribute bounded queries, combined by reciprocal ranks. This is
+   lexical rank fusion, not embedding-based semantic search. Retrieval reuses the existing FTS/literal search and preserves
    article offsets, attribution, license, review status and source checksum.
+   Refinement remaps prior citations only when the current excerpt and article
+   checksum match exactly; changed or unretrieved support is explicitly removed.
 2. Send the request and excerpts as data with a mode-specific bounded JSON schema.
    Ollama's `format` constrains output syntax. A local validator independently
    checks shape, finite numbers, units, references, graph consistency and coverage.
@@ -134,15 +188,15 @@ Next implementation gates:
   catalogs, independently verified domain calculators and parametric CAD export.
   Gate STEP/DXF export on geometric validation and domain review; SVG envelopes
   are not a substitute for fabrication drawings or FEA.
-- **Review/revisions:** persistent project history, change comparison, independent
-  human sign-off and provenance of every parameter; evaluate optional separate
+- **Review/revisions:** independent human sign-off and provenance of every parameter;
+  persistent project history and comparisons are implemented. Evaluate optional separate
   critic models without treating model agreement as proof.
 - **Platform delivery:** packaged desktop installers and a mobile UI/runtime.
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,engine,render}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,engine,render,projects}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 

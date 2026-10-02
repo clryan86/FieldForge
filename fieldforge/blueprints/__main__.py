@@ -10,6 +10,15 @@ import threading
 from pathlib import Path
 
 from fieldforge.blueprints.engine import BlueprintRequest, generate_blueprint
+from fieldforge.blueprints.projects import (
+    append_revision,
+    checkout,
+    compare_designs,
+    create_project,
+    head,
+    load_project,
+    restore_revision,
+)
 from fieldforge.blueprints.render import export_blueprint, load_blueprint
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
@@ -34,14 +43,65 @@ def main(argv=None):
     generate.add_argument("--port", type=int, default=11434)
     generate.add_argument("--timeout", type=float, default=300)
     generate.add_argument("--output", type=Path, required=True, help="New export directory")
+    refine = commands.add_parser("refine", help="Revise an existing design using fresh local evidence")
+    refine.add_argument("source", type=Path)
+    refine.add_argument("changes")
+    for field in ("brief", "constraints", "resources", "evidence-query"):
+        refine.add_argument("--" + field)
+    refine.add_argument("--model", required=True)
+    refine.add_argument("--port", type=int, default=11434)
+    refine.add_argument("--timeout", type=float, default=300)
+    refine.add_argument("--output", type=Path, required=True)
     export = commands.add_parser("export")
     export.add_argument("source", type=Path)
     export.add_argument("destination", type=Path)
+    compare = commands.add_parser("compare")
+    compare.add_argument("before", type=Path)
+    compare.add_argument("after", type=Path)
+    project_init = commands.add_parser("project-init")
+    project_init.add_argument("source", type=Path)
+    project_init.add_argument("destination", type=Path)
+    project_init.add_argument("--name")
+    history = commands.add_parser("project-history")
+    history.add_argument("project", type=Path)
+    project_add = commands.add_parser("project-add")
+    project_add.add_argument("project", type=Path)
+    project_add.add_argument("source", type=Path)
+    project_add.add_argument("--expect", required=True, help="Expected project head checksum")
+    project_add.add_argument("--note", default="Import updated design")
+    restore = commands.add_parser("project-restore")
+    restore.add_argument("project", type=Path)
+    restore.add_argument("revision", type=int)
+    restore.add_argument("--expect", required=True)
+    project_export = commands.add_parser("project-export")
+    project_export.add_argument("project", type=Path)
+    project_export.add_argument("destination", type=Path)
+    project_export.add_argument("--revision", type=int)
     args = parser.parse_args(argv)
     try:
         if args.command == "export":
             result = {"directory": str(export_blueprint(load_blueprint(args.source), args.destination))}
+        elif args.command == "compare":
+            result = compare_designs(load_blueprint(args.before), load_blueprint(args.after))
+        elif args.command.startswith("project-"):
+            if args.command == "project-init":
+                value = load_blueprint(args.source)
+                project = create_project(args.destination, args.name or value["design"]["title"], value)
+            elif args.command == "project-add":
+                project = append_revision(args.project, load_blueprint(args.source),
+                                          expected_head=args.expect, note=args.note)
+            elif args.command == "project-restore":
+                project = restore_revision(args.project, args.revision, expected_head=args.expect)
+            else:
+                project = load_project(args.project)
+            result = {"name": project["name"], "head": head(project),
+                      "revisions": [{key: row[key] for key in ("number", "kind", "note", "created_at", "checksum")}
+                                    for row in project["revisions"]]}
+            if args.command == "project-export":
+                result["directory"] = str(export_blueprint(checkout(project, args.revision), args.destination))
         else:
+            if args.command in {"generate", "refine"} and args.output.exists():
+                raise FileExistsError("Output directory already exists. Choose a new directory.")
             library = KnowledgeLibrary(args.database)
             if args.command == "gui":
                 from fieldforge.ui.blueprints import run
@@ -50,11 +110,21 @@ def main(argv=None):
             if args.command == "install-library":
                 result = install_reference_library(library)
             else:
-                request = BlueprintRequest(args.mode, args.brief, args.constraints,
-                                           args.resources, args.evidence_query)
+                extra = {}
+                if args.command == "refine":
+                    previous = load_blueprint(args.source)
+                    fields = dict(previous["request"])
+                    for field in ("brief", "constraints", "resources", "evidence_query"):
+                        if getattr(args, field) is not None:
+                            fields[field] = getattr(args, field)
+                    request = BlueprintRequest(**fields)
+                    extra = {"previous": previous, "instructions": args.changes}
+                else:
+                    request = BlueprintRequest(args.mode, args.brief, args.constraints,
+                                               args.resources, args.evidence_query)
                 blueprint = generate_blueprint(library, request, args.model,
                                                OllamaClient(port=args.port, timeout=args.timeout),
-                                               cancel=threading.Event())
+                                               cancel=threading.Event(), **extra)
                 result = {"directory": str(export_blueprint(blueprint, args.output)),
                           "status": blueprint["status"]}
         print(json.dumps(result, ensure_ascii=False, allow_nan=False, indent=2))

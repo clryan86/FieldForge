@@ -36,6 +36,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 ### Offline knowledge
 - [Bundled reference library](docs/REFERENCE_LIBRARY.md): 267 attributed articles across 14 categories, available without downloads
 - [Three AI blueprint makers](docs/BLUEPRINT_MAKERS.md): engineering designs, project guides, and software architecture using optional local models
+- Iterative AI refinement, portable project history, change comparisons and restore without deleting earlier revisions
 - Searchable local field-guide library
 - Topic tags, bookmarks, favorites, and notes
 - Source/provenance metadata

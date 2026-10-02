@@ -242,3 +242,78 @@ def test_context_capacity_checked_before_sending_sources(server):
             "example:small", [{"role": "user", "content": "Private design"}],
             schema={"type": "object"}, max_tokens=8192, cancel=threading.Event())
     assert not [request for request in server.requests if request[0] == "/api/chat"]
+
+
+def test_refinement_uses_current_evidence_and_preserves_prior_design(references, server):
+    calls = []
+
+    def reply():
+        request = server.requests[-1][1]
+        calls.append(json.loads(request["messages"][1]["content"]))
+        value = design("engineering") if len(calls) % 2 else {"findings": [], "missing_information": []}
+        return {"done": True, "message": {"role": "assistant", "content": json.dumps(value)}}
+
+    server.responses["/api/chat"] = reply
+    request = BlueprintRequest("engineering", "Record the inventory.")
+    client = OllamaClient(port=server.port, timeout=10)
+    original = generate_blueprint(references, request, "example:small", client)
+    snapshot = copy.deepcopy(original)
+    # The article changes between revisions, so the old passage is no longer current.
+    references.upsert(KnowledgeArticle("inventory", "Inventory", "Inventory uses a new shelf layout.", "projects"))
+    updated = generate_blueprint(references, request, "example:small", client,
+                                 previous=original, instructions="Reduce the shelf width to 600 mm.")
+    assert original == snapshot
+    assert updated["request"]["revision_of"] == digest(original)
+    assert updated["request"]["revision_instructions"] == "Reduce the shelf width to 600 mm."
+    assert updated["sources"][0]["checksum"] != original["sources"][0]["checksum"]
+    context = calls[2]
+    assert context["requested_changes"] == "Reduce the shelf width to 600 mm."
+    assert context["previous_draft"]["citations_removed"] == ["S1"]
+    assert context["previous_draft"]["design"]["parts"][0]["source_ids"] == []
+    assert "PRIVATE DATA" not in json.dumps(calls)
+    assert calls[3]["previous_draft"] == context["previous_draft"]
+
+
+def test_refinement_remaps_unchanged_citations_and_rejects_empty_instructions(references):
+    calls = []
+
+    class Client:
+        def generate(self, _model, messages, **kwargs):
+            calls.append(json.loads(messages[1]["content"]))
+            value = design("project") if len(calls) % 2 else {"findings": [], "missing_information": []}
+            return json.dumps(value), False
+
+    request = BlueprintRequest("project", "Record the inventory.")
+    previous = generate_blueprint(references, request, "local", Client())
+    generate_blueprint(references, request, "local", Client(), previous=previous,
+                       instructions="Add a review step.")
+    assert calls[2]["previous_draft"]["citations_removed"] == []
+    assert calls[2]["previous_draft"]["design"]["requirements"][0]["source_ids"] == ["S1"]
+    with pytest.raises(ValueError, match="5 to 4000"):
+        generate_blueprint(references, request, "local", Client(), previous=previous, instructions=" ")
+    assert len(calls) == 4
+
+
+def test_constraints_and_resources_contribute_to_retrieval(tmp_path):
+    from fieldforge.blueprints.engine import _sources
+
+    library = KnowledgeLibrary(tmp_path / "refs.db")
+    library.upsert(KnowledgeArticle("supply", "Timber", "Douglas fir timber stock information.", "materials"))
+    library.upsert(KnowledgeArticle("power", "Battery", "Battery reserve sizing information.", "energy"))
+    request = BlueprintRequest("engineering", "Develop a new prototype.",
+                               constraints="Battery reserve", resources="Douglas fir timber")
+    sources = _sources(library, request, "", lambda message: None)
+    assert {s["slug"] for s in sources} == {"supply", "power"}
+
+
+def test_existing_output_refused_before_model_or_database_access(tmp_path):
+    from fieldforge.blueprints.__main__ import main
+
+    path = tmp_path / "existing"
+    path.mkdir()
+    db = tmp_path / "not-created.db"
+    with pytest.raises(SystemExit) as exc:
+        main(["--database", str(db), "generate", "project", "Record the inventory.",
+              "--model", "not-installed", "--output", str(path)])
+    assert exc.value.code == 2
+    assert not db.exists()

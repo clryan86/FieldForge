@@ -23,6 +23,7 @@ from fieldforge.blueprints.render import (
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
 from fieldforge.knowledge.assistant import OllamaClient
+from fieldforge.ui.blueprint_history import ProjectHistory
 from fieldforge.ui.blueprint_preview import DrawingPreview
 from fieldforge.ui.lifecycle import release_tk_references
 
@@ -83,11 +84,22 @@ class BlueprintMaker(ttk.Frame):
         self.preview = DrawingPreview(self.pages)
         self.pages.add(self.preview, text="Drawings")
         self.pages.add(edit_page, text="Edit design")
+        refine_page = ttk.Frame(self.pages, padding=8)
+        self.pages.add(refine_page, text="Refine with AI")
+        self.instructions = self._field(refine_page, "What should change in the current design?",
+                                        "", 6)
+        ttk.Label(refine_page, text="The existing design and current Requirements are included. "
+                  "Evidence is searched again; old citations are not assumed to remain valid.",
+                  wraplength=950).pack(fill="x", pady=6)
+        ttk.Button(refine_page, text="Revise current design", command=self.refine).pack(anchor="e")
+        self.history = ProjectHistory(self.pages, self)
+        self.pages.add(self.history, text="Project and revisions")
         self.brief = self._field(brief_page, "What do you want to build or achieve?", example, 4)
         self.constraints = self._field(brief_page, "Constraints and acceptance criteria", "", 3)
         self.resources = self._field(brief_page, "Available materials, tools, people or technology", "", 3)
         ttk.Label(brief_page, text="Evidence keywords (optional; improves local reference selection)").pack(anchor="w")
-        ttk.Entry(brief_page, textvariable=self.query).pack(fill="x", pady=4)
+        self.query_entry = ttk.Entry(brief_page, textvariable=self.query)
+        self.query_entry.pack(fill="x", pady=4)
         self.result = ScrolledText(result_page, wrap="word", state="disabled", font="TkDefaultFont")
         self.result.pack(fill="both", expand=True)
         ttk.Label(edit_page, text="Edit the structured design, then Apply edits. "
@@ -125,6 +137,7 @@ class BlueprintMaker(ttk.Frame):
         self.busy = True
         self._cancel.clear()
         self.generate_button.configure(state="disabled")
+        self._input_state("disabled")
         self.status.set(operation)
         future = self._worker.submit(function, *args, **kwargs)
         self._poll(future, operation)
@@ -140,6 +153,10 @@ class BlueprintMaker(ttk.Frame):
         self._poll_id = None
         self.busy = False
         self.generate_button.configure(state="normal")
+        self._input_state("normal")
+        if self._cancel.is_set():
+            self.status.set("Blueprint cancelled. No generated revision was saved.")
+            return
         try:
             value = future.result()
             if operation == "Loading local models":
@@ -148,8 +165,16 @@ class BlueprintMaker(ttk.Frame):
                 self.status.set(f"{len(value)} local models available.")
             else:
                 self.show_blueprint(value)
+                self.load_request(value)
+                kind = "refined" if operation == "Refining design" else "generated"
+                self.history.after_change(kind, self._change_note)
         except Exception as exc:
             self.status.set(str(exc))
+
+    def _input_state(self, state):
+        for name in ("brief", "constraints", "resources", "instructions", "editor", "query_entry"):
+            getattr(self, name).configure(state=state)
+        self.models.configure(state="readonly" if state == "normal" else "disabled")
 
     def load_models(self):
         try:
@@ -166,14 +191,33 @@ class BlueprintMaker(ttk.Frame):
             return
         if not self._can_replace():
             return
+        self._generate()
+
+    def refine(self):
+        if self.busy or self.blueprint is None or not self._edits_applied():
+            return
+        if not self.model.get():
+            self.status.set("Load models and select an installed local model first.")
+            return
+        instruction = self.instructions.get("1.0", "end-1c").strip()
+        if not 5 <= len(instruction) <= 4000:
+            self.status.set("Describe the requested changes in 5 to 4000 characters.")
+            return
+        self._generate(instruction)
+
+    def _generate(self, instruction=""):
         try:
             request = BlueprintRequest(self.mode, self.brief.get("1.0", "end-1c"),
                                        self.constraints.get("1.0", "end-1c"),
                                        self.resources.get("1.0", "end-1c"), self.query.get())
             client = OllamaClient(port=int(self.port.get()), timeout=300)
+            if not self.history.before_change():
+                return
+            self._change_note = instruction or "Generate design from requirements"
+            extra = {"previous": copy.deepcopy(self.blueprint), "instructions": instruction} if instruction else {}
             self._start(generate_blueprint, self.library, request, self.model.get(), client,
                         cancel=self._cancel, progress=self._messages.put,
-                        operation="Generating design")
+                        operation="Refining design" if instruction else "Generating design", **extra)
         except ValueError as exc:
             self.status.set(str(exc))
 
@@ -228,7 +272,10 @@ class BlueprintMaker(ttk.Frame):
             value.update(design=design, design_sha256=digest(design), validation=validation,
                          review=None, review_error="Manual edits require a new review.",
                          status="needs_revision")
+            if not self.history.before_change():
+                return
             self.show_blueprint(value)
+            self.history.after_change("edited", "Apply manual design edits")
         except (ValueError, TypeError, RecursionError) as exc:
             self.status.set("Edits not applied: " + str(exc))
 
@@ -242,13 +289,18 @@ class BlueprintMaker(ttk.Frame):
                 if value["request"]["mode"] != self.mode:
                     raise ValueError("Open this design in its matching blueprint maker.")
                 self.show_blueprint(value, dirty=False)
-                for field in ("brief", "constraints", "resources"):
-                    widget = getattr(self, field)
-                    widget.delete("1.0", "end")
-                    widget.insert("1.0", value["request"].get(field, ""))
-                self.query.set(value["request"].get("evidence_query", ""))
+                self.load_request(value)
+                self.history.detach()
             except (ValueError, OSError) as exc:
                 self.status.set(str(exc))
+
+    def load_request(self, value):
+        for field in ("brief", "constraints", "resources"):
+            widget = getattr(self, field)
+            widget.delete("1.0", "end")
+            widget.insert("1.0", value["request"].get(field, ""))
+        self.query.set(value["request"].get("evidence_query", ""))
+        self.instructions.delete("1.0", "end")
 
     def save(self):
         if self.busy or self.blueprint is None or not self._edits_applied():
