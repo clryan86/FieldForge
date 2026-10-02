@@ -448,6 +448,50 @@ def test_blueprint_studios_preview_edit_save_and_open(reader, monkeypatch, tmp_p
         studio.destroy()
 
 
+def test_engineering_preview_detail_sheets_zoom_pan_and_colour(reader):
+    from blueprint_fixtures import document
+
+    from fieldforge.ui.blueprint_preview import DrawingPreview
+
+    root, frame, _library, _errors = reader
+    frame.pack_forget()
+    root.geometry("760x650")
+    preview = DrawingPreview(root)
+    preview.pack(fill="both", expand=True)
+    root.update()
+    try:
+        preview.show(document("engineering"))
+        assert "part-001.svg" in preview.choices.cget("values")
+        for name in preview.images:
+            preview.selection.set(name)
+            preview.redraw()
+            assert preview.canvas.find_all()
+        preview.selection.set("isometric.svg")
+        preview.redraw()
+        assert sum(preview.canvas.type(item) == "polygon" for item in preview.canvas.find_all()) == 6
+        preview.selection.set("part-001.svg")
+        preview.zoom.set("200%")
+        preview.redraw()
+        root.update()
+        assert tuple(map(float, preview.canvas.cget("scrollregion").split())) == (0, 0, 2200, 1560)
+        labels = [item for item in preview.canvas.find_all() if preview.canvas.type(item) == "text"]
+        dimension = next(item for item in labels if preview.canvas.itemcget(item, "text") == "X: 1000 mm")
+        assert preview.canvas.itemcget(dimension, "anchor") == "s"
+        assert preview.canvas.cget("background") == "#ffffff"
+        preview.canvas.xview_moveto(0.5)
+        preview.canvas.yview_moveto(0.5)
+        assert preview.canvas.xview()[0] > 0 and preview.canvas.yview()[0] > 0
+        preview.reset_view()
+        assert preview.canvas.xview()[0] == 0 and preview.canvas.yview()[0] == 0
+        preview.zoom.set("Fit width")
+        preview.redraw()
+        assert float(preview.canvas.cget("scrollregion").split()[2]) <= preview.canvas.winfo_width()
+        preview.show(document("software"))
+        assert preview.canvas.cget("background") == "#102239"
+    finally:
+        preview.destroy()
+
+
 def test_blueprint_studio_cancel_and_destroy_release_workers(reader, monkeypatch):
     import threading
 

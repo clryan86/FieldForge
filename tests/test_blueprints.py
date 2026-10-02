@@ -65,7 +65,7 @@ def test_deterministic_checks_and_rendering(mode):
     assert drawings(result)
     if mode == "engineering":
         assert result["validation"]["calculations"][0]["value"] == 0.5
-        assert set(drawings(result)) == {"top.svg", "front.svg", "side.svg"}
+        assert set(drawings(result)) == {"top.svg", "front.svg", "side.svg", "isometric.svg", "part-001.svg"}
     if mode == "project":
         assert result["validation"]["schedule"][-1] == {"id": "P2", "start": 2, "end": 5}
 

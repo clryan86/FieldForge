@@ -11,6 +11,7 @@ from pathlib import Path
 
 from fieldforge.blueprints.checks import check_design
 from fieldforge.blueprints.engine import BlueprintRequest, digest
+from fieldforge.blueprints.engineering import engineering_drawings, schedule_csvs, schedule_html
 from fieldforge.blueprints.schema import REVIEW_SCHEMA, validate
 
 
@@ -32,35 +33,6 @@ def _svg(title, body, width=1100, height=740):
         f'{body}<text x="24" y="{height - 16}" style="font-size:12px">'
         'DESIGN DRAFT · verify assumptions and source evidence before use</text></svg>'
     )
-
-
-def _engineering(design):
-    files = {}
-    parts = design["parts"]
-    for name, axes in (("top", (0, 1)), ("front", (0, 2)), ("side", (1, 2))):
-        a, b = axes
-        max_a = max((p["position_mm"][a] + p["size_mm"][a] for p in parts), default=1)
-        max_b = max((p["position_mm"][b] + p["size_mm"][b] for p in parts), default=1)
-        scale = min(870 / max(max_a, 1), 490 / max(max_b, 1))
-        body = []
-        for index, part in enumerate(parts):
-            x = 90 + part["position_mm"][a] * scale
-            y = 590 - (part["position_mm"][b] + part["size_mm"][b]) * scale
-            w, h = part["size_mm"][a] * scale, part["size_mm"][b] * scale
-            body.append(f'<rect class="part" x="{x:.4f}" y="{y:.4f}" width="{w:.4f}" '
-                        f'height="{h:.4f}"><title>{esc(part["name"])} '
-                        f'{esc(part["size_mm"])} mm</title></rect>')
-            body.append(f'<text x="{x + 4:.4f}" y="{y + 16:.4f}">{esc(part["id"])}</text>')
-            # Alternate dimension label baselines to reduce collisions for adjoining parts.
-            baseline = 612 + (index % 3) * 18
-            body.append(f'<path class="line" d="M{x:.4f} {baseline} h{w:.4f}"/>')
-            body.append(f'<text x="{x:.4f}" y="{baseline + 14}">'
-                        f'{esc(part["id"])}: {part["size_mm"][a]:g} mm</text>')
-        body.append('<text x="24" y="68">Rectangular part envelopes; not fabrication geometry.</text>')
-        body.append(f'<text x="24" y="90">Extent: {max_a:g} × {max_b:g} mm. '
-                    'Scale fits page; use dimensions, not print scaling.</text>')
-        files[f"{name}.svg"] = _svg(design["title"] + " — " + name, "".join(body))
-    return files
 
 
 def _project(design, validation):
@@ -135,7 +107,7 @@ def drawings(blueprint):
     mode, design = blueprint["request"]["mode"], blueprint["design"]
     validation = check_design(mode, design, {s["id"] for s in blueprint["sources"]})
     if mode == "engineering":
-        return _engineering(design)
+        return engineering_drawings(design, digest(design))
     if mode == "project":
         return _project(design, validation)
     return _software(design)
@@ -228,7 +200,13 @@ def report_html(blueprint):
         "<p>Status: <strong>" + esc(blueprint["status"].replace("_", " ")) + "</strong></p>",
         "<h2>Request and constraints</h2>" + _content_html(blueprint["request"]),
     ]
-    sections.extend(images.values())
+    if blueprint["request"]["mode"] == "engineering":
+        sections.append(schedule_html(design))
+    sections.append('<h2>Drawing sheets</h2><nav aria-label="Drawing sheets"><ul>' +
+                    ''.join(f'<li><a href="#drawing-{esc(name)}">{esc(name)}</a></li>'
+                            for name in images) + '</ul></nav>')
+    sections.extend(f'<section class="drawing" id="drawing-{esc(name)}">{svg}</section>'
+                    for name, svg in images.items())
     for name, content in design.items():
         if name in {"title", "summary"}:
             continue
@@ -251,7 +229,7 @@ def report_html(blueprint):
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         "<title>" + esc(design["title"]) + "</title>"
         "<style>body{font:16px/1.55 system-ui,sans-serif;max-width:1100px;margin:36px auto;"
-        "padding:0 24px;color:#17314b;background:#fafcff}h1{font-size:34px}h2{margin-top:36px}"
+        "padding:0 24px;color:#17314b;background:#fafcff;overflow-wrap:anywhere}h1{font-size:34px}h2{margin-top:36px}"
         "pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.6 ui-monospace,monospace;"
         "padding:16px;background:#eaf1f7;border-radius:8px}svg{width:100%;height:auto;margin:20px 0}"
         ".notice{padding:16px;background:#fff0c2;border-left:4px solid #a06c00}"
@@ -259,8 +237,14 @@ def report_html(blueprint):
         "dl{display:grid;grid-template-columns:minmax(100px,180px) 1fr;gap:8px 20px}"
         "dt{font-weight:600}dd{margin:0;white-space:normal;overflow-wrap:anywhere}"
         "ul{padding-left:20px;margin:0}li{margin-bottom:8px}"
+        ".schedule{overflow-x:auto;margin:20px 0}table{border-collapse:collapse;font-size:13px}"
+        "caption{text-align:left;font-weight:700;font-size:20px}th,td{padding:8px;border:1px solid #9cb3c5;"
+        "text-align:left;vertical-align:top;overflow-wrap:anywhere;min-width:65px}"
+        "th{background:#eaf1f7}nav ul{display:flex;flex-wrap:wrap;gap:8px 24px;list-style:none;padding:0}"
         "@media(max-width:600px){dl{display:block}dt{margin-top:12px}.card{padding:12px}}"
-        "@media print{body{margin:0}pre,svg{break-inside:avoid}}</style>"
+        "@media print{body{margin:0}pre,svg,.drawing{break-inside:avoid}nav{display:none}"
+        ".schedule{overflow:visible}table{table-layout:fixed;width:100%;font-size:8px}"
+        "th,td{min-width:0;padding:3px}.drawing{break-before:page}svg{margin:0}}</style>"
         "<body>" + "".join(sections) + "</body></html>"
     )
 
@@ -321,9 +305,17 @@ def export_blueprint(blueprint, destination):
         _atomic(target / "report.html", report_html(blueprint))
         for filename, content in drawings(blueprint).items():
             _atomic(target / filename, content)
+        if blueprint["request"]["mode"] == "engineering":
+            for filename, content in schedule_csvs(blueprint["design"]).items():
+                _atomic(target / filename, content)
         _atomic(target / "README.txt",
                 "Open report.html in a browser; all content and drawings work offline.\n"
                 "blueprint.json is the editable canonical design; SVG files are vector drawings.\n"
+                "Engineering exports include parts.csv and materials.csv (UTF-8).\n"
+                "Each part row is one instance. Material quantities keep their recorded units.\n"
+                "Formula-like CSV text is prefixed with an apostrophe for spreadsheet safety;\n"
+                "blueprint.json retains the exact original text. CSV files are not import files.\n"
+                "Part sheets describe rectangular envelopes, not stock sizes or a cut list.\n"
                 "After editing JSON, use the studio's Apply edits command to revalidate/recompute.\n"
                 "These files contain the project brief and selected source excerpts.\n")
     except Exception as exc:

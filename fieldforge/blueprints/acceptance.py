@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 import re
 
+from fieldforge.blueprints.engineering import bounds
+
 # metric: (maker or all, unit, target description, label, value type)
 METRICS = {
     "requirement.exists": ("all", "count", "Requirement ID", "Requirement retained", "number"),
@@ -85,8 +87,7 @@ def _measure(design, metric, target, phase_schedule):
         if not parts or any(any(size <= 0 for size in row["size_mm"]) for row in parts):
             raise ValueError("Overall span needs positive, dimensioned parts.")
         axis = "xyz".index(metric[-1])
-        return (max(p["position_mm"][axis] + p["size_mm"][axis] for p in parts)
-                - min(p["position_mm"][axis] for p in parts))
+        return bounds(parts)[1][axis]
     if metric.startswith("part."):
         part = _unique(design["parts"], target)
         if metric == "part.material":

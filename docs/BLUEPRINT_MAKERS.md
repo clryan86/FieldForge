@@ -6,7 +6,7 @@ workflows. Open **Knowledge Library → Blueprint Makers**, or run
 
 | Maker | Inputs | Outputs and local checks |
 | --- | --- | --- |
-| Engineering | Brief, dimensions, constraints, available materials/tools, evidence keywords | Dimensioned top/front/side envelope drawings; materials linked to part IDs; ordered build steps; explicit assumptions; fixed-formula calculations with exact units; risks and requirement acceptance checks |
+| Engineering | Brief, dimensions, constraints, available materials/tools, evidence keywords | Dimensioned assembly views, isometric wireframe and individual part sheets; parts/materials tables and CSV; ordered build steps; assumptions; fixed-formula calculations with exact units; risks and requirement acceptance checks |
 | Project | Outcome, time/budget constraints, people/resources, evidence keywords | Phases, deliverables, resources, dependency schedule, illustrated step guide, risks and acceptance checks; rejects cyclic or unknown dependencies |
 | Software | Capabilities, offline constraints, data, technology/resources, evidence keywords | Components, interfaces, data flows, trust zones, storage, authentication assumptions, decisions/alternatives and implementation steps; validates component references and requirement coverage |
 
@@ -45,13 +45,53 @@ library, saved designs, manual editing and exports available.
 3. Generate. The status shows retrieval, design, repair when needed, and critique.
 4. Inspect **Blueprint and checks**, the source excerpts, and **Drawings**. The text
    view provides an accessible equivalent to diagrams. Keyboard arrows and Page
-   Up/Down scroll the drawing canvas.
+   Up/Down scroll the drawing canvas. Choose **Fit width**, **100%**, **150%** or
+   **200%** to inspect details; Left/Right pan horizontally and Home returns to
+   the upper-left corner. Both scrollbars remain available.
 5. Edit the canonical JSON in **Edit design**, then **Apply edits and recompute**.
    Edits invalidate the earlier model critique. Unapplied edits cannot silently
    disappear into a save/export of the old version.
 6. Save a `.json` design or export a new directory containing `report.html`,
    `blueprint.json`, SVG drawings and a README. Reports print from a browser and
    work entirely offline, with no scripts, fonts, images or assets fetched remotely.
+
+### Engineering drawing package
+
+Engineering exports derive every drawing and schedule from the same saved design:
+
+- `top.svg`, `front.svg`, `side.svg`: occupied assembly spans in both view axes,
+  with extension lines, dimension ticks and explicit axis directions. The minimum
+  corner is reported separately; translating an assembly does not add unused
+  origin space to its dimensions. Acceptance span checks use the same bounds.
+- `isometric.svg`: a wireframe overview of all rectangular envelopes. Obscured
+  edges remain visible; this is not hidden-surface removal or collision analysis.
+- `part-001.svg` through `part-060.svg`, as needed: one sheet per recorded part,
+  three independently fitted projections, XYZ size and minimum-corner position,
+  material, source IDs and a design checksum prefix. The numeric filename follows
+  the current parts-list order; the part's own ID remains the revision identity.
+- `parts.csv`: one row per placed instance, exact recorded dimension values,
+  material, position, source IDs and corresponding detail-sheet filename.
+- `materials.csv`: the recorded quantities, units, specifications and part/source
+  references. Similar parts are not silently combined and stock quantities are
+  not inferred from part dimensions. These are not cut lists.
+
+White drawing backgrounds support printing. Use dimension values: the sheets are
+not printed to a physical scale, and thin or small geometry may be subpixel at a
+given zoom. Assembly numbers refer to the parts schedule; labels can be absent or
+obscured in crowded views, so use the individual sheets and complete text tables.
+The self-contained HTML report has a sheet index, accessible tables, full source
+excerpts and print page breaks. A draft with missing/zero dimensions remains
+visibly incomplete and retains its blocking validation results.
+
+CSV files are UTF-8, with quoted multiline fields. Formula-like text receives a
+leading apostrophe for spreadsheet safety. The canonical JSON and HTML retain
+the original text. CSV schedules are export-only and are not accepted as imports.
+Existing version-1 blueprint and project files need no migration: reopening and
+exporting them regenerates the new sheets without changing the saved design.
+
+This package does not introduce tolerances, joints, fastening details, machining
+operations, nesting, stock allowances, structural analysis or fabrication CAD.
+Those require additional structured geometry and independently reviewed rules.
 
 ### Inspect source evidence without a model
 
@@ -314,7 +354,7 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,evidence,engine,render,projects}.py` contains the
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,evidence,engine,engineering,render,projects}.py` contains the
 headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
