@@ -13,6 +13,7 @@ from tkinter.scrolledtext import ScrolledText
 
 from fieldforge.blueprints.checks import check_design
 from fieldforge.blueprints.engine import BlueprintRequest, _json, digest, generate_blueprint
+from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
 from fieldforge.blueprints.render import (
     export_blueprint,
     load_blueprint,
@@ -22,8 +23,9 @@ from fieldforge.blueprints.render import (
 )
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
-from fieldforge.knowledge.assistant import OllamaClient
+from fieldforge.knowledge.assistant import GenerationCancelled, OllamaClient
 from fieldforge.ui.blueprint_acceptance import AcceptanceLimits
+from fieldforge.ui.blueprint_evidence import BlueprintEvidence
 from fieldforge.ui.blueprint_history import ProjectHistory
 from fieldforge.ui.blueprint_preview import DrawingPreview
 from fieldforge.ui.lifecycle import release_tk_references
@@ -87,6 +89,8 @@ class BlueprintMaker(ttk.Frame):
         self.requirement_pages.add(input_page, text="Brief and resources")
         self.acceptance = AcceptanceLimits(self.requirement_pages, self)
         self.requirement_pages.add(self.acceptance, text="Acceptance limits")
+        self.evidence = BlueprintEvidence(self.requirement_pages, self)
+        self.requirement_pages.add(self.evidence, text="Source evidence")
         self.pages.add(result_page, text="Blueprint and checks")
         self.preview = DrawingPreview(self.pages)
         self.pages.add(self.preview, text="Drawings")
@@ -170,6 +174,11 @@ class BlueprintMaker(ttk.Frame):
                 self.models.configure(values=value)
                 self.model.set(value[0] if value else "")
                 self.status.set(f"{len(value)} local models available.")
+            elif operation == "Previewing evidence":
+                self.evidence.show(value)
+                self.pages.select(0)
+                self.requirement_pages.select(self.evidence)
+                self.status.set(f"{len(value['sources'])} source passages found. The design has not changed.")
             else:
                 self.show_blueprint(value)
                 self.load_request(value)
@@ -183,6 +192,7 @@ class BlueprintMaker(ttk.Frame):
             getattr(self, name).configure(state=state)
         self.models.configure(state="readonly" if state == "normal" else "disabled")
         self.acceptance.set_busy(state != "normal")
+        self.evidence.preview_button.configure(state=state)
 
     def load_models(self):
         try:
@@ -215,10 +225,7 @@ class BlueprintMaker(ttk.Frame):
 
     def _generate(self, instruction=""):
         try:
-            request = BlueprintRequest(self.mode, self.brief.get("1.0", "end-1c"),
-                                       self.constraints.get("1.0", "end-1c"),
-                                       self.resources.get("1.0", "end-1c"), self.query.get(),
-                                       acceptance_rules=self.acceptance.get_rules())
+            request = self._request()
             client = OllamaClient(port=int(self.port.get()), timeout=300)
             if not self.history.before_change():
                 return
@@ -230,11 +237,34 @@ class BlueprintMaker(ttk.Frame):
         except ValueError as exc:
             self.status.set(str(exc))
 
+    def _request(self):
+        return BlueprintRequest(self.mode, self.brief.get("1.0", "end-1c"),
+                                self.constraints.get("1.0", "end-1c"),
+                                self.resources.get("1.0", "end-1c"), self.query.get(),
+                                acceptance_rules=self.acceptance.get_rules())
+
+    def preview_evidence(self):
+        if self.busy:
+            return
+
+        def checkpoint(message):
+            if self._cancel.is_set():
+                raise GenerationCancelled("Evidence preview cancelled.")
+            self._messages.put(message)
+
+        try:
+            self._start(retrieve_blueprint_evidence, self.library, self._request(),
+                        self.instructions.get("1.0", "end-1c"), checkpoint,
+                        operation="Previewing evidence")
+        except ValueError as exc:
+            self.status.set(str(exc))
+
     def show_blueprint(self, value, *, dirty=True):
         value = normalized_document(value)
         self.blueprint = value
         self.dirty = dirty
         self.acceptance.set_rules(value["request"].get("acceptance_rules", []))
+        self.evidence.show_saved(value)
         self.preview.show(value)
         self.editor.delete("1.0", "end")
         self.editor.insert("1.0", json.dumps(value["design"], ensure_ascii=False, indent=2))

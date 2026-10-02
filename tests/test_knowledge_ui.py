@@ -749,6 +749,68 @@ def test_first_generation_keeps_limits_without_discard_prompt(reader, monkeypatc
         studio.destroy()
 
 
+@pytest.mark.parametrize("mode", ["engineering", "project", "software"])
+def test_blueprint_evidence_preview_needs_no_model_and_preserves_draft(reader, mode):
+    import copy
+
+    from blueprint_fixtures import document
+
+    from fieldforge.knowledge import KnowledgeArticle
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    library.upsert(KnowledgeArticle("preview-reference", "Workshop", "Workshop inventory records are local.", "reference"))
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers[mode]
+    studio.pages.select(maker)
+    try:
+        maker.show_blueprint(document(mode), dirty=False)
+        maker.load_request(maker.blueprint)
+        original = copy.deepcopy(maker.blueprint)
+        maker.brief.delete("1.0", "end")
+        maker.brief.insert("1.0", "Workshop inventory records.")
+        maker.preview_evidence()
+        wait_for_search(root, maker)
+        assert not maker.model.get()
+        assert maker.evidence.sources
+        assert "Workshop inventory records" in maker.evidence.details.get("1.0", "end-1c")
+        assert maker.blueprint == original and not maker.dirty
+        assert maker.history.project is None
+        studio.geometry("760x650")
+        root.update()
+        assert maker.evidence.details.winfo_ismapped()
+        maker.evidence.show_saved(maker.blueprint)
+        assert "Original excerpts" in maker.evidence.details.get("1.0", "end-1c")
+        assert maker.evidence.sources == original["sources"]
+    finally:
+        studio.destroy()
+
+
+def test_cancelled_evidence_preview_does_not_replace_existing_sources(reader):
+    from concurrent.futures import Future
+
+    from blueprint_fixtures import document
+
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    try:
+        maker.show_blueprint(document("engineering"), dirty=False)
+        original = list(maker.evidence.sources)
+        future = Future()
+        future.set_result({"sources": []})
+        maker.busy = True
+        maker._cancel.set()
+        maker._poll(future, "Previewing evidence")
+        assert maker.evidence.sources == original and not maker.dirty
+        assert "cancelled" in maker.status.get()
+        assert maker.evidence.preview_button.instate(["!disabled"])
+    finally:
+        studio.destroy()
+
+
 def test_desktop_backup_failures_restore_controls_and_preserve_data(reader, tmp_path, monkeypatch):
     from fieldforge.core.snapshot import export_snapshot
     from fieldforge.db.database import FieldForgeDatabase

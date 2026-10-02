@@ -38,6 +38,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - [Three AI blueprint makers](docs/BLUEPRINT_MAKERS.md): engineering designs, project guides, and software architecture using optional local models
 - Iterative AI refinement, portable project history, change comparisons and restore without deleting earlier revisions
 - User-owned acceptance limits for dimensions, schedules and components, recomputed independently of model critique
+- Offline source preview and passage-level evidence ranking with repeatable retrieval regression measurements
 - Searchable local field-guide library
 - Topic tags, bookmarks, favorites, and notes
 - Source/provenance metadata

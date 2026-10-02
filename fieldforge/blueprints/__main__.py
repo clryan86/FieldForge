@@ -12,6 +12,7 @@ from pathlib import Path
 
 from fieldforge.blueprints.acceptance import METRICS, validate_rules
 from fieldforge.blueprints.engine import BlueprintRequest, _json, generate_blueprint
+from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
 from fieldforge.blueprints.projects import (
     append_revision,
     checkout,
@@ -56,6 +57,14 @@ def main(argv=None):
     generate.add_argument("--timeout", type=float, default=300)
     generate.add_argument("--output", type=Path, required=True, help="New export directory")
     generate.add_argument("--limits", type=Path, help="JSON list of user acceptance rules")
+    evidence = commands.add_parser("evidence", help="Inspect current source passages without a model")
+    evidence.add_argument("mode", choices=MODES)
+    evidence.add_argument("brief")
+    evidence.add_argument("--constraints", default="")
+    evidence.add_argument("--resources", default="")
+    evidence.add_argument("--evidence-query", default="")
+    evidence.add_argument("--changes", default="")
+    evidence.add_argument("--limits", type=Path)
     refine = commands.add_parser("refine", help="Revise an existing design using fresh local evidence")
     refine.add_argument("source", type=Path)
     refine.add_argument("changes")
@@ -149,6 +158,10 @@ def main(argv=None):
                 return 0
             if args.command == "install-library":
                 result = install_reference_library(library)
+            elif args.command == "evidence":
+                request = BlueprintRequest(args.mode, args.brief, args.constraints, args.resources, args.evidence_query,
+                                           acceptance_rules=read_limits(args.limits, args.mode) if args.limits else [])
+                result = retrieve_blueprint_evidence(library, request, args.changes)
             else:
                 extra = {}
                 if args.command == "refine":

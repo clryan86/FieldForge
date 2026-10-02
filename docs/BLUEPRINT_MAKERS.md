@@ -38,8 +38,10 @@ selected automatically, or downloaded by FieldForge. A missing model leaves the
 library, saved designs, manual editing and exports available.
 
 1. Choose a maker, describe the intended result, and enter constraints and resources.
-2. Load installed models and select one. Optional evidence keywords help narrow
-   lexical retrieval. Private library notes are never included.
+2. Inspect **Requirements → Source evidence → Preview current request** before
+   loading a model. Optional evidence keywords help narrow lexical retrieval.
+   The preview needs no model or network; private library notes are never included.
+   Then load installed models and select one for generation.
 3. Generate. The status shows retrieval, design, repair when needed, and critique.
 4. Inspect **Blueprint and checks**, the source excerpts, and **Drawings**. The text
    view provides an accessible equivalent to diagrams. Keyboard arrows and Page
@@ -50,6 +52,20 @@ library, saved designs, manual editing and exports available.
 6. Save a `.json` design or export a new directory containing `report.html`,
    `blueprint.json`, SVG drawings and a README. Reports print from a browser and
    work entirely offline, with no scripts, fonts, images or assets fetched remotely.
+
+### Inspect source evidence without a model
+
+The source preview searches the brief, constraints, resources, evidence keywords,
+pending change instructions and text-valued acceptance limits. Select a result to
+read the exact passage, character offsets, body checksum, source URL, attribution,
+license, review status and matched request fields. Search diagnostics report fields
+with no selected match and fields whose query terms were truncated. These are
+lexical matches, not a judgment that the source supports every claim in that field.
+
+Preview does not change the current draft or append project history. Generation
+searches again against a fresh snapshot; changed requirements or library content
+can change the results. **Show design sources** displays the original excerpts
+saved with the current design and labels them as a historical snapshot.
 
 ### Refine and preserve a project
 
@@ -164,6 +180,7 @@ fieldforge-blueprints project-export shelf.ffproject.json restored-report --revi
 fieldforge-blueprints acceptance-metrics engineering
 fieldforge-blueprints apply-limits shelf-draft/blueprint.json limits.json shelf-with-limits
 fieldforge-blueprints check shelf-with-limits/blueprint.json
+fieldforge-blueprints --database fieldforge.db evidence engineering "Lay out a rain barrel" --resources "threaded fittings" --constraints "mosquito exclusion"
 ```
 
 For CLI generation, add `--limits limits.json`. Refinement preserves existing
@@ -194,10 +211,17 @@ closes FieldForge's request; Ollama may take additional time to release its GPU.
 
 ## Generation and validation pipeline
 
-1. Retrieve up to eight matching, checksum-checked local excerpts, at most 1,200
-   characters each. Brief, constraints, resources, evidence keywords and requested
-   changes each contribute bounded queries, combined by reciprocal ranks. This is
-   lexical rank fusion, not embedding-based semantic search. Retrieval reuses the existing FTS/literal search and preserves
+1. Build a disposable in-memory passage index from one consistent, checksum-checked
+   library snapshot. Paragraph/sentence-aware overlapping windows preserve exact
+   offsets and stay within 1,100 characters. FTS5 BM25 with Porter stemming ranks
+   passages; an exact-token Unicode-normalized BM25 fallback works without FTS5.
+   Request fields contribute up to 96 distinct non-stopword terms each in bounded
+   queries. Longer fields retain their first and last 48 terms and report truncation.
+   Reciprocal ranks are fused per field, with a coverage bonus and article diversity
+   penalty. Select at most eight excerpts and two per article, excluding identical
+   text and heavily overlapping windows. Multiple useful sections of one article
+   can now survive selection. Metadata-only matches cannot supply a body passage.
+   This is lexical retrieval, not embedding-based semantic search. It preserves
    article offsets, attribution, license, review status and source checksum.
    Refinement remaps prior citations only when the current excerpt and article
    checksum match exactly; changed or unretrieved support is explicitly removed.
@@ -227,6 +251,13 @@ context limit is checked when supplied. Long repairs may exceed the cap and fail
 explicitly; reduce scope rather than assuming missing context was considered.
 Model memory use and tokenizer overhead vary. No hardware performance is promised.
 
+The index does not alter the library schema, write a cache to disk, or access notes.
+It is closed after each search. Cancellation is checked throughout indexing and
+ranking. The current bounds are 10,000 articles, 32 MiB of source-body UTF-8 text
+and 50,000 passages. Exceeding a bound or encountering corrupt source text aborts
+the search with an explicit error; it does not silently generate from a partial
+library. Large corpora will need a persistent incremental index in a later change.
+
 ## Quality gates and current limits
 
 Automated tests exercise all three makers through the real loopback HTTP adapter
@@ -251,11 +282,27 @@ consistency, missing information, usability and failure handling across addition
 shelter, water, power, construction, project and software cases. Include adversarial
 source text, conflicting requirements, missing evidence and low-memory machines.
 
+For retrieval alone, a repeatable 14-case regression suite runs without a model:
+
+```bash
+python -m tools.evaluate_blueprint_retrieval --database fieldforge.db --output retrieval-run
+python -m tools.evaluate_blueprint_retrieval --database fieldforge.db --output retrieval-literal-run --literal
+```
+
+Run these from the source checkout with the bundled reference collection installed.
+The evaluator compares a frozen pre-index baseline with the current retriever,
+records exact excerpts, ranks, corpus/case fingerprints and elapsed times, and
+refuses missing expected text or an existing output directory. Its labels are
+small hand-authored regression targets, not an independent quality benchmark.
+See [the measured results and limits](BLUEPRINT_RETRIEVAL_EVALUATION.md).
+
 Next implementation gates:
 
-- **Retrieval evaluation:** curated queries with expected passages, hybrid semantic
-  retrieval/reranking, source diversity and coverage metrics; keep literal search
-  available without an embedding model. Current retrieval can miss synonyms.
+- **Retrieval evaluation:** expand the implemented passage regression set with
+  independent domain labels and multilingual cases; add hybrid semantic retrieval,
+  reranking and a persistent incremental index. Keep lexical search available
+  without an embedding model. Current retrieval can still miss synonyms; the
+  no-FTS5 fallback also lacks stemming.
 - **Engineering CAD:** dimension and tolerance constraints, joints, material/part
   catalogs, independently verified domain calculators and parametric CAD export.
   Gate STEP/DXF export on geometric validation and domain review; SVG envelopes
@@ -267,8 +314,8 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,engine,render,projects}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history,blueprint_acceptance}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,evidence,engine,render,projects}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 
