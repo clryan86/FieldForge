@@ -179,7 +179,7 @@ def validate_document(value):
             raise ValueError("Review references unknown evidence.")
     if not isinstance(value["attempts"], list) or len(value["attempts"]) > 2:
         raise ValueError("Invalid generation history.")
-    return check_design(request.mode, value["design"], ids)
+    return check_design(request.mode, value["design"], ids, request.acceptance_rules)
 
 
 def normalized_document(value):

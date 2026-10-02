@@ -7,9 +7,10 @@ import hashlib
 import json
 import re
 import threading
-from dataclasses import asdict, dataclass, replace
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 
+from fieldforge.blueprints.acceptance import validate_rules
 from fieldforge.blueprints.checks import FORMULAS, check_design
 from fieldforge.blueprints.schema import MODES, REVIEW_SCHEMA, blueprint_schema, validate
 from fieldforge.knowledge.assistant import GenerationCancelled, LocalModelError, OllamaClient
@@ -32,6 +33,13 @@ may use only the documented formulas and exact units.
 Project schedules use relative days. Software connections name component IDs and
 explicit trust/authentication assumptions. Never treat absent evidence as approval."""
 
+SYSTEM += """ User-owned acceptance_rules are fixed requirements. They are evaluated
+in application code and must not be removed, relaxed or renamed by the model.
+Preserve their target IDs. If a limit cannot be met with the supplied information,
+record the conflict as a question instead of claiming that it passed. Envelope
+spans measure max(position + size) minus min(position) on each axis. Schedule
+limits use dependency-only relative days; text comparisons are case-sensitive."""
+
 
 @dataclass(frozen=True)
 class BlueprintRequest:
@@ -42,6 +50,7 @@ class BlueprintRequest:
     evidence_query: str = ""
     revision_instructions: str = ""
     revision_of: str = ""
+    acceptance_rules: list = field(default_factory=list)
 
     def __post_init__(self):
         if self.mode not in MODES:
@@ -56,6 +65,7 @@ class BlueprintRequest:
             raise ValueError("Describe the intended result in at least 10 characters.")
         if self.revision_of and not re.fullmatch("[0-9a-f]{64}", self.revision_of):
             raise ValueError("Invalid prior blueprint fingerprint.")
+        validate_rules(self.mode, self.acceptance_rules)
 
 
 def _json(text):
@@ -84,8 +94,8 @@ def _sources(library, request, instructions, checkpoint):
     fields = [request.evidence_query, instructions or request.revision_instructions, request.brief,
               request.constraints, request.resources]
     scores, evidence, queries = {}, {}, set()
-    for field in fields:
-        words = re.findall(r"\w+", field)[:48]
+    for query_field in fields:
+        words = re.findall(r"\w+", query_field)[:48]
         for offset in range(0, len(words), 24):
             question = " ".join(words[offset:offset + 24])[:512]
             if not question or question in queries:
@@ -136,6 +146,8 @@ def generate_blueprint(library: KnowledgeLibrary, request: BlueprintRequest, mod
         progress(message)
 
     checkpoint("Retrieving local evidence")
+    # Snapshot mutable caller inputs before retrieval or any background model work.
+    request = BlueprintRequest(**copy.deepcopy(asdict(request)))
     if previous is not None:
         from fieldforge.blueprints.render import normalized_document
         previous = normalized_document(copy.deepcopy(previous))
@@ -173,7 +185,7 @@ def generate_blueprint(library: KnowledgeLibrary, request: BlueprintRequest, mod
             if truncated:
                 raise ValueError("Model reached its output limit; incomplete designs are not accepted.")
             candidate = _json(answer)
-            validation = check_design(request.mode, candidate, ids)
+            validation = check_design(request.mode, candidate, ids, request.acceptance_rules)
             blocking = [i["issue"] for i in validation["issues"] if i["severity"] == "blocking"]
             attempts.append({"attempt": attempt + 1, "errors": blocking})
             design = candidate

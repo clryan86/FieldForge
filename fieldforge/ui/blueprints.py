@@ -23,6 +23,7 @@ from fieldforge.blueprints.render import (
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
 from fieldforge.knowledge.assistant import OllamaClient
+from fieldforge.ui.blueprint_acceptance import AcceptanceLimits
 from fieldforge.ui.blueprint_history import ProjectHistory
 from fieldforge.ui.blueprint_preview import DrawingPreview
 from fieldforge.ui.lifecycle import release_tk_references
@@ -80,6 +81,12 @@ class BlueprintMaker(ttk.Frame):
         self.pages.pack(fill="both", expand=True, pady=8)
         brief_page, result_page, edit_page = (ttk.Frame(self.pages, padding=8) for _ in range(3))
         self.pages.add(brief_page, text="Requirements")
+        self.requirement_pages = ttk.Notebook(brief_page)
+        self.requirement_pages.pack(fill="both", expand=True)
+        input_page = ttk.Frame(self.requirement_pages, padding=6)
+        self.requirement_pages.add(input_page, text="Brief and resources")
+        self.acceptance = AcceptanceLimits(self.requirement_pages, self)
+        self.requirement_pages.add(self.acceptance, text="Acceptance limits")
         self.pages.add(result_page, text="Blueprint and checks")
         self.preview = DrawingPreview(self.pages)
         self.pages.add(self.preview, text="Drawings")
@@ -94,11 +101,11 @@ class BlueprintMaker(ttk.Frame):
         ttk.Button(refine_page, text="Revise current design", command=self.refine).pack(anchor="e")
         self.history = ProjectHistory(self.pages, self)
         self.pages.add(self.history, text="Project and revisions")
-        self.brief = self._field(brief_page, "What do you want to build or achieve?", example, 4)
-        self.constraints = self._field(brief_page, "Constraints and acceptance criteria", "", 3)
-        self.resources = self._field(brief_page, "Available materials, tools, people or technology", "", 3)
-        ttk.Label(brief_page, text="Evidence keywords (optional; improves local reference selection)").pack(anchor="w")
-        self.query_entry = ttk.Entry(brief_page, textvariable=self.query)
+        self.brief = self._field(input_page, "What do you want to build or achieve?", example, 4)
+        self.constraints = self._field(input_page, "Constraints and acceptance criteria", "", 3)
+        self.resources = self._field(input_page, "Available materials, tools, people or technology", "", 3)
+        ttk.Label(input_page, text="Evidence keywords (optional; improves local reference selection)").pack(anchor="w")
+        self.query_entry = ttk.Entry(input_page, textvariable=self.query)
         self.query_entry.pack(fill="x", pady=4)
         self.result = ScrolledText(result_page, wrap="word", state="disabled", font="TkDefaultFont")
         self.result.pack(fill="both", expand=True)
@@ -175,6 +182,7 @@ class BlueprintMaker(ttk.Frame):
         for name in ("brief", "constraints", "resources", "instructions", "editor", "query_entry"):
             getattr(self, name).configure(state=state)
         self.models.configure(state="readonly" if state == "normal" else "disabled")
+        self.acceptance.set_busy(state != "normal")
 
     def load_models(self):
         try:
@@ -189,7 +197,7 @@ class BlueprintMaker(ttk.Frame):
         if not self.model.get():
             self.status.set("Load models and select an installed local model first.")
             return
-        if not self._can_replace():
+        if self.blueprint is not None and not self._can_replace():
             return
         self._generate()
 
@@ -209,7 +217,8 @@ class BlueprintMaker(ttk.Frame):
         try:
             request = BlueprintRequest(self.mode, self.brief.get("1.0", "end-1c"),
                                        self.constraints.get("1.0", "end-1c"),
-                                       self.resources.get("1.0", "end-1c"), self.query.get())
+                                       self.resources.get("1.0", "end-1c"), self.query.get(),
+                                       acceptance_rules=self.acceptance.get_rules())
             client = OllamaClient(port=int(self.port.get()), timeout=300)
             if not self.history.before_change():
                 return
@@ -225,6 +234,7 @@ class BlueprintMaker(ttk.Frame):
         value = normalized_document(value)
         self.blueprint = value
         self.dirty = dirty
+        self.acceptance.set_rules(value["request"].get("acceptance_rules", []))
         self.preview.show(value)
         self.editor.delete("1.0", "end")
         self.editor.insert("1.0", json.dumps(value["design"], ensure_ascii=False, indent=2))
@@ -247,28 +257,53 @@ class BlueprintMaker(ttk.Frame):
 
     def has_unsaved_changes(self):
         if self.blueprint is None:
-            return False
+            return bool(self.acceptance.rules)
         expected = json.dumps(self.blueprint["design"], ensure_ascii=False, indent=2)
-        return self.dirty or self.editor.get("1.0", "end-1c") != expected
+        return (self.dirty or self.editor.get("1.0", "end-1c") != expected
+                or self.acceptance.rules != self.blueprint["request"].get("acceptance_rules", []))
 
     def _can_replace(self):
         return not self.has_unsaved_changes() or messagebox.askyesno(
             "Replace unsaved design?", "Replace this maker's unsaved design or edits?", parent=self)
 
-    def _edits_applied(self):
+    def _edits_applied(self, *, check_limits=True):
         if self.editor.get("1.0", "end-1c") != json.dumps(
                 self.blueprint["design"], ensure_ascii=False, indent=2):
             self.status.set("Apply your design edits before saving or exporting.")
             return False
+        if check_limits and self.acceptance.rules != self.blueprint["request"].get("acceptance_rules", []):
+            self.status.set("Apply your acceptance limits before saving, exporting or refining.")
+            return False
         return True
+
+    def apply_limits(self):
+        if self.busy or self.blueprint is None or not self._edits_applied(check_limits=False):
+            return
+        try:
+            value = copy.deepcopy(self.blueprint)
+            rules = self.acceptance.get_rules()
+            if rules == value["request"].get("acceptance_rules", []):
+                self.status.set("Acceptance limits are already applied.")
+                return
+            value["request"]["acceptance_rules"] = rules
+            value.update(review=None, review_error="Acceptance limits changed; a new review is required.")
+            value = normalized_document(value)
+            if not self.history.before_change():
+                return
+            self.show_blueprint(value)
+            self.history.after_change("edited", "Update user acceptance limits")
+        except (ValueError, OSError) as exc:
+            self.status.set("Limits not applied: " + str(exc))
 
     def apply_edits(self):
         if self.busy or self.blueprint is None:
             return
         try:
             design = _json(self.editor.get("1.0", "end-1c"))
-            validation = check_design(self.mode, design, {s["id"] for s in self.blueprint["sources"]})
+            rules = self.acceptance.get_rules()
+            validation = check_design(self.mode, design, {s["id"] for s in self.blueprint["sources"]}, rules)
             value = copy.deepcopy(self.blueprint)
+            value["request"]["acceptance_rules"] = rules
             value.update(design=design, design_sha256=digest(design), validation=validation,
                          review=None, review_error="Manual edits require a new review.",
                          status="needs_revision")

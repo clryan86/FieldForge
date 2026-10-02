@@ -94,6 +94,52 @@ are **separate from FieldForge's database snapshot backups**. The neighboring `.
 file has no project content and need not be transferred; OS locks release when a
 process exits, even if the empty sidecar remains.
 
+### Acceptance limits checked by the app
+
+Open **Requirements → Acceptance limits** to add numeric limits or exact text
+requirements. For example, set **Overall X span <= 600 mm**, **Dependency schedule
+duration <= 10 day**, or require component `DB` to retain trust zone `device`.
+Choose a measurement, enter its target ID when required, comparison and value,
+then **Add limit**. Limits can be set before the first generation. For an existing
+design, **Apply limits to design** records the changed requirements and recomputes
+checks; in an open project this creates a revision. To change a limit, remove its
+row and add its replacement, then apply. Pending limits cannot silently disappear
+into a save/export or AI refinement. **Apply edits and recompute** applies both
+the edited design and configured limits.
+
+| Maker | Supported measurements |
+| --- | --- |
+| All three | Required requirement IDs and build/implementation step IDs |
+| Engineering | Overall X/Y/Z envelope spans, individual part X/Y/Z sizes, exact part material text, part count |
+| Project | Dependency schedule duration, individual phase duration and finish day |
+| Software | Component count, required component IDs, exact component kind and trust-zone text |
+
+Every rule is user-owned request data, outside the model's output schema. The
+same application checks run on generation, bounded repair, manual edits, load,
+restoration and reports. A failed or unresolved rule marks the draft
+`needs_revision`, even if the model critique reports no findings. Missing or
+ambiguous target IDs and invalid dependency schedules cannot pass. The model is
+shown the failures during its one repair opportunity; it cannot remove a rule.
+Refinement inherits applied limits unless the user explicitly changes them.
+Changing limits invalidates the old model critique.
+
+Overall span is the largest part endpoint minus the smallest part origin on
+each axis; translating the entire layout does not change its span. Each part is
+one instance. Schedule limits use relative dependency-only days, with parallel
+phases overlapping; they do not guarantee staffing, procurement or calendar dates.
+Text equality is case-sensitive and checks the recorded field, not whether the
+material is suitable or the architecture actually enforces that trust boundary.
+Numeric equality absorbs at most `0.0000001` of the metric's stated unit for
+floating-point noise; it is not a fabrication tolerance. Limits use explicit
+canonical units (mm, day, count or text), with no implicit conversion. Passing
+limits does not certify the design or establish the truth of model-written values.
+
+Up to 30 limits are supported. They travel inside saved blueprints and project
+revisions; old blueprints without limits remain readable. Their actual values and
+pass/fail/unresolved results appear in **Blueprint and checks** and offline reports.
+The structured CLI `check` command also recomputes them and exits 1 for a draft
+needing revision (0 for a draft with no blockers; neither means approved).
+
 Saved files include the brief and selected excerpts; treat them as project records.
 Saved status and calculation results are recomputed when loaded. Checksums detect
 accidental changes, not authorship or malicious tampering. Saving may replace a
@@ -115,7 +161,31 @@ fieldforge-blueprints project-history shelf.ffproject.json
 fieldforge-blueprints project-add shelf.ffproject.json shelf-revised/blueprint.json --expect HEAD_CHECKSUM_FROM_HISTORY --note "Width revision"
 fieldforge-blueprints project-restore shelf.ffproject.json 1 --expect CURRENT_HEAD_CHECKSUM
 fieldforge-blueprints project-export shelf.ffproject.json restored-report --revision 1
+fieldforge-blueprints acceptance-metrics engineering
+fieldforge-blueprints apply-limits shelf-draft/blueprint.json limits.json shelf-with-limits
+fieldforge-blueprints check shelf-with-limits/blueprint.json
 ```
+
+For CLI generation, add `--limits limits.json`. Refinement preserves existing
+limits by default; `--limits` explicitly replaces the list, and a file containing
+`[]` explicitly clears it. The file is a UTF-8 JSON list (maximum 64 KiB) with
+unique IDs; duplicate JSON keys, unknown measurements, unsupported units and
+non-finite values are rejected. Example:
+
+```json
+[
+  {"id":"L1","label":"Fit the available width","metric":"envelope.x",
+   "target":"","operator":"<=","value":600,"unit":"mm"},
+  {"id":"L2","label":"Keep the inspection step","metric":"step.exists",
+   "target":"Inspect","operator":"=","value":1,"unit":"count"}
+]
+```
+
+`acceptance-metrics MODE` lists valid keys, units and target types. Retention
+rules use `= 1`; text rules use `=`; numeric limits use `<=`, `=` or `>=`.
+`apply-limits` creates a new export and leaves the source file intact. Applying
+limits, checking a saved draft and listing metrics require neither a model nor
+a library database.
 
 `python -m fieldforge.blueprints` is equivalent. Options include `--constraints`,
 `--resources`, `--evidence-query`, `--port` and `--timeout` (maximum 300 seconds per
@@ -144,6 +214,8 @@ closes FieldForge's request; Ollama may take additional time to release its GPU.
    box volume, DC power, idealized battery runtime and project effort. Model-written
    expressions are never executed. Positive part sizes, materials coverage,
    acceptance coverage and prerequisite graphs are checked locally.
+   User-owned acceptance limits are recomputed too; failed or unresolved limits
+   remain blocking regardless of model critique.
 6. Render deterministic SVGs and readable HTML from validated data. Model text is
    escaped, with no executable HTML, scripts, tool calls or generated code execution.
 
@@ -195,8 +267,8 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,engine,render,projects}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,engine,render,projects}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_history,blueprint_acceptance}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 

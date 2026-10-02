@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import sqlite3
 import threading
 from pathlib import Path
 
-from fieldforge.blueprints.engine import BlueprintRequest, generate_blueprint
+from fieldforge.blueprints.acceptance import METRICS, validate_rules
+from fieldforge.blueprints.engine import BlueprintRequest, _json, generate_blueprint
 from fieldforge.blueprints.projects import (
     append_revision,
     checkout,
@@ -19,11 +21,21 @@ from fieldforge.blueprints.projects import (
     load_project,
     restore_revision,
 )
-from fieldforge.blueprints.render import export_blueprint, load_blueprint
+from fieldforge.blueprints.render import export_blueprint, load_blueprint, normalized_document
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
 from fieldforge.knowledge.assistant import OllamaClient
 from fieldforge.knowledge.library import KnowledgeLibrary
+
+
+def read_limits(path, mode):
+    with path.open("rb") as stream:
+        raw = stream.read(65_537)
+    if len(raw) > 65_536:
+        raise ValueError("Acceptance limits file exceeds 64 KiB.")
+    rules = _json(raw.decode("utf-8"))
+    validate_rules(mode, rules)
+    return rules
 
 
 def main(argv=None):
@@ -43,6 +55,7 @@ def main(argv=None):
     generate.add_argument("--port", type=int, default=11434)
     generate.add_argument("--timeout", type=float, default=300)
     generate.add_argument("--output", type=Path, required=True, help="New export directory")
+    generate.add_argument("--limits", type=Path, help="JSON list of user acceptance rules")
     refine = commands.add_parser("refine", help="Revise an existing design using fresh local evidence")
     refine.add_argument("source", type=Path)
     refine.add_argument("changes")
@@ -52,9 +65,18 @@ def main(argv=None):
     refine.add_argument("--port", type=int, default=11434)
     refine.add_argument("--timeout", type=float, default=300)
     refine.add_argument("--output", type=Path, required=True)
+    refine.add_argument("--limits", type=Path, help="Explicitly replace inherited acceptance limits")
     export = commands.add_parser("export")
     export.add_argument("source", type=Path)
     export.add_argument("destination", type=Path)
+    limits = commands.add_parser("apply-limits", help="Apply user limits and export a new offline report")
+    limits.add_argument("source", type=Path)
+    limits.add_argument("limits", type=Path)
+    limits.add_argument("destination", type=Path)
+    metrics = commands.add_parser("acceptance-metrics", help="List supported measurements and units")
+    metrics.add_argument("mode", choices=MODES)
+    check = commands.add_parser("check", help="Recompute saved checks; exit 1 if the design needs revision")
+    check.add_argument("source", type=Path)
     compare = commands.add_parser("compare")
     compare.add_argument("before", type=Path)
     compare.add_argument("after", type=Path)
@@ -79,7 +101,25 @@ def main(argv=None):
     project_export.add_argument("--revision", type=int)
     args = parser.parse_args(argv)
     try:
-        if args.command == "export":
+        if args.command == "acceptance-metrics":
+            result = {key: {"unit": spec[1], "target": spec[2], "label": spec[3], "type": spec[4]}
+                      for key, spec in METRICS.items() if spec[0] in (args.mode, "all")}
+        elif args.command == "check":
+            value = load_blueprint(args.source)
+            print(json.dumps({"status": value["status"], "validation": value["validation"],
+                              "review": value["review"], "review_error": value["review_error"]},
+                             ensure_ascii=False, indent=2))
+            return 1 if value["status"] == "needs_revision" else 0
+        elif args.command == "apply-limits":
+            value = copy.deepcopy(load_blueprint(args.source))
+            rules = read_limits(args.limits, value["request"]["mode"])
+            if value["request"].get("acceptance_rules", []) != rules:
+                value["request"]["acceptance_rules"] = rules
+                value.update(review=None, review_error="Acceptance limits changed; a new review is required.")
+            value = normalized_document(value)
+            result = {"directory": str(export_blueprint(value, args.destination)),
+                      "status": value["status"], "validation": value["validation"]}
+        elif args.command == "export":
             result = {"directory": str(export_blueprint(load_blueprint(args.source), args.destination))}
         elif args.command == "compare":
             result = compare_designs(load_blueprint(args.before), load_blueprint(args.after))
@@ -117,11 +157,14 @@ def main(argv=None):
                     for field in ("brief", "constraints", "resources", "evidence_query"):
                         if getattr(args, field) is not None:
                             fields[field] = getattr(args, field)
+                    if args.limits is not None:
+                        fields["acceptance_rules"] = read_limits(args.limits, fields["mode"])
                     request = BlueprintRequest(**fields)
                     extra = {"previous": previous, "instructions": args.changes}
                 else:
                     request = BlueprintRequest(args.mode, args.brief, args.constraints,
-                                               args.resources, args.evidence_query)
+                                               args.resources, args.evidence_query,
+                                               acceptance_rules=read_limits(args.limits, args.mode) if args.limits else [])
                 blueprint = generate_blueprint(library, request, args.model,
                                                OllamaClient(port=args.port, timeout=args.timeout),
                                                cancel=threading.Event(), **extra)

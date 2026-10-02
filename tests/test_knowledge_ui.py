@@ -642,6 +642,113 @@ def test_cancel_after_worker_finishes_does_not_replace_or_save_draft(reader):
     studio.destroy()
 
 
+@pytest.mark.parametrize("mode,metric,target,limit_value", [
+    ("engineering", "Overall X span", "", "600"),
+    ("project", "Dependency schedule duration", "", "4"),
+    ("software", "Component trust zone", "DB", "offline"),
+])
+def test_acceptance_limits_block_save_until_applied_and_survive_history(
+        reader, monkeypatch, tmp_path, mode, metric, target, limit_value):
+    import copy
+
+    from blueprint_fixtures import document
+
+    from fieldforge.blueprints.projects import load_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers[mode]
+    studio.pages.select(maker)
+    project = tmp_path / (mode + ".ffproject.json")
+    monkeypatch.setattr("fieldforge.ui.blueprint_history.filedialog.asksaveasfilename", lambda **kwargs: str(project))
+    try:
+        maker.show_blueprint(document(mode), dirty=False)
+        maker.history.create()
+        limits = maker.acceptance
+        maker.pages.select(0)
+        studio.geometry("760x650")
+        root.update()
+        assert maker.query_entry.winfo_ismapped()
+        assert maker.query_entry.winfo_rooty() + maker.query_entry.winfo_height() <= maker.winfo_rooty() + maker.winfo_height()
+        maker.requirement_pages.select(limits)
+        root.update()
+        assert limits.rows.winfo_ismapped()
+        assert limits.details.winfo_rooty() + limits.details.winfo_height() <= maker.winfo_rooty() + maker.winfo_height()
+        limits.metric.set(metric)
+        limits._metric_changed()
+        limits.target.set(target)
+        limits.value.set(limit_value)
+        limits.add()
+        assert len(limits.rules) == 1
+        assert maker.has_unsaved_changes()
+        maker.save()
+        assert "Apply your acceptance limits" in maker.status.get()
+        maker.apply_limits()
+        assert maker.blueprint["validation"]["acceptance"][0]["status"] == "failed"
+        assert maker.blueprint["review"] is None
+        assert len(load_project(project)["revisions"]) == 2
+        calls = []
+
+        def refine(_library, request, _model, _client, **kwargs):
+            calls.append(request)
+            value = copy.deepcopy(kwargs["previous"])
+            value["request"] = copy.deepcopy(request.__dict__)
+            return value
+
+        monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", refine)
+        maker.model.set("fixture:local")
+        maker.instructions.insert("1.0", "Respect the acceptance limits.")
+        maker.refine()
+        wait_for_search(root, maker)
+        assert calls[0].acceptance_rules == limits.rules
+        assert maker.blueprint["validation"]["acceptance"][0]["status"] == "failed"
+        maker._input_state("disabled")
+        assert limits.measurements.instate(["disabled"])
+        maker._input_state("normal")
+        assert limits.measurements.instate(["!disabled"])
+        limits.rows.selection_set("L1")
+        limits.remove()
+        maker.apply_limits()
+        assert maker.blueprint["request"]["acceptance_rules"] == []
+        maker.history.rows.selection_set("2")
+        maker.history.restore()
+        assert maker.acceptance.rules[0]["value"] == (limit_value if mode == "software" else float(limit_value))
+        assert "acceptance_rules" in maker.history.changes.get("1.0", "end-1c")
+    finally:
+        studio.destroy()
+
+
+def test_first_generation_keeps_limits_without_discard_prompt(reader, monkeypatch):
+    import copy
+
+    from blueprint_fixtures import document
+
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+
+    def generate(_library, request, *_args, **_kwargs):
+        value = document("engineering")
+        value["request"] = copy.deepcopy(request.__dict__)
+        return value
+
+    monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", generate)
+    monkeypatch.setattr("fieldforge.ui.blueprints.messagebox.askyesno", lambda *a, **kw: pytest.fail("No draft is replaced"))
+    try:
+        maker.acceptance.value.set("600")
+        maker.acceptance.add()
+        maker.model.set("fixture:local")
+        maker.generate()
+        wait_for_search(root, maker)
+        assert maker.blueprint["request"]["acceptance_rules"][0]["value"] == 600
+        assert maker.blueprint["status"] == "needs_revision"
+    finally:
+        studio.destroy()
+
+
 def test_desktop_backup_failures_restore_controls_and_preserve_data(reader, tmp_path, monkeypatch):
     from fieldforge.core.snapshot import export_snapshot
     from fieldforge.db.database import FieldForgeDatabase

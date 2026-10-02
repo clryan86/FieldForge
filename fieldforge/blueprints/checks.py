@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 
+from fieldforge.blueprints.acceptance import evaluate_rules
 from fieldforge.blueprints.schema import blueprint_schema, validate
 
 FORMULAS = {
@@ -42,7 +43,7 @@ def schedule(items):
     return rows
 
 
-def check_design(mode, design, source_ids):
+def check_design(mode, design, source_ids, acceptance_rules=None):
     validate(design, blueprint_schema(mode))
     issues, calculations = [], []
 
@@ -145,5 +146,13 @@ def check_design(mode, design, source_ids):
             if connection["source"] not in components or connection["target"] not in components:
                 issue("Connection references an unknown component.")
         issue("Architecture checks validate graph structure, not implementation security.", "warning")
-    return {"issues": issues, "calculations": calculations, "schedule": phase_schedule,
+    acceptance = evaluate_rules(mode, design, [] if acceptance_rules is None else acceptance_rules, phase_schedule)
+    for row in acceptance:
+        if row["status"] != "passed":
+            issue(f"Acceptance {row['id']} ({row['label']}) {row['status']}: {row['detail']}")
+    result = {"issues": issues, "calculations": calculations, "schedule": phase_schedule,
             "status": "needs_revision" if any(i["severity"] == "blocking" for i in issues) else "draft"}
+    # Keep the canonical normalization of older projects stable when no rules exist.
+    if acceptance:
+        result["acceptance"] = acceptance
+    return result
