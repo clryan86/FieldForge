@@ -112,6 +112,16 @@ The core package intentionally avoids internet APIs. Optional integrations must 
 
 FieldForge is under active construction. The first goal is not a flashy demo; it is a dependable offline core with tests, reproducible calculations, durable local storage, and a clean path to a full desktop application.
 
+## Bundled Foundations learning pack
+
+**Knowledge Library → Foundations Pack…** contains 20 original lessons and 40
+self-check exercises on practical mathematics, measurement, stock planning and
+records. Read/practice before installing; **Add missing lessons to Library**
+adds searchable articles without replacing edited copies or private notes.
+The original AI-drafted lessons are not independently specialist-reviewed.
+See [Foundations pack](docs/FOUNDATIONS_PACK.md) for content, compatible JSON
+imports, worked answers and the distinction between exercises and qualifications.
+
 ## Portable Pocket Library
 
 In the desktop Knowledge Library, use **Pocket Reader…** to export the open

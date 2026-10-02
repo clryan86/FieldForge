@@ -13,6 +13,7 @@ from fieldforge.knowledge.packs import export_pack, import_pack
 from fieldforge.knowledge.starter import STARTER_ARTICLE_COUNT, install_starter
 from fieldforge.ui.binder import open_binder
 from fieldforge.ui.documents import add_document_import
+from fieldforge.ui.foundations import open_foundations
 from fieldforge.ui.pocket import open_pocket
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
@@ -47,10 +48,13 @@ class KnowledgeTab(ttk.Frame):
             starter_row, text="Load Starter Library", command=self._starter
         )
         self.starter_button.pack(side="left", padx=(0, 8))
+        self.foundations_button = ttk.Button(starter_row, text="Foundations Pack…",
+                                             command=lambda: open_foundations(self))
+        self.foundations_button.pack(side="left", padx=(0, 8))
         ttk.Label(
             starter_row,
             text=f"{STARTER_ARTICLE_COUNT} introductory articles. Offline, source-labeled, not specialist-reviewed.",
-            wraplength=640,
+            wraplength=480,
         ).pack(side="left", fill="x", expand=True)
         self.text_import_button = add_document_import(self)
         tools = ttk.Frame(self)
