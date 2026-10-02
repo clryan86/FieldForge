@@ -1,0 +1,60 @@
+"""Build-input checks without pretending to execute Windows binaries on Linux."""
+
+import json
+from types import SimpleNamespace
+
+import pytest
+
+from scripts import build_windows
+
+
+@pytest.fixture
+def components(tmp_path, monkeypatch):
+    tk = pytest.importorskip("tkinter")
+    prefix = tmp_path / "Python runtime"
+    prefix.mkdir()
+    (prefix / "LICENSE.txt").write_bytes(b"Synthetic Python license fixture\r\n")
+    directories = {name: prefix / "tcl" / name for name in ("tcl8.6", "tk8.6")}
+    for name, directory in directories.items():
+        directory.mkdir(parents=True)
+        (directory / "license.terms").write_bytes(f"Synthetic {name} terms\r\n".encode())
+    class TclPath:
+        # A real Windows Tk call may return Tcl_Obj, not a PathLike/string.
+        def __init__(self, path):
+            self.path = path
+        def __str__(self):
+            return str(self.path)
+    closed = []
+    def call(*args):
+        return TclPath(directories["tcl8.6" if args == ("info", "library") else "tk8.6"])
+    monkeypatch.setattr(tk, "Tk", lambda: SimpleNamespace(tk=SimpleNamespace(call=call),
+                        withdraw=lambda: None, destroy=lambda: closed.append(True)))
+    monkeypatch.setattr(build_windows.sys, "base_prefix", str(prefix))
+    def distribution(name):
+        path = prefix / f"{name}.dist-info" / "licenses" / "LICENSE.txt"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(f"Synthetic {name} license\n".encode())
+        return SimpleNamespace(version="fixture", files=(path.relative_to(prefix),),
+                               locate_file=lambda item: prefix / item)
+    monkeypatch.setattr(build_windows.importlib.metadata, "distribution", distribution)
+    return prefix, directories, closed, tmp_path / "notices"
+
+
+def test_component_notices_handle_tcl_objects_and_copy_exact_license_bytes(components):
+    prefix, directories, closed, destination = components
+    build_windows.component_notices(destination)
+    assert closed == [True]
+    assert (destination / "CPython-LICENSE.txt").read_bytes() == (prefix / "LICENSE.txt").read_bytes()
+    for name, directory in zip(("Tcl", "Tk"), directories.values()):
+        assert (destination / f"{name}-license.terms").read_bytes() == (directory / "license.terms").read_bytes()
+    assert json.loads((destination / "COMPONENTS.json").read_text())["pypdf"] == "fixture"
+    assert (destination / "pyinstaller-0-LICENSE.txt").read_bytes() == b"Synthetic pyinstaller license\n"
+
+
+def test_missing_tk_notice_still_blocks_distribution(components):
+    _, directories, closed, destination = components
+    (directories["tk8.6"] / "license.terms").unlink()
+    with pytest.raises(FileNotFoundError, match="Tk license.terms is required"):
+        build_windows.component_notices(destination)
+    assert closed == [True]
+    assert not (destination / "COMPONENTS.json").exists()

@@ -43,8 +43,8 @@ def component_notices(destination: Path) -> None:
     root = tk.Tk()
     try:
         root.withdraw()
-        libraries = {"Tcl": Path(root.tk.call("info", "library")),
-                     "Tk": Path(root.tk.call("set", "tk_library"))}
+        libraries = {"Tcl": Path(str(root.tk.call("info", "library"))),
+                     "Tk": Path(str(root.tk.call("set", "tk_library")))}
     finally:
         root.destroy()
     for name, directory in libraries.items():
