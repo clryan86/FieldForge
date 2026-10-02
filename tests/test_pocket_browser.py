@@ -5,6 +5,7 @@ Memory mode is for restricted development containers only, not file-opening proo
 """
 
 import os
+import re
 from dataclasses import replace
 
 import pytest
@@ -14,7 +15,7 @@ from fieldforge.knowledge.pocket import capture_pocket, render_pocket, save_pock
 
 
 @pytest.fixture(scope="module")
-def browser():
+def browser(tmp_path_factory):
     if os.environ.get("FIELDFORGE_BROWSER_TESTS") != "1":
         pytest.skip("Opt-in browser job required; no browser download during regular tests")
     from playwright.sync_api import sync_playwright
@@ -25,8 +26,35 @@ def browser():
         if os.environ.get("FIELDFORGE_BROWSER_EXECUTABLE"):
             options["executable_path"] = os.environ["FIELDFORGE_BROWSER_EXECUTABLE"]
         engine = getattr(driver, kind).launch(**options)
-        yield engine
-        engine.close()
+        try:
+            if os.environ.get("FIELDFORGE_BROWSER_MODE", "file") == "file":
+                # Diagnose the automation engine separately from our document.
+                # WebKit's offline emulation can reject even a script-free file.
+                probe = tmp_path_factory.mktemp("browser-probe") / "plain.html"
+                probe.write_text("<!doctype html><title>Local probe</title><p>Local bytes only</p>", encoding="utf-8")
+                outcomes = {}
+                for offline in (False, True):
+                    context = engine.new_context(offline=offline)
+                    requests = []
+                    context.route(re.compile(r"^https?://"), lambda route: (
+                        requests.append(route.request.url), route.abort("internetdisconnected")))
+                    page = context.new_page()
+                    try:
+                        page.goto(probe.as_uri(), wait_until="load", timeout=5000)
+                        assert page.locator("p").inner_text() == "Local bytes only"
+                        outcomes[str(offline)] = "loaded"
+                    except Exception as exc:
+                        outcomes[str(offline)] = type(exc).__name__ + ": " + str(exc).splitlines()[0]
+                    finally:
+                        context.close()
+                    assert not requests
+                print(f"\n{kind} plain local-file probe; offline emulation False/True: {outcomes}", flush=True)
+                assert outcomes["False"] == "loaded", outcomes
+                if kind != "webkit":
+                    assert outcomes["True"] == "loaded", outcomes
+            yield engine
+        finally:
+            engine.close()
 
 
 @pytest.fixture
@@ -46,8 +74,14 @@ def reader(browser, snapshot):
     contexts = []
     failures, network = [], []
     def open_page(*, javascript=True, width=1280, content=None, fragment=""):
-        context = browser.new_context(offline=True, java_script_enabled=javascript,
+        # All network navigation/resources are blocked BEFORE the file opens.
+        # WebKit offline emulation rejects local files in some engine versions;
+        # load with request blocking, then enable its offline flag for interactions.
+        webkit = os.environ.get("FIELDFORGE_BROWSER", "chromium") == "webkit"
+        context = browser.new_context(offline=not webkit, java_script_enabled=javascript,
                                       viewport={"width": width, "height": 900}, has_touch=width < 500)
+        context.route(re.compile(r"^https?://"), lambda route: (
+            network.append(route.request.url), route.abort("internetdisconnected")))
         contexts.append(context)
         page = context.new_page()
         page.on("pageerror", lambda error: failures.append(str(error)))
@@ -67,6 +101,8 @@ def reader(browser, snapshot):
             page.set_content((content or render_pocket(collection)).decode(), wait_until="load")
             if fragment:
                 page.evaluate("value => { location.hash = value; }", fragment)
+        if webkit:
+            context.set_offline(True)
         if javascript and content is None:
             page.wait_for_selector("html.enhanced")
         return page
@@ -211,3 +247,18 @@ def test_session_preferences_and_search_are_not_persisted(reader):
     assert fresh.locator("#query").input_value() == ""
     assert fresh.locator("#size").input_value() == "normal"
     assert fresh.locator("html").get_attribute("data-theme") == "light"
+
+
+def test_network_blocking_control_denies_request_before_a_document_is_loaded(browser):
+    """An intentional forbidden request verifies the file-mode harness, not the app."""
+    context = browser.new_context(offline=False)
+    attempted = []
+    target = "https://fieldforge.invalid/blocked-test-resource"
+    context.route(re.compile(r"^https?://"), lambda route: (
+        attempted.append(route.request.url), route.abort("internetdisconnected")))
+    try:
+        page = context.new_page()
+        succeeded = page.evaluate("async url => { try { await fetch(url); return true; } catch (_) { return false; } }", target)
+        assert not succeeded and attempted == [target]
+    finally:
+        context.close()

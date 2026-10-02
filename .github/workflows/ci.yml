@@ -85,7 +85,7 @@ jobs:
           FIELDFORGE_BROWSER_TESTS: "1"
           FIELDFORGE_BROWSER: ${{ matrix.browser }}
           FIELDFORGE_BROWSER_MODE: "file"
-        run: python -m pytest -o addopts='' -q -ra tests/test_pocket_browser.py
+        run: python -m pytest -o addopts='' -q -ra -s tests/test_pocket_browser.py
 
   source-bundle:
     needs: [test, text-import-gui, windows-recovery, pocket-browser]
