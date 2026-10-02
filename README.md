@@ -112,6 +112,15 @@ The core package intentionally avoids internet APIs. Optional integrations must 
 
 FieldForge is under active construction. The first goal is not a flashy demo; it is a dependable offline core with tests, reproducible calculations, durable local storage, and a clean path to a full desktop application.
 
+## Offline places and bearings
+
+**Places** manages saved waypoints and private notes, calculates approximate
+point-to-point distances/initial true bearings, and previews GPX 1.1 waypoint
+imports/exports. No maps, live GPS, magnetic correction or safe routes are implied.
+GPX exports disclose precise coordinates; private notes are excluded unless
+explicitly selected. See [Places & GPX](docs/PLACES_AND_GPX.md) for limits,
+conflict handling, privacy and full-backup compatibility.
+
 ## Original PDF preservation
 
 **Knowledge Library → Original PDFs…** stores unchanged local PDFs (including

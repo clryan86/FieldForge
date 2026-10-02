@@ -34,6 +34,7 @@ def run() -> None:
     from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.pathways import add_pathways_tab
+    from fieldforge.ui.places import PlacesTab
     from fieldforge.ui.recovery import add_recovery_tab
     from fieldforge.ui.recreation import add_recreation_tab
     from fieldforge.ui.supplies import SuppliesTab
@@ -69,10 +70,48 @@ def run() -> None:
     add_ask_library_tab(notebook, app.knowledge)
     recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
     add_recreation_tab(notebook, app.db.path)
+    places_panel = PlacesTab(notebook, app.db.path)
+    notebook.add(places_panel, text="Places")
+
+    # A compact-window selector keeps every section reachable when notebook
+    # tabs extend past the right edge. It uses the same tab-change save guards.
+    section_bar = ttk.Frame(root, name="section_navigation", padding=(10, 4))
+    ttk.Label(section_bar, text="Go to section").pack(side="left", padx=(0, 8))
+    section_choice = tk.StringVar(value="Dashboard")
+    section_picker = ttk.Combobox(section_bar, name="choice", textvariable=section_choice,
+                                  values=[notebook.tab(tab, "text") for tab in notebook.tabs()],
+                                  state="readonly", width=28)
+    section_picker.pack(side="left", fill="x", expand=True)
+    section_visible = False
+
+    def select_section(_event):
+        for tab in notebook.tabs():
+            if notebook.tab(tab, "text") == section_choice.get():
+                notebook.select(tab)
+                break
+
+    def sync_section(_event):
+        if notebook.select():
+            section_choice.set(notebook.tab(notebook.select(), "text"))
+
+    def compact_navigation(event):
+        nonlocal section_visible
+        if event.widget is root:
+            wanted = event.width < 1160
+            if wanted != section_visible:
+                section_visible = wanted
+                if wanted:
+                    section_bar.pack(fill="x", before=notebook)
+                else:
+                    section_bar.pack_forget()
+
+    section_picker.bind("<<ComboboxSelected>>", select_section)
+    notebook.bind("<<NotebookTabChanged>>", sync_section, add=True)
+    root.bind("<Configure>", compact_navigation, add=True)
 
     def close_application() -> None:
         if (not supplies_panel.can_close() or not household_panel.can_close()
-                or not emergency_panel.can_close() or not recovery_tab.can_close()):
+                or not emergency_panel.can_close() or not places_panel.can_close() or not recovery_tab.can_close()):
             return
         if knowledge_tab.busy:
             messagebox.showinfo(
@@ -171,7 +210,7 @@ def run() -> None:
 
     def save_before_backup() -> bool:
         return (supplies_panel.can_close() and household_panel.can_close()
-                and emergency_panel.can_close() and original_backup_guard())
+                and emergency_panel.can_close() and places_panel.can_close() and original_backup_guard())
 
     recovery_tab.before_backup = save_before_backup
 
