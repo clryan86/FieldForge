@@ -33,6 +33,7 @@ def run() -> None:
     from fieldforge.ui.emergency_actions import ActionWorkspace
     from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
+    from fieldforge.ui.maps import MapsTab
     from fieldforge.ui.pathways import add_pathways_tab
     from fieldforge.ui.places import PlacesTab
     from fieldforge.ui.recovery import add_recovery_tab
@@ -72,6 +73,8 @@ def run() -> None:
     add_recreation_tab(notebook, app.db.path)
     places_panel = PlacesTab(notebook, app.db.path)
     notebook.add(places_panel, text="Places")
+    maps_panel = MapsTab(notebook, app.db.path)
+    notebook.add(maps_panel, text="Maps")
 
     # A compact-window selector keeps every section reachable when notebook
     # tabs extend past the right edge. It uses the same tab-change save guards.
@@ -97,7 +100,7 @@ def run() -> None:
     def compact_navigation(event):
         nonlocal section_visible
         if event.widget is root:
-            wanted = event.width < 1160
+            wanted = event.width < 1280
             if wanted != section_visible:
                 section_visible = wanted
                 if wanted:
