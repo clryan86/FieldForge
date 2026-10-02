@@ -21,7 +21,6 @@ from fieldforge.knowledge.foundations import (
     install_foundations,
 )
 
-
 _ROW_STATES = {"missing": "Not installed", "installed": "Installed", "preserved": "Preserved"}
 
 
@@ -56,7 +55,7 @@ class FoundationsDialog(tk.Toplevel):
         header = ttk.Frame(self, padding=(16, 14))
         header.grid(row=0, column=0, sticky="ew")
         ttk.Label(header, text="Learn the practical foundations", font=("TkDefaultFont", 21, "bold")).pack(anchor="w")
-        ttk.Label(header, text=f"{len(self.lessons)} complete lessons · {sum(len(l.exercises) for l in self.lessons)} "
+        ttk.Label(header, text=f"{len(self.lessons)} complete lessons · {sum(len(lesson.exercises) for lesson in self.lessons)} "
                   "self-check exercises · no downloads", font=("TkDefaultFont", 11)).pack(anchor="w", pady=(4, 0))
         self.notice = ttk.Label(self, text=NOTICE, wraplength=1090, justify="left", padding=(16, 0, 16, 12))
         self.notice.grid(row=1, column=0, sticky="ew")
