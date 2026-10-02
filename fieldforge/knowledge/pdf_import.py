@@ -14,7 +14,6 @@ import os
 import re
 import stat
 import subprocess
-import sys
 import tempfile
 import time
 from dataclasses import dataclass, field
@@ -22,6 +21,7 @@ from pathlib import Path
 from threading import Event
 
 from fieldforge.knowledge import KnowledgeArticle
+from fieldforge.runtime import pdf_command
 
 MAX_PDF_BYTES = 16 * 1024 * 1024
 MAX_PAGES = 200
@@ -122,7 +122,7 @@ def _run_parser(raw: bytes, cancel: Event, timeout: float) -> dict[str, object]:
     with tempfile.TemporaryFile() as incoming, tempfile.TemporaryFile() as outgoing:
         incoming.write(raw)
         incoming.seek(0)
-        command = [sys.executable, "-m", "fieldforge.knowledge.pdf_worker"]
+        command = pdf_command()
         process = subprocess.Popen(command, stdin=incoming, stdout=outgoing, stderr=subprocess.DEVNULL,
                                    cwd=Path(__file__).resolve().parents[2], shell=False,
                                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))

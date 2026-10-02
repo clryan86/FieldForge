@@ -121,6 +121,17 @@ This first viewer supports flat indexed PNG packs, not JPEG/vector or view-based
 layouts. External map files are **not included in database backups**. See
 [Offline Maps](docs/OFFLINE_MAPS.md) for formats, limits, privacy and separate backups.
 
+## Windows development application
+
+The CI-produced **FieldForge-Windows-x64** archive bundles Python, Tk and the PDF
+text parser. Extract the entire folder and run **FieldForge.exe**; no separate
+Python installation is needed for this edition. The GUI and PDF-worker helper
+are separate executables so packaged PDF extraction and recovered-window launch
+use the correct process entry points. **Help → Build & data location** identifies
+the build and database in use. This is unsigned development software, not a
+signed installer or automatic updater. See [Windows portable build](docs/WINDOWS_PORTABLE.md)
+for data locations, the recovery launcher, verification scope and update steps.
+
 ## Offline places and bearings
 
 **Places** manages saved waypoints and private notes, calculates approximate

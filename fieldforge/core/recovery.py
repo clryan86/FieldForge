@@ -10,7 +10,6 @@ import hashlib
 import os
 import sqlite3
 import subprocess
-import sys
 import tempfile
 import time
 from contextlib import closing
@@ -19,6 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fieldforge.core.snapshot import export_snapshot, restore_snapshot
+from fieldforge.runtime import desktop_command, desktop_environment
 
 NOTICE = (
     "Backups are unencrypted and include private household records, articles, notes, and learning "
@@ -202,9 +202,8 @@ def launch_recovered_copy(database: str | Path) -> subprocess.Popen:
     path = Path(database).expanduser().resolve()
     if not path.is_file():
         raise FileNotFoundError("recovered database no longer exists")
-    environment = os.environ.copy()
-    environment["FIELDFORGE_DB"] = str(path)
-    return subprocess.Popen([sys.executable, "-m", "fieldforge.ui.desktop"], env=environment,
+    environment = desktop_environment(path)
+    return subprocess.Popen(desktop_command(), env=environment,
                             cwd=Path(__file__).resolve().parents[2], shell=False)
 
 

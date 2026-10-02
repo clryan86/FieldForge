@@ -30,6 +30,7 @@ def run() -> None:
     from tkinter import messagebox, ttk
 
     from fieldforge.ui.assistant import add_ask_library_tab
+    from fieldforge.ui.build_info import install_help_menu
     from fieldforge.ui.emergency_actions import ActionWorkspace
     from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
@@ -46,6 +47,7 @@ def run() -> None:
     root.title("FieldForge — Offline Emergency Operations")
     root.geometry("1240x800")
     root.minsize(1000, 700)
+    install_help_menu(root, app.db.path)
 
     style = ttk.Style(root)
     if "clam" in style.theme_names():
