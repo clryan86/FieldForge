@@ -30,11 +30,12 @@ class ImageMapFrame(TkCleanupMixin, ttk.Frame):
         ttk.Label(self, text="Map image reference", font=("TkDefaultFont", 20, "bold")).grid(
             row=0, column=0, sticky="w"
         )
-        ttk.Label(
+        self.notice_label = ttk.Label(
             self,
             text="UNCALIBRATED IMAGE — no GPS overlay, coordinates, bearings or scale in ground units",
             foreground="#8b4d16",
-        ).grid(row=1, column=0, sticky="w", pady=(4, 8))
+        )
+        self.notice_label.grid(row=1, column=0, sticky="w", pady=(4, 8))
         controls = ttk.Frame(self)
         controls.grid(row=2, column=0, sticky="ew")
         ttk.Checkbutton(
@@ -68,12 +69,14 @@ class ImageMapFrame(TkCleanupMixin, ttk.Frame):
         self.status_label.pack(fill="both", expand=True)
         self.canvas = tk.Canvas(self, background="#ebede9", highlightthickness=1)
         self.canvas.grid(row=4, column=0, sticky="nsew")
-        ttk.Label(
+        self.footer = ttk.Label(
             self,
             text="Drag or arrow keys to pan; mouse wheel to zoom. First page/frame only; stored pixel orientation. "
             "GeoTIFF/world-file calibration and EXIF GPS are not interpreted.",
             wraplength=960,
-        ).grid(row=5, column=0, sticky="ew", pady=(7, 0))
+        )
+        self.footer.grid(row=5, column=0, sticky="ew", pady=(7, 0))
+        self.bind("<Configure>", self.wrap_labels, add=True)
         self.canvas.bind("<Configure>", lambda _e: self.request_draw())
         self.canvas.bind("<ButtonPress-1>", self.start_drag)
         self.canvas.bind("<B1-Motion>", self.drag)
@@ -92,6 +95,11 @@ class ImageMapFrame(TkCleanupMixin, ttk.Frame):
         self.permission.trace_add("write", self.permission_changed)
         self._buttons()
         self.poll()
+
+    def wrap_labels(self, event):
+        if event.widget is self:
+            for label in (self.notice_label, self.status_label, self.footer):
+                label.configure(wraplength=max(1, event.width - 24))
 
     def _buttons(self):
         self.open_button.configure(state="normal" if self.permission.get() else "disabled")

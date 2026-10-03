@@ -40,7 +40,7 @@ jobs:
           PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -c "import json; from pathlib import Path; import fieldforge.knowledge.foundations as f; assert Path(f.__file__).is_relative_to(Path('foundation-wheel').resolve()); assert len(json.loads(Path('wheel-foundations.json').read_text())['data']['articles']) == 20; print('All 20 lessons exported from installed wheel:', f.__file__)"
 
           PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -S -c "from fieldforge.navigation.map_view import Viewport; from fieldforge.navigation.mbtiles import inspect_pack; assert len(Viewport(0, 0, 1, 512, 512).slots()) == 4; print('Offline map core imports without site packages')"
-          PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -c "from pathlib import Path; import fieldforge_gps; from fieldforge_gps.mbtiles import inspect_pack; p = Path(fieldforge_gps.__file__); assert p.is_relative_to(Path('foundation-wheel').resolve()); data = p.parent / 'data'; assert inspect_pack(data / 'FICTIONAL-MAP.mbtiles', consent=True).zooms; assert (data / 'FICTIONAL-PLACES.csv').is_file(); print('GPS package and map/place fixtures verified from installed wheel:', p)"
+          PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -c "from pathlib import Path; import fieldforge_gps; from fieldforge_gps.mbtiles import inspect_pack; p = Path(fieldforge_gps.__file__); assert p.is_relative_to(Path('foundation-wheel').resolve()); data = p.parent / 'data'; assert inspect_pack(data / 'FICTIONAL-MAP.mbtiles', consent=True).levels; assert (data / 'FICTIONAL-PLACES.csv').is_file(); print('GPS package and map/place fixtures verified from installed wheel:', p)"
 
   text-import-gui:
     runs-on: ubuntu-latest

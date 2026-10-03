@@ -111,3 +111,25 @@ def test_map_workspace_owns_image_viewer_and_closes_its_worker(root):
         worker._thread.join(2)
         assert not worker._thread.is_alive()
     assert image_frame._closed
+
+
+def test_minimum_window_keeps_image_controls_and_help_inside_frame(image_ui):
+    root, frame = image_ui
+    root.geometry("940x640")
+    root.update()
+    for label in (frame.notice_label, frame.status_label, frame.footer):
+        assert int(label.cget("wraplength")) <= frame.winfo_width() - 24
+    for control in (
+        frame.actual_button,
+        frame.notice_label,
+        frame.status_label,
+        frame.footer,
+        frame.canvas,
+    ):
+        assert (
+            control.winfo_rootx() + control.winfo_width() <= root.winfo_rootx() + root.winfo_width()
+        )
+        assert (
+            control.winfo_rooty() + control.winfo_height()
+            <= root.winfo_rooty() + root.winfo_height()
+        )

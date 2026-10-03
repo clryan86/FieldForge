@@ -160,7 +160,10 @@ def _time(text: str | None) -> str | None:
     if len(text) > 80 or not TIME.fullmatch(text):
         raise ValueError("Unsupported GPX time; use an ISO date/time, optionally with a time zone.")
     try:
-        datetime.fromisoformat(text.replace("Z", "+00:00"))
+        # Python 3.10 only parses three/six fractional digits. Validate the
+        # calendar using microseconds, but retain the exact supplied timestamp.
+        validation = re.sub(r"\.([0-9]+)", lambda m: "." + m[1][:6].ljust(6, "0"), text)
+        datetime.fromisoformat(validation.replace("Z", "+00:00"))
     except ValueError as exc:
         raise ValueError("The GPX time is not a valid calendar date/time.") from exc
     # XSD timezone offsets must be no more than 14:00, not Python's wider range.

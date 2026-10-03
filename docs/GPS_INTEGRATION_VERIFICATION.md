@@ -46,3 +46,15 @@ arbitrary maps, altered fixtures and household databases remain rejected.
 Windows executable results must be read from the Actions run for the published
 commit. Local Linux results do not establish physical GPS accuracy, native mobile
 support, map freshness or compatibility with every possible MBTiles/image file.
+
+## Compatibility follow-up
+
+The first GitHub run found Python 3.10's stricter fractional-second parser and a
+wrong attribute in the new installed-wheel assertion. Timestamp validation now
+uses a six-digit temporary value while preserving the exact original string;
+the wheel assertion uses the GPS reader's `levels` field. The image viewer's
+help/status labels also wrap to the available width at its minimum window size.
+Focused GPX/image/installation regression after these fixes: **110 passed in
+4.63s**, with Ruff and the corrected installed-wheel resource check passing.
+The first run's Linux GUI and both browser jobs passed. Final platform/build
+outcomes belong to the subsequent CI run for the updated commit.
