@@ -217,7 +217,7 @@ saved with the current design and labels them as a historical snapshot.
 
 After generating or opening a design, choose **Project and revisions → New project**
 and save a `.ffproject.json` file. The first design becomes revision 1. While that
-project is open, successful generation, AI refinement and applied manual edits
+project is open, successful generation, explicitly applied AI refinements and manual edits
 automatically append revisions. A draft already changed in memory is preserved
 before the next change. **Save revision** can also record the current design.
 
@@ -228,6 +228,47 @@ requirements, but that behavior still requires review. The new result goes throu
 the same schema checks, bounded repair and critique as an initial design. It also
 records the requested change and a canonical SHA-256 fingerprint of the previous
 blueprint in its request metadata; older saved blueprints remain readable.
+
+All three desktop makers open **Review AI revision** when refinement finishes.
+The working draft, its unsaved state, undo target and project file stay unchanged
+while a candidate is being generated or reviewed. The window provides:
+
+- **Changes and checks:** recomputed before/after results with the original
+  acceptance rules held fixed, including regressions, new passes and blockers.
+- **Candidate and evidence:** the complete proposed design, submitted request,
+  deterministic checks, model critique and source excerpts in accessible text.
+- **Candidate drawings** and **Original drawings:** independently zoomable views
+  of the candidate and the original draft captured when refinement started.
+
+**Apply as draft revision** adopts the candidate and appends a revision when a
+project is open. If the original draft had unsaved changes, it is recorded first.
+Applying a failing candidate retains `needs_revision`; a clean model critique
+cannot override failed checks. Applying is not expert sign-off. **Discard
+candidate** leaves the original draft, undo target and saved history intact, and
+keeps the revision instructions available for another attempt. Closing the review
+window asks before discarding it. Another generation/refinement cannot replace a
+pending candidate silently. Initial **Generate blueprint** retains its existing
+behavior; this review step applies to **Revise current design**.
+
+The app verifies the candidate's original-snapshot fingerprint, maker, submitted
+request and unchanged applied acceptance limits. Changed working drafts,
+requirements or open projects block application; pending raw edits/limits must
+be applied before starting a new refinement. A competing disk writer blocks
+application while keeping the original draft and candidate available. If writing
+an accepted revision fails afterward, the new draft remains in memory with a
+save error. Cancellation, model errors and discard do not save an unsaved baseline.
+
+**Export candidate and comparison** writes a new folder without accepting the
+candidate or writing project history. It includes `report.html`, `blueprint.json`,
+drawings, `REVISION_REVIEW.txt`, and `comparison/` with a report and complete
+before/after snapshots. Export remains available if application is blocked by a
+stale draft or project. An existing destination is refused; interrupted exports
+can leave an incomplete folder, so retry with a new destination. Candidates remain
+in memory until applied or discarded; exporting also keeps a separate disk copy.
+They are not automatically recovered after a crash. Exported JSON can be opened
+through **Open saved design**.
+The existing CLI `refine` already exports separately from its input; use `compare`
+to inspect its result and explicitly `project-add` to record it in project history.
 
 The comparison view lists changed fields, matching parts, phases and components by
 ID rather than array position. Select a saved revision to compare it with the current
@@ -645,8 +686,8 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report,parameters}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_diagnostics,blueprint_evidence,blueprint_parameters}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report,parameters,revision}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_diagnostics,blueprint_evidence,blueprint_parameters,blueprint_revision}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 

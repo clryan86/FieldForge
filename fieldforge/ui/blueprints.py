@@ -31,6 +31,7 @@ from fieldforge.ui.blueprint_evidence import BlueprintEvidence
 from fieldforge.ui.blueprint_history import ProjectHistory
 from fieldforge.ui.blueprint_parameters import PartParameters
 from fieldforge.ui.blueprint_preview import DrawingPreview
+from fieldforge.ui.blueprint_revision import RevisionReview, project_identity
 from fieldforge.ui.lifecycle import release_tk_references
 
 EXAMPLES = {
@@ -58,6 +59,8 @@ class BlueprintMaker(ttk.Frame):
         self.library, self.mode = library, mode
         self.blueprint = None
         self.part_editor = None
+        self.revision_review = None
+        self._refinement_context = None
         self.dirty = False
         self.busy = False
         self._closed = False
@@ -110,7 +113,7 @@ class BlueprintMaker(ttk.Frame):
         self.instructions = self._field(self.revision_input, "What should change in the current design?",
                                         "", 6)
         ttk.Label(self.revision_input, text="The existing design, measured failures and current Requirements are included. "
-                  "Evidence is searched again; old citations are not assumed to remain valid.",
+                  "Evidence is searched again. Review the candidate before applying it to your draft or project.",
                   wraplength=950).pack(fill="x", pady=6)
         ttk.Button(self.revision_input, text="Revise current design", command=self.refine).pack(anchor="e")
         self.history = ProjectHistory(self.pages, self)
@@ -157,6 +160,10 @@ class BlueprintMaker(ttk.Frame):
     def _start(self, function, *args, operation, **kwargs):
         if self.busy:
             return
+        if self.revision_review is not None:
+            self.revision_review.lift()
+            self.status.set("Apply, export or discard the pending AI candidate first.")
+            return
         self.busy = True
         self._cancel.clear()
         self.generate_button.configure(state="disabled")
@@ -177,6 +184,7 @@ class BlueprintMaker(ttk.Frame):
         self.busy = False
         self.generate_button.configure(state="normal")
         self._input_state("normal")
+        context, self._refinement_context = self._refinement_context, None
         if self._cancel.is_set():
             self.status.set("Blueprint cancelled. No generated revision was saved.")
             return
@@ -191,11 +199,15 @@ class BlueprintMaker(ttk.Frame):
                 self.pages.select(0)
                 self.requirement_pages.select(self.evidence)
                 self.status.set(f"{len(value['sources'])} source passages found. The design has not changed.")
+            elif operation == "Refining design":
+                if context is None:
+                    raise ValueError("The original refinement context is unavailable; draft unchanged.")
+                self.revision_review = RevisionReview(self, value, context)
+                self.status.set("AI candidate ready for review. Apply, export or discard it; the working draft is unchanged.")
             else:
                 self.show_blueprint(value)
                 self.load_request(value)
-                kind = "refined" if operation == "Refining design" else "generated"
-                self.history.after_change(kind, self._change_note)
+                self.history.after_change("generated", self._change_note)
         except Exception as exc:
             self.status.set(str(exc))
 
@@ -214,7 +226,7 @@ class BlueprintMaker(ttk.Frame):
             self.status.set(str(exc))
 
     def generate(self):
-        if self.busy:
+        if self.busy or self._review_pending():
             return
         if not self.model.get():
             self.status.set("Load models and select an installed local model first.")
@@ -224,7 +236,7 @@ class BlueprintMaker(ttk.Frame):
         self._generate()
 
     def refine(self):
-        if self.busy or self.blueprint is None or not self._edits_applied():
+        if self.busy or self._review_pending() or self.blueprint is None or not self._edits_applied():
             return
         if not self.model.get():
             self.status.set("Load models and select an installed local model first.")
@@ -240,15 +252,28 @@ class BlueprintMaker(ttk.Frame):
             request = self._request()
             require_consistent_rules(request.mode, request.acceptance_rules)
             client = OllamaClient(port=int(self.port.get()), timeout=300)
-            if not self.history.before_change():
+            if not instruction and not self.history.before_change():
                 return
             self._change_note = instruction or "Generate design from requirements"
-            extra = {"previous": copy.deepcopy(self.blueprint), "instructions": instruction} if instruction else {}
+            extra = {}
+            if instruction:
+                before = normalized_document(copy.deepcopy(self.blueprint))
+                self._refinement_context = {"before": before, "request": copy.deepcopy(request.__dict__),
+                                            "instructions": instruction, "project": project_identity(self.history)}
+                extra = {"previous": copy.deepcopy(before), "instructions": instruction}
             self._start(generate_blueprint, self.library, request, self.model.get(), client,
                         cancel=self._cancel, progress=self._messages.put,
                         operation="Refining design" if instruction else "Generating design", **extra)
         except ValueError as exc:
+            self._refinement_context = None
             self.status.set(str(exc))
+
+    def _review_pending(self):
+        if self.revision_review is None:
+            return False
+        self.revision_review.lift()
+        self.status.set("Apply, export or discard the pending AI candidate first.")
+        return True
 
     def _request(self):
         return BlueprintRequest(self.mode, self.brief.get("1.0", "end-1c"),
@@ -300,6 +325,8 @@ class BlueprintMaker(ttk.Frame):
         self.status.set("Design ready for review. Export includes an offline report and vector drawings.")
 
     def has_unsaved_changes(self):
+        if self.revision_review is not None:
+            return True
         if self.blueprint is None:
             return bool(self.acceptance.rules)
         expected = json.dumps(self.blueprint["design"], ensure_ascii=False, indent=2)

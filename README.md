@@ -45,6 +45,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - Recomputed revision comparisons with fixed baseline limits, dimension/contact/clearance changes and portable offline reports
 - Measured failure diagnostics, focused AI revision instructions and model-free checks for conflicting exact limits
 - Part measurement editing with metric/imperial input, drawing previews and recomputed revision checks before applying
+- AI revision review with original/candidate drawings, fixed-limit comparisons, separate export, and explicit apply or discard
 - Searchable local field-guide library
 - Topic tags, bookmarks, favorites, and notes
 - Source/provenance metadata

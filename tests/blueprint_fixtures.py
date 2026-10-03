@@ -2,6 +2,15 @@ import copy
 
 from fieldforge.blueprints.checks import check_design
 from fieldforge.blueprints.engine import BlueprintRequest, digest
+from fieldforge.blueprints.render import normalized_document
+
+
+def revision(previous, request=None, instructions="Revise the recorded design."):
+    before = normalized_document(copy.deepcopy(previous))
+    value = copy.deepcopy(before)
+    value["request"] = copy.deepcopy(request.__dict__ if request else before["request"])
+    value["request"].update(revision_of=digest(before), revision_instructions=instructions)
+    return value
 
 
 def design(mode):

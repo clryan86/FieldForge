@@ -39,7 +39,7 @@ class ProjectHistory(ttk.Frame):
                                ("Save revision", self.save), ("Restore selected", self.restore),
                                ("Undo last draft change", self.undo)):
             ttk.Button(actions, text=label, command=command).pack(side="left", padx=(0, 5))
-        self.notice = ttk.Label(self, text="Open projects automatically record generated, refined and applied "
+        self.notice = ttk.Label(self, text="Open projects record generated designs, accepted AI revisions and applied "
                                 "edits. Project files are separate from database backups.", wraplength=950)
         self.notice.pack(fill="x")
         comparison_actions = ttk.Frame(self)

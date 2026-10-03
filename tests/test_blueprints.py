@@ -245,6 +245,8 @@ def test_context_capacity_checked_before_sending_sources(server):
 
 
 def test_refinement_uses_current_evidence_and_preserves_prior_design(references, server):
+    from fieldforge.blueprints.revision import prepare_revision
+
     calls = []
 
     def reply():
@@ -266,6 +268,9 @@ def test_refinement_uses_current_evidence_and_preserves_prior_design(references,
     assert updated["request"]["revision_of"] == digest(original)
     assert updated["request"]["revision_instructions"] == "Reduce the shelf width to 600 mm."
     assert updated["sources"][0]["checksum"] != original["sources"][0]["checksum"]
+    proposal = prepare_revision(original, updated)
+    assert proposal["candidate"] == updated
+    assert proposal["before"] == original
     context = calls[2]
     assert context["requested_changes"] == "Reduce the shelf width to 600 mm."
     assert context["previous_draft"]["citations_removed"] == ["S1"]

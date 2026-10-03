@@ -695,9 +695,10 @@ def test_blueprint_project_refine_compare_edit_restore_and_reopen(reader, monkey
     calls = []
 
     def refine(_library, request, model, client, **kwargs):
+        from blueprint_fixtures import revision
+
         calls.append((request, kwargs))
-        value = copy.deepcopy(kwargs["previous"])
-        value["request"] = request.__dict__
+        value = revision(kwargs["previous"], request, kwargs["instructions"])
         value["design"]["title"] = "Refined design"
         value["design_sha256"] = digest(value["design"])
         return value
@@ -713,6 +714,20 @@ def test_blueprint_project_refine_compare_edit_restore_and_reopen(reader, monkey
         maker.refine()
         wait_for_search(root, maker)
         assert calls[0][1]["previous"]["design"]["title"] == "Example design"
+        assert len(load_project(path)["revisions"]) == 1
+        assert maker.blueprint["design"]["title"] == "Example design"
+        review = maker.revision_review
+        assert "Refined design" in review.changes.get("1.0", "end-1c")
+        review.geometry("760x650")
+        root.update()
+        assert review.changes.winfo_height() > 200
+        assert review.apply_button.winfo_rootx() + review.apply_button.winfo_width() < review.winfo_rootx() + review.winfo_width()
+        review.pages.select(review.preview)
+        root.update()
+        assert review.preview.canvas.find_all() and review.original.images
+        assert "SOURCE EVIDENCE" in review.details.get("1.0", "end-1c")
+        review.apply()
+        assert maker.revision_review is None
         assert len(load_project(path)["revisions"]) == 2
         assert "Refined design" in maker.history.changes.get("1.0", "end-1c")
         assert not maker.has_unsaved_changes()
@@ -1067,10 +1082,8 @@ def test_history_comparison_export_uses_selected_revision_and_current_applied_dr
         studio.destroy()
 
 
-def test_project_save_conflict_keeps_new_draft_and_external_revision(reader, monkeypatch, tmp_path):
-    import copy
-
-    from blueprint_fixtures import document
+def test_project_save_conflict_keeps_unapplied_candidate_original_and_external_revision(reader, monkeypatch, tmp_path):
+    from blueprint_fixtures import document, revision
 
     from fieldforge.blueprints.engine import digest
     from fieldforge.blueprints.projects import append_revision, checkout, head, load_project
@@ -1086,12 +1099,12 @@ def test_project_save_conflict_keeps_new_draft_and_external_revision(reader, mon
     maker.history.create()
     expected = head(maker.history.project)
 
-    def raced(*args, **kwargs):
+    def raced(_library, request, *_args, **kwargs):
         external = document("project")
         external["design"]["title"] = "Another window's revision"
         external["design_sha256"] = digest(external["design"])
         append_revision(path, external, expected_head=expected)
-        candidate = copy.deepcopy(external)
+        candidate = revision(kwargs["previous"], request, kwargs["instructions"])
         candidate["design"]["title"] = "New model draft"
         candidate["design_sha256"] = digest(candidate["design"])
         return candidate
@@ -1101,8 +1114,11 @@ def test_project_save_conflict_keeps_new_draft_and_external_revision(reader, mon
     maker.instructions.insert("1.0", "Update the schedule.")
     maker.refine()
     wait_for_search(root, maker)
-    assert "project was not saved" in maker.status.get()
-    assert maker.blueprint["design"]["title"] == "New model draft"
+    review = maker.revision_review
+    review.apply()
+    assert "project was not saved" in review.status.get()
+    assert maker.blueprint["design"]["title"] == "Example design"
+    assert review.proposal["candidate"]["design"]["title"] == "New model draft"
     assert maker.has_unsaved_changes()
     assert checkout(load_project(path))["design"]["title"] == "Another window's revision"
     studio.destroy()
@@ -1139,8 +1155,6 @@ def test_cancel_after_worker_finishes_does_not_replace_or_save_draft(reader):
 ])
 def test_acceptance_limits_block_save_until_applied_and_survive_history(
         reader, monkeypatch, tmp_path, mode, metric, target, limit_value):
-    import copy
-
     from blueprint_fixtures import document
 
     from fieldforge.blueprints.projects import load_project
@@ -1181,10 +1195,10 @@ def test_acceptance_limits_block_save_until_applied_and_survive_history(
         calls = []
 
         def refine(_library, request, _model, _client, **kwargs):
+            from blueprint_fixtures import revision
+
             calls.append(request)
-            value = copy.deepcopy(kwargs["previous"])
-            value["request"] = copy.deepcopy(request.__dict__)
-            return value
+            return revision(kwargs["previous"], request, kwargs["instructions"])
 
         monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", refine)
         maker.model.set("fixture:local")
@@ -1192,6 +1206,8 @@ def test_acceptance_limits_block_save_until_applied_and_survive_history(
         maker.refine()
         wait_for_search(root, maker)
         assert calls[0].acceptance_rules == limits.rules
+        assert maker.revision_review.proposal["candidate"]["validation"]["acceptance"][0]["status"] == "failed"
+        maker.revision_review.apply()
         assert maker.blueprint["validation"]["acceptance"][0]["status"] == "failed"
         maker._input_state("disabled")
         assert limits.measurements.instate(["disabled"])
@@ -1297,6 +1313,212 @@ def test_cancelled_evidence_preview_does_not_replace_existing_sources(reader):
         assert maker.evidence.sources == original and not maker.dirty
         assert "cancelled" in maker.status.get()
         assert maker.evidence.preview_button.instate(["!disabled"])
+    finally:
+        studio.destroy()
+
+
+def _propose_revision(maker):
+    import copy
+    from concurrent.futures import Future
+
+    from blueprint_fixtures import revision
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.ui.blueprint_revision import project_identity
+
+    request = maker._request()
+    instructions = "Revise the recorded title."
+    maker._refinement_context = {"before": copy.deepcopy(maker.blueprint), "request": copy.deepcopy(request.__dict__),
+                                 "instructions": instructions, "project": project_identity(maker.history)}
+    value = revision(maker.blueprint, request, instructions)
+    value["design"]["title"] = "Candidate design"
+    value["design_sha256"] = digest(value["design"])
+    future = Future()
+    future.set_result(value)
+    maker._poll(future, "Refining design")
+    assert maker._refinement_context is None
+    assert maker.revision_review is not None, maker.status.get()
+    return maker.revision_review
+
+
+@pytest.mark.parametrize("mode", ["engineering", "project", "software"])
+def test_revision_review_export_discard_and_pending_guards_preserve_unsaved_draft_and_history(
+        reader, monkeypatch, tmp_path, mode):
+    import copy
+
+    from blueprint_fixtures import document
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.blueprints.projects import create_project
+    from fieldforge.blueprints.render import load_blueprint
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers[mode]
+    try:
+        original = document(mode)
+        path = tmp_path / "original.ffproject.json"
+        project = create_project(path, "Original", original)
+        maker.history.project, maker.history.path = project, path
+        original["design"]["title"] = "Unsaved changes before the AI request"
+        original["design_sha256"] = digest(original["design"])
+        maker.show_blueprint(original)
+        maker.load_request(original)
+        saved = path.read_bytes()
+        previous_undo = document(mode)
+        maker.history.previous = copy.deepcopy(previous_undo)
+        review = _propose_revision(maker)
+        assert maker.dirty and maker.has_unsaved_changes()
+        assert maker.blueprint == original and path.read_bytes() == saved
+        assert maker.history.previous == previous_undo
+        monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", lambda *_a, **_kw: pytest.fail("New model call"))
+        maker.generate()
+        maker.refine()
+        assert not maker.busy and "pending AI candidate" in maker.status.get()
+        monkeypatch.setattr("fieldforge.ui.blueprint_revision.filedialog.askdirectory", lambda **_kw: str(tmp_path))
+        monkeypatch.setattr("fieldforge.ui.blueprint_revision.simpledialog.askstring", lambda *_a, **_kw: "proposal")
+        review.export()
+        assert load_blueprint(tmp_path / "proposal" / "blueprint.json")["design"]["title"] == "Candidate design"
+        assert (tmp_path / "proposal" / "comparison" / "report.html").is_file()
+        review.export()  # Existing directory reports failure and leaves candidate/draft intact.
+        assert maker.revision_review is review and maker.blueprint == original and path.read_bytes() == saved
+        monkeypatch.setattr("fieldforge.ui.blueprint_revision.messagebox.askyesno", lambda *_a, **_kw: False)
+        review.discard()
+        studio.close()
+        assert review.winfo_exists() and studio.winfo_exists()
+        monkeypatch.setattr("fieldforge.ui.blueprint_revision.messagebox.askyesno", lambda *_a, **_kw: True)
+        review.discard()
+        assert maker.revision_review is None and maker.blueprint == original and maker.dirty
+        assert maker.history.previous == previous_undo and path.read_bytes() == saved
+        assert "discarded" in maker.status.get()
+    finally:
+        studio.destroy()
+
+
+def test_revision_review_guards_busy_unapplied_changed_requirements_baseline_and_project(reader, tmp_path):
+    import copy
+
+    from blueprint_fixtures import document
+
+    from fieldforge.blueprints.projects import create_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["project"]
+    try:
+        maker.show_blueprint(document("project"), dirty=False)
+        maker.load_request(maker.blueprint)
+        original = copy.deepcopy(maker.blueprint)
+        review = _propose_revision(maker)
+        maker.busy = True
+        review.apply()
+        assert "busy" in review.status.get()
+        maker.busy = False
+        maker.editor.insert("end", " ")
+        review.apply()
+        assert "Apply your design edits" in review.status.get()
+        maker.show_blueprint(original, dirty=False)
+        maker.resources.insert("end", "Changed resource availability")
+        review.apply()
+        assert "requirements changed" in review.status.get()
+        maker.load_request(original)
+        changed = copy.deepcopy(original)
+        changed["review_error"] = "New review status"
+        maker.show_blueprint(changed)
+        review.apply()
+        assert "working draft changed" in review.status.get()
+        maker.show_blueprint(original, dirty=False)
+        path = tmp_path / "other.ffproject.json"
+        maker.history.project, maker.history.path = create_project(path, "Another project", original), path
+        review.apply()
+        assert "open project changed" in review.status.get()
+        maker.history.detach()
+        review.apply()
+        assert maker.revision_review is None and maker.blueprint["design"]["title"] == "Candidate design"
+        assert maker.dirty
+        maker.history.undo()
+        assert maker.blueprint == original
+    finally:
+        studio.destroy()
+
+
+def test_revision_apply_write_failure_retains_candidate_as_unsaved_draft(reader, tmp_path, monkeypatch):
+    from blueprint_fixtures import document
+
+    from fieldforge.blueprints.projects import create_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["software"]
+    try:
+        maker.show_blueprint(document("software"), dirty=False)
+        maker.load_request(maker.blueprint)
+        path = tmp_path / "write-failure.ffproject.json"
+        maker.history.project, maker.history.path = create_project(path, "Original", maker.blueprint), path
+        original = path.read_bytes()
+        review = _propose_revision(maker)
+
+        def fail(*_a, **_kw):
+            raise OSError("Simulated disk write failure")
+
+        monkeypatch.setattr("fieldforge.blueprints.projects.os.replace", fail)
+        review.apply()
+        assert maker.revision_review is None
+        assert maker.blueprint["design"]["title"] == "Candidate design" and maker.dirty
+        assert "project was not saved" in maker.status.get() and path.read_bytes() == original
+    finally:
+        studio.destroy()
+
+
+@pytest.mark.parametrize("outcome", ["cancelled", "error", "wrong_request"])
+def test_refinement_without_acceptance_does_not_save_dirty_draft_or_change_undo(
+        reader, monkeypatch, tmp_path, outcome):
+    import copy
+
+    from blueprint_fixtures import document, revision
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.blueprints.projects import create_project
+    from fieldforge.knowledge.assistant import GenerationCancelled, LocalModelError
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    try:
+        original = document("engineering")
+        path = tmp_path / "no-writes.ffproject.json"
+        maker.history.project, maker.history.path = create_project(path, "Original", original), path
+        original["design"]["title"] = "Unsaved baseline"
+        original["design_sha256"] = digest(original["design"])
+        maker.show_blueprint(original)
+        maker.load_request(original)
+        saved = path.read_bytes()
+        maker.history.previous = copy.deepcopy(original)
+
+        def worker(_library, request, *_a, **kwargs):
+            if outcome == "cancelled":
+                kwargs["cancel"].set()
+                raise GenerationCancelled("Cancelled")
+            if outcome == "error":
+                raise LocalModelError("Unavailable model")
+            value = revision(kwargs["previous"], request, kwargs["instructions"])
+            value["request"]["resources"] = "Unexpected request change"
+            return value
+
+        monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", worker)
+        maker.model.set("fixture:local")
+        maker.instructions.insert("1.0", "Revise the recorded design.")
+        maker.refine()
+        wait_for_search(root, maker)
+        assert maker.revision_review is None and maker._refinement_context is None
+        assert maker.blueprint == original and maker.dirty and maker.history.previous == original
+        assert path.read_bytes() == saved and maker.instructions.get("1.0", "end-1c")
+        if outcome == "wrong_request":
+            assert "submitted revision request" in maker.status.get()
     finally:
         studio.destroy()
 
