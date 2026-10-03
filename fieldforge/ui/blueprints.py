@@ -22,6 +22,7 @@ from fieldforge.blueprints.render import (
     readable,
     save_blueprint,
 )
+from fieldforge.blueprints.review_files import load_review, validate_review
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
 from fieldforge.knowledge.assistant import GenerationCancelled, OllamaClient
@@ -115,7 +116,10 @@ class BlueprintMaker(ttk.Frame):
         ttk.Label(self.revision_input, text="The existing design, measured failures and current Requirements are included. "
                   "Evidence is searched again. Review the candidate before applying it to your draft or project.",
                   wraplength=950).pack(fill="x", pady=6)
-        ttk.Button(self.revision_input, text="Revise current design", command=self.refine).pack(anchor="e")
+        revision_actions = ttk.Frame(self.revision_input)
+        revision_actions.pack(fill="x")
+        ttk.Button(revision_actions, text="Resume saved review", command=self.resume_review).pack(side="left")
+        ttk.Button(revision_actions, text="Revise current design", command=self.refine).pack(side="right")
         self.history = ProjectHistory(self.pages, self)
         self.pages.add(self.history, text="Project and revisions")
         self.brief = self._field(input_page, "What do you want to build or achieve?", example, 4)
@@ -274,6 +278,44 @@ class BlueprintMaker(ttk.Frame):
         self.revision_review.lift()
         self.status.set("Apply, export or discard the pending AI candidate first.")
         return True
+
+    def resume_review(self):
+        if self.busy or self._review_pending():
+            return
+        if self.blueprint is not None and not self._edits_applied():
+            return
+        path = filedialog.askopenfilename(parent=self, title="Resume an unapplied revision review",
+                                         filetypes=[("Revision review", "*.ffreview.json")])
+        if not path:
+            return
+        try:
+            value = load_review(path)
+            proposal = validate_review(value)
+            candidate = proposal["candidate"]
+            if candidate["request"]["mode"] != self.mode:
+                raise ValueError("Resume this review in its matching blueprint maker.")
+            empty = self.blueprint is None
+            if empty and not self._can_replace():
+                return
+            # Resuming into an empty maker restores the original as an unsaved
+            # draft. Existing drafts, requirements and project associations stay put.
+            request = copy.deepcopy(candidate["request"])
+            request.update(revision_of="", revision_instructions="")
+            guard = (BlueprintRequest(**request).__dict__ if empty else self._request().__dict__)
+            context = {"before": proposal["before"], "request": request, "guard_request": copy.deepcopy(guard),
+                       "instructions": candidate["request"]["revision_instructions"],
+                       "lineage_sha256": candidate["request"]["revision_of"],
+                       "project": None if empty else project_identity(self.history)}
+            review = RevisionReview(self, candidate, context)
+            if empty:
+                self.show_blueprint(proposal["before"])
+                self.history.detach()
+                self.load_request(candidate)
+            self.revision_review = review
+            review._ready()  # Explain a stale baseline immediately; export remains usable.
+            self.status.set("Saved review reopened. The candidate remains unapplied.")
+        except (ValueError, OSError) as exc:
+            self.status.set(str(exc))
 
     def _request(self):
         return BlueprintRequest(self.mode, self.brief.get("1.0", "end-1c"),

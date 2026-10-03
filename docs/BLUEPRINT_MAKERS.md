@@ -258,17 +258,70 @@ application while keeping the original draft and candidate available. If writing
 an accepted revision fails afterward, the new draft remains in memory with a
 save error. Cancellation, model errors and discard do not save an unsaved baseline.
 
-**Export candidate and comparison** writes a new folder without accepting the
+**Export report** writes a new folder without accepting the
 candidate or writing project history. It includes `report.html`, `blueprint.json`,
-drawings, `REVISION_REVIEW.txt`, and `comparison/` with a report and complete
+drawings, `REVISION_REVIEW.txt`, `review.ffreview.json`, and `comparison/` with a report and complete
 before/after snapshots. Export remains available if application is blocked by a
 stale draft or project. An existing destination is refused; interrupted exports
 can leave an incomplete folder, so retry with a new destination. Candidates remain
 in memory until applied or discarded; exporting also keeps a separate disk copy.
-They are not automatically recovered after a crash. Exported JSON can be opened
-through **Open saved design**.
+They are not automatically recovered after a crash. Save a review file explicitly
+to resume the review later. Exported blueprint JSON can also be opened through
+**Open saved design**.
 The existing CLI `refine` already exports separately from its input; use `compare`
 to inspect its result and explicitly `project-add` to record it in project history.
+
+### Save and resume an unapplied AI review
+
+Choose **Save review for later** in the review window to create a new
+`.ffreview.json` file. It contains the exact original snapshot referenced by the
+candidate, the complete candidate, both sets of source excerpts, the submitted
+request, model critique and a canonical checksum. It adds no project path,
+database path or local model installation path metadata. Saving keeps the candidate open
+and does not accept it, mark the current draft as saved, or append project history.
+Report exports include the same portable review format as `review.ffreview.json`.
+
+In the matching maker, choose **Refine with AI → Resume saved review**. This needs
+no model, library search or network connection. In an empty maker, the original
+is restored as an unsaved draft and the submitted Requirements fields are loaded;
+the candidate remains in the review window. In an existing maker, the current
+draft, forms and project association stay unchanged. The window shows the saved
+request and source evidence; accepting it adopts that submitted request too.
+Applying still requires the current applied draft to match the recomputed original
+snapshot. A different draft can inspect, save or export the review, but cannot
+apply it. Export the original snapshot and open it before resuming, or use an empty
+maker. Pending JSON/acceptance edits must be applied before resuming a review.
+
+Reopening verifies format, checksums, original-snapshot lineage, mode and unchanged
+acceptance limits before use. Stored checks and status are recomputed with the
+current app; the original historical snapshot stays intact even if derived
+checker fields change. Checksums detect accidental corruption, not authenticity
+or expert approval. Source excerpts remain historical snapshots; resuming does
+not assert that the local library still has identical sources.
+
+Review files are bounded to 6 MB, with each embedded blueprint limited to 2 MB.
+Duplicate JSON keys, non-finite numbers, malformed records and oversized input are
+rejected. Saving uses the same atomic-replacement and advisory-lock protocol as
+projects, but always requires a new filename. The empty `.lock` sidecar contains
+no review content and need not be transferred. Existing files, including other
+valid reviews, are never overwrite targets for cooperating writers. Copy the
+review file separately for backup; database backups do not contain it. Saving a
+review does not introduce automatic crash recovery or a durable approval record.
+
+The matching file-only CLI commands also run without a database or model:
+
+```bash
+fieldforge-blueprints review-save before.json ai-candidate.json pending.ffreview.json
+fieldforge-blueprints review-check pending.ffreview.json
+fieldforge-blueprints review-export pending.ffreview.json review-report
+```
+
+The candidate must reference the supplied original and retain its acceptance
+limits. `review-check` recomputes comparison outcomes, including regressions, and
+reports `applied: false`. Exit 0 means the file operation succeeded, even for a
+candidate needing revision; invalid input, existing destinations or I/O errors
+exit 2. These commands never apply a design or write project history. Original
+version-1 blueprint and project formats are unchanged.
 
 The comparison view lists changed fields, matching parts, phases and components by
 ID rather than array position. Select a saved revision to compare it with the current
@@ -686,7 +739,7 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report,parameters,revision}.py` contains the
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report,parameters,revision,review_files}.py` contains the
 headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_diagnostics,blueprint_evidence,blueprint_parameters,blueprint_revision}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.

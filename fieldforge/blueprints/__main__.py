@@ -29,6 +29,13 @@ from fieldforge.blueprints.projects import (
     restore_revision,
 )
 from fieldforge.blueprints.render import export_blueprint, load_blueprint, normalized_document
+from fieldforge.blueprints.review_files import (
+    load_review,
+    review_from_files,
+    save_review,
+    validate_review,
+)
+from fieldforge.blueprints.revision import export_revision
 from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
 from fieldforge.knowledge.assistant import OllamaClient
@@ -110,6 +117,15 @@ def main(argv=None):
     compare.add_argument("after", type=Path)
     compare.add_argument("--results", action="store_true", help="Recompute outcomes against fixed baseline limits")
     compare.add_argument("--output", type=Path, help="Export computed comparison and snapshots to a new directory")
+    review_save = commands.add_parser("review-save", help="Save an unapplied before/candidate pair for later review")
+    review_save.add_argument("before", type=Path)
+    review_save.add_argument("candidate", type=Path)
+    review_save.add_argument("destination", type=Path)
+    review_check = commands.add_parser("review-check", help="Verify a saved review and recompute its outcomes offline")
+    review_check.add_argument("source", type=Path)
+    review_export = commands.add_parser("review-export", help="Export a saved review without accepting the candidate")
+    review_export.add_argument("source", type=Path)
+    review_export.add_argument("destination", type=Path)
     project_compare = commands.add_parser("project-compare", help="Compare saved revisions without changing history")
     project_compare.add_argument("project", type=Path)
     project_compare.add_argument("before", type=int)
@@ -187,6 +203,22 @@ def main(argv=None):
             result = compare_results(before, after) if args.results or args.output else compare_designs(before, after)
             if args.output:
                 result["directory"] = str(export_comparison(before, after, args.output))
+        elif args.command in {"review-save", "review-check", "review-export"}:
+            if args.command == "review-save":
+                value = review_from_files(args.before, args.candidate)
+                save_review(value, args.destination)
+            else:
+                value = load_review(args.source)
+            proposal = validate_review(value)
+            result = {"checksum": value["checksum"], "mode": proposal["candidate"]["request"]["mode"],
+                      "status": proposal["candidate"]["status"], "applied": False,
+                      "base_snapshot_sha256": proposal["base_snapshot_sha256"],
+                      "acceptance_outcomes": proposal["comparison"]["acceptance"]["outcomes"],
+                      "comparison": proposal["comparison"]}
+            if args.command == "review-save":
+                result["file"] = str(args.destination)
+            elif args.command == "review-export":
+                result["directory"] = str(export_revision(value["before"], value["candidate"], args.destination))
         elif args.command == "project-compare":
             project = load_project(args.project)
             before, after = checkout(project, args.before), checkout(project, args.after)

@@ -1527,6 +1527,162 @@ def test_refinement_without_acceptance_does_not_save_dirty_draft_or_change_undo(
         studio.destroy()
 
 
+@pytest.mark.parametrize("mode", ["engineering", "project", "software"])
+def test_saved_review_resumes_in_empty_maker_without_model_then_applies_and_undoes(reader, monkeypatch, tmp_path, mode):
+    import copy
+
+    from blueprint_fixtures import document
+
+    from fieldforge.blueprints.review_files import load_review
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    first = BlueprintStudio(root, library)
+    maker = first.makers[mode]
+    maker.show_blueprint(document(mode), dirty=False)
+    maker.load_request(maker.blueprint)
+    original = copy.deepcopy(maker.blueprint)
+    maker.resources.insert("end", "Submitted resource update")
+    review = _propose_revision(maker)
+    candidate = copy.deepcopy(review.proposal["candidate"])
+    path = tmp_path / "saved.ffreview.json"
+    monkeypatch.setattr("fieldforge.ui.blueprint_revision.filedialog.asksaveasfilename", lambda **_kw: str(path))
+    review.save()
+    raw = path.read_bytes()
+    assert load_review(path)["candidate"] == candidate
+    assert maker.blueprint == original and not maker.dirty
+    assert "remains unapplied" in review.status.get()
+    review.save()
+    assert "already exists" in review.status.get() and path.read_bytes() == raw
+    first.destroy()
+    second = BlueprintStudio(root, library)
+    maker = second.makers[mode]
+    monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.askopenfilename", lambda **_kw: str(path))
+    monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint", lambda *_a, **_kw: pytest.fail("Model called"))
+    try:
+        maker.resume_review()
+        review = maker.revision_review
+        assert review is not None and not maker.model.get()
+        assert maker.blueprint == original and maker.dirty and maker.history.project is None
+        assert maker.resources.get("1.0", "end-1c") == "Submitted resource update"
+        assert "Submitted resource update" in review.details.get("1.0", "end-1c")
+        review.geometry("760x650")
+        root.update()
+        assert review.changes.winfo_height() > 200
+        assert review.save_button.winfo_rootx() + review.save_button.winfo_width() < review.winfo_rootx() + review.winfo_width()
+        review.apply()
+        assert maker.revision_review is None and maker.blueprint == candidate and maker.dirty
+        maker.history.undo()
+        assert maker.blueprint == original and path.read_bytes() == raw
+    finally:
+        second.destroy()
+
+
+def test_saved_review_with_existing_project_preserves_forms_and_only_records_when_applied(reader, monkeypatch, tmp_path):
+    import copy
+
+    from blueprint_fixtures import document, revision
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.blueprints.projects import create_project, load_project
+    from fieldforge.blueprints.review_files import create_review, save_review
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    before = document("project")
+    candidate = revision(before)
+    candidate["request"]["resources"] = "Resources from the submitted request"
+    candidate["design"]["title"] = "Reopened candidate"
+    candidate["design_sha256"] = digest(candidate["design"])
+    path = save_review(create_review(before, candidate), tmp_path / "review.ffreview.json")
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["project"]
+    project_path = tmp_path / "project.ffproject.json"
+    try:
+        maker.show_blueprint(before, dirty=False)
+        maker.load_request(before)
+        maker.resources.insert("end", "Current UI resource notes")
+        maker.history.project, maker.history.path = create_project(project_path, "Existing", before), project_path
+        saved = project_path.read_bytes()
+        original = copy.deepcopy(maker.blueprint)
+        monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.askopenfilename", lambda **_kw: str(path))
+        maker.resume_review()
+        assert maker.blueprint == original and project_path.read_bytes() == saved and not maker.dirty
+        assert maker.resources.get("1.0", "end-1c") == "Current UI resource notes"
+        maker.revision_review.apply()
+        assert len(load_project(project_path)["revisions"]) == 2
+        assert maker.blueprint["design"]["title"] == "Reopened candidate" and not maker.dirty
+        assert maker.resources.get("1.0", "end-1c") == "Resources from the submitted request"
+    finally:
+        studio.destroy()
+
+
+def test_saved_review_stale_baseline_blocks_apply_but_can_export_without_changing_current_draft(reader, monkeypatch, tmp_path):
+    import copy
+
+    from blueprint_fixtures import document, revision
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.blueprints.review_files import create_review, save_review
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    before = document("software")
+    path = save_review(create_review(before, revision(before)), tmp_path / "review.ffreview.json")
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["software"]
+    try:
+        current = copy.deepcopy(before)
+        current["design"]["title"] = "Different current draft"
+        current["design_sha256"] = digest(current["design"])
+        maker.show_blueprint(current)
+        maker.load_request(current)
+        monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.askopenfilename", lambda **_kw: str(path))
+        maker.resume_review()
+        review = maker.revision_review
+        assert "working draft changed" in review.status.get()
+        review.apply()
+        assert maker.blueprint == current and maker.dirty and maker.revision_review is review
+        monkeypatch.setattr("fieldforge.ui.blueprint_revision.filedialog.askdirectory", lambda **_kw: str(tmp_path))
+        monkeypatch.setattr("fieldforge.ui.blueprint_revision.simpledialog.askstring", lambda *_a, **_kw: "export")
+        review.export()
+        assert (tmp_path / "export" / "review.ffreview.json").is_file()
+        assert maker.blueprint == current
+    finally:
+        studio.destroy()
+
+
+def test_saved_review_wrong_mode_bad_checksum_busy_and_pending_edits_preserve_current_state(reader, monkeypatch, tmp_path):
+    from blueprint_fixtures import document, revision
+
+    from fieldforge.blueprints.review_files import create_review, save_review
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    value = document("project")
+    path = save_review(create_review(value, revision(value)), tmp_path / "review.ffreview.json")
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    try:
+        monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.askopenfilename", lambda **_kw: str(path))
+        maker.resume_review()
+        assert "matching blueprint maker" in maker.status.get() and maker.blueprint is None
+        path.write_text(path.read_text(encoding="utf-8").replace("Example design", "Changed design"), encoding="utf-8")
+        maker.resume_review()
+        assert "checksum" in maker.status.get() and maker.blueprint is None
+        monkeypatch.setattr("fieldforge.ui.blueprints.filedialog.askopenfilename", lambda **_kw: pytest.fail("Picker called"))
+        maker.busy = True
+        maker.resume_review()
+        maker.busy = False
+        maker.show_blueprint(document("engineering"), dirty=False)
+        maker.editor.insert("end", " ")
+        maker.resume_review()
+        assert "Apply your design edits" in maker.status.get()
+        assert maker.revision_review is None
+    finally:
+        studio.destroy()
+
+
 def test_desktop_backup_failures_restore_controls_and_preserve_data(reader, tmp_path, monkeypatch):
     from fieldforge.core.snapshot import export_snapshot
     from fieldforge.db.database import FieldForgeDatabase

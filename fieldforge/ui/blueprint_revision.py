@@ -11,6 +11,7 @@ from fieldforge.blueprints.comparison import comparison_text
 from fieldforge.blueprints.engine import digest
 from fieldforge.blueprints.projects import head
 from fieldforge.blueprints.render import normalized_document
+from fieldforge.blueprints.review_files import create_review, save_review
 from fieldforge.blueprints.revision import candidate_text, export_revision, prepare_revision
 from fieldforge.ui.blueprint_preview import DrawingPreview
 from fieldforge.ui.lifecycle import release_tk_references
@@ -23,7 +24,7 @@ def project_identity(history):
 class RevisionReview(tk.Toplevel):
     def __init__(self, maker, value, context):
         proposal = prepare_revision(context["before"], value)
-        expected = {**context["request"], "revision_of": proposal["base_snapshot_sha256"],
+        expected = {**context["request"], "revision_of": context.get("lineage_sha256", proposal["base_snapshot_sha256"]),
                     "revision_instructions": context["instructions"]}
         if proposal["candidate"]["request"] != expected:
             raise ValueError("The candidate does not match the submitted revision request.")
@@ -49,8 +50,10 @@ class RevisionReview(tk.Toplevel):
         actions.pack(fill="x")
         self.apply_button = ttk.Button(actions, text="Apply as draft revision", command=self.apply)
         self.apply_button.pack(side="left")
-        self.export_button = ttk.Button(actions, text="Export candidate and comparison", command=self.export)
+        self.export_button = ttk.Button(actions, text="Export report", command=self.export)
         self.export_button.pack(side="left", padx=8)
+        self.save_button = ttk.Button(actions, text="Save review for later", command=self.save)
+        self.save_button.pack(side="left")
         ttk.Button(actions, text="Discard candidate", command=self.discard).pack(side="right")
         self.status_label = ttk.Label(content, textvariable=self.status, wraplength=1000)
         self.status_label.pack(fill="x", pady=8)
@@ -101,7 +104,7 @@ class RevisionReview(tk.Toplevel):
         if project_identity(maker.history) != self.context["project"]:
             self.status.set("The open project changed. Export or discard this candidate and start a new revision.")
             return False
-        if maker._request().__dict__ != self.context["request"]:
+        if maker._request().__dict__ != self.context.get("guard_request", self.context["request"]):
             self.status.set("The requirements changed. Export or discard this candidate and start a new revision.")
             return False
         return True
@@ -137,6 +140,18 @@ class RevisionReview(tk.Toplevel):
         try:
             destination = export_revision(self.proposal["before"], self.proposal["candidate"], Path(parent) / name)
             self.status.set(f"Unapplied candidate exported to {destination}. Project history is unchanged.")
+        except (ValueError, OSError) as exc:
+            self.status.set(str(exc))
+
+    def save(self):
+        path = filedialog.asksaveasfilename(parent=self, title="Save unapplied review",
+                                          defaultextension=".ffreview.json",
+                                          filetypes=[("Revision review", "*.ffreview.json")])
+        if not path:
+            return
+        try:
+            save_review(create_review(self.proposal["before"], self.proposal["candidate"]), path)
+            self.status.set(f"Review saved to {path}. It remains unapplied; project history is unchanged.")
         except (ValueError, OSError) as exc:
             self.status.set(str(exc))
 
