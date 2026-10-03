@@ -1,0 +1,48 @@
+name: USA map sources wave four
+on:
+  push:
+    branches: [chatgpt/usa-batch-wave4]
+    paths: [.github/workflows/usa-wave4.yml]
+permissions:
+  contents: read
+jobs:
+  source-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'pytest>=8,<10'
+      - run: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_usa_acquire.py tests/test_usa_provider_dates.py
+  acquire:
+    needs: source-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        region: [connecticut, maryland, west-virginia, oklahoma]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire bounded public source and preserve checksum receipt
+        run: |
+          mkdir usa-acquisition
+          python tools/usa_maps/acquire.py --output usa-acquisition --region '${{ matrix.region }}' --max-mib 384
+          python tools/usa_maps/acquire.py --output usa-acquisition --region '${{ matrix.region }}' --verify-only
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-wave4-${{ matrix.region }}
+          path: usa-acquisition/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 14
