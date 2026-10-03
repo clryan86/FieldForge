@@ -132,3 +132,19 @@ for Pillow 12.3.0 and PyInstaller 6.22.3, plus the universal pypdf 6.19.0 and
 pySerial 3.5 wheels. This verifies build inputs without importing Windows native
 libraries on Linux. Frozen executable verification remains required in the next
 Actions run.
+
+Run 37127830560 passed the added notice checks, all Linux jobs and both browser
+jobs. Each Windows map job passed 935 tests, but the next Tk root after the
+direct-destruction test failed to read installed Tcl/Tk scripts during fixture
+setup; subsequent GUI tests passed. A similar intermittent initialization error
+is reported at https://github.com/actions/setup-python/issues/1102. This does
+not establish that the installed scripts were actually missing.
+
+Both Windows test commands now use `--capture=sys` to keep native standard
+handles stable while independent test interpreters are destroyed and recreated.
+The previous default capture repeatedly duplicated/replaced native descriptors;
+that interaction is the suspected cause, to be checked by the next Windows run.
+Python output remains captured and native output goes to the job log. No Tk
+error is retried, skipped or suppressed, and all GUI assertions remain required.
+The matching local desktop/image/packaging checks passed **56 tests in 5.01s**
+with this capture mode; Ruff and whitespace checks passed.
