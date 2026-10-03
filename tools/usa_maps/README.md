@@ -43,7 +43,9 @@ Use the last desktop build's **Import prepared pack...** control for the data ZI
 
 ## Bounds and failure behavior
 
-Preparation explicitly selects finite backend ceilings: 50 million source nodes, 5 million ways, 100 million references and 4 million indexed features. These are limits, not claims that every state or a country-wide source will fit. A prepared ZIP is capped at 4 GiB compressed and 7 GiB expanded. New ZIP exports require filesystem hard-link support for no-clobber publication; unsupported filesystems fail explicitly.
+Preparation explicitly selects finite backend ceilings: 50 million source nodes, 5 million ways, 100 million references and 4 million indexed features. These are limits, not claims that every state or a country-wide source will fit.
+
+Wave-six Alabama exposed a valid source entity with more than the older backend's 128-tag per-entity preview cap. `tag-limit-512.patch` raises only that finite per-entity cap to 512 and adds a regression proving >128 valid tags parse while the bound still rejects larger inputs when configured lower. Apply it only to the compatible map-manager source checkpoint; it is not a substitute for the full application source. A prepared ZIP is capped at 4 GiB compressed and 7 GiB expanded. New ZIP exports require filesystem hard-link support for no-clobber publication; unsupported filesystems fail explicitly.
 
 The tool refuses linked output folders, unexpected ZIP members, changed source identities and hash mismatches. It uses exclusive per-job locks and new temporary folders and does not replace existing installations. The output directory is assumed not to be maliciously modified by other processes. A power failure can leave a lock or temporary directory; do not remove those while another build is active. This is not a signed publisher-authentication system or a sandbox for hostile files.
 
