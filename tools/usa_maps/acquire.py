@@ -52,19 +52,28 @@ def _safe_url(url):
     if (parsed.scheme != "https" or parsed.netloc != "download.geofabrik.de"
             or parsed.query or parsed.fragment or not url.startswith(BASE)):
         raise ValueError("Only fixed public Geofabrik HTTPS source paths are allowed.")
-    tail = url[len(BASE):]
-    if not any(tail in (r + "-latest.osm.pbf", r + "-latest.osm.pbf.md5", r + ".poly")
-               for r in REGIONS):
-        raise ValueError("Unsupported public geographic source path.")
+    _file_identity(url)
     return url
+
+
+def _file_identity(url):
+    tail = url[len(BASE):]
+    for region in REGIONS:
+        if tail == region + '.poly':
+            return region, 'poly'
+        match = re.fullmatch(re.escape(region) + r'-(latest|[0-9]{6})\.osm\.pbf(\.md5)?', tail)
+        if match:
+            if match.group(1) != 'latest':
+                datetime.strptime(match.group(1), '%y%m%d')
+            return region, 'md5' if match.group(2) else 'pbf'
+    raise ValueError("Unsupported public geographic source path.")
 
 
 class _Redirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         _safe_url(newurl)
-        # Redirects within the fixed region path cannot change the requested source.
-        if newurl != req.full_url:
-            raise ValueError("Source redirect changed the requested file.")
+        if _file_identity(newurl) != _file_identity(req.full_url):
+            raise ValueError("Source redirect changed the region or file type.")
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
@@ -132,7 +141,7 @@ def _download(url, path, cap, transport, deadline):
     count = 0
     with transport(url) as response, path.open('xb') as target:
         final_url = response.geturl()
-        if _safe_url(final_url) != url:
+        if _file_identity(_safe_url(final_url)) != _file_identity(url):
             raise ValueError("Response changed the requested public file.")
         size_header = response.headers.get('Content-Length')
         expected = None
@@ -160,7 +169,7 @@ def _download(url, path, cap, transport, deadline):
     if count == 0 or (expected is not None and count != expected):
         raise ValueError("Source was empty or incomplete.")
     return dict(bytes=count, sha256=h.hexdigest(), md5=md5.hexdigest(),
-                url=url, http_last_modified=modified)
+                url=url, final_url=final_url, http_last_modified=modified)
 
 
 def verify_acquisition(folder, *, expected_region=None):
@@ -186,6 +195,8 @@ def verify_acquisition(folder, *, expected_region=None):
         item = row['files'][name]
         if not isinstance(item, dict) or item.get('url') != BASE + name:
             raise ValueError("Receipt source URL mismatch.")
+        if _file_identity(_safe_url(item.get('final_url', item['url']))) != _file_identity(item['url']):
+            raise ValueError('Receipt final source URL mismatch.')
         if type(item.get('bytes')) is not int or not 0 < item['bytes'] <= MAX_CAP:
             raise ValueError("Invalid receipt size.")
         if not re.fullmatch(r'[0-9a-f]{64}', item.get('sha256', '')):
@@ -194,7 +205,8 @@ def verify_acquisition(folder, *, expected_region=None):
             raise ValueError("Acquired file size or SHA-256 changed.")
     pbf = region + '-latest.osm.pbf'
     md5_text = (folder / (pbf + '.md5')).read_text('ascii').strip()
-    match = re.fullmatch(r'([0-9a-fA-F]{32})\s+\*?' + re.escape(pbf), md5_text)
+    final_name = urlsplit(row['files'][pbf].get('final_url', BASE + pbf)).path.rsplit('/', 1)[-1]
+    match = re.fullmatch(r'([0-9a-fA-F]{32})\s+\*?(' + re.escape(pbf) + '|' + re.escape(final_name) + ')', md5_text)
     if not match or match.group(1).lower() != row['files'][pbf]['md5']:
         raise ValueError("Publisher MD5 does not match acquired source.")
     return row
