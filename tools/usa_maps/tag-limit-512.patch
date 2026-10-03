@@ -1,0 +1,36 @@
+--- a/fieldforge/navigation/osm_source.py
++++ b/fieldforge/navigation/osm_source.py
+@@ -25,7 +25,7 @@
+ MAX_REFERENCES = 1000000
+ MAX_FEATURES = 25000
+ MAX_VALUES = 1000000
+-MAX_TAGS = 128
++MAX_TAGS = 512  # Finite per-entity cap; real regional sources can exceed 128 tags.
+ MAX_STRING = 16384
+ # Preserve policy-bearing fields for the opt-in local path model. Contact and
+ # contributor fields are still excluded. Values are not interpreted by this reader.
+--- a/tests/test_osm_source.py
++++ b/tests/test_osm_source.py
+@@ -215,6 +215,22 @@
+     with pytest.raises(ValueError):
+         osm.parse_street_source(header() + primitive(binary(2, dense)))
+ 
++def test_valid_entity_with_more_than_128_tags_is_supported_but_still_bounded(monkeypatch):
++    extra = tuple((f"extra-{i}", f"value-{i}") for i in range(127))
++    strings = ("", "highway", "residential", "name", "Map Street") + tuple(
++        value for pair in extra for value in pair
++    )
++    keys = [1, 3] + [5 + i * 2 for i in range(len(extra))]
++    vals = [2, 4] + [6 + i * 2 for i in range(len(extra))]
++    group = binary(1, node(1, -70, 40)) + binary(1, node(2, -69.999, 40.001))
++    group += binary(3, way(keys=keys, vals=vals))
++    result = osm.parse_street_source(header() + primitive(group, strings))
++    road = result.features[0]
++    assert road.name == "Map Street" and road.kind == "highway=residential"
++    monkeypatch.setattr(osm, "MAX_TAGS", 128)
++    with pytest.raises(ValueError, match="tags"):
++        osm.parse_street_source(header() + primitive(group, strings))
++
+ def test_dense_empty_tags_and_unpacked_values():
+     dense = integer(1, zz(1)) + integer(8, zz(-1)) + integer(9, zz(2))
+     result = osm.parse_street_source(header() + primitive(binary(2, dense)))
