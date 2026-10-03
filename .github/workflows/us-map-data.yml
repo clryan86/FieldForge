@@ -1,0 +1,76 @@
+name: USA public map data
+on:
+  push:
+    branches: [chatgpt/map-data-load-20261002]
+    paths: [.github/workflows/us-map-data.yml]
+permissions:
+  contents: read
+jobs:
+  acquire-public-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Retrieve public geographic data only
+        shell: python
+        run: |
+          import datetime, hashlib, json, pathlib, urllib.request, zipfile
+          root = pathlib.Path('us-map-sources')
+          root.mkdir()
+          sources = [
+            ('cb_2025_us_state_500k.zip', 'https://www2.census.gov/geo/tiger/GENZ2025/shp/cb_2025_us_state_500k.zip', 'U.S. Census Bureau', '2025 cartographic boundaries', 'Public domain U.S. government geographic data'),
+            ('cb_2025_us_county_500k.zip', 'https://www2.census.gov/geo/tiger/GENZ2025/shp/cb_2025_us_county_500k.zip', 'U.S. Census Bureau', '2025 cartographic boundaries', 'Public domain U.S. government geographic data'),
+            ('2025_Gaz_place_national.zip', 'https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2025_Gazetteer/2025_Gaz_place_national.zip', 'U.S. Census Bureau', '2025 Gazetteer', 'Public domain U.S. government geographic data'),
+            ('tl_2025_us_primaryroads.zip', 'https://www2.census.gov/geo/tiger/TIGER2025/PRIMARYROADS/tl_2025_us_primaryroads.zip', 'U.S. Census Bureau', '2025 TIGER/Line primary roads', 'Public domain U.S. government geographic data'),
+            ('delaware-latest.osm.pbf', 'https://download.geofabrik.de/north-america/us/delaware-latest.osm.pbf', 'OpenStreetMap contributors; Geofabrik extract', 'Read snapshot date from source header; latest URL is mutable', 'ODbL-1.0'),
+            ('district-of-columbia-latest.osm.pbf', 'https://download.geofabrik.de/north-america/us/district-of-columbia-latest.osm.pbf', 'OpenStreetMap contributors; Geofabrik extract', 'Read snapshot date from source header; latest URL is mutable', 'ODbL-1.0'),
+          ]
+          receipts = []
+          total = 0
+          for name, url, publisher, edition, rights in sources:
+            row = dict(file=name, source_url=url, publisher=publisher, edition=edition, rights=rights)
+            path = root / name
+            try:
+              request = urllib.request.Request(url, headers={'User-Agent':'FieldForge-USA-map-acquisition/0.1'})
+              digest = hashlib.sha256()
+              count = 0
+              with urllib.request.urlopen(request, timeout=60) as response, path.open('xb') as stream:
+                if not response.url.startswith('https://'):
+                  raise ValueError('HTTPS source required')
+                row['http_last_modified'] = response.headers.get('Last-Modified')
+                row['final_url'] = response.url
+                while True:
+                  chunk = response.read(1024 * 1024)
+                  if not chunk:
+                    break
+                  count += len(chunk)
+                  total += len(chunk)
+                  if count > 96 * 1024 * 1024 or total > 240 * 1024 * 1024:
+                    raise ValueError('Public data download budget exceeded')
+                  digest.update(chunk)
+                  stream.write(chunk)
+              if count == 0:
+                raise ValueError('Empty source')
+              if name.endswith('.zip'):
+                with zipfile.ZipFile(path) as archive:
+                  if len(archive.infolist()) > 100 or sum(i.file_size for i in archive.infolist()) > 600 * 1024 * 1024:
+                    raise ValueError('Unexpected archive size')
+                  if archive.testzip():
+                    raise ValueError('Source archive CRC failure')
+              row.update(status='downloaded', bytes=count, sha256=digest.hexdigest())
+            except Exception as exc:
+              path.unlink(missing_ok=True)
+              row.update(status='failed', error=str(exc))
+            row['checked_utc'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+            receipts.append(row)
+            print(json.dumps(row), flush=True)
+            (root / 'source-receipts.json').write_text(json.dumps(receipts, indent=2) + '\n', encoding='utf-8')
+          if not any(r['status'] == 'downloaded' for r in receipts):
+            raise RuntimeError('No geographic source file was downloaded')
+      - name: Preserve acquired maps and source receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-source-data
+          path: us-map-sources/
+          if-no-files-found: error
+          retention-days: 14
