@@ -114,16 +114,23 @@ FieldForge is under active construction. The first goal is not a flashy demo; it
 
 ## Offline raster map viewer
 
-**Maps → Open local map…** reads compatible, already-local PNG MBTiles packs
+The main desktop also provides **Navigation → Maps, GPS & places…** for the
+combined live-receiver, local-map, offline-place and saved-trip workspace.
+It does not connect or record automatically; unsaved trips are checked before
+the application closes. See [GPS workspace](docs/GPS_WORKSPACE.md).
+
+**Maps → Open local map…** reads compatible, already-local PNG, JPEG or WebP MBTiles packs
 with pan/zoom and an optional saved-place overlay. Missing/corrupt tiles are
 labeled; no map tiles are downloaded and no GPS or safe-route guidance is implied.
-This first viewer supports flat indexed PNG packs, not JPEG/vector or view-based
-layouts. External map files are **not included in database backups**. See
+Both map viewers support flat indexed raster packs; vector tiles and view-based
+layouts are unsupported. **Navigation → Open map image…** opens local map images
+with pan/zoom and an explicit uncalibrated-reference label. Source installations
+use `pip install ".[maps,gps,pdf]"` for image, serial-receiver and PDF support. External map files are **not included in database backups**. See
 [Offline Maps](docs/OFFLINE_MAPS.md) for formats, limits, privacy and separate backups.
 
 ## Windows development application
 
-The CI-produced **FieldForge-Windows-x64** archive bundles Python, Tk and the PDF
+The CI-produced **FieldForge-Windows-x64** archive bundles Python, Tk, Pillow image codecs, the serial adapter and the PDF
 text parser. Extract the entire folder and run **FieldForge.exe**; no separate
 Python installation is needed for this edition. The GUI and PDF-worker helper
 are separate executables so packaged PDF extraction and recovered-window launch

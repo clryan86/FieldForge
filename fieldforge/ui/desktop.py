@@ -32,6 +32,7 @@ def run() -> None:
     from fieldforge.ui.assistant import add_ask_library_tab
     from fieldforge.ui.build_info import install_help_menu
     from fieldforge.ui.emergency_actions import ActionWorkspace
+    from fieldforge.ui.gps import install_gps_menu
     from fieldforge.ui.household import HouseholdTab
     from fieldforge.ui.knowledge import KnowledgeTab
     from fieldforge.ui.maps import MapsTab
@@ -47,7 +48,8 @@ def run() -> None:
     root.title("FieldForge — Offline Emergency Operations")
     root.geometry("1240x800")
     root.minsize(1000, 700)
-    install_help_menu(root, app.db.path)
+    menu_bar = install_help_menu(root, app.db.path)
+    gps_workspace = install_gps_menu(root, menu_bar)
 
     style = ttk.Style(root)
     if "clam" in style.theme_names():
@@ -124,7 +126,9 @@ def run() -> None:
                 "Finish the local knowledge-pack operation before closing.",
                 parent=root,
             )
-        elif knowledge_tab.save_current() and pathways_tab.save_current():
+        elif (knowledge_tab.save_current() and pathways_tab.save_current()
+                and gps_workspace.can_close()):
+            gps_workspace.close()
             root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", close_application)

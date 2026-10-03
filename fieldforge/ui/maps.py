@@ -1,4 +1,4 @@
-"""Offline PNG MBTiles viewer. Tk owns rendering; workers only read bounded data.
+"""Offline raster MBTiles viewer. Tk owns rendering; workers only read bounded data.
 
 External map files are never imported into the household database or snapshots.
 No GPS, network, routes, map downloads, saved viewport or automatic place writes.
@@ -58,7 +58,7 @@ class MapsTab(ttk.Frame):
         self._drag = None
         self._worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fieldforge-map")
         self.busy = False
-        self.source = tk.StringVar(value="No map open. Choose a trusted, locally stored PNG MBTiles pack.")
+        self.source = tk.StringVar(value="No map open. Choose a trusted, locally stored raster MBTiles pack.")
         self.status = tk.StringVar(value="No maps are bundled or downloaded automatically. Your location is not requested.")
         self.pointer = tk.StringVar(value="Pointer coordinates appear only over a loaded map view.")
         self.attribution = tk.StringVar(value="Source attribution will appear here. Map accuracy and reuse rights are not verified.")
@@ -140,7 +140,7 @@ class MapsTab(ttk.Frame):
         self.credit_label = fixed_label(7, 44, self.attribution)
         self.footer = fixed_label(8, 58, self.status)
         self.bind("<Configure>", self._wrap, add=True)
-        self._blank("Open a local PNG map pack to begin.\n\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
+        self._blank("Open a local raster map pack to begin.\n\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
         self._buttons()
 
     def _wrap(self, event):
@@ -187,11 +187,11 @@ class MapsTab(ttk.Frame):
         self._poll_id = self.after(40, self._poll, self._future, operation, self._generation)
 
     def choose(self):
-        path = filedialog.askopenfilename(parent=self, title="Open a trusted PNG raster MBTiles pack",
-                                          filetypes=[("PNG MBTiles map", "*.mbtiles")])
+        path = filedialog.askopenfilename(parent=self, title="Open a trusted raster MBTiles pack",
+                                          filetypes=[("Raster MBTiles map", "*.mbtiles")])
         if path:
             if messagebox.askyesno("Open a trusted offline map?", "Only open a map pack you trust and have permission to use. "
-                                   "This build supports flat, indexed PNG raster MBTiles, not vector/JPEG maps. "
+                                   "This build supports flat, indexed PNG/JPEG/WebP raster MBTiles; vector maps are not supported. "
                                    "No malware, accuracy or route-safety check is performed. The file stays external to your database backups. Continue?",
                                    parent=self):
                 self.open_path(path)
@@ -221,7 +221,7 @@ class MapsTab(ttk.Frame):
         self.attribution.set("Map packs are separate files. Database backups do not contain them.")
         self.pointer.set("No map coordinates available.")
         self.status.set("Closed map view. No map file or saved-place record was deleted or changed.")
-        self._blank("No map open.\nChoose Open local map… to read a compatible PNG MBTiles file.")
+        self._blank("No map open.\nChoose Open local map… to read a compatible raster MBTiles file.")
         self._buttons()
 
     def _dimensions(self):
@@ -263,7 +263,7 @@ class MapsTab(ttk.Frame):
             if operation == "open":
                 self.pack_info = value
                 self.zoom_picker.configure(values=tuple(str(z) for z in value.zooms))
-                self.source.set(f"{value.name[:120]} · PNG raster · stored zooms {', '.join(map(str, value.zooms))}")
+                self.source.set(f"{value.name[:120]} · raster · stored zooms {', '.join(map(str, value.zooms))}")
                 attribution = dict(value.metadata).get("attribution", "Not supplied — verify source and rights")
                 compact = " ".join(attribution.split())
                 self.attribution.set("Attribution (pack-supplied): " + compact[:200]
@@ -465,7 +465,7 @@ class MapsTab(ttk.Frame):
                     "Metadata below is supplied by the pack, not independently checked or fetched. HTML/URLs remain inert text.\n\n"
                     + "\n\n".join(f"{key}:\n{value}" for key, value in pack.metadata)
                     + "\n\nLIMITS\n" + "\n".join(pack.warnings)
-                    + "\n\nOnly flat/indexed PNG MBTiles with 256/512-pixel tiles; no vector/JPEG/WebP or normalized views. "
+                    + "\n\nFlat/indexed PNG/JPEG/WebP MBTiles with 256/512-pixel tiles; no vector or normalized views. "
                     "The file signature detects ordinary changes, not malicious tampering or full integrity. "
                     "Only open trusted data with an up-to-date Python/Tk/SQLite installation.\n\n" + NOTICE)
         text.configure(state="disabled")

@@ -110,7 +110,7 @@ def test_retina_dimensions_and_outside_projection_cells(tmp_path):
     assert good[0].data is good[1].data  # Repeated world copies share cached bytes.
 
 
-@pytest.mark.parametrize('metadata', [{'format': 'pbf'}, {'format': 'jpg'}, {'format': 'webp'}, {'scheme': 'xyz'},
+@pytest.mark.parametrize('metadata', [{'format': 'pbf'}, {'scheme': 'xyz'},
     {'name': ''}, {'name': 'bad\x00name'}, {'description': 'x'*8193}])
 def test_unsupported_map_metadata_rejected(tmp_path, metadata):
     path = make_map(tmp_path/'bad.mbtiles', metadata=metadata)

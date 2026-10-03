@@ -1,0 +1,126 @@
+{
+  "type": "FeatureCollection",
+  "name": "FICTIONAL SCHEMA TEST - NOT NATURAL EARTH DATA",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fictional Springs",
+        "nameascii": "Fictional Springs",
+        "namealt": "Test Spring|Demo Water",
+        "adm0name": "Fictional Country",
+        "adm1name": "North District",
+        "ne_id": 100,
+        "source": "FICTIONAL TEST DATA - NOT A REAL LOCATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.0,
+          32.0
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fictional Springs",
+        "nameascii": "Fictional Springs",
+        "namealt": "",
+        "adm0name": "Fictional Country",
+        "adm1name": "South District",
+        "ne_id": 101,
+        "source": "FICTIONAL TEST DATA - NOT A REAL LOCATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.4,
+          32.4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fictional Café Camp",
+        "nameascii": "Fictional Café Camp",
+        "namealt": "Demo Cafe",
+        "adm0name": "Fictional Country",
+        "adm1name": "North District",
+        "ne_id": 102,
+        "source": "FICTIONAL TEST DATA - NOT A REAL LOCATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.2,
+          32.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fictional Depot",
+        "nameascii": "Fictional Depot",
+        "namealt": "Demo Store",
+        "adm0name": "Fictional Country",
+        "adm1name": "North District",
+        "ne_id": 103,
+        "source": "FICTIONAL TEST DATA - NOT A REAL LOCATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1,
+          31.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fictional Date-Line Camp",
+        "nameascii": "Fictional Date-Line Camp",
+        "namealt": "",
+        "adm0name": "Fictional Country",
+        "adm1name": "Remote District",
+        "ne_id": 104,
+        "source": "FICTIONAL TEST DATA - NOT A REAL LOCATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          179.9,
+          0.0
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fictional Polar Camp",
+        "nameascii": "Fictional Polar Camp",
+        "namealt": "",
+        "adm0name": "Fictional Country",
+        "adm1name": "Remote District",
+        "ne_id": 105,
+        "source": "FICTIONAL TEST DATA - NOT A REAL LOCATION"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.0,
+          89.0
+        ]
+      }
+    }
+  ]
+}

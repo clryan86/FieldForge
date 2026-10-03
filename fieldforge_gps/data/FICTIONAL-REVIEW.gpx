@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="FieldForge fictional software test; NOT A REAL JOURNEY">
+  <metadata>
+    <name>FICTIONAL SOFTWARE EXAMPLE — NOT A REAL JOURNEY</name>
+    <desc>Artificial coordinates for testing display only. Not a traversable route, a GPS recording, or travel guidance.</desc>
+  </metadata>
+  <trk>
+    <name>FICTIONAL DISPLAY TEST — NOT A REAL JOURNEY</name>
+    <trkseg>
+      <trkpt lat="32.0" lon="-12.0">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:00Z</time>
+      </trkpt>
+      <trkpt lat="32.45" lon="-11.3">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:01Z</time>
+      </trkpt>
+      <trkpt lat="32.9" lon="-10.6">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:02Z</time>
+      </trkpt>
+      <trkpt lat="33.35" lon="-9.9">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:03Z</time>
+      </trkpt>
+      <trkpt lat="33.8" lon="-9.2">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:04Z</time>
+      </trkpt>
+      <trkpt lat="34.25" lon="-8.5">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:05Z</time>
+      </trkpt>
+      <trkpt lat="34.7" lon="-7.800000000000001">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:06Z</time>
+      </trkpt>
+      <trkpt lat="35.15" lon="-7.1000000000000005">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:07Z</time>
+      </trkpt>
+      <trkpt lat="35.6" lon="-6.4">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:08Z</time>
+      </trkpt>
+      <trkpt lat="36.05" lon="-5.7">
+        <ele>0</ele>
+        <time>2024-01-01T00:00:09Z</time>
+      </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="41.0" lon="-2.0">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:00Z</time>
+      </trkpt>
+      <trkpt lat="41.45" lon="-1.3">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:01Z</time>
+      </trkpt>
+      <trkpt lat="41.9" lon="-0.6000000000000001">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:02Z</time>
+      </trkpt>
+      <trkpt lat="42.35" lon="0.09999999999999964">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:03Z</time>
+      </trkpt>
+      <trkpt lat="42.8" lon="0.7999999999999998">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:04Z</time>
+      </trkpt>
+      <trkpt lat="43.25" lon="1.5">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:05Z</time>
+      </trkpt>
+      <trkpt lat="43.7" lon="2.1999999999999993">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:06Z</time>
+      </trkpt>
+      <trkpt lat="44.15" lon="2.8999999999999995">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:07Z</time>
+      </trkpt>
+      <trkpt lat="44.6" lon="3.5999999999999996">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:08Z</time>
+      </trkpt>
+      <trkpt lat="45.05" lon="4.3">
+        <ele>0</ele>
+        <time>2024-01-01T00:01:09Z</time>
+      </trkpt>
+    </trkseg>
+    <trkseg>
+      <trkpt lat="50.0" lon="8.0">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:00Z</time>
+      </trkpt>
+      <trkpt lat="50.45" lon="8.7">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:01Z</time>
+      </trkpt>
+      <trkpt lat="50.9" lon="9.4">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:02Z</time>
+      </trkpt>
+      <trkpt lat="51.35" lon="10.1">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:03Z</time>
+      </trkpt>
+      <trkpt lat="51.8" lon="10.8">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:04Z</time>
+      </trkpt>
+      <trkpt lat="52.25" lon="11.5">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:05Z</time>
+      </trkpt>
+      <trkpt lat="52.7" lon="12.2">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:06Z</time>
+      </trkpt>
+      <trkpt lat="53.15" lon="12.899999999999999">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:07Z</time>
+      </trkpt>
+      <trkpt lat="53.6" lon="13.6">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:08Z</time>
+      </trkpt>
+      <trkpt lat="54.05" lon="14.3">
+        <ele>0</ele>
+        <time>2024-01-01T00:02:09Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>FICTIONAL DATE-LINE TEST — no timestamps supplied</name>
+    <trkseg>
+      <trkpt lat="10" lon="178" />
+      <trkpt lat="10.2" lon="179" />
+      <trkpt lat="10.4" lon="-179" />
+      <trkpt lat="10.6" lon="-178" />
+    </trkseg>
+  </trk>
+</gpx>

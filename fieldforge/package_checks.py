@@ -112,6 +112,74 @@ def _close_own_windows(process: subprocess.Popen, expected_title: str) -> None:
             process.wait(timeout=5)
 
 
+def verify_gps_workspace(root) -> None:
+    """Require the packaged map, catalogue and UI without opening a serial port."""
+    import io
+
+    from PIL import Image
+
+    from fieldforge.ui.gps import GPSWorkspace
+    from fieldforge_gps.raster import tile_png
+
+    workspace = GPSWorkspace(root)
+    workers = []
+    try:
+        receiver = workspace.open()
+        view = receiver.live_map_frame
+        workers.append(view._map_reader)
+        finder = view.open_finder()
+        workers.append(finder.worker)
+        view.map_trust.set(True)
+        view.example_map()
+        finder.permission.set(True)
+        finder.wgs84.set(True)
+        finder.example()
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            root.update()
+            if (view.map_pack is not None and finder.catalog is not None
+                    and view._map_task is None and view._draw_after is None):
+                break
+            time.sleep(.005)
+        _require(view.map_pack is not None and bool(view.canvas.find_withtag("map-tile")),
+                 "Bundled fictional GPS map or PNG rendering is unavailable")
+        _require(finder.catalog is not None and len(finder.catalog.places) == 6,
+                 "Bundled fictional place catalogue is unavailable")
+        _require(receiver.session is None and not view.show_live.get()
+                 and not receiver.trip_consent.get(), "GPS workspace connected or recorded automatically")
+        image_view = view.open_image_reference()
+        workers.append(image_view.worker)
+        with tempfile.TemporaryDirectory(prefix="FieldForge image check ") as directory:
+            for fmt, label in (("JPEG", "jpg"), ("WEBP", "webp")):
+                encoded = io.BytesIO()
+                with Image.new("RGB", (256, 256), (80, 120, 160)) as sample:
+                    sample.save(encoded, format=fmt)
+                with Image.open(io.BytesIO(tile_png(encoded.getvalue(), label))) as decoded:
+                    _require(decoded.size == (256, 256), "Raster tile codec is unavailable")
+                path = Path(directory) / ("synthetic." + label)
+                path.write_bytes(encoded.getvalue())
+                image_view.permission.set(True)
+                image_view.open_path(path)
+                deadline = time.monotonic() + 5
+                while time.monotonic() < deadline:
+                    root.update()
+                    if image_view._job is None and image_view._draw_after is None:
+                        break
+                    time.sleep(.005)
+                _require(image_view.document is not None
+                         and image_view.document.format == fmt
+                         and bool(image_view.canvas.find_withtag("reference-image")),
+                         "Packaged map-image viewer or raster decoder is unavailable")
+        if packaged():
+            import serial
+            _require(callable(serial.Serial), "Packaged serial adapter is unavailable")
+    finally:
+        workspace.close()
+        for worker in workers:
+            worker._thread.join(2)
+            _require(not worker._thread.is_alive(), "GPS diagnostic worker did not stop")
+
+
 def verify_installation() -> dict[str, object]:
     import tkinter as tk
 
@@ -176,9 +244,11 @@ def verify_installation() -> dict[str, object]:
             _require(image.width() == image.height() == 256, "Bundled Tk PNG decoder failed")
             tk_root.update()
             tk_version = str(tk_root.tk.call("info", "patchlevel"))
+            verify_gps_workspace(tk_root)
         finally:
             tk_root.destroy()
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
+        checks.append("GPS workspace with fictional tiles/places and JPEG/WebP image rendering; no receiver or recording")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

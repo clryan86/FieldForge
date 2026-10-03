@@ -55,7 +55,7 @@ def component_notices(destination: Path) -> None:
             raise FileNotFoundError(f"{name} license.terms is required; do not ship without it")
         shutil.copy2(notice, destination / f"{name}-license.terms")
     versions = {"Python": platform.python_version()}
-    for name in ("pypdf", "pyinstaller"):
+    for name in ("pypdf", "pyinstaller", "pyserial", "Pillow"):
         package = importlib.metadata.distribution(name)
         notices = [item for item in package.files or () if
                    any(word in Path(str(item)).name.lower() for word in ("license", "copying"))
@@ -68,6 +68,17 @@ def component_notices(destination: Path) -> None:
             if source.is_file():
                 shutil.copy2(source, destination / f"{name}-{index}-{source.name}")
     (destination / "COMPONENTS.json").write_text(json.dumps(versions, indent=2) + "\n", encoding="utf-8")
+
+
+def validate_bundle_file(path: Path, bundle: Path) -> None:
+    """Only the exact bundled fictional map may pass the database-file exclusion."""
+    if path.is_symlink():
+        raise ValueError("Unexpected symlink in the application bundle")
+    if path.suffix.lower() in {".db", ".sqlite", ".sqlite3", ".mbtiles"}:
+        expected = Path("_internal/fieldforge_gps/data/FICTIONAL-MAP.mbtiles")
+        source = ROOT / "fieldforge_gps/data/FICTIONAL-MAP.mbtiles"
+        if path.relative_to(bundle) != expected or digest(path) != digest(source):
+            raise ValueError("Unexpected data file in the application bundle")
 
 
 def main() -> None:
@@ -114,8 +125,7 @@ def main() -> None:
         raise FileExistsError("Use a new output directory; an existing artifact is never overwritten")
     files = sorted(path for path in bundle.rglob("*") if path.is_file())
     for path in files:
-        if path.is_symlink() or path.suffix.lower() in {".db", ".sqlite", ".sqlite3", ".mbtiles"}:
-            raise ValueError("Unexpected data file or symlink in the application bundle")
+        validate_bundle_file(path, bundle)
     with zipfile.ZipFile(archive, "x", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zipped:
         for path in files:
             zipped.write(path, str(Path("FieldForge-Windows") / path.relative_to(bundle)))

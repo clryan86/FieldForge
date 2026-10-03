@@ -22,7 +22,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install
-        run: python -m pip install --upgrade pip && pip install -e ".[dev,pdf]"
+        run: python -m pip install --upgrade pip && pip install -e ".[dev,pdf,maps]"
       - name: Ruff
         run: ruff check .
       - name: Tests
@@ -40,6 +40,7 @@ jobs:
           PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -c "import json; from pathlib import Path; import fieldforge.knowledge.foundations as f; assert Path(f.__file__).is_relative_to(Path('foundation-wheel').resolve()); assert len(json.loads(Path('wheel-foundations.json').read_text())['data']['articles']) == 20; print('All 20 lessons exported from installed wheel:', f.__file__)"
 
           PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -S -c "from fieldforge.navigation.map_view import Viewport; from fieldforge.navigation.mbtiles import inspect_pack; assert len(Viewport(0, 0, 1, 512, 512).slots()) == 4; print('Offline map core imports without site packages')"
+          PYTHONPATH="$RUNNER_TEMP/foundation-wheel" python -c "from pathlib import Path; import fieldforge_gps; from fieldforge_gps.mbtiles import inspect_pack; p = Path(fieldforge_gps.__file__); assert p.is_relative_to(Path('foundation-wheel').resolve()); data = p.parent / 'data'; assert inspect_pack(data / 'FICTIONAL-MAP.mbtiles', consent=True).zooms; assert (data / 'FICTIONAL-PLACES.csv').is_file(); print('GPS package and map/place fixtures verified from installed wheel:', p)"
 
   text-import-gui:
     runs-on: ubuntu-latest
@@ -53,10 +54,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb
-          python -m pip install -e ".[dev,pdf]"
+          python -m pip install -e ".[dev,pdf,maps]"
       - name: Run local workflows, emergency, binder and recreation UI integration
+        env:
+          FIELDFORGE_REQUIRE_GUI: "1"
         run: |
-          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket_ui.py tests/test_foundations_ui.py tests/test_foundations_integration.py tests/test_originals.py tests/test_originals_ui.py tests/test_originals_integration.py tests/test_places.py tests/test_gpx.py tests/test_places_ui.py tests/test_places_integration.py tests/test_maps.py tests/test_maps_ui.py tests/test_maps_integration.py tests/test_packaged_ui.py'
+          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket_ui.py tests/test_foundations_ui.py tests/test_foundations_integration.py tests/test_originals.py tests/test_originals_ui.py tests/test_originals_integration.py tests/test_places.py tests/test_gpx.py tests/test_places_ui.py tests/test_places_integration.py tests/test_maps.py tests/test_maps_ui.py tests/test_maps_integration.py tests/test_packaged_ui.py tests/test_gps_desktop.py tests/test_raster_maps.py tests/test_image_maps_ui.py tests/gps_addon'
 
   windows-recovery:
     runs-on: windows-latest
@@ -70,11 +73,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
       - name: Install
-        run: python -m pip install -e ".[dev,pdf]"
+        run: python -m pip install -e ".[dev,pdf,maps]"
       - name: Require functioning Tk
         run: python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()"
       - name: Windows local-data, emergency, binder and recreation workflow tests
-        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket.py tests/test_pocket_ui.py tests/test_foundations.py tests/test_foundations_ui.py tests/test_foundations_integration.py tests/test_originals.py tests/test_originals_ui.py tests/test_originals_integration.py tests/test_places.py tests/test_gpx.py tests/test_places_ui.py tests/test_places_integration.py tests/test_maps.py tests/test_maps_ui.py tests/test_maps_integration.py tests/test_packaged_runtime.py tests/test_packaged_ui.py
+        env:
+          FIELDFORGE_REQUIRE_GUI: "1"
+        run: python -m pytest -q tests/test_snapshot.py tests/test_snapshot_hardening.py tests/test_recovery.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket.py tests/test_pocket_ui.py tests/test_foundations.py tests/test_foundations_ui.py tests/test_foundations_integration.py tests/test_originals.py tests/test_originals_ui.py tests/test_originals_integration.py tests/test_places.py tests/test_gpx.py tests/test_places_ui.py tests/test_places_integration.py tests/test_maps.py tests/test_maps_ui.py tests/test_maps_integration.py tests/test_packaged_runtime.py tests/test_packaged_ui.py tests/test_gps_desktop.py tests/test_raster_maps.py tests/test_image_maps_ui.py tests/gps_addon
 
   pocket-browser:
     runs-on: ubuntu-latest
@@ -109,7 +114,7 @@ jobs:
           architecture: "x64"
           cache: pip
       - name: Install explicit packaging dependencies
-        run: python -m pip install -e ".[pdf]" "pyinstaller==6.22.3"
+        run: python -m pip install -e ".[pdf,gps,maps]" "pyinstaller==6.22.3"
       - name: Build and verify relocated standalone Windows executables
         env:
           FIELDFORGE_BRANCH_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}

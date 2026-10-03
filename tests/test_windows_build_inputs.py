@@ -49,6 +49,7 @@ def test_component_notices_handle_tcl_objects_and_copy_exact_license_bytes(compo
         assert (destination / f"{name}-license.terms").read_bytes() == (directory / "license.terms").read_bytes()
     assert json.loads((destination / "COMPONENTS.json").read_text())["pypdf"] == "fixture"
     assert (destination / "pyinstaller-0-LICENSE.txt").read_bytes() == b"Synthetic pyinstaller license\n"
+    assert (destination / "pyserial-0-LICENSE.txt").read_bytes() == b"Synthetic pyserial license\n"
 
 
 def test_missing_tk_notice_still_blocks_distribution(components):
@@ -58,3 +59,26 @@ def test_missing_tk_notice_still_blocks_distribution(components):
         build_windows.component_notices(destination)
     assert closed == [True]
     assert not (destination / "COMPONENTS.json").exists()
+
+
+def test_bundle_allows_only_exact_fictional_map_at_expected_path(tmp_path):
+    import shutil
+    from pathlib import Path
+
+    bundle = tmp_path / "bundle"
+    fixture = bundle / "_internal/fieldforge_gps/data/FICTIONAL-MAP.mbtiles"
+    fixture.parent.mkdir(parents=True)
+    source = Path(build_windows.ROOT) / "fieldforge_gps/data/FICTIONAL-MAP.mbtiles"
+    shutil.copy2(source, fixture)
+    build_windows.validate_bundle_file(fixture, bundle)
+    fixture.write_bytes(b"Unrelated private map content")
+    with pytest.raises(ValueError, match="Unexpected data file"):
+        build_windows.validate_bundle_file(fixture, bundle)
+    wrong_path = bundle / "private.mbtiles"
+    shutil.copy2(source, wrong_path)
+    with pytest.raises(ValueError, match="Unexpected data file"):
+        build_windows.validate_bundle_file(wrong_path, bundle)
+    database = bundle / "household.db"
+    database.write_bytes(b"Private data")
+    with pytest.raises(ValueError, match="Unexpected data file"):
+        build_windows.validate_bundle_file(database, bundle)

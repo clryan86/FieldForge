@@ -60,11 +60,14 @@ The 12 starter articles and 20 Foundations lessons are bundled but remain
 explicit library-installation choices. Use Load Starter Library or Foundations
 Pack inside Knowledge Library. There is no specialist-reviewed civilization
 corpus, local language model, native mobile app or new map collection in this ZIP.
-The standard PDF-text parser is included. Encrypted-PDF extraction is still
+The standard PDF-text parser, serial adapter and Pillow image codecs are included. Encrypted-PDF extraction is still
 unsupported; original-file storage preserves those bytes without decryption.
 Read and retain the existing source/extraction warnings for technical references.
 
-Maps opens supported already-local PNG MBTiles files. Map packs stay external
+Maps opens supported already-local PNG/JPEG/WebP MBTiles files. Navigation opens
+the combined GPS workspace and a separate uncalibrated map-image viewer. The
+serial adapter and Pillow image codecs are included; nothing connects or records
+automatically. See docs/GPS_WORKSPACE.md in the source for format limits. Map packs stay external
 and are NOT included in database backups; keep independent copies and licenses.
 Full database backups include original PDFs only when explicitly stored through
 Original PDFs. The application folder is not a backup of your data or documents.

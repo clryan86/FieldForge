@@ -1,4 +1,4 @@
-"""Read a limited, flat/indexed PNG MBTiles subset without network or writes.
+"""Read a limited, flat/indexed raster MBTiles subset without network or writes.
 
 This is NOT a general MBTiles validator or a malicious-file sandbox. Only open
 trusted, closed map-pack copies. The pack remains external to the app database.
@@ -127,7 +127,7 @@ def _png_size(data: bytes) -> int:
 def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
     path = Path(source).expanduser().resolve()
     if path.suffix.lower() != ".mbtiles":
-        raise ValueError("Choose a local PNG .mbtiles map pack, not a URL, image, GPX or vector pack.")
+        raise ValueError("Choose a local raster .mbtiles map pack, not a URL, image, GPX or vector pack.")
     signature = _signature(path)
     warnings = []
     with _read_database(path, signature, cancel) as db:
@@ -161,8 +161,8 @@ def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
             metadata[key] = value
         if not metadata.get("name", "").strip():
             raise ValueError("Map metadata must supply a name.")
-        if metadata.get("format", "").lower() != "png":
-            raise ValueError("Only PNG raster MBTiles are supported in this build; not JPEG, WebP or PBF/vector tiles.")
+        if metadata.get("format", "").lower() not in {"png", "jpg", "jpeg", "webp"}:
+            raise ValueError("Use PNG, JPEG or WebP raster MBTiles; PBF/vector tiles are not supported.")
         if metadata.get("scheme", "tms").lower() != "tms":
             raise ValueError("Map row scheme must be MBTiles/TMS, not XYZ.")
         indexed = f"tiles INDEXED BY {_quoted(index_name)}"
@@ -221,6 +221,13 @@ def read_frame(pack: MapPack, view: Viewport, *, cancel: Event | None = None) ->
                         raise ValueError("Visible map data exceeds the 32 MiB frame budget; use a smaller window.")
                     data = db.execute(f"SELECT tile_data FROM {table} WHERE zoom_level=? AND tile_column=? AND tile_row=?", key).fetchone()[0]
                     try:
+                        if dict(pack.metadata)["format"].lower() != "png":
+                            from fieldforge_gps.raster import tile_png
+                            converted = tile_png(data, dict(pack.metadata)["format"])
+                            total += max(0, len(converted) - len(data))
+                            if total > MAX_FRAME_BYTES:
+                                raise ValueError("Decoded tile buffers exceed the 32 MiB frame budget.")
+                            data = converted
                         pixels = _png_size(data)
                     except ValueError as exc:
                         data, issue = None, str(exc)

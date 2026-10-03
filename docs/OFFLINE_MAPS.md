@@ -1,4 +1,4 @@
-# Offline raster maps — local PNG MBTiles, not live navigation
+# Offline raster maps — local MBTiles
 
 The desktop **Maps** section opens an already-local map pack, renders its raster
 tiles, and provides pan, zoom, coordinate centering and an optional saved-place
@@ -10,26 +10,29 @@ meeting point are not verified safe travel guidance.
 ## Open a supported map
 
 Choose **Maps → Open local map…**, select a trusted `.mbtiles` file and confirm
-that you trust it and have permission to use it. This initial reader supports a
+that you trust it and have permission to use it. Both the Maps tab and GPS workspace support a
 specific MBTiles subset:
 
-- PNG raster imagery in ordinary `metadata` and `tiles` tables, using MBTiles'
+- PNG, JPEG or WebP raster imagery in ordinary `metadata` and `tiles` tables, using MBTiles'
   TMS rows and Web Mercator tile coordinates.
 - A unique, non-partial index on `(zoom_level, tile_column, tile_row)` in that
-  order, plus `name` and `format=png` metadata. The reader never builds an index
+  order, plus `name` and `format=png`, `jpg`, `jpeg` or `webp` metadata. The reader never builds an index
   or changes the supplied pack to make it compatible.
-- Square 256- or 512-pixel PNGs. A 512-pixel retina tile is subsampled to the same
+- Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
   256-screen-pixel logical footprint. There is no extra detail invented from a
   lower zoom, no resampling fallback from another level and no remote fallback.
 - Integer zoom levels between 0 and 22. Controls use levels actually present in
   the tiles table, not just claimed by metadata. A level's presence does NOT
   establish that every part of the viewport or declared region is covered.
 
-JPEG, WebP, PBF/vector tiles and normalized/view-based MBTiles layouts are **not
-supported yet**. Those can be valid MBTiles formats; rejection means this reader
+PBF/vector tiles, animated tiles and normalized/view-based MBTiles layouts are
+**not supported**. Those can be valid MBTiles formats; rejection means this reader
 cannot display them, not that their files are corrupt. GPX, PDF maps and ordinary
 image files are not MBTiles. The app does not convert these formats automatically.
-Use a fully exported, closed map copy; nonempty WAL/journal sidecars are refused.
+Open ordinary map images through **Navigation → Open map image…**; see
+[image formats and limits](GPS_WORKSPACE.md#mbtiles-and-image-files). Source users
+install `.[maps]` for JPEG/WebP and map-image decoding; native PNG tiles continue
+to work without Pillow. Use a fully exported, closed map copy; nonempty WAL/journal sidecars are refused.
 
 The map file is read in place, not copied into SQLite or registered in a persistent
 map catalog. Closing the map or application forgets its file selection and view.
@@ -64,8 +67,8 @@ A corrupt or changed map file clears the frame instead of leaving an old map
 under new coordinate labels. A new failed file-open also removes the prior map.
 
 Only a bounded viewport is loaded: at most 2560×1600 screen pixels and 96 visible
-cells, at most 2 MiB compressed PNG bytes per tile, 32 MiB of unique compressed
-tile bytes per frame and 16 GiB per external pack. Larger input or excessive
+cells, at most 2 MiB source bytes per tile, 32 MiB of unique source/display-PNG
+tile buffers per frame (whichever is larger for each tile) and 16 GiB per external pack. Larger input or excessive
 visible data fails with an explanation. These bounds are implementation limits,
 not a benchmark for all storage hardware or a claim that a 16 GiB pack was tested.
 Decoded images and the running application need additional memory.
@@ -99,9 +102,11 @@ and GPX-sharing rules, separate from the external imagery.
 ## Read-only and cancellation boundaries
 
 Map SQLite connections use read-only URI mode, query-only mode and disabled
-trusted schema. Metadata counts/sizes, table shapes, index shape, PNG dimensions
+trusted schema. Metadata counts/sizes, table shapes, index shape, raster dimensions
 and compressed sizes are bounded. Tile preflight does not completely validate
-PNG content; Tk performs actual decoding and decode failures become marked cells.
+PNG content; Tk performs PNG decoding and decode failures become marked cells.
+JPEG/WebP tiles are decoded by Pillow in the worker, checked against the declared
+format/dimensions, and converted to metadata-free PNG display buffers.
 Only trusted files should be opened with a maintained Python/SQLite/Tk build.
 This is not a malware scanner, content sanitizer or hostile-file security sandbox.
 
@@ -115,8 +120,8 @@ Close and reopen the intended pack to explicitly accept a different file version
 SQLite work has a progress-handler deadline and 250 ms lock wait. Cancellation
 signals stop obsolete queries and generation tokens prevent their late results
 from appearing after a new file, pan, zoom, opt-out or close. Regular filesystem
-I/O and PNG decoding are not forcibly interrupted or guaranteed to finish within
-that deadline. Workers only read data; Tk decoding/drawing is on the main thread.
+I/O and image decoding are not forcibly interrupted or guaranteed to finish within
+that deadline. Workers read data and decode non-PNG tiles; Tk PNG decoding/drawing is on the main thread.
 There is no mid-read database write to wait for when closing the application.
 Existing guards still protect unrelated unsaved editors and active write jobs.
 

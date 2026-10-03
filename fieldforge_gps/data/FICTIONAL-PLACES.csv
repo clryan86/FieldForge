@@ -1,0 +1,7 @@
+name,latitude,longitude,country,region,aliases,source_id,source
+Fictional Springs,32.0,0.0,Fictional Country,North District,Test Spring|Demo Water,fiction-01,FICTIONAL TEST DATA - NOT A REAL LOCATION
+Fictional Springs,32.4,0.4,Fictional Country,South District,,fiction-02,FICTIONAL TEST DATA - NOT A REAL LOCATION
+Fictional Café Camp,32.1,0.2,Fictional Country,North District,Demo Cafe,fiction-03,FICTIONAL TEST DATA - NOT A REAL LOCATION
+Fictional Depot,31.9,-0.1,Fictional Country,North District,Demo Store,fiction-04,FICTIONAL TEST DATA - NOT A REAL LOCATION
+Fictional Date-Line Camp,0.0,179.9,Fictional Country,Remote District,,fiction-05,FICTIONAL TEST DATA - NOT A REAL LOCATION
+Fictional Polar Camp,89.0,0.0,Fictional Country,Remote District,,fiction-06,FICTIONAL TEST DATA - NOT A REAL LOCATION
