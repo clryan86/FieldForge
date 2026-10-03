@@ -7,6 +7,11 @@ benchmark claim, factual validation, or proof that designs are safe or complete.
 
 ## Setup and reproducibility
 
+These recorded results use the pre-education-expansion corpus below. The current
+bundle also contains 24 Education Foundations drafts; rerunning with it produces
+a different corpus fingerprint. These historical scores are not measurements of
+that expanded corpus.
+
 - Run date: 2026-10-02, Windows 11, Python 3.12.14.
 - Corpus: the 267-article bundled reference pack, installed into a fresh database.
 - Corpus fingerprint (sorted slug/body-checksum pairs):

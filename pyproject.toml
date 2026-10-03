@@ -27,7 +27,7 @@ fieldforge-blueprints = "fieldforge.blueprints.__main__:main"
 include = ["fieldforge*"]
 
 [tool.setuptools.package-data]
-"fieldforge.content" = ["packs/*.json", "LICENSE_CONTENT.txt"]
+"fieldforge.content" = ["packs/*.json", "education/*.json", "LICENSE_CONTENT.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

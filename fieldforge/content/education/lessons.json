@@ -1,0 +1,985 @@
+{
+  "edition": "2026-10-02",
+  "language": "en",
+  "license": "CC BY-SA 4.0",
+  "authorship": "Original AI-assisted FieldForge lesson drafts; no independent educator review",
+  "references": {
+    "study": {
+      "title": "Organizing Instruction and Study to Improve Student Learning (2007)",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+      "scope": "Background on spaced study, retrieval, explanations, and worked examples; not validation of these activities.",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "accessed_on": "2026-10-02"
+    },
+    "reading": {
+      "title": "Foundational Skills to Support Reading for Understanding in Kindergarten Through 3rd Grade (2016; revised 2019)",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+      "scope": "Background on speech sounds, letter relationships, decoding, vocabulary and connected reading. Evidence concerns early school grades, not all ages or languages.",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "accessed_on": "2026-10-02"
+    },
+    "comprehension": {
+      "title": "Improving Reading Comprehension in Kindergarten Through 3rd Grade (2010)",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+      "scope": "Background on comprehension instruction; the stories, questions and adaptations here are original examples.",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "accessed_on": "2026-10-02"
+    },
+    "writing": {
+      "title": "Teaching Elementary School Students to Be Effective Writers (2012; revised 2018)",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+      "scope": "Background on writing processes and basic writing skills; not a tested FieldForge intervention.",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "accessed_on": "2026-10-02"
+    },
+    "early-math": {
+      "title": "Teaching Math to Young Children (2013)",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/18",
+      "scope": "Background on early mathematics progressions and monitoring; the source addresses preschool through kindergarten.",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "accessed_on": "2026-10-02"
+    },
+    "whole": {
+      "title": "Prealgebra 2e: Introduction to Whole Numbers",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/1-1-introduction-to-whole-numbers",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "addition": {
+      "title": "Prealgebra 2e: Add Whole Numbers",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/1-2-add-whole-numbers",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "multiplication": {
+      "title": "Prealgebra 2e: Multiply Whole Numbers",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "fractions": {
+      "title": "Prealgebra 2e: Visualize Fractions",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/4-1-visualize-fractions",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "decimals": {
+      "title": "Prealgebra 2e: Decimals",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/5-1-decimals",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "percent": {
+      "title": "Prealgebra 2e: Understand Percent",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/6-1-understand-percent",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "measurement": {
+      "title": "Prealgebra 2e: Systems of Measurement",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    },
+    "geometry": {
+      "title": "Prealgebra 2e: Use Properties of Rectangles, Triangles, and Trapezoids",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids",
+      "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-02"
+    }
+  },
+  "lessons": [
+    {
+      "id": "01",
+      "title": "Start a learning group with limited materials",
+      "track": "teaching",
+      "audience": "Facilitators, parents, peer tutors and adult learning groups",
+      "prerequisites": [],
+      "goal": "Create a workable learning session with an explicit goal, accessible materials and a record of what to try next.",
+      "materials": "Paper or a reusable writing surface, a pencil or chalk, and this pack. No electricity is required once lessons have been printed or copied.",
+      "lesson": [
+        "Begin with a conversation: what would each learner like to read, write, calculate or explain? Ask which language and response method are most comfortable. A person who cannot yet read an English instruction may already understand its mathematics. Do not turn an English reading task into a general judgment of ability.",
+        "Choose a predictable meeting place and a short routine: welcome, one demonstration, practice, and a closing check. Start with a duration the group can manage; there is no universal lesson length here. Agree that learners may ask for a repeat, decline public reading, or explain through speech, drawing or objects. Avoid displaying personal difficulties on a public scoreboard.",
+        "Prepare three reusable materials: number cards, letter cards for the language being taught, and a notebook. Draw counters instead of collecting small objects if choking is a concern. Use large, high-contrast writing. Check that everyone can see, hear, reach and handle the materials before teaching. Ask about adaptations rather than guessing someone's needs.",
+        "An example first meeting: invite a learner to count six drawn marks, recognize their written name, and describe a familiar task. These are starting observations, not a diagnostic test. Pick one next step with that learner. For a mixed group, give independent practice to learners who already know the skill and spend a few minutes demonstrating it to others. End by recording one success and one next step."
+      ],
+      "practice": [
+        "List three materials available locally and one way to make each accessible.",
+        "Write one goal for the first meeting that a learner could demonstrate.",
+        "A learner explains a number problem orally but cannot read its English sentence. What should you try next?"
+      ],
+      "answers": [
+        "Examples: thick pencil and large paper; high-contrast chalkboard; large paper counters instead of small loose items. Suitability depends on the learners.",
+        "An observable goal: count eight drawn marks once each and state the total. 'Become good at mathematics' is too broad for one meeting.",
+        "Read or translate the prompt with permission, let the learner demonstrate the calculation, and record language support separately from mathematical understanding."
+      ],
+      "adaptation": "Use familiar names and locally meaningful tasks. Adults should choose adult contexts without being required to reveal finances or private history. Revisit the plan with the group after the first meeting.",
+      "references": [
+        "early-math"
+      ],
+      "tags": [
+        "community-learning",
+        "low-resource",
+        "accessibility"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Plan a lesson with a worked example",
+      "track": "teaching",
+      "audience": "Facilitators and self-directed learners",
+      "prerequisites": [
+        "01"
+      ],
+      "goal": "Write a lesson that moves from one clear demonstration to supported practice and an independent check.",
+      "materials": "A blank lesson card and an example from the literacy or numeracy lessons below.",
+      "lesson": [
+        "A useful lesson card answers five questions: What will learners do? What must they already know? What will I demonstrate? What will they try? How will I tell whether they can do it? Keep the goal narrow enough to observe during the meeting. 'Use a label to find the date' is clearer than 'understand documents'.",
+        "Here is an original lesson card for combining amounts. Goal: represent two groups and find the total. Starting knowledge: count to ten. Demonstration: draw four circles and three more; touch each once and write 4 + 3 = 7. Supported task: learner and tutor draw two groups together. Independent task: learner creates a new example and explains the answer without copying the demonstration.",
+        "Say why each step makes sense. Give time for the learner to try before supplying the answer. If an error appears, identify the step that caused it. A counting error needs a different response from not knowing what the plus sign means. Change the example while keeping the goal stable so that copying alone does not pass the check.",
+        "Prepare an easier version and a further challenge. For the example, smaller groups are easier; finding a missing group is a challenge. These options let you respond during the session. Keep any worksheet separate from its answer key until the learner has tried. The teacher's demonstration, practice task and final check should all target the same skill."
+      ],
+      "practice": [
+        "Write a lesson card for reading a two-word label.",
+        "For 3 + 2, explain what each number and sign represents.",
+        "A learner copies 4 + 3 = 7 perfectly. What extra check is needed?"
+      ],
+      "answers": [
+        "Accept a card with a readable label, one demonstration, a different practice label, and a final label the learner attempts with an appropriate level of help.",
+        "3 and 2 are the group sizes; + means combine them; = says both sides represent the same amount, five.",
+        "Use a new combination or ask the learner to build the groups and explain the total. Copying does not by itself establish understanding."
+      ],
+      "adaptation": "Keep a simple record of what support was needed. Drawing, spoken explanation or pointing may show the intended skill when handwriting is not the goal.",
+      "references": [
+        "study"
+      ],
+      "tags": [
+        "lesson-planning",
+        "worked-example",
+        "peer-tutoring"
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Remember learning through spaced practice",
+      "track": "teaching",
+      "audience": "Facilitators and self-directed learners",
+      "prerequisites": [
+        "02"
+      ],
+      "goal": "Make a small review plan that includes trying to recall, checking an answer and revisiting it later.",
+      "materials": "Folded paper question cards and a notebook; a calendar is optional.",
+      "lesson": [
+        "Retrieval means trying to bring an idea to mind before looking at the answer. Spacing means returning to it on separate occasions. The IES study guide discusses these approaches, but it does not validate a single schedule for every learner. Use the following card system as a practical example, then adjust it.",
+        "Write one question on the front and an explanation on the back. A mathematics card might ask 'How can you show 12 as equal groups of three?' Its back says 'Four groups, because 3 + 3 + 3 + 3 = 12'. A vocabulary card should ask for a meaning in context rather than only a copied word.",
+        "At the next meeting, try each question without turning the card over. Then check it. Sort into 'can explain', 'partly remembered', and 'needs another demonstration'. This is a private planning tool, not a ranking of people. For a missed item, inspect the explanation and try a different example. Repeatedly guessing without feedback is not the purpose.",
+        "An example timetable is an initial lesson, a review at the next meeting, another several meetings later, and a later mixed review. Change the interval if the item is repeatedly forgotten or the task is still unfamiliar. Ask 'why?' or 'how do you know?' to distinguish understanding from a remembered phrase. Include one older skill in a new practical task, such as reading a label while counting its contents."
+      ],
+      "practice": [
+        "Make a question card for an idea you learned today.",
+        "Why should you check the answer after an attempted recall?",
+        "A learner remembers a definition but cannot use it. Suggest a better review task."
+      ],
+      "answers": [
+        "A useful card has a clear prompt and an answer with enough explanation to correct a mistake.",
+        "Checking can reveal and correct an error; an unsupported guess should not become the practice target.",
+        "Ask for a new example, a comparison with a non-example, or a practical application, then review the result together."
+      ],
+      "adaptation": "Questions can be spoken or shown with pictures. Do not use surprise public quizzes to embarrass learners. Keep review brief enough to leave time for explanation and practice.",
+      "references": [
+        "study"
+      ],
+      "tags": [
+        "spaced-practice",
+        "retrieval-practice",
+        "study-skills"
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Check understanding and give useful feedback",
+      "track": "teaching",
+      "audience": "Facilitators, parents and tutors",
+      "prerequisites": [
+        "02"
+      ],
+      "goal": "Record what a learner can do, identify a specific difficulty and choose the next teaching step.",
+      "materials": "One independent task and a private progress sheet with date, task, support, observation and next-step columns.",
+      "lesson": [
+        "A progress check should answer a teaching question. For example: can this learner count objects without skipping any? Give an unfamiliar small arrangement and watch the method. A single task is a sample of performance in that setting, not proof of permanent mastery or a diagnosis.",
+        "Describe observations concretely. 'Counted the same mark twice after moving the paper' is more useful than 'bad at numbers'. Record whether the task was read aloud, translated, enlarged or demonstrated. Keep those supports when they improve access unless the support supplies the very skill being assessed.",
+        "Give feedback in a form the learner can use immediately: identify a successful step, name one change, and invite a retry. Example: 'You touched each of the first four marks once. Your finger returned to the second mark. Try moving a counter into a new row after counting it.' Now offer another arrangement. Avoid making the learner repeat a failed attempt many times with no new explanation.",
+        "Compare the learner's work with the goal, not with a peer's speed. Separate calculation, reading and handwriting demands when the goal permits. Keep a few dated work samples to discuss progress privately. If difficulty persists, consult available educators or specialists with the learner or caregiver; do not assign disability labels from these informal activities. The lesson pack has no standardized scoring norms."
+      ],
+      "practice": [
+        "Rewrite 'needs to try harder' as an observable note about a specific task.",
+        "A goal is understanding fractions; a learner can explain with paper but struggles to write numerals. What can you record?",
+        "Plan a follow-up after a learner adds the denominators in 1/4 + 1/4."
+      ],
+      "answers": [
+        "Example: 'Read the first two words independently, asked for help on the third, then reread the sentence accurately.'",
+        "Record demonstrated fraction understanding, the response method and the writing difficulty separately.",
+        "Use one whole divided into four equal parts. Combine two quarter pieces, name two quarters, then ask a new same-denominator question."
+      ],
+      "adaptation": "Store progress sheets privately and collect only information needed for teaching. Offer oral, tactile or large-print formats where appropriate, and ask the learner which helps.",
+      "references": [
+        "early-math"
+      ],
+      "tags": [
+        "assessment",
+        "feedback",
+        "progress-monitoring"
+      ]
+    },
+    {
+      "id": "05",
+      "title": "English speech sounds and letters",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [],
+      "goal": "Distinguish a spoken sound from a letter name and connect a small set of sounds to printed letters.",
+      "materials": "Large cards for m, s, a, t and p; a writing surface. English-speaking support for the examples.",
+      "lesson": [
+        "A letter is a written symbol. A speech sound is something heard and produced. Letter names and the sounds they represent are related but are not identical. The name of m is 'em'; the first sound in 'mat' is /m/. Slashes in this lesson indicate a sound, not punctuation to read aloud.",
+        "Say 'mat' naturally. Stretch its /m/ without adding a separate 'uh'. Listen for the short vowel /a/ as in 'apple' in many English accents, then the final /t/. The pronunciation symbols here are informal teaching cues, not a complete phonetic alphabet. English accents differ; use consistent local pronunciation and do not treat an accent difference as an error.",
+        "Show m while making /m/. Have the learner point to the matching card, then form the letter in large writing if appropriate. Repeat for s, a, t and p. For stop sounds such as /t/ and /p/, keep the sound brief. Teach these limited sound-letter relationships first; do not claim that every English letter always makes only one sound.",
+        "Separate listening from print at first. Say 'sun' and 'mat' and ask which begins with /m/. Then add the m card. Reverse the direction: show m and ask for its sound. A learner can respond by selecting a card if speech production is difficult. This sample set starts a sequence; it does not cover the alphabet, vowel patterns, spelling exceptions or another language's writing system."
+      ],
+      "practice": [
+        "Which begins with /m/: map or tap?",
+        "Point to the card for the first sound in 'sat'.",
+        "Explain the difference between saying the letter name 'em' and the first sound in 'mat'."
+      ],
+      "answers": [
+        "Map begins with /m/.",
+        "s corresponds to the initial /s/ in this word.",
+        "'Em' names the written letter m; /m/ is the sound used at the start of 'mat'."
+      ],
+      "adaptation": "Use a qualified speaker and suitable materials for the language being taught. Do not transfer English sound-letter examples unchanged to other writing systems. Use tactile cards or enlarged print when helpful.",
+      "references": [
+        "reading"
+      ],
+      "tags": [
+        "phonemic-awareness",
+        "phonics",
+        "english-literacy",
+        "letters"
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Blend sounds to read and spell short words",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "05"
+      ],
+      "goal": "Read and build regular short English words from taught sound-letter relationships.",
+      "materials": "Letter cards m, a, t, s and p, with extra copies of a and m if needed.",
+      "lesson": [
+        "Put m, a and t in a row. Point below each letter from left to right and say its sound: /m/ /a/ /t/. Move the pointer smoothly across the row while joining the sounds into 'mat'. Say the word normally and check its meaning. Ask the learner to try after the demonstration.",
+        "Change only the first letter: mat becomes sat. Then compare mat and map. The learner should attend to the whole printed word; its first letter or an accompanying picture is not enough to identify it. If the learner says 'mat' for map, point to the final letter, supply its sound if needed, and blend again.",
+        "For spelling, reverse the process. Say 'tap', identify the three sounds in order, and choose t, a and p. Ask the learner to reread the constructed word. Use a familiar spoken word before expecting the learner to connect it with meaning. Explain that these examples are regular words using the limited letter set; later lessons must explicitly introduce other patterns and exceptions.",
+        "Try a small sequence: am, at, mat, sat, map, tap. Change the order on a later attempt so that the learner cannot simply recite the list. Notice whether a mistake involves recalling a sound, joining sounds, or recognizing word meaning. Practice the difficult step with support and then return to the whole word."
+      ],
+      "practice": [
+        "Build 'map' from letter cards, then change one letter to make 'mat'.",
+        "Read these in a new order: tap, sat, am.",
+        "A learner reads 'sat' when the print says 'mat'. Where should the tutor direct attention?"
+      ],
+      "answers": [
+        "m-a-p becomes m-a-t by replacing p with t.",
+        "Listen for the words tap, sat and am. Supply taught sounds as needed, then have the learner blend again; do not score accent differences as decoding errors.",
+        "Compare the initial letters and their sounds, then blend all three letters. The shared ending does not make the words identical."
+      ],
+      "adaptation": "Large cards, pointing or selecting letters can replace handwriting. Use age-respectful short-word tasks for adult beginners. Continue with a systematic local reading sequence after this limited introduction.",
+      "references": [
+        "reading"
+      ],
+      "tags": [
+        "decoding",
+        "blending",
+        "spelling",
+        "phonics"
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Read short sentences and check meaning",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "06"
+      ],
+      "goal": "Read a brief controlled text, explain what happened and distinguish words from sentences.",
+      "materials": "This lesson copied in large print. Introduce capital M, S and P as forms of m, s and p.",
+      "lesson": [
+        "Words can be joined into sentences that communicate an event or idea. Spaces separate words in these English examples. A capital letter marks the beginning, and a period marks the end of a statement. Names also begin with capitals. Before reading, introduce Sam and Pam as names made from the taught sounds.",
+        "Text A: 'Sam sat. Pam sat.' First point to each word while the learner reads it. If needed, model blending a difficult word, then reread the entire sentence. Ask who sat. Do not assume that accurate pronunciation alone means the sentence was understood.",
+        "Text B: 'Sam taps. Pam taps.' Teach taps explicitly: blend t-a-p, then add the final /s/. Ask learners to demonstrate tapping on the paper softly or describe the action. Read the two sentences again in a comfortable, meaningful voice. These tiny texts support early practice; they are not a substitute for richer stories read aloud by a fluent reader.",
+        "Ask the learner to point to a capital, a space and a period. Swap the order of the names and see whether the learner notices. For an oral extension, tell an original story about Sam and Pam and ask the learner to retell it. Label that activity as listening comprehension, because hearing a story and independently decoding it are different tasks."
+      ],
+      "practice": [
+        "In Text A, who sat?",
+        "How many sentences are in Text B? How many words are in its first sentence?",
+        "Point to the difference between 'tap' and 'taps', and read both."
+      ],
+      "answers": [
+        "Sam and Pam both sat.",
+        "There are two sentences. 'Sam taps.' contains two words.",
+        "Taps has a final s representing /s/ here. Accept consistent local pronunciation while checking the additional sound."
+      ],
+      "adaptation": "A learner may answer by pointing, acting or speaking. Offer individual practice before public reading. Move beyond these texts when their limited sounds are secure, using instruction that introduces the next patterns explicitly.",
+      "references": [
+        "reading"
+      ],
+      "tags": [
+        "connected-text",
+        "reading-fluency",
+        "sentences"
+      ]
+    },
+    {
+      "id": "08",
+      "title": "Vocabulary, retelling and reading comprehension",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "07"
+      ],
+      "goal": "Use context to discuss a word, distinguish stated facts from inferences and retell a short passage.",
+      "materials": "The original passage below, read aloud by a facilitator if its words exceed the learner's decoding knowledge.",
+      "lesson": [
+        "Passage: 'Mina carried an empty basket to the garden. She picked four beans and put them in the basket. At the gate, she gave one bean to Jo. Mina carried the basket home.' This passage introduces spelling patterns beyond lesson 07. Treat it as listening comprehension until the learner can decode those patterns.",
+        "Before reading, discuss 'empty': containing nothing. Show an empty drawn basket and one with marks inside. Ask for another thing that can be empty. After the passage, ask which sentence tells us the basket was empty at the start. Return to the exact words instead of asking learners to guess what the tutor wants.",
+        "A stated fact is directly given: Mina picked four beans. An inference combines the words with reasoning: assuming none were lost or added, three beans remained after she gave one away. An unsupported claim would be 'Mina likes beans best'; the passage does not tell us her favorite food. Saying 'we do not know' is sometimes the most accurate answer.",
+        "For retelling, use a beginning-middle-end sequence: empty basket, collecting and sharing beans, returning home. A retelling does not have to use the author's exact sentences. Ask what changed and which details support the answer. If the learner misses a detail, reread the relevant part and ask a more focused question. This is a comprehension conversation, not a memory trap."
+      ],
+      "practice": [
+        "Explain 'empty' using a new example.",
+        "Where did Mina put the four beans, and what happened next?",
+        "Does the passage tell us Jo's age? How many beans remain under the stated assumption?"
+      ],
+      "answers": [
+        "Example: a cup with nothing inside. Accept other examples consistent with containing nothing.",
+        "She put them in the basket, then gave one to Jo at the gate.",
+        "Jo's age is not stated. Three beans remain if no others were lost, eaten or added."
+      ],
+      "adaptation": "Use oral stories in the learner's strongest language too. Separate unfamiliar vocabulary from decoding difficulty, and invite more than one reasonable inference when each is supported by the text.",
+      "references": [
+        "comprehension"
+      ],
+      "tags": [
+        "vocabulary",
+        "comprehension",
+        "retelling",
+        "inference"
+      ]
+    },
+    {
+      "id": "09",
+      "title": "Write clear sentences and revise them",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "08"
+      ],
+      "goal": "Draft a meaningful sentence, improve a missing detail and check basic English conventions.",
+      "materials": "Paper or a writing board. A scribe or letter cards may support learners whose handwriting is still developing.",
+      "lesson": [
+        "Writing can begin with a spoken message. Ask what the learner wants another person to know. Say the message, then write a first draft. For an early task, use a statement that names someone or something and tells what happens: 'Ari sorts the cards.' This is a useful starting pattern, not a definition of every possible English sentence.",
+        "Choose one purpose and reader. A note for a study partner needs different details from a story. Original draft: 'We meet later.' A reader cannot tell when or where. Revision: 'We meet by the library table at 3:00 in the afternoon.' The revision adds information needed for the purpose.",
+        "Revising improves meaning and organization; editing checks conventions such as spelling, spacing, capitals and punctuation. Work on meaning first when a message is unclear. Read the sentence aloud, asking whether it says what the learner intended. Then check its first capital and ending punctuation. Do not mark every possible spelling issue if that would overwhelm the current goal.",
+        "Ask a partner to explain the message back without guessing missing details. The writer decides which suggestions improve it. Keep the first draft to show what changed. Copying a polished sentence can practice handwriting, but it does not replace choosing a message and making a revision."
+      ],
+      "practice": [
+        "Write a sentence about an ordinary learning task.",
+        "Revise 'Bring it tomorrow' so a reader knows what to bring and where.",
+        "Edit this sentence for an initial capital and a period: 'nora counts the pencils'"
+      ],
+      "answers": [
+        "Example: 'I read a story with my partner.' Accept another understandable statement appropriate to the task.",
+        "Example: 'Bring your notebook to the learning table tomorrow.' A date or time may also be needed in a real note.",
+        "'Nora counts the pencils.' Explain that Nora is also a name and begins with a capital."
+      ],
+      "adaptation": "Dictation to a scribe may assess composition separately from handwriting. Use the writing conventions of the language being taught. Ask permission before sharing a learner's work outside the group.",
+      "references": [
+        "writing"
+      ],
+      "tags": [
+        "writing",
+        "revision",
+        "punctuation",
+        "sentences"
+      ]
+    },
+    {
+      "id": "10",
+      "title": "Read notices and write practical instructions",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "09"
+      ],
+      "goal": "Extract key information from a simple notice and write a short sequence another person can follow.",
+      "materials": "The sample notice below, paper and a pencil. All names, dates and activities are fictional exercises.",
+      "lesson": [
+        "Sample notice: 'BOOK EXCHANGE. Wednesday, 14 October. Learning room. 2:00-3:00 in the afternoon. Bring one clean book if you have one. You may attend without bringing a book.' Read the heading, date, place, time and conditions separately. Notice that bringing a book is optional; a hurried reader could miss the last sentence.",
+        "Real notices may omit a year, use ambiguous dates, or change after being copied. This teaching notice omits the year deliberately so learners can identify a missing detail. For an actual event, verify the full date and current arrangements with its organizer. Copying an old notice does not make its information current.",
+        "Instructions should name the starting materials, put actions in order and explain how to recognize completion. Original example: 'Put the cards face up. Sort them into two piles: letters and numbers. Count the number cards. Write the total on the sheet.' Let a partner try without extra spoken hints; revise the part where they get stuck.",
+        "For forms, first identify which fields are required and what each asks for. Practice with invented details. Never require learners to reveal addresses, identification numbers, financial information or other private facts to complete a literacy exercise. Reading a field label is different from deciding whether it is appropriate to provide the requested information."
+      ],
+      "practice": [
+        "Can someone attend the book exchange without bringing a book? Identify the words that support your answer.",
+        "What date information is missing from the sample notice?",
+        "Write three ordered steps for putting notebooks on a shelf, then ask a partner to test them."
+      ],
+      "answers": [
+        "Yes. The last sentence explicitly allows attendance without a book.",
+        "The year is missing. A real notice should make the full date unambiguous.",
+        "Example: clear a space; place notebooks upright with titles visible; check that the pile or row is stable. Accept other usable, safe steps and revise unclear directions."
+      ],
+      "adaptation": "Use familiar local notice formats, but explain ambiguous abbreviations. For adult learners, offer relevant choices such as a work rota or library slip, using fictional personal data.",
+      "references": [
+        "writing",
+        "comprehension"
+      ],
+      "tags": [
+        "functional-literacy",
+        "notices",
+        "instructions",
+        "adult-literacy"
+      ]
+    },
+    {
+      "id": "11",
+      "title": "Count, compare and order whole numbers",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [],
+      "goal": "Count a small collection once per object, connect its total to a numeral and compare two collections.",
+      "materials": "Paper marks or large counters and numeral cards 0-10. Use drawn marks when small objects could be swallowed.",
+      "lesson": [
+        "Draw five marks in a row. Touch or point to each mark once while saying one, two, three, four, five. Five names the total. Move the marks into a different arrangement and count again: rearranging the same marks does not add or remove any. Separate the counted marks from the uncounted ones if tracking is difficult.",
+        "Write 5 beside the collection. The written symbol is a numeral representing the number. Show an empty space labeled 0. Zero is a number; it can describe how many objects are in an empty collection. Practice matching numerals to amounts before moving to larger numbers.",
+        "To compare two small collections, match one object in the first with one in the second. If every object is matched, the amounts are equal. If the first has objects left over, it has more. Do not judge the count from how much space the collection occupies. Six tightly spaced dots can be more than four widely spaced dots.",
+        "Draw a number line with equally spaced marks labeled 0 through 10. For these whole numbers, moving one step right adds one and gives a larger number. Use words before introducing symbols: 4 is less than 7, written 4 < 7; 7 > 4 says the same comparison in reverse; 5 = 5 expresses equality. The wide opening of < or > faces the larger amount."
+      ],
+      "practice": [
+        "Draw seven marks, count them, rearrange them and count again.",
+        "Which is greater: eight marks in a small cluster or six widely spaced marks?",
+        "Put 0, 6, 2 and 4 in order from least to greatest, then fill in 2 __ 6 with <, > or =."
+      ],
+      "answers": [
+        "Both counts should be seven if no marks were added or removed. Watch for skipped or double-counted marks.",
+        "Eight is greater than six; spacing does not determine count.",
+        "0, 2, 4, 6. The comparison is 2 < 6."
+      ],
+      "adaptation": "Start with fewer marks if needed. Use spoken number names in the learner's strongest language and connect them to the numeral system being studied.",
+      "references": [
+        "whole",
+        "early-math"
+      ],
+      "tags": [
+        "counting",
+        "zero",
+        "number-line",
+        "comparison"
+      ]
+    },
+    {
+      "id": "12",
+      "title": "Place value and grouping by tens",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "11"
+      ],
+      "goal": "Represent a three-digit whole number as hundreds, tens and ones, including a zero placeholder.",
+      "materials": "A three-column chart labeled hundreds, tens, ones; drawings or bundles representing groups of ten.",
+      "lesson": [
+        "Our decimal whole-number notation uses ten digits, 0 through 9. A digit's position changes its value. In 352, the 3 represents three hundreds, the 5 represents five tens, and the 2 represents two ones. Thus 352 = 300 + 50 + 2. This example uses a comma-free three-digit number to avoid local differences in grouping punctuation.",
+        "Draw ten single marks and circle them as one group of ten. The amount is unchanged: ten ones can be exchanged for one ten. Ten tens make one hundred. Use this exchange to explain why a count moves from 9 to 10 and from 99 to 100. The written representation changes, but no objects disappear.",
+        "Zero can hold a place that has no group of that size. In 406 there are four hundreds, zero tens and six ones. Removing the zero gives 46, a different amount. Point to each column, including an empty one, before writing the numeral. Read back the written number to check that it matches the chart.",
+        "Compare multi-digit whole numbers by their highest-value differing place. For 352 and 325, both have three hundreds; five tens is greater than two tens, so 352 is greater. For addition later, line up places rather than merely placing the first digits under each other. A units label, such as cards, describes what is counted; it is separate from the place-value system."
+      ],
+      "practice": [
+        "Expand 274 into hundreds, tens and ones.",
+        "Write the number with five hundreds, no tens and nine ones.",
+        "Which is greater, 608 or 680? Explain using place value."
+      ],
+      "answers": [
+        "274 = 200 + 70 + 4.",
+        "509. The zero keeps the hundreds and ones in their correct positions.",
+        "680 is greater: both have six hundreds, but 680 has eight tens and 608 has none."
+      ],
+      "adaptation": "Begin with tens and ones before adding hundreds. Use drawn bundles or tactile groups. Introduce thousands only after the learner can explain the exchange between adjacent places.",
+      "references": [
+        "whole"
+      ],
+      "tags": [
+        "place-value",
+        "base-ten",
+        "hundreds",
+        "tens"
+      ]
+    },
+    {
+      "id": "13",
+      "title": "Addition, subtraction and checking the result",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "12"
+      ],
+      "goal": "Combine or remove whole-number amounts, explain regrouping and check subtraction with addition.",
+      "materials": "A place-value chart and paper; counters or drawn tens and ones are optional.",
+      "lesson": [
+        "Addition combines amounts. If one box has 28 cards and another has 17, combine their ones: 8 + 7 = 15. Exchange ten of those ones for one ten. Now there are 2 + 1 + 1 = 4 tens and 5 ones, so 28 + 17 = 45. The exchanged ten came from the ones; it is not an extra amount created by the calculation.",
+        "Subtraction can remove an amount or find a difference. To calculate 52 - 18, write 52 as 4 tens and 12 ones. This is still 52. Remove 1 ten and 8 ones, leaving 3 tens and 4 ones: 34. Check by adding back: 34 + 18 = 52. If the check fails, inspect the place where an exchange happened.",
+        "Use a rough estimate as another check. In the first example, about 30 plus about 20 is about 50, so 45 is plausible and 405 is not. An estimate is not the exact answer. Write units in a practical problem: 45 cards, not merely 45. Combine amounts only after establishing that they describe compatible quantities.",
+        "A missing amount can be found by either operation. If a set should contain 60 cards and contains 47, solve 47 + ? = 60 or 60 - 47. Counting up from 47 to 50 adds 3, and from 50 to 60 adds 10, for a missing amount of 13. Invite more than one method when the learner can explain why it works."
+      ],
+      "practice": [
+        "Calculate 36 + 27 and explain the exchange.",
+        "Calculate 71 - 26 and check with addition.",
+        "A shelf has room for 80 notebooks and already holds 58. How many more fit under this simplified count-only assumption?"
+      ],
+      "answers": [
+        "63. Six ones plus seven ones make thirteen ones, exchanged for one ten and three ones; the total is six tens and three ones.",
+        "45; 45 + 26 = 71.",
+        "22 notebooks, because 80 - 58 = 22. Actual physical capacity also depends on size and arrangement."
+      ],
+      "adaptation": "Start with single-digit amounts and drawings. Extend to larger numbers only when the exchanges make sense. Include problems that do not require regrouping so the learner decides when it is necessary.",
+      "references": [
+        "addition"
+      ],
+      "tags": [
+        "addition",
+        "subtraction",
+        "regrouping",
+        "estimation"
+      ]
+    },
+    {
+      "id": "14",
+      "title": "Multiplication, division and remainders",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "13"
+      ],
+      "goal": "Represent equal groups, connect multiplication with division and interpret a remainder in context.",
+      "materials": "A grid drawn on paper and large counters or marks.",
+      "lesson": [
+        "Multiplication can count equal groups. Four rows of six marks contain 6 + 6 + 6 + 6 = 24 marks, written 4 x 6 = 24. Rotate the grid to see six rows of four. The arrangement changes, but the total remains 24. Here x means multiplication, not an unknown variable.",
+        "Division asks either how much is in each equal group or how many groups fit. Sharing 24 cards among four people gives six each: 24 / 4 = 6. Making groups of six from 24 cards gives four groups: 24 / 6 = 4. Both can be checked with 4 x 6 = 24. Explain what the divisor represents in the story.",
+        "Some whole-number groupings leave a remainder. With 29 cards and groups of six, four full groups use 24 and five cards remain. Write 29 = 6 x 4 + 5. The remainder must be smaller than the positive group size; if six or more cards remain, another full group can be formed.",
+        "A story determines what to do with the remainder. Storing 29 cards in boxes holding at most six cards requires five boxes, with the last partly full. Making complete six-card sets yields only four complete sets. A remainder is not automatically rounded up or discarded. Division by zero is undefined; zero cards split among four people gives zero each, which is a different question."
+      ],
+      "practice": [
+        "Draw three rows of seven marks. How many marks are there?",
+        "Share 32 cards equally among eight people.",
+        "There are 38 notebooks and boxes hold five each. How many full boxes, how many notebooks remain, and how many boxes are needed to store all notebooks?"
+      ],
+      "answers": [
+        "21, because 3 x 7 = 21.",
+        "Four per person; 8 x 4 = 32.",
+        "Seven full boxes and three notebooks remain. Eight boxes are needed in all; 38 = 5 x 7 + 3."
+      ],
+      "adaptation": "Use small equal groups first. Ask learners to invent two stories for the same division, one about sharing and one about grouping, and explain the units of their answers.",
+      "references": [
+        "multiplication"
+      ],
+      "tags": [
+        "multiplication",
+        "division",
+        "equal-groups",
+        "remainders"
+      ]
+    },
+    {
+      "id": "15",
+      "title": "Fractions as equal parts of a whole",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14"
+      ],
+      "goal": "Name equal parts, identify equivalent fractions and add fractions with the same denominator.",
+      "materials": "Paper strips of equal length, a pencil and a number line from zero to one.",
+      "lesson": [
+        "A fraction can describe equal parts of one whole. Divide a strip into four equal lengths. One part is 1/4 and three parts are 3/4. The denominator, below the slash, tells how many equal parts make the whole. The numerator, above it, counts the parts being described. Unequal pieces cannot simply be called quarters because there are four of them.",
+        "Mark 0 and 1 at the ends of a number line, then divide the distance into four equal intervals. The third mark after zero is 3/4. This connects a fraction to a number, not only to a shaded shape. Keep the whole fixed when comparing pieces: half of a long strip can be longer than all of a short strip.",
+        "Fold another equal-length strip into two equal parts. One half covers the same length as two quarters: 1/2 = 2/4. Doubling numerator and denominator keeps that fraction's value because both count and part size change together. The multiplier must be nonzero. Compare fractions by matching wholes and finding common-sized parts.",
+        "For equal denominators, count pieces of the same size: 1/4 + 2/4 = 3/4. Do not add the denominators. A quarter plus a quarter is two quarters, not two eighths. Subtraction works similarly: 3/5 - 1/5 = 2/5. These examples do not yet teach the full procedures for multiplying, dividing or adding unlike fractions."
+      ],
+      "practice": [
+        "Name three of six equal parts of one whole and give an equivalent simpler fraction.",
+        "Calculate 2/7 + 3/7.",
+        "Which is larger, 1/2 or 1/4, when both refer to equal-sized wholes? Explain with a strip."
+      ],
+      "answers": [
+        "3/6 = 1/2.",
+        "5/7. The pieces remain sevenths.",
+        "1/2 is larger; it occupies two quarter-sized lengths rather than one."
+      ],
+      "adaptation": "Use tactile folding or an enlarged line. Check that all pieces are equal before counting them. Extend with mixed numbers only after the learner can identify the whole consistently.",
+      "references": [
+        "fractions"
+      ],
+      "tags": [
+        "fractions",
+        "equivalence",
+        "numerator",
+        "denominator"
+      ]
+    },
+    {
+      "id": "16",
+      "title": "Decimals and percentages",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "15"
+      ],
+      "goal": "Connect tenths and hundredths to decimals and percentages, and find a simple percent of an amount.",
+      "materials": "A ten-by-ten grid, paper and a pencil.",
+      "lesson": [
+        "A decimal point separates the whole-number places from fractional places in this notation. The first place to its right is tenths and the next is hundredths. Thus 0.37 = 37/100, while 3.7 is three wholes and seven tenths. Some locales use a comma as the decimal separator; state the convention before beginning.",
+        "A ten-by-ten grid has 100 equal squares. Shade 25: this is 25/100 = 0.25 = 1/4 of the grid. Percent means per hundred, so it is also 25%. It does not mean 25 whole grids. The same percentage can represent different counts when the total changes.",
+        "Example: 25% of 48 cards is one quarter of 48, or 12 cards. Another method is (25/100) x 48 = 12. Ten percent of 70 is 7 because 10/100 = 1/10. Use simple fractions when they make the relationship clearer, rather than treating percentage calculation as a mysterious rule.",
+        "Compare decimals by place value. Write 0.6 as 0.60 and compare it with 0.45: sixty hundredths is greater than forty-five hundredths. More digits after the point does not automatically mean a larger number. When adding decimals, align decimal points: 1.25 + 0.40 = 1.65. Explain the units before applying a percentage to a practical total; the number being treated as 100% must be identified."
+      ],
+      "practice": [
+        "Write 0.08 as a fraction with denominator 100 and as a percentage.",
+        "Find 50% of 36 and 10% of 90.",
+        "Which is larger, 0.7 or 0.65? What is 1.30 + 0.45?"
+      ],
+      "answers": [
+        "8/100 and 8%.",
+        "18 and 9, respectively.",
+        "0.7 = 0.70 is larger than 0.65. The sum is 1.75."
+      ],
+      "adaptation": "Keep counts and continuous measurements distinct: a calculation can yield a fractional measure even when a real inventory item is indivisible. Introduce rounding only with an explicit purpose.",
+      "references": [
+        "decimals",
+        "percent"
+      ],
+      "tags": [
+        "decimals",
+        "percentages",
+        "hundredths"
+      ]
+    },
+    {
+      "id": "17",
+      "title": "Measure length and convert metric units",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "16"
+      ],
+      "goal": "Measure from a stated starting point, record a unit and convert among millimeters, centimeters and meters.",
+      "materials": "A metric ruler and a paper strip. If no verified ruler is available, use a repeated paper unit and label it as a nonstandard unit.",
+      "lesson": [
+        "A measurement compares a quantity with a unit. A number without its unit is incomplete: 12 millimeters and 12 meters are very different lengths. Use the zero mark of a ruler as the starting point, which may not coincide with the physical edge. Keep the ruler aligned with the object's length.",
+        "If an object begins at 2 cm and ends at 9 cm on a ruler, its length is 9 - 2 = 7 cm. Reading only the ending mark would be wrong. Repeat the measurement and explain any difference, such as moving the ruler or choosing a different endpoint. Do not report more precision than the markings and method support.",
+        "Metric relationships for this lesson are exact: 10 millimeters = 1 centimeter, 100 centimeters = 1 meter, and 1,000 millimeters = 1 meter. Therefore 2.4 m = 240 cm = 2,400 mm. A larger number of smaller units can represent the same length. Going from centimeters to meters divides the number by 100.",
+        "To compare lengths expressed in different units, convert them to the same unit. For example, 85 cm is less than 1.2 m because 1.2 m = 120 cm. Record the original reading as well as a conversion when accuracy matters. This lesson concerns length only: square and cubic units change by different factors and should not be converted using a length rule unchanged."
+      ],
+      "practice": [
+        "A paper edge runs from the 3 cm mark to the 11 cm mark. Find its length.",
+        "Convert 175 cm to meters and 0.6 m to millimeters.",
+        "Which is longer, 950 mm or 1 m? By how many millimeters?"
+      ],
+      "answers": [
+        "8 cm.",
+        "1.75 m and 600 mm.",
+        "1 m is longer because it equals 1,000 mm. The difference is 50 mm."
+      ],
+      "adaptation": "Learners can measure repeated paper widths before using standard units, but homemade uncalibrated scales must not be labeled accurate centimeters. Use this for learning, not precision construction.",
+      "references": [
+        "measurement"
+      ],
+      "tags": [
+        "measurement",
+        "metric",
+        "length",
+        "unit-conversion"
+      ]
+    },
+    {
+      "id": "18",
+      "title": "Perimeter, area and rectangular grids",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17"
+      ],
+      "goal": "Distinguish distance around a rectangle from the surface it covers, using correct units.",
+      "materials": "Squared paper or a hand-drawn grid with equal-sized squares and a ruler.",
+      "lesson": [
+        "Perimeter is the total length around a shape. Area describes how much flat surface it covers. For a rectangle four units long and three units wide, the perimeter is 4 + 3 + 4 + 3 = 14 units. Its area is twelve unit squares because there are three rows of four. Perimeter and area answer different questions.",
+        "For a rectangle, P = 2 x (length + width) and A = length x width. If the sides measure 4 cm and 3 cm, P = 14 cm while A = 12 square centimeters, written 12 cm^2. Say 'square centimeters' rather than treating cm^2 as a different spelling of cm. Use matching length units before multiplying.",
+        "Different rectangles can have the same perimeter and different areas. A 5-by-2 rectangle has perimeter 14 and area 10; a 4-by-3 rectangle also has perimeter 14 but area 12. Trace each boundary, then count the enclosed squares. This helps prevent substituting the perimeter formula when the question asks about surface coverage.",
+        "A simple compound shape can be divided into nonoverlapping rectangles. Add their areas only after checking that no region is counted twice and no gap is omitted. A hand-drawn plan is a learning model. Actual material quantities may require allowances for cuts, overlaps or waste; neither these formulas nor an area calculation establishes structural suitability."
+      ],
+      "practice": [
+        "Find the perimeter and area of a 6 cm by 4 cm rectangle.",
+        "Two nonoverlapping rectangles have areas 8 cm^2 and 15 cm^2. What is their combined area?",
+        "Does a larger perimeter always mean a larger area? Compare a 1-by-8 rectangle and a 4-by-4 square."
+      ],
+      "answers": [
+        "Perimeter 20 cm; area 24 cm^2.",
+        "23 cm^2, provided the regions do not overlap.",
+        "No. The 1-by-8 rectangle has perimeter 18 and area 8; the 4-by-4 square has perimeter 16 and area 16, using the same length unit."
+      ],
+      "adaptation": "Use raised boundaries or tiled paper shapes when visual grids are difficult. Extend to triangles by dividing a rectangle along a diagonal, explaining the relationship before introducing a new formula.",
+      "references": [
+        "geometry"
+      ],
+      "tags": [
+        "geometry",
+        "perimeter",
+        "area",
+        "rectangles"
+      ]
+    },
+    {
+      "id": "19",
+      "title": "Read clocks and calculate elapsed time",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "13"
+      ],
+      "goal": "Read a simple timetable, distinguish clock time from duration and calculate an interval crossing an hour.",
+      "materials": "A drawn clock face and the fictional timetable in this lesson.",
+      "lesson": [
+        "One hour contains 60 minutes. A clock time identifies a point in a day; a duration tells how long something lasts. 'Starts at 09:40' is not the same kind of information as 'lasts 40 minutes'. Always include enough context to distinguish morning from afternoon or use a 24-hour time.",
+        "On a standard analog clock, the minute hand completes a full turn in an hour. Each interval between adjacent hour numbers represents five minutes for that hand. The hour hand moves gradually between numbers: at 3:30 it is halfway from 3 to 4, not exactly on 3. A drawn clock should show both hands consistently.",
+        "In 24-hour notation, 14:25 is 2:25 in the afternoon. Midnight is 00:00 and noon is 12:00. This lesson uses times within one ordinary local day; overnight dates, time zones and clock changes require additional information. Never assume two identical-looking times on different dates represent zero elapsed time.",
+        "Fictional timetable: reading begins at 09:40 and ends at 10:15; break ends at 10:25; mathematics ends at 11:05. Reading lasts 20 minutes to 10:00 plus 15 more, or 35 minutes. A break follows for 10 minutes, then mathematics lasts 40 minutes. Counting through an hour boundary can be easier than subtracting clock numerals as if they used base ten."
+      ],
+      "practice": [
+        "How long is a lesson from 13:50 to 14:20 on the same day?",
+        "Write 4:10 in the afternoon using 24-hour notation.",
+        "A session starts at 10:45 and lasts 50 minutes. When does it finish, assuming no clock change?"
+      ],
+      "answers": [
+        "30 minutes: ten to 14:00 and twenty more.",
+        "16:10.",
+        "11:35: fifteen minutes to 11:00 and another thirty-five."
+      ],
+      "adaptation": "Begin with whole and half hours, then add five-minute and single-minute readings. For real timetables, include the date and confirm whether the listed time is current.",
+      "references": [
+        "measurement"
+      ],
+      "tags": [
+        "time",
+        "clocks",
+        "elapsed-time",
+        "timetable"
+      ]
+    },
+    {
+      "id": "20",
+      "title": "Make tables and read simple graphs",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14"
+      ],
+      "goal": "Organize counts, construct a labeled bar graph and explain what the data do and do not show.",
+      "materials": "Paper, pencil and this invented classroom dataset: Monday 6 books returned, Tuesday 9, Wednesday 5.",
+      "lesson": [
+        "A table gives values a consistent home. Use columns headed 'Day' and 'Books returned', then record one row for each day. Keep the unit in the heading. The total is 6 + 9 + 5 = 20 books returned. It is not necessarily 20 different people, because a person might return several books.",
+        "For a bar graph, place the day names along the horizontal axis and the number of books on the vertical axis. Start the count axis at zero and use equal intervals. Draw three separated bars reaching 6, 9 and 5. Add the title 'Books returned in three observed days'. State that the dataset is fictional if displaying the practice graph.",
+        "Compare differences as well as totals: Tuesday had three more returns than Monday and four more than Wednesday. The graph does not explain why. To investigate a cause, you would need more information about opening times, due dates or other circumstances. Three observations also do not establish what happens every week.",
+        "Record missing data as missing, not zero. If Thursday was not observed, a blank or 'not recorded' is appropriate. Zero would assert that it was observed and no books were returned. A bar starting above zero or using uneven intervals can exaggerate differences; check axes before drawing conclusions. Keep individual learners' private records out of public class graphs."
+      ],
+      "practice": [
+        "Make the three-row table and find the total.",
+        "How many more books were returned Tuesday than Wednesday?",
+        "Thursday was not observed. Should its return count be entered as zero? Why?"
+      ],
+      "answers": [
+        "Monday 6, Tuesday 9, Wednesday 5; total 20.",
+        "Four more books.",
+        "No. Missing information is not evidence of no returns. Label the value as not recorded."
+      ],
+      "adaptation": "Use tactile or large-print bars and read labels aloud. Learners can invent a harmless dataset when collecting real data would expose personal information.",
+      "references": [
+        "early-math"
+      ],
+      "tags": [
+        "data-literacy",
+        "tables",
+        "bar-graphs",
+        "missing-data"
+      ]
+    },
+    {
+      "id": "21",
+      "title": "Ratios, rates and scaling a pattern",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "16"
+      ],
+      "goal": "Interpret a simple ratio, keep proportions while scaling and distinguish a ratio from a rate.",
+      "materials": "Paper counters in two clearly distinguishable shapes, plus a pencil.",
+      "lesson": [
+        "A ratio compares quantities in a stated order. A pattern containing two circles for every three squares has circle-to-square ratio 2:3. One full pattern contains five shapes. The circle fraction of the whole pattern is 2/5, not 2/3. State whether you compare a part with another part or with the total.",
+        "To double the pattern, multiply both counts by two: four circles and six squares give 4:6, the same proportion as 2:3. Tripling gives six circles and nine squares. Adding the same number to both counts does not generally preserve a ratio: 2:3 and 3:4 differ.",
+        "A rate compares quantities with different units. If a fictional copying task completes 18 cards in six minutes at a constant rate, the rate is three cards per minute. Under that assumption, ten minutes gives thirty cards. Real working speed may change; this arithmetic exercise does not promise actual production or a suitable pace for a learner.",
+        "A scale drawing uses a fixed relationship between a drawing length and an actual length. In an exercise where 1 cm on paper represents 2 m, a 3 cm line represents 6 m. Label the scale and units explicitly. Length scale and area scale are different: doubling both sides of a rectangle makes its area four times as large. These exercises do not provide specifications for mixing substances, dosing medicine or fabricating parts."
+      ],
+      "practice": [
+        "For a 2:3 circle-to-square pattern, how many squares accompany eight circles?",
+        "Five of twelve counters are triangles. Give the triangle-to-other-counter ratio and triangle fraction of the total.",
+        "At a constant four practice cards per minute, how many are completed in seven minutes?"
+      ],
+      "answers": [
+        "Twelve squares: multiplying the two circles by four also multiplies the three squares by four.",
+        "5:7 and 5/12, respectively.",
+        "28 cards under the stated constant-rate assumption."
+      ],
+      "adaptation": "Build several physical patterns before using notation. Ask the learner to explain the comparison order and unit in every answer; reversing either changes the meaning.",
+      "references": [
+        "fractions",
+        "multiplication"
+      ],
+      "tags": [
+        "ratio",
+        "rate",
+        "proportion",
+        "scale"
+      ]
+    },
+    {
+      "id": "22",
+      "title": "Observation, questions and a fair comparison",
+      "track": "inquiry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "20"
+      ],
+      "goal": "Separate observation from explanation and plan a small, harmless comparison with recorded conditions.",
+      "materials": "Two equal sheets of paper, a clear tabletop and a ruler. Keep the activity on the table; no climbing or overhead dropping.",
+      "lesson": [
+        "An observation describes what you can record. An explanation proposes why it happened. 'The folded paper stood upright for 20 seconds' is an observation if timed. 'The folds made it stable' is an explanation to investigate. Record both, but do not label the explanation as already established.",
+        "Original activity: compare how long a flat sheet and an accordion-folded sheet can stand on their short edges on a tabletop, up to a fixed 20-second limit. Use equal paper size and thickness, the same surface and a consistent release method. Record the fold count and orientation. Have a facilitator show the setup so learners do not confuse different procedures with different outcomes.",
+        "Before trying, make a prediction and say why. Repeat each setup three times and record every result, including failures. If a sheet reaches the observation limit, write 'at least 20 seconds'; its full standing time was not measured. If air movement changes between trials, record that instead of hiding the inconvenient result.",
+        "Discuss what the comparison supports and its limits. A difference under these conditions does not establish that every folded sheet is always stronger, nor does standing time measure load capacity. Several features of a fold can change together, so this simple comparison cannot isolate every cause. Propose one next variation, such as keeping the paper fixed and changing only the fold count. Never turn a tabletop demonstration into a claim about safe structures."
+      ],
+      "practice": [
+        "Write one observation and one possible explanation from the activity.",
+        "Name three conditions to keep consistent between trials.",
+        "A sheet remains upright when the 20-second observation ends. Is 'exactly 20 seconds' an accurate standing time?"
+      ],
+      "answers": [
+        "Example observation: 'This folded sheet remained standing for the full observation period.' Possible explanation: 'Its shape may help it balance.' The explanation needs investigation.",
+        "Paper size/thickness, tabletop surface and release method; airflow and orientation also matter.",
+        "No. Record 'at least 20 seconds'; the time when it would fall is unknown."
+      ],
+      "adaptation": "If manual manipulation is difficult, a partner can perform the setup while the learner predicts, observes and records. The activity is an original draft example; the study reference concerns teaching methods, not validation of this experiment.",
+      "references": [
+        "study"
+      ],
+      "tags": [
+        "scientific-inquiry",
+        "observation",
+        "fair-test",
+        "uncertainty"
+      ]
+    },
+    {
+      "id": "23",
+      "title": "Check a claim and preserve its source",
+      "track": "inquiry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "08",
+        "20"
+      ],
+      "goal": "Distinguish a claim from supporting evidence and record enough source information for later checking.",
+      "materials": "Two invented source cards: A, 'The room holds 20 people' with no source; B, 'We counted 20 chairs in the room on Monday; signed Lee'.",
+      "lesson": [
+        "A claim is something someone asserts. Evidence is information offered to support it. Source B supports the narrower statement that Lee reported counting twenty chairs at a certain time. It does not establish legal occupancy, safe room capacity or whether the chairs are still there. Do not stretch an observation beyond what it measures.",
+        "For a library entry, record a title, author or organization, publication or revision date when known, source location, and what part supports the claim. If a date is absent, write 'date unknown' rather than inventing one. Copy a short finding in your own words and keep it separate from your interpretation. Preserve the original document when its license permits.",
+        "Ask whether two sources are independent. If two notices copy the same chair count, they are two copies of one observation, not two fresh counts. If sources disagree, compare what they measured, when, where and how. A room may have changed; the observers may have counted different things. Do not settle disagreement by picking the more confident wording.",
+        "A checksum can help detect a change to a file, but it does not prove the file's claims true. A review date records a review event only when a qualified review actually occurred. For FieldForge lessons, the blank review date means independent review has not been recorded. Keep that status visible when sharing a copied lesson. Offline access preserves information; it does not automatically keep it current."
+      ],
+      "practice": [
+        "What claim can Source B support, and what stronger claim can it not establish?",
+        "List four pieces of information to record with a source.",
+        "Two articles repeat the same unsupported statement. Does repetition provide independent verification?"
+      ],
+      "answers": [
+        "It supports a report of twenty chairs counted on Monday. It does not establish safe occupancy or current room contents.",
+        "Examples: title, author/organization, date, location/URL, exact relevant section, and whether the item was actually reviewed.",
+        "No. Trace their sources and seek independent evidence relevant to the claim."
+      ],
+      "adaptation": "Use local examples such as a notice or inventory list. Do not require learners to publish private documents. This is an original information-literacy exercise; the comprehension reference supports reading discussion, not technical certification.",
+      "references": [
+        "comprehension"
+      ],
+      "tags": [
+        "information-literacy",
+        "source-evaluation",
+        "evidence",
+        "provenance"
+      ]
+    },
+    {
+      "id": "24",
+      "title": "Teach a practical skill and keep a learning record",
+      "track": "teaching",
+      "audience": "Peer tutors, facilitators and adult learners",
+      "prerequisites": [
+        "03",
+        "04",
+        "10"
+      ],
+      "goal": "Break a low-risk skill into observable steps, let a partner practice and record what was demonstrated.",
+      "materials": "Paper, labels and a small set of books or notebooks; use a harmless organizing task rather than a hazardous trade procedure.",
+      "lesson": [
+        "Choose a task whose result can be checked safely, such as arranging notebooks by title. Define the starting state and finish condition: 'Given six labeled notebooks, place them in alphabetical order so another learner can find one.' Clarify the alphabet and language used. Alphabetical order is a taught convention, not something all learners already know.",
+        "Demonstrate slowly while naming the decision: compare the first letters; when they match, compare the next letters; keep looking until a difference appears. Use simple titles such as Birds, Boats and Trees. Birds comes before Boats because i comes before o after the shared B. If alphabet order is new, supply an alphabet strip.",
+        "Let the partner try a different set while explaining choices. Observe without taking over, then offer specific feedback and a retry. Ask the partner to retrieve a named notebook to check usability. Swap roles so that each person practices giving an explanation and asking for clarification. Competence at this task does not certify the person to teach unrelated or hazardous skills.",
+        "Keep a brief learning record: date, task, materials, support used, observed result and next practice. Example: 'Sorted six short titles using an alphabet strip; needed one prompt when first letters matched; next time compare two matching first letters independently.' Store the record privately and share it with the learner. Revisit the task at a later meeting rather than assuming one successful attempt guarantees retention."
+      ],
+      "practice": [
+        "Put these titles in alphabetical order: Seeds, Soil, Rain.",
+        "Write a finish condition for a low-risk task of your choice.",
+        "What should a progress note say when a learner finishes with help from an alphabet strip?"
+      ],
+      "answers": [
+        "Rain, Seeds, Soil. S is shared by the last two; e comes before o.",
+        "Example: 'All number cards are in increasing order and a partner can find the requested numeral.' Accept a specific observable result.",
+        "Record the successful result and the support used; do not claim unsupported independent mastery."
+      ],
+      "adaptation": "Learners can choose a familiar task and practice in their strongest language. Document local vocabulary as well as steps. Trade, medical and safety-critical instruction requires appropriate expertise beyond this starter pack.",
+      "references": [
+        "study"
+      ],
+      "tags": [
+        "skills-transfer",
+        "peer-teaching",
+        "learning-record",
+        "alphabetical-order"
+      ]
+    }
+  ]
+}
