@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from fieldforge.blueprints.acceptance import METRICS, validate_rules
+from fieldforge.blueprints.constraints import analyze_constraints
 from fieldforge.blueprints.geometry import RELATIONS
 from fieldforge.ui.lifecycle import release_tk_references
 
@@ -59,7 +60,7 @@ class AcceptanceLimits(ttk.Frame):
         actions = ttk.Frame(self)
         actions.pack(fill="x", pady=5)
         for text, command in (("Add limit", self.add), ("Remove selected", self.remove),
-                              ("Apply limits to design", maker.apply_limits)):
+                              ("Apply limits to design", maker.apply_limits), ("Check limits", self.check_limits)):
             button = ttk.Button(actions, text=text, command=command)
             button.pack(side="left", padx=(0, 6))
             self._widgets.append(button)
@@ -144,6 +145,22 @@ class AcceptanceLimits(ttk.Frame):
     def get_rules(self):
         validate_rules(self.maker.mode, self.rules)
         return copy.deepcopy(self.rules)
+
+    def check_limits(self):
+        if self._busy:
+            return
+        result = analyze_constraints(self.maker.mode, self.get_rules())
+        if result["conflicts"]:
+            first = result["conflicts"][0]
+            keys = ", ".join(first["rule_ids"][:3]) + (", …" if len(first["rule_ids"]) > 3 else "")
+            reason = first["reason"][:300] + ("…" if len(first["reason"]) > 300 else "")
+            message = f"{len(result['conflicts'])} conflicting rule groups. First: {keys}. {reason}"
+        else:
+            message = (f"No supported conflicts detected in {len(result['examined_rule_ids'])} exact rules. "
+                       f"{len(result['not_analyzed_rule_ids'])} other numeric rules were not analyzed here. "
+                       "This does not establish feasibility.")
+        self.note.set(message)
+        self.maker.status.set("Acceptance limits checked locally. No design or limits changed.")
 
     def set_rules(self, rules):
         validate_rules(self.maker.mode, rules)

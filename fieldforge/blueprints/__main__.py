@@ -13,6 +13,8 @@ from pathlib import Path
 from fieldforge.blueprints.acceptance import METRICS, validate_rules
 from fieldforge.blueprints.comparison import compare_results
 from fieldforge.blueprints.comparison_report import export_comparison
+from fieldforge.blueprints.constraints import analyze_constraints
+from fieldforge.blueprints.diagnostics import diagnose_blueprint
 from fieldforge.blueprints.engine import BlueprintRequest, _json, digest, generate_blueprint
 from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
 from fieldforge.blueprints.geometry import analyze_envelopes
@@ -89,6 +91,11 @@ def main(argv=None):
     metrics.add_argument("mode", choices=MODES)
     check = commands.add_parser("check", help="Recompute saved checks; exit 1 if the design needs revision")
     check.add_argument("source", type=Path)
+    diagnose = commands.add_parser("diagnose", help="Inspect measured failures and conflicting limits without a model")
+    diagnose.add_argument("source", type=Path)
+    limits_check = commands.add_parser("limits-check", help="Check supported exact-rule conflicts before generation")
+    limits_check.add_argument("mode", choices=MODES)
+    limits_check.add_argument("limits", type=Path)
     geometry = commands.add_parser("geometry", help="Inspect engineering envelope pairs without a model")
     geometry.add_argument("source", type=Path)
     compare = commands.add_parser("compare")
@@ -125,6 +132,15 @@ def main(argv=None):
         if args.command == "acceptance-metrics":
             result = {key: {"unit": spec[1], "target": spec[2], "label": spec[3], "type": spec[4]}
                       for key, spec in METRICS.items() if spec[0] in (args.mode, "all")}
+        elif args.command in {"diagnose", "limits-check"}:
+            if args.command == "limits-check":
+                result = analyze_constraints(args.mode, read_limits(args.limits, args.mode))
+                failed = bool(result["conflicts"])
+            else:
+                result = diagnose_blueprint(load_blueprint(args.source))
+                failed = bool(result["blocking_issues"] or result["constraints"]["conflicts"])
+            print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+            return 1 if failed else 0
         elif args.command == "geometry":
             value = load_blueprint(args.source)
             if value["request"]["mode"] != "engineering":

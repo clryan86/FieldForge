@@ -12,6 +12,7 @@ from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
 from fieldforge.blueprints.checks import check_design
+from fieldforge.blueprints.constraints import require_consistent_rules
 from fieldforge.blueprints.engine import BlueprintRequest, _json, digest, generate_blueprint
 from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
 from fieldforge.blueprints.render import (
@@ -25,6 +26,7 @@ from fieldforge.blueprints.schema import MODES
 from fieldforge.content import install_reference_library
 from fieldforge.knowledge.assistant import GenerationCancelled, OllamaClient
 from fieldforge.ui.blueprint_acceptance import AcceptanceLimits
+from fieldforge.ui.blueprint_diagnostics import BlueprintDiagnostics
 from fieldforge.ui.blueprint_evidence import BlueprintEvidence
 from fieldforge.ui.blueprint_history import ProjectHistory
 from fieldforge.ui.blueprint_preview import DrawingPreview
@@ -97,12 +99,18 @@ class BlueprintMaker(ttk.Frame):
         self.pages.add(edit_page, text="Edit design")
         refine_page = ttk.Frame(self.pages, padding=8)
         self.pages.add(refine_page, text="Refine with AI")
-        self.instructions = self._field(refine_page, "What should change in the current design?",
+        self.refinement_pages = ttk.Notebook(refine_page)
+        self.refinement_pages.pack(fill="both", expand=True)
+        self.revision_input = ttk.Frame(self.refinement_pages, padding=6)
+        self.refinement_pages.add(self.revision_input, text="Revision instructions")
+        self.diagnostics = BlueprintDiagnostics(self.refinement_pages, self)
+        self.refinement_pages.add(self.diagnostics, text="Measured failures")
+        self.instructions = self._field(self.revision_input, "What should change in the current design?",
                                         "", 6)
-        ttk.Label(refine_page, text="The existing design and current Requirements are included. "
+        ttk.Label(self.revision_input, text="The existing design, measured failures and current Requirements are included. "
                   "Evidence is searched again; old citations are not assumed to remain valid.",
                   wraplength=950).pack(fill="x", pady=6)
-        ttk.Button(refine_page, text="Revise current design", command=self.refine).pack(anchor="e")
+        ttk.Button(self.revision_input, text="Revise current design", command=self.refine).pack(anchor="e")
         self.history = ProjectHistory(self.pages, self)
         self.pages.add(self.history, text="Project and revisions")
         self.brief = self._field(input_page, "What do you want to build or achieve?", example, 4)
@@ -226,6 +234,7 @@ class BlueprintMaker(ttk.Frame):
     def _generate(self, instruction=""):
         try:
             request = self._request()
+            require_consistent_rules(request.mode, request.acceptance_rules)
             client = OllamaClient(port=int(self.port.get()), timeout=300)
             if not self.history.before_change():
                 return
@@ -266,6 +275,7 @@ class BlueprintMaker(ttk.Frame):
         self.acceptance.set_rules(value["request"].get("acceptance_rules", []))
         self.evidence.show_saved(value)
         self.preview.show(value)
+        self.diagnostics.show(value)
         self.editor.delete("1.0", "end")
         self.editor.insert("1.0", json.dumps(value["design"], ensure_ascii=False, indent=2))
         lines = [value["design"]["title"], value["design"]["summary"], "",

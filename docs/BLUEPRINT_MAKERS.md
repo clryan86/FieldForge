@@ -317,6 +317,75 @@ These commands exit 0 when the comparison completes, even if it finds regression
 inspect `acceptance.outcomes` and unresolved results. Invalid input exits 2.
 Use `check` for the existing current-design acceptance exit status.
 
+### Diagnose failures and guide AI revisions
+
+Open **Refine with AI → Measured failures** to inspect the applied design without
+an installed model. The list shows each acceptance rule's passed/failed/unresolved
+result and measured value. Details include exact pair distances and squared
+distances, per-axis gaps and overlaps, targeted part dimensions/positions/materials,
+blocking checks, open questions and the dependency schedule for project designs.
+Stored or model-written validation is never used as a substitute for recomputation.
+
+Select failed or unresolved rules, then **Add selected failures to revision**.
+This appends focused, editable instructions to the existing revision text; it
+does not modify geometry, rules or project history and does not start generation.
+Passing rules remain requirements even when they are not selected. Pending design
+edits or limits must be applied first. Busy operations, stale selections that now
+pass, conflicting limits and instructions longer than 4,000 characters are rejected.
+Review the text, select a local model, then choose **Revise current design**.
+
+Every AI refinement now receives deterministic feedback on its first design pass,
+evaluated against the **current request's** acceptance rules. This matters when a
+user explicitly changed limits since the prior revision. Fresh evidence is still
+retrieved and old citations remapped before the prior design is supplied. A valid
+but failing first response receives freshly computed measurements in its one
+allowed repair pass. A schema-invalid response receives parse/schema errors and
+no invented measurements. The critique receives feedback on the final candidate.
+All current rules, including passing ones, are checked again. This adds evidence
+about recorded geometry and constraints, not evidence of real-world correctness.
+
+Feedback retains all 30 possible acceptance results and at most 60 targeted parts
+and 30 targeted pairs. Blocking messages are capped at 60 with an omitted count;
+normal blueprint validation remains complete. No numeric solver, automatic
+geometry edits, extra model retries or executable model output are introduced.
+The existing context-capacity check still rejects oversized prompts explicitly.
+
+**Requirements → Acceptance limits → Check limits** also works before a design
+exists. It checks the configured list, including limits not yet applied to a
+design, without changing that list. Generation and refinement automatically run
+the same check before retrieval or model calls. Proven contradictions stop the
+request so the user can edit the conflicting requirements. Existing saved drafts
+with conflicts remain readable, editable and exportable.
+
+The conservative preflight detects:
+
+- Incompatible minimum, maximum or equality values for the same pair measurement,
+  treating `A/B` and `B/A` as the same pair.
+- Conflicting required contact relations, positive gap/clearance requirements
+  combined with contact/overlap, or separation combined with forced zero distance.
+- Axis-gap bounds inconsistent with the shortest clearance, using the exact
+  identity `clearance² = gap_x² + gap_y² + gap_z²` without rounded square roots.
+- Different required exact text values for the same material/component property.
+
+It reports involved rule IDs and a reason. Groups are explanatory, not minimal
+conflict sets. It does not infer structural feasibility, constraints between
+different pairs, coordinate bounds, stock availability or unsupplied tolerances.
+Other numeric metrics are explicitly listed as not analyzed for contradictions;
+their existing evaluator and numeric epsilon are unchanged. **No detected conflict
+does not prove the request can be built or satisfied.**
+
+```bash
+# Recompute measurements, failures and supported conflicts; no database/model needed.
+fieldforge-blueprints diagnose shelf-draft/blueprint.json
+# Check a rules JSON file before generating any design.
+fieldforge-blueprints limits-check engineering limits.json
+```
+
+`diagnose` exits 1 for deterministic blocking issues or detected conflicts;
+`limits-check` exits 1 for detected conflicts. Both exit 0 otherwise and 2 on invalid
+input. `diagnose` does not assess the model critique; use `check` for the complete
+current draft status. Neither command changes source files or creates a library.
+
 ### Acceptance limits checked by the app
 
 Open **Requirements → Acceptance limits** to add numeric limits or exact text
@@ -521,8 +590,8 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_evidence}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_diagnostics,blueprint_evidence}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 

@@ -741,6 +741,99 @@ def test_blueprint_project_refine_compare_edit_restore_and_reopen(reader, monkey
         studio.destroy()
 
 
+def test_measured_failures_prepare_user_reviewed_revision_without_changing_design(reader, monkeypatch):
+    import copy
+
+    from test_blueprint_clearance import limit
+    from test_blueprint_geometry import pair
+
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    value = pair((12, 0, 0))
+    value["request"]["acceptance_rules"] = [limit()]
+    monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint",
+                        lambda *_a, **_kw: pytest.fail("Preparing instructions must not call a model"))
+    try:
+        maker.show_blueprint(value, dirty=False)
+        maker.load_request(maker.blueprint)
+        original = copy.deepcopy(maker.blueprint)
+        maker.instructions.insert("1.0", "Keep the original material.")
+        studio.pages.select(maker)
+        maker.pages.select(4)
+        maker.refinement_pages.select(maker.diagnostics)
+        studio.geometry("760x650")
+        root.update()
+        panel = maker.diagnostics
+        assert panel.prepare_button.winfo_ismapped() and panel.details.winfo_ismapped()
+        assert panel.prepare_button.winfo_rootx() + panel.prepare_button.winfo_width() <= (
+            studio.winfo_rootx() + studio.winfo_width())
+        assert panel.rows.selection() == ("C1",)
+        assert "failed" in panel.details.get("1.0", "end")
+        maker.busy = True
+        panel.prepare()
+        maker.busy = False
+        assert maker.instructions.get("1.0", "end-1c") == "Keep the original material."
+        maker.editor.insert("end", "pending")
+        panel.prepare()
+        assert maker.instructions.get("1.0", "end-1c") == "Keep the original material."
+        maker.show_blueprint(value, dirty=False)
+        panel.prepare()
+        instruction = maker.instructions.get("1.0", "end-1c")
+        assert instruction.startswith("Keep the original material.") and "C1" in instruction
+        assert "including passing rules" in instruction
+        assert maker.refinement_pages.select() == str(maker.revision_input)
+        assert maker.blueprint == original and not maker.has_unsaved_changes() and not maker.busy
+        # Revalidate a formerly failing selection instead of using stale cached diagnostics.
+        maker.blueprint = pair((15, 0, 0))
+        maker.blueprint["request"]["acceptance_rules"] = [limit()]
+        maker.editor.delete("1.0", "end")
+        import json
+        maker.editor.insert("1.0", json.dumps(maker.blueprint["design"], ensure_ascii=False, indent=2))
+        panel.prepare()
+        assert "passing or unknown" in maker.status.get()
+        assert maker.instructions.get("1.0", "end-1c") == instruction
+    finally:
+        studio.destroy()
+
+
+def test_conflicting_limits_can_be_inspected_but_never_start_model_or_save_revision(reader, monkeypatch, tmp_path):
+    from test_blueprint_clearance import limit
+    from test_blueprint_geometry import pair
+
+    from fieldforge.blueprints.projects import create_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    value = pair((12, 0, 0))
+    value["request"]["acceptance_rules"] = [limit(), limit(value=1, operator="<=", id="C2")]
+    path = tmp_path / "conflict.ffproject.json"
+    project = create_project(path, "Conflicting request", value)
+    original = path.read_bytes()
+    monkeypatch.setattr("fieldforge.ui.blueprints.generate_blueprint",
+                        lambda *_a, **_kw: pytest.fail("A contradictory request must not call a model"))
+    try:
+        maker.acceptance.set_rules(value["request"]["acceptance_rules"])
+        maker.acceptance.check_limits()  # Works even before there is a blueprint.
+        assert "conflicting rule groups" in maker.acceptance.note.get()
+        maker.show_blueprint(value, dirty=False)
+        maker.load_request(maker.blueprint)
+        maker.history.project, maker.history.path = project, path
+        maker.diagnostics.prepare()
+        assert "limits conflict" in maker.status.get() and maker.instructions.get("1.0", "end-1c") == ""
+        maker.instructions.insert("1.0", "Fix these dimensions.")
+        maker.model.set("fixture")
+        maker.refine()
+        assert "Conflicting acceptance limits" in maker.status.get() and not maker.busy
+        assert path.read_bytes() == original and not maker.has_unsaved_changes()
+    finally:
+        studio.destroy()
+
+
 def test_history_comparison_export_uses_selected_revision_and_current_applied_draft(reader, monkeypatch, tmp_path):
     import copy
     import json
