@@ -148,3 +148,16 @@ Python output remains captured and native output goes to the job log. No Tk
 error is retried, skipped or suppressed, and all GUI assertions remain required.
 The matching local desktop/image/packaging checks passed **56 tests in 5.01s**
 with this capture mode; Ruff and whitespace checks passed.
+
+Run 37128237827 passed all ten source jobs. Both Windows map jobs passed
+**936 tests with 4 platform-specific skips** (108.34s on 3.12, 101.63s on
+3.13.16), including the previously failing fixture. The portable build compiled
+both executables and collected component notices, then stopped in its isolation
+script: copying `os.environ` into a plain dictionary had lost Windows' case-
+insensitive lookup, so `SystemRoot` did not match the stored `SYSTEMROOT` key.
+
+The verification environment now explicitly normalizes variable names and uses
+a Windows-only system PATH. Regression cases cover upper/mixed/lowercase keys,
+removal of Python/Tcl/Tk/virtualenv overrides, preservation of unrelated values
+and the caller's mapping, and a missing/empty system root. This fixes the check
+setup; successful frozen execution is still required before an archive is made.

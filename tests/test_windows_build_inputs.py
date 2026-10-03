@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from scripts import build_windows
+from scripts import build_windows, verify_windows_bundle
 
 
 @pytest.fixture
@@ -141,3 +141,28 @@ def test_recorded_but_absent_installed_license_blocks_distribution(tmp_path):
                               locate_file=lambda item: tmp_path / item)
     with pytest.raises(FileNotFoundError, match="version-matched license"):
         build_windows.distribution_notices("Pillow", package)
+
+
+@pytest.mark.parametrize("root_key", ["SYSTEMROOT", "SystemRoot", "systemroot"])
+def test_relocated_check_strips_case_insensitive_runtime_overrides(root_key):
+    inherited = {root_key: r"C:\Windows", "Path": r"C:\Python313;C:\other-tools",
+                 "PythonPath": "source-tree", "PythonHome": "installed-python",
+                 "Tcl_Library": "installed-tcl", "Tk_Library": "installed-tk",
+                 "Virtual_Env": "development-venv", "FieldForge_DB": "untouched-sentinel",
+                 "Temp": r"C:\temporary"}
+    before = inherited.copy()
+    child = verify_windows_bundle.isolated_environment(inherited)
+    assert child["SYSTEMROOT"] == r"C:\Windows"
+    assert child["PATH"] == r"C:\Windows\System32;C:\Windows"
+    assert child["PYINSTALLER_RESET_ENVIRONMENT"] == "1"
+    assert child["FIELDFORGE_DB"] == "untouched-sentinel"
+    assert child["TEMP"] == r"C:\temporary"
+    assert not {"PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY", "VIRTUAL_ENV"} & child.keys()
+    assert all(key == key.upper() for key in child)
+    assert inherited == before
+
+
+@pytest.mark.parametrize("inherited", [{}, {"SystemRoot": ""}])
+def test_relocated_check_requires_windows_system_root(inherited):
+    with pytest.raises(RuntimeError, match="SYSTEMROOT is required"):
+        verify_windows_bundle.isolated_environment(inherited)

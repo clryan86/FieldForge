@@ -12,12 +12,25 @@ import os
 import subprocess
 import sys
 import tempfile
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 
 def files_digest(folder: Path) -> dict[str, str]:
     return {p.relative_to(folder).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in folder.rglob("*") if p.is_file()}
+
+
+def isolated_environment(inherited) -> dict[str, str]:
+    """Copy Windows variables without losing their case-insensitive semantics."""
+    environment = {name.upper(): value for name, value in inherited.items()}
+    for name in ("PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY", "VIRTUAL_ENV"):
+        environment.pop(name, None)
+    if not environment.get("SYSTEMROOT"):
+        raise RuntimeError("Windows SYSTEMROOT is required for isolated executable verification")
+    system = PureWindowsPath(environment["SYSTEMROOT"])
+    environment["PATH"] = str(system / "System32") + ";" + str(system)
+    environment["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
+    return environment
 
 
 def main() -> None:
@@ -26,12 +39,7 @@ def main() -> None:
     bundle, report_path, source_commit = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve(), sys.argv[3]
     helper = bundle / "FieldForgeTools.exe"
     before = files_digest(bundle)
-    environment = os.environ.copy()
-    for name in ("PYTHONPATH", "PYTHONHOME", "TCL_LIBRARY", "TK_LIBRARY", "VIRTUAL_ENV"):
-        environment.pop(name, None)
-    system = Path(environment["SystemRoot"])
-    environment["PATH"] = str(system / "System32") + os.pathsep + str(system)
-    environment["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
+    environment = isolated_environment(os.environ)
     with tempfile.TemporaryDirectory(prefix="FieldForge isolated verification ") as temp:
         sentinel = Path(temp) / "must-not-touch-user-data.db"
         sentinel.write_bytes(b"Not a database: this must remain unchanged")
