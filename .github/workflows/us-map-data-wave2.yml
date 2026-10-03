@@ -1,0 +1,79 @@
+name: USA map sources wave two
+on:
+  push:
+    branches: [chatgpt/map-data-load-20261002]
+    paths: [.github/workflows/us-map-data-wave2.yml]
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        region: [new-jersey, rhode-island, hawaii, us-virgin-islands]
+    env:
+      MAP_REGION: ${{ matrix.region }}
+    steps:
+      - name: Acquire public OSM extract and publisher checksum
+        shell: python
+        run: |
+          import datetime, hashlib, json, os, pathlib, re, urllib.request
+          region = os.environ['MAP_REGION']
+          allowed = {'new-jersey', 'rhode-island', 'hawaii', 'us-virgin-islands'}
+          if region not in allowed:
+            raise ValueError('Region not approved')
+          root = pathlib.Path('source'); root.mkdir()
+          base = 'https://download.geofabrik.de/north-america/us/'
+          name = region + '-latest.osm.pbf'
+          url = base + name
+          def request(url):
+            req = urllib.request.Request(url, headers={'User-Agent':'FieldForge-USA-map-acquisition/0.2'})
+            response = urllib.request.urlopen(req, timeout=60)
+            if not response.url.startswith(base):
+              response.close()
+              raise ValueError('Unexpected source redirect')
+            return response
+          with request(url + '.md5') as response:
+            checksum_text = response.read(4097).decode('ascii')
+          if len(checksum_text) > 4096 or not re.fullmatch(r'[0-9a-fA-F]{32}\s+\*?' + re.escape(name) + r'\s*', checksum_text):
+            raise ValueError('Unexpected publisher checksum format')
+          expected_md5 = checksum_text.split()[0].lower()
+          sha = hashlib.sha256(); md5 = hashlib.md5(); count = 0
+          with request(url) as response, (root / name).open('xb') as out:
+            length = response.headers.get('Content-Length')
+            modified = response.headers.get('Last-Modified')
+            final_url = response.url
+            while chunk := response.read(1024 * 1024):
+              count += len(chunk)
+              if count > 192 * 1024 * 1024:
+                raise ValueError('Regional source exceeds approved 192 MiB limit')
+              sha.update(chunk); md5.update(chunk); out.write(chunk)
+          if not count or (length is not None and count != int(length)):
+            raise ValueError('Incomplete source response')
+          if md5.hexdigest() != expected_md5:
+            raise ValueError('Publisher checksum mismatch; source may have changed during download')
+          (root / (name + '.md5')).write_text(checksum_text, encoding='ascii')
+          with request(base + region + '.poly') as response:
+            polygon = response.read(1024 * 1024 + 1)
+          if not polygon or len(polygon) > 1024 * 1024:
+            raise ValueError('Invalid extract polygon size')
+          (root / (region + '.poly')).write_bytes(polygon)
+          receipt = dict(region=region, file=name, bytes=count, sha256=sha.hexdigest(), publisher_md5=expected_md5,
+            publisher='OpenStreetMap contributors; Geofabrik extract', license='ODbL-1.0',
+            rights_url='https://www.openstreetmap.org/copyright', source_url=url, final_url=final_url,
+            http_last_modified=modified, acquired_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            coverage_polygon_file=region+'.poly', coverage_polygon_sha256=hashlib.sha256(polygon).hexdigest(),
+            status='source_downloaded_not_prepared', notice='MD5 is a publisher consistency check, not authenticity. Read actual source snapshot from PBF header. No private user location or account data.')
+          (root / 'source-receipt.json').write_text(json.dumps(receipt, indent=2)+'\n', encoding='utf-8')
+          print(json.dumps(receipt, indent=2))
+      - name: Upload verified source only
+        uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-wave2-${{ matrix.region }}
+          path: source/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
