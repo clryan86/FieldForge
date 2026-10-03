@@ -150,6 +150,41 @@
       "scope": "Background on reading map legends. The small grid, symbols, scale and questions here are fictional classroom examples, not USGS maps or a navigation plan.",
       "publisher": "U.S. Geological Survey",
       "accessed_on": "2026-10-03"
+    },
+    "division": {
+      "title": "Prealgebra 2e: Divide Whole Numbers",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/1-5-divide-whole-numbers",
+      "scope": "Background on whole-number division. All calculations, situations and answer explanations here are original examples, not reproduced textbook exercises.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "averages-probability": {
+      "title": "Prealgebra 2e: Averages and Probability",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/5-5-averages-and-probability",
+      "scope": "Background definitions for averages and elementary probability. The data sets, models and practice tasks in these lessons are original.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "motion": {
+      "title": "Newton's Laws of Motion",
+      "url": "https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/newtons-laws-of-motion/",
+      "scope": "Background on the relationship between net force and changes in motion. The paper-box observation and questions are original introductory examples.",
+      "publisher": "NASA Glenn Research Center",
+      "accessed_on": "2026-10-03"
+    },
+    "water-cycle": {
+      "title": "Water cycle",
+      "url": "https://www.usgs.gov/water-science-school/water-cycle",
+      "scope": "Background on water storage and movement. The word-only diagram, fictional journey and exercises are original; no source diagram is reproduced.",
+      "publisher": "U.S. Geological Survey, Water Science School",
+      "accessed_on": "2026-10-03"
+    },
+    "primary-sources": {
+      "title": "Getting Started with Primary Sources",
+      "url": "https://www.loc.gov/programs/teachers/getting-started-with-primary-sources/",
+      "scope": "Background on examining source origins, purpose, context and corroboration. All historical records used in the lesson are explicitly fictional teaching examples, not Library of Congress documents.",
+      "publisher": "Library of Congress",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -1656,6 +1691,660 @@
         "coordinates",
         "map-scale",
         "geography"
+      ]
+    },
+    {
+      "id": "41",
+      "edition": "2026-10-03",
+      "title": "Vowel teams for long-a and long-e words",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "28",
+        "30"
+      ],
+      "goal": "Read and spell selected ai, ay, ee and ea words, using explicitly taught examples and recognizing exceptions.",
+      "materials": "Word cards, a writing surface and a proficient English speaker to model pronunciation.",
+      "lesson": [
+        "Several letters can work together to represent a vowel sound. In rain, ai represents the vowel heard in the letter name A; in day, ay represents that sound. Compare rain with ran and day with dad. Point to the complete vowel spelling each time. Teach ai with rain, mail and paint, and ay with day, play and tray. The examples suggest common positions for these spellings, but they are not an exception-free rule for choosing every spelling.",
+        "In seed, ee represents the vowel heard in the letter name E. Build seed as s-ee-d and read it as a whole word. Then try feet and green, explicitly reviewing the gr blend. Teach ea with team, leaf and read when read means what someone does now. The word read also has a past-time pronunciation with a different vowel, so a spelling list alone cannot resolve every word's pronunciation.",
+        "Contrast the taught ea sound with head and bread, which use a different vowel. Teach these words directly, identifying both familiar and unexpected parts. A useful word record has columns for the printed word, a familiar spoken example of its vowel, and a sentence showing meaning. Do not make a learner guess every unfamiliar ea word from a slogan about two vowels.",
+        "Preview the original sentence 'Jay can see three green leaves.' Teach Jay as a name, see with ee, three with th-r-ee, green with gr-ee-n, and leaves as the plural of leaf: the ending changes to ves and the final sound is /z/. Review can before reading. Ask what Jay can see, then return to individual spellings. Reading the sentence checks comprehension after instruction; it is not evidence that these four vowel teams are mastered in every word."
+      ],
+      "practice": [
+        "Sort rain, play, feet and team by their vowel-team spelling.",
+        "Build mail, then change m to t. Read both words and name the part that stays the same.",
+        "Does ea always represent the same vowel in team and head? Explain with the taught pronunciations."
+      ],
+      "answers": [
+        "ai: rain; ay: play; ee: feet; ea: team.",
+        "Mail becomes tail. The ai spelling and its long-a sound remain the same in these examples; the first consonant changes.",
+        "No. Team has the long-e sound; head has the vowel in bed in the modeled pronunciation. Teach the specific correspondence instead of applying a universal rule."
+      ],
+      "adaptation": "Introduce two or three examples per session and revisit them in a changed order. Use the learner's accent consistently. A facilitator should teach any additional sentence word before expecting independent reading.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "vowel-teams",
+        "long-a",
+        "long-e",
+        "ai",
+        "ay",
+        "ee",
+        "ea"
+      ]
+    },
+    {
+      "id": "42",
+      "edition": "2026-10-03",
+      "title": "Read ar, or, er, ir and ur spellings",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "41"
+      ],
+      "goal": "Recognize common vowel-plus-r spellings and connect their pronunciation to whole words in a local English accent.",
+      "materials": "Cards for car, park, corn, fork, her, bird and turn, plus space for spelling practice.",
+      "lesson": [
+        "A vowel followed by r often behaves differently from the short-vowel or silent-e patterns learned earlier. Teach ar with car and park, and or with corn and fork. Say each complete word, point to the spelling, and compare car with cat. Do not read ar as the letter name A followed automatically by a separate consonant sound; connect the written unit to the spoken word.",
+        "In many English accents, er in her, ir in bird and ur in turn represent the same stressed vowel pattern. Hearing that pattern alone therefore does not tell a writer which spelling to choose. Practice each whole word, including its spelling, with a short meaning cue. A record such as 'bird: an animal with feathers' helps connect the letters to a known word without replacing decoding with picture guessing.",
+        "English accents differ in whether an r is pronounced after a vowel. A speaker may pronounce the r in car, while another uses a different vowel realization without that consonant in this position. Model a consistent local form and accept the learner's established accent. The written spellings are still useful to compare; accent differences should not be treated as mistakes or corrected by forcing an unfamiliar speech pattern.",
+        "The examples are selected patterns, not a claim about all words containing r. In word and warm, for example, the preceding w affects the expected pronunciation in many accents; teach those later as specific cases. For current practice, read 'A bird is on the corn.' Preview a, is, on and the, including their ordinary unstressed or voiced forms. Ask which word has ir and which has or, then ask what the sentence says."
+      ],
+      "practice": [
+        "Match car, fork, her, bird and turn to ar, or, er, ir and ur.",
+        "Why might hearing the vowel in bird not be enough to choose between ir, er and ur when spelling an unfamiliar word?",
+        "Read park and car. Which letter sequence is shared, and must every English speaker pronounce a separate r in these words?"
+      ],
+      "answers": [
+        "Car: ar; fork: or; her: er; bird: ir; turn: ur.",
+        "Several spellings can represent the same sound pattern in many accents. The learner also needs knowledge of the particular word's spelling.",
+        "Both contain ar. No: pronunciation varies across English accents. Check consistent word recognition and spelling without marking an accent difference wrong."
+      ],
+      "adaptation": "Start with familiar spoken words and practice reading and spelling separately. Use a local fluent speaker where possible. When English is an additional language, explain vocabulary as well as the sound pattern.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "r-controlled-vowels",
+        "ar",
+        "or",
+        "er",
+        "ir",
+        "ur",
+        "accent"
+      ]
+    },
+    {
+      "id": "43",
+      "edition": "2026-10-03",
+      "title": "Read longer words using syllables and meaningful parts",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "29",
+        "42"
+      ],
+      "goal": "Break selected longer words into useful spoken or meaningful parts, then blend and check the whole word.",
+      "materials": "Cards for sunset, picnic, repaint, unkind and helpful; paper for marking parts.",
+      "lesson": [
+        "A syllable is a spoken beat organized around a vowel sound. Say sunset and hear two beats: sun-set. Each part is also a familiar word. Read sun and set, join them without a long pause, and connect sunset to its meaning. Now compare picnic: pic-nic gives two useful reading chunks, but those chunks are not two meaningful words in this use. Syllable parts and meaning parts are different tools.",
+        "A prefix is a meaningful part added before a base; a suffix comes after it. In repaint, re- means again and paint is the base. In unkind, un- changes kind to its opposite. Helpful joins help with -ful, giving the sense of providing help. Teach kind explicitly with its long-i sound in this word, and teach the weak vowel in the ending of helpful rather than assuming every written vowel is stressed.",
+        "Use a repeatable reading routine: look for a familiar base or ending, mark a manageable part, say the parts, blend them, and check the resulting spoken word and meaning. For repainting, identify re + paint + ing, review ai in paint and ng in the ending, then say the full word. The base still helps explain the action, even though the finished word has several syllables.",
+        "Do not impose a mechanical split after every two letters or assume every initial re is a prefix. A tutor may supply the whole word and then explain its parts when the learner's first attempt does not produce a known pronunciation. Marking syllables is a temporary support, not a replacement spelling. In the learning record, note whether the learner read independently, used marked parts or needed a spoken model."
+      ],
+      "practice": [
+        "Read sunset and picnic. Which one contains two familiar whole words as well as two syllables?",
+        "Identify the prefix and base in repaint. What meaning does the prefix add?",
+        "Break helpful into meaningful parts and explain why a syllable chunk is not always a meaningful word."
+      ],
+      "answers": [
+        "Sunset contains sun and set. Picnic has two spoken syllables, but pic and nic are not meaningful component words here.",
+        "re- + paint. Re- adds the meaning again: to paint again.",
+        "help + -ful. Meaningful parts contribute to a word's meaning; syllable chunks organize its pronunciation. The two kinds of division can coincide, but do not always do so."
+      ],
+      "adaptation": "Teach the examples across several sessions and check that their meanings are familiar. Offer oral blending or large print. This lesson introduces a strategy; it does not cover all English syllable patterns, stresses or spelling changes.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "syllables",
+        "prefixes",
+        "suffixes",
+        "morphology",
+        "multisyllable-words"
+      ]
+    },
+    {
+      "id": "44",
+      "edition": "2026-10-03",
+      "title": "Complete a simple form and check required fields",
+      "track": "practical-literacy",
+      "audience": "Adolescent and adult literacy learners; younger learners can use a fictional club example",
+      "prerequisites": [
+        "10",
+        "31"
+      ],
+      "goal": "Read field labels, distinguish required from optional information, and check a fictional form against its instructions.",
+      "materials": "Paper and the fictional form below. Use invented details throughout this exercise.",
+      "lesson": [
+        "A form asks for information in labeled places called fields. Read its purpose and instructions before writing. In this fictional learning-club form, a star marks a required field: '* Display name: ___; * Session code: ___; Contact method (optional): ___; Notes (optional): ___'. The allowed session codes are R1 for reading and M1 for mathematics. The instruction says 'Choose one session code.' These rules apply to this practice form only.",
+        "A completed example is '* Display name: River; * Session code: R1; Contact method: left blank; Notes: large print requested'. River is an invented display name, not a legal-name entry. The optional blank is allowed here. Leaving the session code blank would make this form incomplete because that field is marked required. Putting R1 and M1 in the same field would conflict with the choose-one instruction.",
+        "Check the format as well as whether something is written. The digit 1 and the letter I can look similar: R1 is an allowed code, while RI is not listed. Read back each completed field against the instruction rather than guessing from appearance. If an unfamiliar real form asks for information whose purpose or format is unclear, ask its provider for an explanation before completing that field.",
+        "Practice with fictional information rather than collecting participants' addresses, identification numbers or contact details. A literacy activity does not require those details. Before handing in the paper exercise, use a three-part check: all required fields completed, allowed choices used, and optional fields intentionally completed or left blank. A partner may read the labels aloud; record that support separately from independent reading."
+      ],
+      "practice": [
+        "Which two fields are required on the fictional form, and can Contact method be blank?",
+        "A learner enters 'River' and 'R1 M1', leaving the optional fields blank. What needs correction?",
+        "Write a complete example for the mathematics session using an invented display name and no optional information."
+      ],
+      "answers": [
+        "Display name and Session code are required. Contact method may be blank because it is explicitly optional here.",
+        "The session field contains two choices, contrary to the choose-one instruction. Select R1 or M1. The blank optional fields are acceptable.",
+        "For example: Display name: Ash; Session code: M1; Contact method: blank; Notes: blank. Accept any invented name with the single valid mathematics code."
+      ],
+      "adaptation": "Use large labels, read-aloud support or pointing when handwriting is not the goal. Compare another fictional form with different instructions to show that required fields and conventions vary. Do not treat this as guidance for a specific legal or government form.",
+      "references": [
+        "comprehension",
+        "writing"
+      ],
+      "tags": [
+        "forms",
+        "required-fields",
+        "optional-fields",
+        "adult-literacy",
+        "proofreading"
+      ]
+    },
+    {
+      "id": "45",
+      "edition": "2026-10-03",
+      "title": "Read a schedule and plan a feasible sequence",
+      "track": "practical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "10",
+        "19"
+      ],
+      "goal": "Combine opening times, activity durations and travel time to decide whether a simple plan fits a fictional schedule.",
+      "materials": "Paper, a drawn timeline and the fictional opening hours in this lesson.",
+      "lesson": [
+        "Read every heading before using a schedule. The fictional community room opens Monday 09:00-12:00 and 13:00-16:00, Tuesday 10:00-14:00, and is closed Wednesday. These are same-day 24-hour times. The dash separates an opening and a closing time; it does not mean the room opens continuously across Monday's midday break. Other schedules may use different time formats, dates or exceptions.",
+        "Suppose a learner starts a 20-minute walk at 11:20 on Monday and needs 30 minutes inside. Arrival would be 11:40, leaving only 20 minutes until the 12:00 closure, so the visit does not fit. A plan beginning at 13:00 would reach the room at 13:20 and finish at 13:50. Write departure, arrival and finish as separate entries to avoid overlooking part of the trip.",
+        "Work backward when the finish time is fixed. To finish a 30-minute activity by 12:00, start it no later than 11:30; with a 20-minute walk, depart by 11:10. That plan has no spare time. An earlier departure creates a buffer for ordinary delay. A calculated fit assumes the stated durations and availability; it does not guarantee that a real appointment or service will be available.",
+        "Check the day as well as the clock. A note saying 'meet at 11' is incomplete when the day, morning or evening, and location are not understood. Rewrite it as 'Meet at the community-room entrance on Tuesday at 11:00.' In a real plan, confirm any date-specific changes with the schedule's issuer. For this offline exercise, use only the fictional hours given above and state any added assumption."
+      ],
+      "practice": [
+        "On Tuesday, a person arrives at 13:40 and needs 30 minutes inside. Does the activity fit before closing?",
+        "On Monday, what is the latest departure for a 20-minute walk and 30-minute activity ending at 12:00?",
+        "What is missing from 'Meet at 11', and is the fictional room open Wednesday?"
+      ],
+      "answers": [
+        "No. It would finish at 14:10, ten minutes after Tuesday's 14:00 closure.",
+        "11:10, assuming exactly 20 minutes walking and 30 minutes inside with no delay. Explain that this leaves no buffer.",
+        "The day or date, clear time format and location may be missing. The fictional schedule says the room is closed Wednesday."
+      ],
+      "adaptation": "Draw intervals on a number line or move paper clock hands. Replace walking with an explicitly stated accessible travel method when appropriate. Keep the arithmetic scenario distinct from actual local opening hours.",
+      "references": [
+        "comprehension"
+      ],
+      "tags": [
+        "schedule",
+        "opening-hours",
+        "elapsed-time",
+        "planning",
+        "adult-literacy"
+      ]
+    },
+    {
+      "id": "46",
+      "edition": "2026-10-03",
+      "title": "Follow instructions and resolve conflicting versions",
+      "track": "practical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "10",
+        "23",
+        "33"
+      ],
+      "goal": "Follow a short conditional procedure, distinguish a revision from an older copy, and identify when instructions remain unresolved.",
+      "materials": "Paper cards labeled with the fictional instructions and a few sheets to sort.",
+      "lesson": [
+        "Instructions can contain sequence words and conditions. The fictional classroom procedure says: 'First count the sheets. If there are at least five, place five in Tray A and put any remaining sheets in Tray B. If there are fewer than five, put all sheets in Tray B. Finally record both tray counts.' At least five includes exactly five. Read the entire procedure before moving anything so the final recording step is not missed.",
+        "Work through seven sheets: the condition is true, so Tray A gets five and Tray B gets two; record A=5, B=2. With three sheets, the condition is false: record A=0, B=3. Both runs account for every sheet. Checking the total after sorting catches a lost or double-counted item without requiring an elaborate explanation.",
+        "Now compare two fictional cards from the same classroom organizer. Card 1, revision 1, says to place completed records in a blue folder. Card 2, revision 2, explicitly says it replaces revision 1 and changes the destination to a green folder. For this exercise, the stated replacement makes the green folder the current destination. A newer date by itself would not prove an unrelated card has authority over the original procedure.",
+        "If a third unsigned card simply says 'Use the red folder', record the disagreement and ask the organizer which instruction applies. Do not combine contradictory destinations or conceal uncertainty by choosing one at random. When rewriting the procedure, keep the condition, quantities and final check intact; shortening the text must not silently remove a decision the reader needs to make."
+      ],
+      "practice": [
+        "Apply the sorting procedure to exactly five sheets. What are the recorded tray counts?",
+        "Which folder is specified by the current authorized revision in the fictional example, and what establishes the replacement?",
+        "Rewrite the fewer-than-five branch for a partner without changing its meaning, and explain what to do with the unsigned conflicting card."
+      ],
+      "answers": [
+        "A=5, B=0. Exactly five satisfies at least five, and there are no remaining sheets.",
+        "Green. Card 2 is from the same organizer and explicitly replaces revision 1; the revision number alone is not the whole evidence.",
+        "For example: 'When the total is under five, place every sheet in Tray B, then record A=0 and the Tray B count.' Flag the red-folder conflict and seek clarification from the organizer."
+      ],
+      "adaptation": "Act out the procedure with paper or use a drawn trace table. This is a harmless sorting exercise; it does not authorize improvising with conflicting instructions for equipment or other consequential tasks.",
+      "references": [
+        "comprehension",
+        "writing"
+      ],
+      "tags": [
+        "instructions",
+        "conditions",
+        "revision",
+        "sequence",
+        "adult-literacy"
+      ]
+    },
+    {
+      "id": "47",
+      "edition": "2026-10-03",
+      "title": "Round numbers and use estimates to check answers",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "12",
+        "13",
+        "16"
+      ],
+      "goal": "Round nonnegative numbers to a stated place and use a rough estimate to detect an implausible calculation.",
+      "materials": "A number line and paper for recording exact values beside estimates.",
+      "lesson": [
+        "Rounding replaces a number with a nearby value at a chosen level of precision. To round 347 to the nearest ten, compare 340 and 350: 347 is three away from 350 and seven away from 340, so use 350. To the nearest hundred, compare 300 and 400: 347 is closer to 300. Always name the place; 'round 347' alone does not specify the result.",
+        "For this lesson's nonnegative numbers, use the convention that an exact halfway value rounds upward. Thus 345 rounds to 350 to the nearest ten. Other settings can specify different tie conventions, so name the one being used. A digit-based shortcut is to inspect the next smaller place: 0-4 keeps the rounding digit, while 5-9 increases it. Digits in smaller whole-number places become zero.",
+        "Apply the same idea to decimals. To the nearest tenth, 6.27 lies between 6.2 and 6.3 and is closer to 6.3. A value such as 9.96 rounds to 10.0 to the nearest tenth because increasing the tenths carries into the next place. Writing 10.0 signals the requested tenth-place precision; do not claim the original measurement became more accurate through rounding.",
+        "Estimate before accepting a result. For 398 + 203, rounding both addends to hundreds gives about 400 + 200 = 600. The exact sum is 601, which is plausible; a written answer of 6,010 would deserve rechecking. An estimate is a check, not proof of an exact answer. Keep original values when accuracy matters, and avoid repeatedly rounding intermediate steps unless the task explicitly calls for it."
+      ],
+      "practice": [
+        "Round 764 to the nearest ten and nearest hundred.",
+        "Round 4.36 to the nearest tenth, and 2.5 to the nearest whole number using this lesson's tie convention.",
+        "Estimate 198 + 403 by rounding to hundreds, then calculate exactly. Would 6,010 be a plausible answer?"
+      ],
+      "answers": [
+        "Nearest ten: 760. Nearest hundred: 800. The requested place changes the comparison.",
+        "4.4 and 3, respectively. The second value is exactly halfway and uses the stated upward tie convention.",
+        "Estimate: 200 + 400 = 600. Exact: 601. No: 6,010 is about ten times too large and should be checked."
+      ],
+      "adaptation": "Use distances on a number line before introducing digit rules. Begin with whole numbers if decimals are unfamiliar. Estimates for quantities such as required containers may need rounding up rather than nearest-value rounding; state the practical rule separately.",
+      "references": [
+        "whole",
+        "decimals"
+      ],
+      "tags": [
+        "rounding",
+        "estimation",
+        "place-value",
+        "reasonableness"
+      ]
+    },
+    {
+      "id": "48",
+      "edition": "2026-10-03",
+      "title": "Multiply larger whole numbers with partial products",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "12",
+        "14",
+        "47"
+      ],
+      "goal": "Use place value to multiply two-digit whole numbers and check the result with a second representation.",
+      "materials": "Paper, a drawn rectangle divided into four regions and optional counters for small examples.",
+      "lesson": [
+        "Multiplying larger numbers uses the same equal-group idea as smaller facts. For 23 groups of 14, split 23 into 20 + 3 and 14 into 10 + 4. Each part of one factor must multiply each part of the other. The four products are 20 x 10 = 200, 20 x 4 = 80, 3 x 10 = 30 and 3 x 4 = 12. Add them to obtain 322.",
+        "Draw a rectangle with side lengths 20 + 3 and 10 + 4. Label its four regions with those products. The drawing shows why adding only 200 and 12 would omit two regions and give a result that is too small. The rectangle represents multiplication of lengths for an area model; when the story is groups of objects, use the diagram to explain the arithmetic without calling the final count square units.",
+        "A more compact method first multiplies 23 by 4 to obtain 92, then by 10 to obtain 230, and adds 92 + 230 = 322. In written column multiplication, the second row represents tens, not another set of ones. A zero placeholder can keep that place value visible. Explain what each row means before treating row alignment as a rule to memorize.",
+        "Check the product by changing the decomposition: 14 x 23 = 14 x 20 + 14 x 3 = 280 + 42 = 322. A rough estimate, 20 x 15 = 300, supports the scale of the result but does not prove the exact digits. Return to a smaller array if a learner omits a product or loses place value. Practice accuracy and explanation before imposing time limits."
+      ],
+      "practice": [
+        "Compute 32 x 14 by splitting 14 into 10 + 4.",
+        "For 21 x 13, list all four products from (20 + 1) x (10 + 3), then add them.",
+        "A learner calculates 24 x 12 as 24 x 1 + 24 x 2 = 72. Explain the place-value mistake and correct it."
+      ],
+      "answers": [
+        "32 x 10 = 320 and 32 x 4 = 128; total 448.",
+        "200, 60, 10 and 3; total 273.",
+        "The 1 in 12 represents ten, not one. Use 24 x 10 + 24 x 2 = 240 + 48 = 288."
+      ],
+      "adaptation": "Use smaller factors and labeled boxes when multiplication facts are still developing. A multiplication chart may support the facts while place value remains the target. Record which support was used so the next lesson can address the actual difficulty.",
+      "references": [
+        "multiplication"
+      ],
+      "tags": [
+        "partial-products",
+        "multiplication",
+        "area-model",
+        "place-value"
+      ]
+    },
+    {
+      "id": "49",
+      "edition": "2026-10-03",
+      "title": "Divide larger numbers and interpret the remainder",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14",
+        "48"
+      ],
+      "goal": "Divide a larger whole number by grouping manageable multiples, check the remainder, and interpret it in context.",
+      "materials": "Paper and optional counters or drawn bundles representing equal groups.",
+      "lesson": [
+        "To divide 157 objects into groups of six, start with a useful multiple: 20 groups use 120 objects, leaving 37. Six more groups use 36, leaving one. There are 20 + 6 = 26 complete groups and a remainder of one. This partial-quotients method lets a learner choose manageable multiples instead of guessing the entire quotient at once.",
+        "Check whole-number division using the original total: divisor x quotient + remainder = dividend. Here 6 x 26 + 1 = 157. The remainder must be at least zero and less than the positive divisor. A proposed answer of 25 remainder 7 has the same total, but seven contains another complete group of six, so the grouping is not finished.",
+        "The correct practical answer depends on the question. With boxes holding at most six objects each, 157 objects need 27 boxes: 26 full boxes and one partly filled box. If each activity kit must contain exactly six objects, the same supply makes 26 complete kits and leaves one object. Do not always discard a remainder or always round up without reading what is being counted.",
+        "When an amount is genuinely divisible into smaller equal parts, a remainder can become a fraction. Sharing 157 identical units equally among six groups gives 26 and 1/6 units per group, if subdividing a unit is allowed. That answer would be unsuitable for counting indivisible people or complete sealed items. Write the number with its unit and explain what the remainder represents before deciding how to report it."
+      ],
+      "practice": [
+        "Calculate 185 divided by 8 as a whole-number quotient and remainder, then check it.",
+        "Using that calculation, how many boxes of capacity eight hold all 185 objects, and how many complete eight-object kits can be made?",
+        "A learner gives 157 divided by 6 as 25 remainder 7. Why is this not a finished whole-number division answer?"
+      ],
+      "answers": [
+        "23 remainder 1; 8 x 23 + 1 = 185, and 1 is smaller than 8.",
+        "24 boxes hold everything, including one partly filled box. The supply makes 23 complete kits, with one object left.",
+        "The remainder 7 is at least the divisor 6. Form one more full group: 26 remainder 1."
+      ],
+      "adaptation": "Start with smaller groups and drawings, then move to multiples of ten groups. Require a written interpretation of the remainder as well as arithmetic. Fractions are an extension only when splitting units fits the situation.",
+      "references": [
+        "division"
+      ],
+      "tags": [
+        "division",
+        "partial-quotients",
+        "remainders",
+        "capacity"
+      ]
+    },
+    {
+      "id": "50",
+      "edition": "2026-10-03",
+      "title": "Compare proportional relationships in tables",
+      "track": "applied-numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21",
+        "37"
+      ],
+      "goal": "Identify a constant amount per unit, extend a proportional table, and distinguish a fixed starting amount from proportional growth.",
+      "materials": "Paper for two small tables and counters representing fictional points.",
+      "lesson": [
+        "In a proportional relationship, one quantity is a constant multiple of another. Suppose each completed practice card earns three fictional points with no starting bonus. Cards 0, 1, 2 and 4 correspond to points 0, 3, 6 and 12. For any positive card count, points divided by cards equals three. The rule is p = 3c, where c is the number of cards and p the points.",
+        "Use both multiplication and division to read the table. Five cards give 15 points. If the total is 21 points, divide 21 by three to find seven cards. Doubling the number of cards doubles the points in this particular model. Keep units in the explanation: three points per card is a rate, while seven cards is a count.",
+        "Compare a second rule that awards a two-point starting bonus plus three points per card. Cards 0, 1, 2 and 4 now give 2, 5, 8 and 14 points. This table increases by three for each additional card but is not proportional: at zero cards it already has two points, and the ratio of points to positive card counts is not constant. Its rule is p = 2 + 3c.",
+        "A few matching entries suggest a pattern but cannot prove that every future case follows it. Here the fictional rule is explicitly stated, so extending the table is justified. For measured data, ask whether the same conditions continue and whether there is a fixed starting quantity. Do not assume every increasing table is proportional merely because both columns become larger."
+      ],
+      "practice": [
+        "Under the no-bonus rule, find the points for six cards and the cards needed for 27 points.",
+        "Under the two-point starting-bonus rule, how many points do three cards give? Is this relationship proportional?",
+        "A table shows pairs (1, 4), (2, 8), (3, 12). What proportional rule fits, and what information would justify using it for all later rows?"
+      ],
+      "answers": [
+        "18 points; nine cards. Use 6 x 3 and 27 divided by 3.",
+        "11 points: 2 + 3 x 3. It is not proportional because of the nonzero starting bonus.",
+        "y = 4x fits these rows. An explicit rule or adequate evidence that the constant-rate, zero-start relationship continues would justify extending it; the three rows alone do not prove that."
+      ],
+      "adaptation": "Begin with equal bundles and a two-column table. Introduce letters only after learners can explain the quantities verbally. These are classroom points, not claims about actual prices, pay or financial returns.",
+      "references": [
+        "multiplication",
+        "equations"
+      ],
+      "tags": [
+        "proportional",
+        "ratio-table",
+        "unit-rate",
+        "fixed-starting-amount"
+      ]
+    },
+    {
+      "id": "51",
+      "edition": "2026-10-03",
+      "title": "Describe a data set with mean, median and range",
+      "track": "applied-numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "16",
+        "20",
+        "49"
+      ],
+      "goal": "Calculate three simple summaries and explain how an unusually large value can affect the story they tell.",
+      "materials": "Paper and the fictional daily counts given below; a calculator is optional after setting out the method.",
+      "lesson": [
+        "Five fictional days have 2, 3, 3, 4 and 8 returned books. Their mean is the total divided by the number of days: 20 divided by 5 = 4 books per day. Think of redistributing the total equally across the five days. The mean describes the whole set; it does not assert that every day actually had four returns.",
+        "To find the median, first order the values. The middle value of 2, 3, 3, 4, 8 is 3. If there are an even number of values, average the two middle ones: the median of 2, 3, 4, 9 is (3 + 4) divided by 2 = 3.5. Keep repeated values; deleting one of the threes in the first set would change the data rather than simplify the calculation.",
+        "The range is the largest value minus the smallest. For the five-day set it is 8 - 2 = 6 books. It gives a rough measure of spread but does not show how values are distributed between the extremes. Name which summary you use instead of saying only 'the average', and include the unit and observation period so another reader can interpret it.",
+        "Now replace the 8 with 28 while keeping the other four days. The total becomes 40 and the mean becomes 8; the median stays 3, while the range rises to 26. Report the unusual day and the summaries rather than automatically deleting it. First check whether it is a recording error or a real event. Five days of observations also do not establish what will happen every future week."
+      ],
+      "practice": [
+        "Find the mean, median and range of 1, 2, 2, 3, 7.",
+        "Find the median of 4, 10, 6, 8. Show the ordered values.",
+        "In the original five-day example, what happens to the mean and median when 8 is replaced by 28? Why report more than one summary?"
+      ],
+      "answers": [
+        "Total 15 across five values gives mean 3; median 2; range 7 - 1 = 6.",
+        "Ordered values: 4, 6, 8, 10. Median (6 + 8) divided by 2 = 7.",
+        "Mean rises from 4 to 8; median stays 3. Different summaries show different features, and the unusually high day strongly changes the mean."
+      ],
+      "adaptation": "Use piles of counters to demonstrate equal sharing and ordered cards to find the middle. Keep real learners' personal scores out of a public exercise unless there is an appropriate agreed purpose; fictional counts suffice here.",
+      "references": [
+        "averages-probability"
+      ],
+      "tags": [
+        "mean",
+        "median",
+        "range",
+        "data-summary",
+        "outlier"
+      ]
+    },
+    {
+      "id": "52",
+      "edition": "2026-10-03",
+      "title": "Model chance and compare it with observations",
+      "track": "applied-numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "15",
+        "16",
+        "20"
+      ],
+      "goal": "Calculate a simple probability under stated assumptions and distinguish the model from the outcomes of a short trial.",
+      "materials": "Four same-size paper cards labeled A, B, C and D, and a bag or a drawing of one; physical trials are optional.",
+      "lesson": [
+        "Probability describes chance under a model. Suppose four cards A, B, C and D are mixed so that each has an equal chance of being selected without looking. If A, B and C are marked red and D is marked blue, the probability of red is three favorable cards out of four: 3/4, or 75%. The equally likely assumption applies to individual cards, not to the two color categories.",
+        "The probability of blue is 1/4. In this model a green card is impossible, with probability zero, and a red-or-blue card is certain, with probability one. These conclusions depend on the stated contents. In an actual activity, use cards that cannot be distinguished by size or feel, mix them, and avoid looking; otherwise the equally likely model may be a poor description.",
+        "If each card is replaced and the cards are mixed again after every draw, the model gives the same probabilities for each draw. Twenty draws need not contain exactly 15 red results. A short run of blue draws does not make red due on the next independent draw; the bag's contents and selection method determine the next draw's chance. Record results without changing the model merely to match one short run.",
+        "Compare model probability with observed frequency. If 13 of 20 recorded draws are red, the observed fraction is 13/20 = 65%, while the stated model predicts a 75% chance per draw. That difference alone does not establish unfair selection. If a drawn card is not replaced, the contents do change: after drawing a blue card from this bag, the remaining three cards are all red."
+      ],
+      "practice": [
+        "A bag contains five equally selectable cards: two marked X and three marked Y. What is the probability of X?",
+        "In 10 replacement draws from that bag, X appears six times. Give the observed fraction and explain whether the model required exactly two X results in every five draws.",
+        "In the original A-D example, the blue card is drawn and not replaced. What is the probability that the next card is red?"
+      ],
+      "answers": [
+        "2/5, or 40%, under the stated equal-selection model.",
+        "Observed fraction 6/10 = 3/5, or 60%. No: a model probability does not fix the exact outcomes in a short block of trials.",
+        "1, or 100%, because only the three red cards remain. This conclusion uses the changed contents, not a belief that a color is due."
+      ],
+      "adaptation": "Use letter or shape labels alongside colors so the task does not depend on color vision. A paper model is enough if cards cannot be mixed reliably. Keep this as a probability lesson without wagering or rewards tied to random outcomes.",
+      "references": [
+        "averages-probability"
+      ],
+      "tags": [
+        "probability",
+        "chance",
+        "random",
+        "replacement",
+        "observed-frequency"
+      ]
+    },
+    {
+      "id": "53",
+      "edition": "2026-10-03",
+      "title": "Observe pushes, friction and changes in motion",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "22"
+      ],
+      "goal": "Distinguish motion from a change in motion and describe a small observation without overstating its explanation.",
+      "materials": "A small empty paper box, a clear level tabletop or floor area, and paper for observations. A facilitator may demonstrate while learners describe.",
+      "lesson": [
+        "Describe an object's position relative to a chosen reference, such as a line drawn on paper beside the box. A push can change the box's motion: it may begin moving, speed up, slow down or change direction. Force has direction as well as size. In this introductory activity, use gentle pushes over a short clear area so the box stays on its surface.",
+        "A box sliding after a push usually slows and stops because of interactions including friction with the surface. It does not stop simply because moving objects must run out of motion. In the ideal Newtonian model, if the forces on an object balance, it can remain still or continue moving at constant speed in a straight line. Balanced forces mean no change in velocity, not necessarily no movement.",
+        "Gently slide the same empty box on a smooth sheet and on a textured sheet, keeping the starting place and surface level alike. Record the distance traveled and any turning or tipping. Repeat several times. A hand push is hard to reproduce exactly, so this is an exploratory observation, not a precise measurement of friction or proof that texture alone caused every distance difference.",
+        "Use a two-column record: observation and possible explanation. 'The box moved 12 cm and then stopped' is an observation if measured; 'friction contributed to slowing it' is an explanation consistent with the model. If a result changes on repetition, keep the result and ask what else varied. Do not use this simple activity to calculate safe loads, design machinery or infer a material's engineering properties."
+      ],
+      "practice": [
+        "A box slides in a straight line at constant speed in an ideal model. Must the net force be forward? Explain.",
+        "Which statement is an observation: 'The box stopped after 12 cm' or 'The rough surface caused the shorter slide'?",
+        "Name two conditions to keep alike when comparing slides and one limitation that remains."
+      ],
+      "answers": [
+        "No. Zero net force is consistent with constant speed and direction in the Newtonian model. A nonzero net force would change velocity.",
+        "The measured stopping distance is an observation. The statement about what caused it is an explanation that needs evidence and control of other variables.",
+        "Examples: use the same box, starting place, level surface and measurement method. Hand pushes can still differ in strength or duration, limiting causal conclusions."
+      ],
+      "adaptation": "A learner can direct or describe a facilitator's demonstration. Use only a small empty box and a contained clear area, with no throwing or moving heavy objects. A drawing can substitute for the activity.",
+      "references": [
+        "motion"
+      ],
+      "tags": [
+        "force",
+        "motion",
+        "friction",
+        "observation",
+        "net-force"
+      ]
+    },
+    {
+      "id": "54",
+      "edition": "2026-10-03",
+      "title": "Trace water storage and movement through a cycle",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "38"
+      ],
+      "goal": "Label common water-cycle processes and explain why a simple cycle drawing represents many possible paths.",
+      "materials": "Paper for a labeled diagram. No heating, collection or tasting activity is needed.",
+      "lesson": [
+        "Water can be stored in oceans, lakes, soil, ice and the atmosphere. Evaporation changes liquid water to water vapor, a gas; condensation changes vapor to liquid droplets. Clouds contain tiny liquid droplets, ice crystals or both, rather than being visible collections of gaseous water vapor alone. Precipitation includes rain or snow falling from clouds toward the surface.",
+        "After rain reaches land, some water flows across the surface as runoff, while some enters the ground through infiltration. Water below ground can move through connected pores and cracks and may later return to a stream or spring. Plants also move water into the air through transpiration. Sunlight supplies much of the energy for evaporation, while gravity helps drive falling precipitation and downhill flow.",
+        "Draw five labeled places: lake, air, cloud, land surface and ground. Add arrows for lake-to-air evaporation, vapor-to-droplet condensation, cloud-to-land precipitation, land-to-lake runoff and land-to-ground infiltration. This is an intentionally incomplete model: add a plant-to-air arrow for transpiration and an ice store with melting if those processes are being studied. The drawing is a relationship map, not a required route for every water molecule.",
+        "A fictional water journey might include lake, air, cloud, rain and soil, but another portion may stay stored as ice for a long time. The word cycle does not promise that every portion returns quickly or visits every place. Nor does describing a natural pathway establish that collected water is suitable to drink. The lesson explains storage, movement and state changes, not water treatment or a local weather prediction."
+      ],
+      "practice": [
+        "Name the changes from liquid water to vapor and from vapor to liquid droplets.",
+        "Rain reaches land. Describe two different paths it could take next and label the processes.",
+        "What is wrong with saying that every drop must visit all five places in the drawing in the same order?"
+      ],
+      "answers": [
+        "Evaporation and condensation, respectively.",
+        "It may flow across the surface toward a stream or lake as runoff, or enter the ground by infiltration. Other paths are possible too, including later evaporation.",
+        "The drawing is a simplified network of possible paths. Water can take different routes and remain stored for different lengths of time; there is no single mandatory five-stop sequence."
+      ],
+      "adaptation": "Use labeled arrows and textures as well as color, or describe the route aloud. Relate the diagram to familiar rain and puddles without claiming a small observation proves where particular water came from.",
+      "references": [
+        "water-cycle"
+      ],
+      "tags": [
+        "water-cycle",
+        "evaporation",
+        "condensation",
+        "infiltration",
+        "transpiration"
+      ]
+    },
+    {
+      "id": "55",
+      "edition": "2026-10-03",
+      "title": "Compare historical sources and build a supported timeline",
+      "track": "history-inquiry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "23",
+        "33"
+      ],
+      "goal": "Distinguish a source from an interpretation, place dated claims in order, and explain what conflicting evidence can and cannot establish.",
+      "materials": "Paper and the three explicitly fictional records printed below. They are invented for practice, not authentic historical documents.",
+      "lesson": [
+        "Historians ask questions about the past using surviving evidence. A primary source comes directly from the period or experience being studied, such as a contemporary notice or a participant's account. A secondary source interprets earlier evidence. The distinction depends partly on the research question: a later history book can itself be a primary source for studying how that later period remembered the past. Neither label guarantees accuracy.",
+        "Use this fictional case about a reading room. Record A is a notice dated 2 May 1910: 'The room is scheduled to open on 9 May.' Record B is a caretaker's notebook entry dated 10 May 1910: 'We welcomed the first visitors yesterday.' Record C is a history written in 1980: 'The room opened in April 1910'; it gives no citation. Preserve each creator, date and exact claim in a small source table.",
+        "Place the dates on a timeline: April 1910, 2 May, 9 May, 10 May, then 1980. Record A supports a plan for 9 May, not by itself proof the plan happened. Record B supports first visitors on 9 May if the entry date and word yesterday are accurate. Together they make 9 May a supported working conclusion; Record C conflicts with it but may refer to a different kind of opening or contain an error.",
+        "Write a conclusion with its limits: 'In this fictional record set, the planned opening and caretaker's account support first visitors on 9 May 1910; the later April claim remains unexplained.' Seek another independently created source, such as a dated visitor register. Two accounts copying the same original are not necessarily independent corroboration. Keep unresolved disagreement visible instead of erasing a record that does not fit."
+      ],
+      "practice": [
+        "Which fictional record directly states a plan, and which reports visitors after the event?",
+        "What date does 'yesterday' imply in the notebook entry dated 10 May 1910, and what assumption is required?",
+        "Why is 'all three records prove an April opening' unsupported, and what evidence could help resolve the disagreement?"
+      ],
+      "answers": [
+        "Record A states a scheduled opening. Record B reports the first visitors after they arrived. Their purposes differ.",
+        "9 May 1910, assuming the entry is accurately dated and yesterday refers to the preceding calendar day.",
+        "Records A and B point to May, and Record C supplies an uncited April claim. An independently dated visitor register, contemporary report or explanation of different opening events could help; no missing evidence should be invented."
+      ],
+      "adaptation": "Read records aloud when source reasoning is the target. When using real history later, retain provenance and context, distinguish original wording from paraphrase, and choose accessible materials suited to the learners.",
+      "references": [
+        "primary-sources"
+      ],
+      "tags": [
+        "history",
+        "primary-source",
+        "secondary-source",
+        "timeline",
+        "corroboration"
+      ]
+    },
+    {
+      "id": "56",
+      "edition": "2026-10-03",
+      "title": "Discuss a shared decision and record the reasons",
+      "track": "civic-learning",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "31",
+        "33"
+      ],
+      "goal": "Compare proposals against an agreed constraint, distinguish evidence from preference, and write an accurate record of a fictional group decision.",
+      "materials": "Paper and the fictional learning-group scenario below; no real election or political campaign is involved.",
+      "lesson": [
+        "A fictional group has six members and 60 minutes for its next meeting. Proposal A gives 40 minutes to reading and 20 to mathematics; Proposal B gives 30 minutes to each; Proposal C gives 45 minutes to each. Start by checking the common constraint. A and B fit 60 minutes; C needs 90 and must be revised or considered under a different time limit. This arithmetic check does not decide which feasible proposal people should prefer.",
+        "Separate observations, preferences and reasons. 'Four members asked for more reading practice' is a reported observation that should be checked against the record. 'I prefer mathematics first' is a preference. 'Equal time may help us compare both activities' is a reason for Proposal B, not a measured result. Invite each member to explain needs, and make participation accessible through speaking, writing or a facilitator reading a contribution.",
+        "Before deciding, the fictional group agrees to a simple vote among the feasible proposals and to revisit the schedule after one meeting. Three choose A, two choose B, and one abstains. Under their stated rule of more votes than the other proposal, A is selected. Three is not more than half of all six members, although it is more than half of the five votes cast for A or B. Always state the denominator and the decision rule instead of using an ambiguous majority claim.",
+        "Record the decision, reasons, vote counts, abstention and review point: 'Try A next meeting; several members requested additional reading practice. A: 3, B: 2, abstain: 1. Reconsider after that meeting.' Preserve a short account of the concern about mathematics time. A vote does not establish that a proposal is factually true or automatically resolves every access need. This classroom procedure is an example of shared discussion, not a statement of voting law or a required governance system."
+      ],
+      "practice": [
+        "Which proposals fit the 60-minute limit, and why does C need revision?",
+        "For the stated result, give A's share of all members and of votes cast for A or B. Did A receive more than half of all members' support?",
+        "Draft a two-sentence decision record that includes the selected plan, counts and when it will be reconsidered."
+      ],
+      "answers": [
+        "A and B total 60 minutes. C totals 90, exceeding the stated limit by 30 minutes.",
+        "3/6 = 50% of all members; 3/5 = 60% of A-or-B votes. No: three is exactly half of six, not more than half.",
+        "For example: 'Try Proposal A at the next meeting; votes were A=3, B=2 and abstain=1 under the agreed rule. Reconsider after that meeting and include the concern about mathematics time.' Accept equivalent records that preserve the decision and its limits."
+      ],
+      "adaptation": "Use a fictional group so learners can practice disagreement without exposing private preferences. For real organizations, check their own agreed procedures and applicable rules rather than treating this example as authoritative.",
+      "references": [
+        "comprehension",
+        "writing"
+      ],
+      "tags": [
+        "group-decisions",
+        "discussion",
+        "evidence",
+        "minutes",
+        "majority",
+        "abstention"
       ]
     }
   ]
