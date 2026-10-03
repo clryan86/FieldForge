@@ -9,3 +9,20 @@
          metadata = _receipt(con)
          if con.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
              raise ValueError('Prepared-map integrity check failed.')
+@@ -496,10 +496,13 @@
+     bounds = _bounds(bounds)
+     w, s, e, n = bounds
+     with _connect(index.path, fingerprint=index.fingerprint, cancel=cancel) as con:
++        # Bound spatial candidates BEFORE fetching/sorting feature rows. Sorting
++        # every intersecting feature first made whole-state views exceed 4 seconds.
+         rows = con.execute('SELECT f.osm_id,f.name,f.kind,f.geometry,f.tags '
+-                           'FROM feature_bounds b JOIN features f ON f.fid=b.fid '
+-                           'WHERE b.east>=? AND b.west<=? AND b.north>=? AND b.south<=? '
+-                           'ORDER BY f.fid LIMIT ?', (w, e, s, n, limit + 1))
++                           'FROM features f WHERE f.fid IN '
++                           '(SELECT fid FROM feature_bounds WHERE east>=? AND west<=? '
++                           'AND north>=? AND south<=? LIMIT ?) ORDER BY f.fid',
++                           (w, e, s, n, limit + 1))
+         return _collect(rows, limit)
+ 
+ 
