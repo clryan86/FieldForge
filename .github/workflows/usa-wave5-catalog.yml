@@ -1,0 +1,49 @@
+name: USA map collection checks
+on:
+  push:
+    branches: [chatgpt/usa-batch-wave5-20261003]
+    paths:
+      - .github/workflows/usa-wave5-catalog.yml
+      - tools/usa_maps/catalog.py
+      - tools/usa_maps/COLLECTIONS.md
+      - tests/test_usa_catalog.py
+permissions:
+  contents: read
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.12']
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python }}'
+      - run: python -m pip install 'pytest>=8,<10'
+      - name: Tool checks - absent regional backend integration is explicitly skipped
+        run: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_usa_acquire.py tests/test_usa_provider_dates.py tests/test_usa_catalog.py
+      - run: python -m compileall -q tools/usa_maps
+  source:
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Preserve exact developer tools, not the application
+        run: |
+          mkdir tools-delivery
+          git archive --format=zip --prefix=FieldForge-USA-Tools/ HEAD tools/usa_maps tests/test_usa_acquire.py tests/test_usa_provider_dates.py tests/test_usa_prepare.py tests/test_usa_catalog.py .github/workflows/usa-wave5.yml .github/workflows/usa-wave5-catalog.yml > tools-delivery/FieldForge-USA-Collection-Tools.zip
+          git rev-parse HEAD > tools-delivery/source-commit.txt
+          sha256sum tools-delivery/FieldForge-USA-Collection-Tools.zip > tools-delivery/SHA256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-wave5-collection-tools
+          path: tools-delivery/
+          retention-days: 14
