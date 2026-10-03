@@ -109,3 +109,26 @@ suite passed **2,295 tests, 15 browser skips, 2 existing PDF deprecation warning
 in 131.03s**. Ruff and staged whitespace checks passed. Windows and frozen-app
 results must come from the Actions run for this repair, not the earlier cancelled
 runs or these local simulations.
+
+## Windows source results and pySerial packaging follow-up
+
+Run 37126817185 passed every source gate, including both Windows versions.
+Windows map/GPS jobs each passed **929 tests with 4 platform-specific skips**
+(105.45s on Python 3.13.16; 109.43s on 3.12). Both Windows local-data suites,
+all three Linux Python/wheel jobs, Linux GUI and Chromium/WebKit also passed.
+
+Both Windows executables compiled, then the portable job stopped because the
+published pySerial 3.5 wheel contains no license file. Its exact upstream BSD
+notice is now retained with an immutable source reference under
+`packaging/notices/pyserial-3.5/`. This fallback requires both the installed
+version and the notice SHA-256 to match. Installed license files take precedence;
+missing, altered or unknown-version notices still stop the build. The bundle
+includes notice provenance. Recorded-but-missing license paths no longer count
+as a successful notice collection.
+
+The focused packaging/runtime suite passed **37 tests** and Ruff passed.
+Notice selection also passed against extracted, unmodified Windows x64 wheels
+for Pillow 12.3.0 and PyInstaller 6.22.3, plus the universal pypdf 6.19.0 and
+pySerial 3.5 wheels. This verifies build inputs without importing Windows native
+libraries on Linux. Frozen executable verification remains required in the next
+Actions run.

@@ -103,3 +103,41 @@ def test_modified_upstream_notice_still_blocks_distribution(tmp_path, monkeypatc
     monkeypatch.setattr(build_windows, "ROOT", tmp_path)
     with pytest.raises(FileNotFoundError, match="Tcl license.terms is required"):
         build_windows.tcltk_notice("Tcl", tmp_path / "runtime", "8.6.15")
+
+
+def test_pyserial_wheel_without_license_uses_exact_upstream_notice(components, monkeypatch):
+    _, _, _, destination = components
+    original = build_windows.importlib.metadata.distribution
+    monkeypatch.setattr(build_windows.importlib.metadata, "distribution", lambda name:
+                        SimpleNamespace(version="3.5", files=None) if name == "pyserial" else original(name))
+    build_windows.component_notices(destination)
+    source = build_windows.ROOT / "packaging/notices/pyserial-3.5/LICENSE.txt"
+    assert (destination / "pyserial-0-LICENSE.txt").read_bytes() == source.read_bytes()
+    provenance = json.loads((destination / "pyserial-NOTICE-SOURCES.json").read_text())
+    assert provenance["version"] == "3.5"
+    assert provenance["sha256"] == build_windows.digest(source) == build_windows.PYSERIAL_NOTICE_HASH
+    assert json.loads((destination / "COMPONENTS.json").read_text())["pyserial"] == "3.5"
+
+
+@pytest.mark.parametrize("version", ["3.4", "3.6", "3.5.dev0"])
+def test_pyserial_unknown_version_cannot_borrow_notice(version):
+    with pytest.raises(FileNotFoundError, match="version-matched license"):
+        build_windows.distribution_notices("pyserial", SimpleNamespace(version=version, files=()))
+
+
+@pytest.mark.parametrize("altered", [False, True])
+def test_missing_or_changed_pyserial_notice_blocks_distribution(tmp_path, monkeypatch, altered):
+    if altered:
+        path = tmp_path / "packaging/notices/pyserial-3.5/LICENSE.txt"
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b"Changed notice")
+    monkeypatch.setattr(build_windows, "ROOT", tmp_path)
+    with pytest.raises(FileNotFoundError, match="version-matched license"):
+        build_windows.distribution_notices("pyserial", SimpleNamespace(version="3.5", files=()))
+
+
+def test_recorded_but_absent_installed_license_blocks_distribution(tmp_path):
+    package = SimpleNamespace(version="fixture", files=("licenses/LICENSE.txt",),
+                              locate_file=lambda item: tmp_path / item)
+    with pytest.raises(FileNotFoundError, match="version-matched license"):
+        build_windows.distribution_notices("Pillow", package)

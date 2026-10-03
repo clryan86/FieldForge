@@ -26,6 +26,7 @@ TCLTK_NOTICE_HASHES = {
     "Tcl": "c0a69a2bfd757361ec7e6143973b103c90409316b49e9c88db26ad6388e79f16",
     "Tk": "2cde822b93ca16ae535c954b7dfe658b4ad10df2a193628d1b358f1765e8b198",
 }
+PYSERIAL_NOTICE_HASH = "f91cb9813de6a5b142b8f7f2dede630b5134160aedaeaf55f4d6a7e2593ca3f3"
 
 
 def digest(path: Path) -> str:
@@ -48,6 +49,27 @@ def tcltk_notice(name: str, directory: Path, version: str) -> Path:
             return source
     raise FileNotFoundError(
         f"{name} license.terms is required for runtime {version}; do not ship without it"
+    )
+
+
+def distribution_notices(name: str, package: importlib.metadata.Distribution) -> list[Path]:
+    notices = []
+    for item in package.files or ():
+        filename = Path(str(item)).name.lower()
+        if (any(word in filename for word in ("license", "copying"))
+                and filename.endswith((".txt", "license", "copying", ".rst", ".md"))):
+            source = Path(package.locate_file(item))
+            if source.is_file():
+                notices.append(source)
+    if notices:
+        return notices
+    # The published pySerial 3.5 wheel omits its upstream BSD notice.
+    if name.lower() == "pyserial" and package.version == "3.5":
+        source = ROOT / "packaging/notices/pyserial-3.5/LICENSE.txt"
+        if source.is_file() and digest(source) == PYSERIAL_NOTICE_HASH:
+            return [source]
+    raise FileNotFoundError(
+        f"Installed {name} {package.version} has no discoverable version-matched license text"
     )
 
 
@@ -75,16 +97,12 @@ def component_notices(destination: Path) -> None:
             shutil.copy2(notice.parent / "SOURCES.json", destination / "TCLTK-NOTICE-SOURCES.json")
     for name in ("pypdf", "pyinstaller", "pyserial", "Pillow"):
         package = importlib.metadata.distribution(name)
-        notices = [item for item in package.files or () if
-                   any(word in Path(str(item)).name.lower() for word in ("license", "copying"))
-                   and str(item).lower().endswith((".txt", "license", "copying", ".rst", ".md"))]
-        if not notices:
-            raise FileNotFoundError(f"Installed {name} distribution has no discoverable license text")
+        notices = distribution_notices(name, package)
         versions[name] = package.version
-        for index, item in enumerate(notices):
-            source = Path(package.locate_file(item))
-            if source.is_file():
-                shutil.copy2(source, destination / f"{name}-{index}-{source.name}")
+        for index, source in enumerate(notices):
+            shutil.copy2(source, destination / f"{name}-{index}-{source.name}")
+            if source.parent == ROOT / "packaging/notices/pyserial-3.5":
+                shutil.copy2(source.parent / "SOURCES.json", destination / "pyserial-NOTICE-SOURCES.json")
     (destination / "COMPONENTS.json").write_text(json.dumps(versions, indent=2) + "\n", encoding="utf-8")
 
 
