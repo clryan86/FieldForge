@@ -57,12 +57,12 @@ The download workflow, patch and this progress record are on `chatgpt/usa-batch-
 
 ```
 e6d3f1dd4b01efc35c4ac676b74709fea6c52a569b5b317833369dbba9bbef52  FieldForge-USA-Connecticut-2026-10-02.zip
-461e0702e16cdd1a8769018950316f55d349fd29ac2d0b6658b45c5b52a08d291  PLACEHOLDER_DO_NOT_USE
+f1eb2e38ef734f2be5c63347a007420a389ca85965bdd6c585cf01cf923ceb7d  FieldForge-USA-Maryland-2026-10-02.zip
 09c99b29d60227ed5a68f6d0d93c81e3d55eb7dfde1da81c0f6ebf9f3f1471e7  FieldForge-USA-West-Virginia-2026-10-02.zip
 6e0c8b4d0448ef9fe8ec533350efb6e9290c4beef83a7d3cd48cb6643ac04c8f  FieldForge-USA-Oklahoma-2026-10-02.zip
 ```
 
-The accompanying checksum file is authoritative for all four final ZIPs; the Maryland checksum is recorded there and will be populated in this table after exact comparison.
+All four hashes were compared with the final local ZIP bytes. The accompanying checksum file additionally records the updater and coverage JSON.
 
 Sources and rights: © OpenStreetMap contributors, ODbL-1.0.
 https://www.openstreetmap.org/copyright/en
