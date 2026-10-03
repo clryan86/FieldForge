@@ -91,7 +91,23 @@ class KnowledgeTab(ttk.Frame):
         ttk.Button(files, text="Export Pack", command=self._export).pack(side="left", padx=6)
         ttk.Checkbutton(files, text="Include / restore private notes", variable=self.personal).pack(side="left")
         ttk.Checkbutton(files, text="Allow replacing conflicts", variable=self.replace).pack(side="left", padx=6)
+        makers = ttk.Frame(self)
+        makers.pack(fill="x", pady=(6, 0))
+        ttk.Button(makers, text="Install Reference Library", command=self._install_references).pack(side="left")
+        ttk.Button(makers, text="Blueprint Makers", command=self._blueprints).pack(side="left", padx=6)
         self.refresh()
+        if self.library.count() == 0:
+            self._install_references()
+
+    def _install_references(self):
+        from fieldforge.content import install_reference_library
+        self._start(install_reference_library, self.library)
+
+    def _blueprints(self):
+        if self.busy or not self.save_current():
+            return
+        from fieldforge.ui.blueprints import BlueprintStudio
+        BlueprintStudio(self, self.library)
 
     def _destroyed(self, event: tk.Event) -> None:
         if event.widget is self:
@@ -130,7 +146,8 @@ class KnowledgeTab(ttk.Frame):
         self.body.delete("1.0", "end")
         self.body.tag_remove("evidence", "1.0", "end")
         self.body.configure(state="disabled")
-        self.metadata.set("Select an article. No bundled survival corpus or AI model is installed by this feature.")
+        self.metadata.set("Select an article. Community references retain source and review status. "
+                          "Local AI models are installed separately.")
 
     def refresh(self, *, reset: bool = True) -> None:
         if self._closed or self.busy or not self.save_current():

@@ -1,0 +1,2709 @@
+{
+  "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/",
+  "articles": [
+    {
+      "slug": "wikibooks-6914",
+      "title": "Outdoor Survival",
+      "category": "survival",
+      "revision": 3693231,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3693231",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival&action=history",
+      "words": 317,
+      "body_sha256": "be6284b03cf94858f1686f48a069f80d17d73baccd02551a5b0a2159efb3002c"
+    },
+    {
+      "slug": "wikibooks-85605",
+      "title": "Outdoor Survival/Emergency Situations",
+      "category": "survival",
+      "revision": 3577061,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3577061",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FEmergency+Situations&action=history",
+      "words": 1154,
+      "body_sha256": "19a08bf9ca83c7f60aa69b0780e0fb0b8236987448359f564dbe50929313475a"
+    },
+    {
+      "slug": "wikibooks-13937",
+      "title": "Outdoor Survival/Fire",
+      "category": "survival",
+      "revision": 4368533,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4368533",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FFire&action=history",
+      "words": 472,
+      "body_sha256": "a4e287997e8b9078f7b047e54ef1cdfbe39a959741bc24f5dec30e0bc9309487"
+    },
+    {
+      "slug": "wikibooks-102277",
+      "title": "Outdoor Survival/First Aid",
+      "category": "survival",
+      "revision": 4194552,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4194552",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FFirst+Aid&action=history",
+      "words": 2347,
+      "body_sha256": "6f867c049969e81f80180e004d14d21ff2fee32839a488ff5a2f8d6684796d1f"
+    },
+    {
+      "slug": "wikibooks-12469",
+      "title": "Outdoor Survival/Food",
+      "category": "survival",
+      "revision": 4398276,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4398276",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FFood&action=history",
+      "words": 2301,
+      "body_sha256": "d31ab21e2393a1d0181f559ee1d3e83cf3edd6749473b78b1b71e09db244d996"
+    },
+    {
+      "slug": "wikibooks-54068",
+      "title": "Outdoor Survival/Quinzhee",
+      "category": "survival",
+      "revision": 3341122,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3341122",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FQuinzhee&action=history",
+      "words": 425,
+      "body_sha256": "110b1bf3593e93e146d2fe1d30915a6cfa3438758e825a5c6abb4c8274054f4d"
+    },
+    {
+      "slug": "wikibooks-13211",
+      "title": "Outdoor Survival/Shelter",
+      "category": "survival",
+      "revision": 3663585,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3663585",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FShelter&action=history",
+      "words": 724,
+      "body_sha256": "4b3e1cb8d3e069d2369a8dbb3a9dad01fbff3279106d43e826f123d27a262ef1"
+    },
+    {
+      "slug": "wikibooks-13935",
+      "title": "Outdoor Survival/Signals",
+      "category": "survival",
+      "revision": 3341121,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3341121",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FSignals&action=history",
+      "words": 279,
+      "body_sha256": "4185760166ab26fd82665f73e21fee73546809f4a2406ef0080b53bf58865bdc"
+    },
+    {
+      "slug": "wikibooks-13936",
+      "title": "Outdoor Survival/Survival Kit",
+      "category": "survival",
+      "revision": 4600828,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4600828",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FSurvival+Kit&action=history",
+      "words": 1006,
+      "body_sha256": "980efd3aff4eacfd00f3c9ec0f72994b2594fb811328ae38e2043130e1927fca"
+    },
+    {
+      "slug": "wikibooks-48787",
+      "title": "Outdoor Survival/Water",
+      "category": "survival",
+      "revision": 4379829,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4379829",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FWater&action=history",
+      "words": 1921,
+      "body_sha256": "1d13f432a5e49dce668265940e722762e885e93696546a60e29b1d4556dedef8"
+    },
+    {
+      "slug": "wikibooks-53094",
+      "title": "Outdoor Survival/Water in the desert",
+      "category": "survival",
+      "revision": 3341119,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3341119",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Outdoor+Survival%2FWater+in+the+desert&action=history",
+      "words": 515,
+      "body_sha256": "351108343c742d5bf642b591b856589f2935e22c580f9ddd4a183d5c967c0a85"
+    },
+    {
+      "slug": "wikibooks-81238",
+      "title": "Horticulture/Elements of a Garden Location",
+      "category": "agriculture",
+      "revision": 4028177,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4028177",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FElements+of+a+Garden+Location&action=history",
+      "words": 423,
+      "body_sha256": "5b0bfc5bf589a568828a1f08a7eb4d365548e73b8b51af1221323b0ce358eda6"
+    },
+    {
+      "slug": "wikibooks-82497",
+      "title": "Horticulture/Soil Improvement",
+      "category": "agriculture",
+      "revision": 4473110,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4473110",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FSoil+Improvement&action=history",
+      "words": 209,
+      "body_sha256": "2cbd59189982216342ff8229d4603671f73db1dcd9bdc246070ecbda6322b4b0"
+    },
+    {
+      "slug": "wikibooks-136243",
+      "title": "Horticulture/Irrigation",
+      "category": "agriculture",
+      "revision": 4673058,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4673058",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FIrrigation&action=history",
+      "words": 3481,
+      "body_sha256": "810fd2bea991519770e1f886223d4f6a3a8f1b660d374b51d65187e438f93563"
+    },
+    {
+      "slug": "wikibooks-134347",
+      "title": "Horticulture/Compost Introduction",
+      "category": "agriculture",
+      "revision": 4028187,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4028187",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FCompost+Introduction&action=history",
+      "words": 631,
+      "body_sha256": "d808f8970b0168417db1a946bac6e8777efb7c60ef44650421de1f3d924322fd"
+    },
+    {
+      "slug": "wikibooks-93450",
+      "title": "Horticulture/The Benefits of Compost",
+      "category": "agriculture",
+      "revision": 4188608,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4188608",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FThe+Benefits+of+Compost&action=history",
+      "words": 906,
+      "body_sha256": "af6bb9e5c92ce931560ce8f653a8a3d7d4193ddca4ed4dc7b20856bbad542980"
+    },
+    {
+      "slug": "wikibooks-134345",
+      "title": "Horticulture/Hot Composting",
+      "category": "agriculture",
+      "revision": 4028191,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4028191",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FHot+Composting&action=history",
+      "words": 633,
+      "body_sha256": "4c77588212d69df49de2c1e012cf24d9ce31b449caac1371b9f96e2505d30be6"
+    },
+    {
+      "slug": "wikibooks-102406",
+      "title": "Horticulture/Square Foot Gardening",
+      "category": "agriculture",
+      "revision": 3319832,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3319832",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FSquare+Foot+Gardening&action=history",
+      "words": 544,
+      "body_sha256": "1e6e4a60cf3d1a04464049a1db97b3fa4f63f3ae7c1ee8108072337b7b80785f"
+    },
+    {
+      "slug": "wikibooks-103069",
+      "title": "Horticulture/No Till Gardening",
+      "category": "agriculture",
+      "revision": 3319824,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3319824",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FNo+Till+Gardening&action=history",
+      "words": 398,
+      "body_sha256": "c0b396f3c4be3d280328c1b564dc4d0d1e1f5a805cc0f0256c596854dccd0c71"
+    },
+    {
+      "slug": "wikibooks-102444",
+      "title": "Horticulture/Raised Beds",
+      "category": "agriculture",
+      "revision": 4113761,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4113761",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture%2FRaised+Beds&action=history",
+      "words": 263,
+      "body_sha256": "12f421f7be8cf3a00e9f0080570382db1209f5f29273efb3b3599e978cb4cdef"
+    },
+    {
+      "slug": "wikibooks-78578",
+      "title": "Horticulture",
+      "category": "agriculture",
+      "revision": 4536445,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4536445",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Horticulture&action=history",
+      "words": 283,
+      "body_sha256": "eefaaa0b3e03d2bc3f8a9dff68c248e5152fc2bb36a37418f0f7c9391b90d387"
+    },
+    {
+      "slug": "wikibooks-279592",
+      "title": "Drinking Water",
+      "category": "water-sanitation",
+      "revision": 4617655,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4617655",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water&action=history",
+      "words": 187,
+      "body_sha256": "93ff813b60961c7f0afd423b912f2ebbcb5e9376785b8f0c2f677565142ba5a0"
+    },
+    {
+      "slug": "wikibooks-279811",
+      "title": "Drinking Water/Disinfection",
+      "category": "water-sanitation",
+      "revision": 3849270,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3849270",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FDisinfection&action=history",
+      "words": 503,
+      "body_sha256": "10b99efe64a500fa99aafb140549f5f339ee2f3ee136dc6d9efe0a846426bf0a"
+    },
+    {
+      "slug": "wikibooks-279812",
+      "title": "Drinking Water/Disinfection/Solar",
+      "category": "water-sanitation",
+      "revision": 3253456,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3253456",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FDisinfection%2FSolar&action=history",
+      "words": 2834,
+      "body_sha256": "5ef673b7ced66f8b97f52d65867a6579b7a57d2ff6f96f722b9c0794911170a7"
+    },
+    {
+      "slug": "wikibooks-280134",
+      "title": "Drinking Water/Distillation",
+      "category": "water-sanitation",
+      "revision": 4540094,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4540094",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FDistillation&action=history",
+      "words": 1113,
+      "body_sha256": "a69468d7885821dcea2415e80dae6ab4ec87b50b4f204b16c1b28b0f1c915fb8"
+    },
+    {
+      "slug": "wikibooks-279591",
+      "title": "Drinking Water/Rain barrel",
+      "category": "water-sanitation",
+      "revision": 3371949,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3371949",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FRain+barrel&action=history",
+      "words": 779,
+      "body_sha256": "fa8e378e42eb2b75eed79940290ca12e0a309e58db96572302a7e1ae74ee9429"
+    },
+    {
+      "slug": "wikibooks-279816",
+      "title": "Drinking Water/Scarcity",
+      "category": "water-sanitation",
+      "revision": 3671442,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3671442",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FScarcity&action=history",
+      "words": 3180,
+      "body_sha256": "3416df8d03b8a5d20eb9c9aebbdad2eb2766f1c7c303e5a864084df7d30fcae9"
+    },
+    {
+      "slug": "wikibooks-279817",
+      "title": "Drinking Water/Scarcity/Africa",
+      "category": "water-sanitation",
+      "revision": 4082773,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4082773",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FScarcity%2FAfrica&action=history",
+      "words": 2709,
+      "body_sha256": "0296c98b607104802ffb743e292c40753c3615bbf512b5b17d80ac1e04e55ce5"
+    },
+    {
+      "slug": "wikibooks-279818",
+      "title": "Drinking Water/Scarcity/Australia",
+      "category": "water-sanitation",
+      "revision": 4532905,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4532905",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FScarcity%2FAustralia&action=history",
+      "words": 2410,
+      "body_sha256": "072ad95bbd97ed490e3b408a8895875082a407a9571522b5ed4eedcb70a3a298"
+    },
+    {
+      "slug": "wikibooks-478597",
+      "title": "Drinking Water/Seawater desalination",
+      "category": "water-sanitation",
+      "revision": 4540103,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4540103",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Drinking+Water%2FSeawater+desalination&action=history",
+      "words": 357,
+      "body_sha256": "edff2c2b4ca5a558f21de22262909beb6a368f209132b40ed7745276012d0554"
+    },
+    {
+      "slug": "wikibooks-126301",
+      "title": "First Aid",
+      "category": "medicine",
+      "revision": 4536706,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4536706",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid&action=history",
+      "words": 605,
+      "body_sha256": "030d90b90ec1aa61a4ef6003ba9116e909961b2ffef56c12c4875b14547488a2"
+    },
+    {
+      "slug": "wikibooks-116889",
+      "title": "First Aid/A for Airway",
+      "category": "medicine",
+      "revision": 3570401,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3570401",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FA+for+Airway&action=history",
+      "words": 639,
+      "body_sha256": "93cb375ca81fb801eeba07929f4e032593b2e1a048ed0acee5f0a1ef45a1934c"
+    },
+    {
+      "slug": "wikibooks-128976",
+      "title": "First Aid/Abuse & Neglect",
+      "category": "medicine",
+      "revision": 4283769,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4283769",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FAbuse+%26+Neglect&action=history",
+      "words": 550,
+      "body_sha256": "ca22390a04ce73de8931166a5e879a19cf599862aff66d2724d2d890ba91000c"
+    },
+    {
+      "slug": "wikibooks-129333",
+      "title": "First Aid/Airway Management",
+      "category": "medicine",
+      "revision": 4350465,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4350465",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FAirway+Management&action=history",
+      "words": 1411,
+      "body_sha256": "8c84eee27276f7a9d980b822b636015e687ff94709677ce2edd32e3441334ea2"
+    },
+    {
+      "slug": "wikibooks-116896",
+      "title": "First Aid/Anaphylactic Shock",
+      "category": "medicine",
+      "revision": 3773791,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3773791",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FAnaphylactic+Shock&action=history",
+      "words": 496,
+      "body_sha256": "b3733b33b32099a4f728c3a91684254b9742fa96ea784bdb37c7185fb4ebecae"
+    },
+    {
+      "slug": "wikibooks-121729",
+      "title": "First Aid/Asthma & Hyperventilation",
+      "category": "medicine",
+      "revision": 4343724,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4343724",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FAsthma+%26+Hyperventilation&action=history",
+      "words": 1252,
+      "body_sha256": "a3b1a802c2c0ef2242d99ec2f710ae1134a3bf903fd5b64d34514a50733b465d"
+    },
+    {
+      "slug": "wikibooks-126904",
+      "title": "First Aid/Automated External Defibrillation",
+      "category": "medicine",
+      "revision": 3539811,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3539811",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FAutomated+External+Defibrillation&action=history",
+      "words": 986,
+      "body_sha256": "af852fbec186cd9def8c78cf67e39fe9437031abce943df1728bda20e4cf34f4"
+    },
+    {
+      "slug": "wikibooks-116890",
+      "title": "First Aid/B for Breathing",
+      "category": "medicine",
+      "revision": 4672804,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4672804",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FB+for+Breathing&action=history",
+      "words": 1153,
+      "body_sha256": "d6dfbfae1d15e7f1c92bc2198448d89fe4add99113a3f98d85f635cdef796eb9"
+    },
+    {
+      "slug": "wikibooks-116897",
+      "title": "First Aid/Burns",
+      "category": "medicine",
+      "revision": 3778520,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3778520",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FBurns&action=history",
+      "words": 894,
+      "body_sha256": "af78f7c59a9f9c7406514b1e622152dd3fa320f9078cdfb7c85f557714e75f16"
+    },
+    {
+      "slug": "wikibooks-46288",
+      "title": "First Aid/CPR summary",
+      "category": "medicine",
+      "revision": 4660122,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4660122",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FCPR+summary&action=history",
+      "words": 848,
+      "body_sha256": "8c431181b76109b9b9037724d00d8bf6f2caf10f19fd7cb0512808aaeae8ebf4"
+    },
+    {
+      "slug": "wikibooks-116891",
+      "title": "First Aid/C for Compressions",
+      "category": "medicine",
+      "revision": 4348086,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4348086",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FC+for+Compressions&action=history",
+      "words": 1452,
+      "body_sha256": "19dd9995e8705a74757a6534c396c310b71f5ef465898e16ccee9f149b64d870"
+    },
+    {
+      "slug": "wikibooks-126924",
+      "title": "First Aid/Chest & Abdominal Injuries",
+      "category": "medicine",
+      "revision": 3995096,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3995096",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=First+Aid%2FChest+%26+Abdominal+Injuries&action=history",
+      "words": 885,
+      "body_sha256": "e93543926674d73c087fb31caacde885a30e16c97ddbcee00a1a4b8f644ff17b"
+    },
+    {
+      "slug": "wikibooks-29859",
+      "title": "Human Physiology/Blood physiology",
+      "category": "medicine",
+      "revision": 4598443,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4598443",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FBlood+physiology&action=history",
+      "words": 7213,
+      "body_sha256": "9eab40aac5042873ceaffde829dffb34c4abcb7b1eac169e26938a316d74c2e4"
+    },
+    {
+      "slug": "wikibooks-86634",
+      "title": "Human Physiology/Cell physiology",
+      "category": "medicine",
+      "revision": 4669609,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4669609",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FCell+physiology&action=history",
+      "words": 7388,
+      "body_sha256": "0d98cab36d775c7adf4001ce87f99e80d37fce82b5bfb6ae3e1dac6e1cb71907"
+    },
+    {
+      "slug": "wikibooks-87122",
+      "title": "Human Physiology/Development: birth through death",
+      "category": "medicine",
+      "revision": 4663585,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4663585",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FDevelopment%3A+birth+through+death&action=history",
+      "words": 12743,
+      "body_sha256": "4800bb73db63477268a7b3457c30ac6461eef5914442e1e34131036cf9dce9ee"
+    },
+    {
+      "slug": "wikibooks-86916",
+      "title": "Human Physiology/Genetics and inheritance",
+      "category": "medicine",
+      "revision": 4605055,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4605055",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FGenetics+and+inheritance&action=history",
+      "words": 8837,
+      "body_sha256": "bb5bd90b67ce5d3ff7295f86fbbe8564b096b31b5704f8cc68eb144aadb1da8f"
+    },
+    {
+      "slug": "wikibooks-241564",
+      "title": "Human Physiology/Homeostasis",
+      "category": "medicine",
+      "revision": 4656887,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4656887",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FHomeostasis&action=history",
+      "words": 8508,
+      "body_sha256": "0b553bf077d18fecc557cdd329f3f21bc9e094fe6665a8edd3f9d7c781de7fc4"
+    },
+    {
+      "slug": "wikibooks-87484",
+      "title": "Human Physiology/Integumentary System",
+      "category": "medicine",
+      "revision": 4602703,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4602703",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FIntegumentary+System&action=history",
+      "words": 5856,
+      "body_sha256": "e6b2326363eb6662a29fdc7c2abe2536f0a0e826131c3165dbfbd00ee96caf85"
+    },
+    {
+      "slug": "wikibooks-86988",
+      "title": "Human Physiology/Nutrition",
+      "category": "medicine",
+      "revision": 4653992,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4653992",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FNutrition&action=history",
+      "words": 12353,
+      "body_sha256": "4a87139b3564973848bd197543ba9c9149fc7c780ed39335c3a75e9cb7bab3fb"
+    },
+    {
+      "slug": "wikibooks-300697",
+      "title": "Human Physiology/Physiology Introduction",
+      "category": "medicine",
+      "revision": 4559432,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4559432",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FPhysiology+Introduction&action=history",
+      "words": 1071,
+      "body_sha256": "0ef8644779a3a38e3676a08d6f1dbb487beb1cf72c49faa1ed106dc72ba22309"
+    },
+    {
+      "slug": "wikibooks-87291",
+      "title": "Human Physiology/Pregnancy and birth",
+      "category": "medicine",
+      "revision": 4604502,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4604502",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FPregnancy+and+birth&action=history",
+      "words": 11130,
+      "body_sha256": "382973897e9b04aa0ba9d82c4985d38435afb934bcc6b852cd04e2f652f2f10f"
+    },
+    {
+      "slug": "wikibooks-87671",
+      "title": "Human Physiology/Senses",
+      "category": "medicine",
+      "revision": 4598187,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4598187",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FSenses&action=history",
+      "words": 11632,
+      "body_sha256": "12fe30fb86233f633ed8327e5d034c098217cd67739f2bca9e53e4c489dae22f"
+    },
+    {
+      "slug": "wikibooks-112452",
+      "title": "Human Physiology/The Immune System",
+      "category": "medicine",
+      "revision": 4605062,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4605062",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FThe+Immune+System&action=history",
+      "words": 10350,
+      "body_sha256": "1c15154558cf1704012f7d12e70fd5beb9aa26198f268710399b80593dbfd383"
+    },
+    {
+      "slug": "wikibooks-87486",
+      "title": "Human Physiology/The Muscular System",
+      "category": "medicine",
+      "revision": 4613051,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4613051",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Human+Physiology%2FThe+Muscular+System&action=history",
+      "words": 5733,
+      "body_sha256": "60c8731d4349ac9feec4c01b6fd4b3be375615bae0c82ad925b0cb83fabaa4c7"
+    },
+    {
+      "slug": "wikibooks-1785",
+      "title": "General Biology",
+      "category": "science",
+      "revision": 4233715,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4233715",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology&action=history",
+      "words": 261,
+      "body_sha256": "20803c642bd694c435e328fb5729b293aad2230ff3a3c5f63be0c6e92801b515"
+    },
+    {
+      "slug": "wikibooks-479",
+      "title": "General Biology/Animal Evolution",
+      "category": "science",
+      "revision": 4494342,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4494342",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FAnimal+Evolution&action=history",
+      "words": 784,
+      "body_sha256": "c4f1715d7945717eb8c2d4f947a7370c33c6ec683268e59b401c52320a9aedf4"
+    },
+    {
+      "slug": "wikibooks-2154",
+      "title": "General Biology/Cells/Cell-Cell Interactions",
+      "category": "science",
+      "revision": 3585778,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3585778",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FCell-Cell+Interactions&action=history",
+      "words": 314,
+      "body_sha256": "b8a49354d0321c02c4b792e5d5452f02e57d5a9f1f240d71c005073f748f4ac5"
+    },
+    {
+      "slug": "wikibooks-16824",
+      "title": "General Biology/Cells/Cell Structure",
+      "category": "science",
+      "revision": 4430411,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4430411",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FCell+Structure&action=history",
+      "words": 2573,
+      "body_sha256": "5a52510c72b72719bd57ee0f560cd9519db604d80129f7b6c54729d3cf6e6c0a"
+    },
+    {
+      "slug": "wikibooks-2162",
+      "title": "General Biology/Cells/Energy and Metabolism",
+      "category": "science",
+      "revision": 3376332,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3376332",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FEnergy+and+Metabolism&action=history",
+      "words": 815,
+      "body_sha256": "8ac1ca95f417459827ee5bbf5f689d85b8bd9e3fe2193c34c20ecda73236c85b"
+    },
+    {
+      "slug": "wikibooks-2165",
+      "title": "General Biology/Cells/How Cells Divide",
+      "category": "science",
+      "revision": 4110384,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4110384",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FHow+Cells+Divide&action=history",
+      "words": 810,
+      "body_sha256": "de2c06b32a6dacaded8be9dc8fd8e593489564d05cef2f49e24e9a8ad3d888bb"
+    },
+    {
+      "slug": "wikibooks-2153",
+      "title": "General Biology/Cells/Membranes",
+      "category": "science",
+      "revision": 4410895,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4410895",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FMembranes&action=history",
+      "words": 562,
+      "body_sha256": "49e60f34949d2b89c71a51d3fd0a669ba7a006c4adf569c39f7ede8b0e452be1"
+    },
+    {
+      "slug": "wikibooks-2164",
+      "title": "General Biology/Cells/Photosynthesis",
+      "category": "science",
+      "revision": 4410923,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4410923",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FPhotosynthesis&action=history",
+      "words": 927,
+      "body_sha256": "9c9b4d9bd976f17ee500497c855d2bf7e1220c5bcf3e15696938f13f24ef774f"
+    },
+    {
+      "slug": "wikibooks-2163",
+      "title": "General Biology/Cells/Respiration",
+      "category": "science",
+      "revision": 4618444,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4618444",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FRespiration&action=history",
+      "words": 521,
+      "body_sha256": "e9b020fe413b86e9281cd856ad6a5684c2a3107944cf3ff808b91655889f01aa"
+    },
+    {
+      "slug": "wikibooks-2166",
+      "title": "General Biology/Cells/Sexual Reproduction",
+      "category": "science",
+      "revision": 3950183,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3950183",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FCells%2FSexual+Reproduction&action=history",
+      "words": 465,
+      "body_sha256": "565c3f81b2dda53385660f7ccd56f44666cbb4a254757dc85fa93b85869ddc69"
+    },
+    {
+      "slug": "wikibooks-2180",
+      "title": "General Biology/Classification of Living Things/Classification and Domains of Life",
+      "category": "science",
+      "revision": 4442392,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4442392",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FClassification+of+Living+Things%2FClassification+and+Domains+of+Life&action=history",
+      "words": 1661,
+      "body_sha256": "cc96d24a5f9dd5b4a754ee1b6e3c111d6e824e744f4e62d944a622fbb1825f25"
+    },
+    {
+      "slug": "wikibooks-155378",
+      "title": "General Biology/Classification of Living Things/Eubacteria",
+      "category": "science",
+      "revision": 3583223,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3583223",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Biology%2FClassification+of+Living+Things%2FEubacteria&action=history",
+      "words": 959,
+      "body_sha256": "c4b20af3d769e2ef0a0f46ab2517479139532f007ed94211ea46b557d8e1a225"
+    },
+    {
+      "slug": "wikibooks-129154",
+      "title": "General Chemistry",
+      "category": "science",
+      "revision": 4668987,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4668987",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry&action=history",
+      "words": 451,
+      "body_sha256": "f28ca1f8bb152ab990203052f82b86a788ece7f2d6b20b9e0fa6bd43a4bb6d7d"
+    },
+    {
+      "slug": "wikibooks-152584",
+      "title": "General Chemistry/Atomic Structure/History of Atomic Structure",
+      "category": "science",
+      "revision": 4603894,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4603894",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FAtomic+Structure%2FHistory+of+Atomic+Structure&action=history",
+      "words": 2095,
+      "body_sha256": "609e808593eae2ebfaccf2874efbb0331527ec49c4aed7b30e62b4b6e61ab9a9"
+    },
+    {
+      "slug": "wikibooks-3162",
+      "title": "General Chemistry/Atomic Structure/Subatomic Particles",
+      "category": "science",
+      "revision": 4671115,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4671115",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FAtomic+Structure%2FSubatomic+Particles&action=history",
+      "words": 1265,
+      "body_sha256": "71517d7dbb8c294b4ef36ab175d144576267811d9f437eb1b0b3a7ab6b59bfdc"
+    },
+    {
+      "slug": "wikibooks-19399",
+      "title": "General Chemistry/Atoms and Molecules",
+      "category": "science",
+      "revision": 4638457,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4638457",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FAtoms+and+Molecules&action=history",
+      "words": 394,
+      "body_sha256": "18188f17c8f01a36b5b401dca77b835f365553f70785a6fbe5d5e52131d7a471"
+    },
+    {
+      "slug": "wikibooks-9739",
+      "title": "General Chemistry/Balancing Equations",
+      "category": "science",
+      "revision": 4660461,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4660461",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FBalancing+Equations&action=history",
+      "words": 779,
+      "body_sha256": "ed8e87f6b2e59a307744cd1e213c7e5d2db1808488e22eb61b08c6e1ca721ddd"
+    },
+    {
+      "slug": "wikibooks-169429",
+      "title": "General Chemistry/Behaviour of Gases",
+      "category": "science",
+      "revision": 4649476,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4649476",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FBehaviour+of+Gases&action=history",
+      "words": 472,
+      "body_sha256": "89f761f23efe53b0de20f81c414d702582d5db31c581edcaed2dc56244b4058b"
+    },
+    {
+      "slug": "wikibooks-121538",
+      "title": "General Chemistry/Buffer Systems",
+      "category": "science",
+      "revision": 4652509,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4652509",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FBuffer+Systems&action=history",
+      "words": 491,
+      "body_sha256": "085b7644d1d450ed3adade0b3efd2e42c070c9f846d3444f7b1d79f0488d149c"
+    },
+    {
+      "slug": "wikibooks-9829",
+      "title": "General Chemistry/Calculations",
+      "category": "science",
+      "revision": 3799264,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3799264",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FCalculations&action=history",
+      "words": 793,
+      "body_sha256": "5692671df5a2cedf61ee46c8c19bf67954257bcb550ee1694413ec6ee0abf2c9"
+    },
+    {
+      "slug": "wikibooks-9744",
+      "title": "General Chemistry/Chemical Equilibria/Acid-Base Equilibrium",
+      "category": "science",
+      "revision": 4649651,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4649651",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FChemical+Equilibria%2FAcid-Base+Equilibrium&action=history",
+      "words": 640,
+      "body_sha256": "ae1cc423c308fd7fbe2846bdc74f4112b77a8c6aa7ba6cd68a62d27b700adfe3"
+    },
+    {
+      "slug": "wikibooks-33334",
+      "title": "General Chemistry/Chemical Equilibria/Equilibrium",
+      "category": "science",
+      "revision": 4656780,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4656780",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FChemical+Equilibria%2FEquilibrium&action=history",
+      "words": 1384,
+      "body_sha256": "9ebf72d7b2b3c8c2efc1f69395c7f544015121604f4998a6c97283686610075f"
+    },
+    {
+      "slug": "wikibooks-183736",
+      "title": "General Chemistry/Chemical Equilibria/Le Chatelier's Principle",
+      "category": "science",
+      "revision": 4078796,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4078796",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FChemical+Equilibria%2FLe+Chatelier%27s+Principle&action=history",
+      "words": 499,
+      "body_sha256": "50a6f4fa4f0ebcc98a1e8163eee3c13d370ee1bb9c316710d95679463e96099f"
+    },
+    {
+      "slug": "wikibooks-162357",
+      "title": "General Chemistry/Chemical Equilibria/Solutions in Equilibrium",
+      "category": "science",
+      "revision": 4644190,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4644190",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=General+Chemistry%2FChemical+Equilibria%2FSolutions+in+Equilibrium&action=history",
+      "words": 931,
+      "body_sha256": "2372a8a2c28e474210940516582ea3e0a95ebf780f3155da85baf7b5c8538db2"
+    },
+    {
+      "slug": "wikibooks-1848",
+      "title": "Physics Study Guide",
+      "category": "science",
+      "revision": 4488775,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4488775",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide&action=history",
+      "words": 181,
+      "body_sha256": "b67fad7c6cebf4bfb7f2f4f4e7863b59245387ad82418e74c0a129f2995fc712"
+    },
+    {
+      "slug": "wikibooks-92480",
+      "title": "Physics Study Guide/Basic Units",
+      "category": "science",
+      "revision": 4601500,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4601500",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FBasic+Units&action=history",
+      "words": 978,
+      "body_sha256": "f702cfc806e9fc3a418ce3d02f7db7abb8eddb8d11b913a2731f2ca61067483c"
+    },
+    {
+      "slug": "wikibooks-474208",
+      "title": "Physics Study Guide/Chaos theory",
+      "category": "science",
+      "revision": 4490968,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4490968",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FChaos+theory&action=history",
+      "words": 236,
+      "body_sha256": "a223f2636eb2fd0b2f01671a3ee61a6d3648729405f77fe28b824ae55fd41fbd"
+    },
+    {
+      "slug": "wikibooks-119381",
+      "title": "Physics Study Guide/Circular Motion",
+      "category": "science",
+      "revision": 4584650,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4584650",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FCircular+Motion&action=history",
+      "words": 410,
+      "body_sha256": "8b6d811bd14d1354c24b4faf40bd415b776b11c5def6ba9611ff4e87ff9f1fa8"
+    },
+    {
+      "slug": "wikibooks-1944",
+      "title": "Physics Study Guide/Electricity",
+      "category": "science",
+      "revision": 4659708,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4659708",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FElectricity&action=history",
+      "words": 1010,
+      "body_sha256": "edc360f7d345f65d92473bb8cbf2f66f69f573a9ce2ee6ecbab9b439f6b42e5f"
+    },
+    {
+      "slug": "wikibooks-15179",
+      "title": "Physics Study Guide/Electronics",
+      "category": "science",
+      "revision": 4341844,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4341844",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FElectronics&action=history",
+      "words": 782,
+      "body_sha256": "5b6ad3112f33724d67545e81f0b280fb8e07561159ab1fb040fdeb024851bb35"
+    },
+    {
+      "slug": "wikibooks-1879",
+      "title": "Physics Study Guide/Energy",
+      "category": "science",
+      "revision": 4660427,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4660427",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FEnergy&action=history",
+      "words": 637,
+      "body_sha256": "15e5ee4a449a3798bf59c7e6914253196c49bb90e69a915e98c1b54b1cdf009a"
+    },
+    {
+      "slug": "wikibooks-3036",
+      "title": "Physics Study Guide/Fields",
+      "category": "science",
+      "revision": 4660428,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4660428",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FFields&action=history",
+      "words": 417,
+      "body_sha256": "2dfea547a918ea9c8952a3a3894495a8828de72bfc913b8e327e9160755390fc"
+    },
+    {
+      "slug": "wikibooks-3906",
+      "title": "Physics Study Guide/Fluids",
+      "category": "science",
+      "revision": 4408318,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4408318",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FFluids&action=history",
+      "words": 322,
+      "body_sha256": "c58dae2220f8bd08b3a89002185c66e094d49f22469e3e3876f6e4531fd79ddd"
+    },
+    {
+      "slug": "wikibooks-1875",
+      "title": "Physics Study Guide/Force",
+      "category": "science",
+      "revision": 4520172,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4520172",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FForce&action=history",
+      "words": 1264,
+      "body_sha256": "a7b12197b31f6d548bf8be34d2e544dc2bc65f2174b81624b87178eae266db9b"
+    },
+    {
+      "slug": "wikibooks-1876",
+      "title": "Physics Study Guide/Gravity",
+      "category": "science",
+      "revision": 4660431,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4660431",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FGravity&action=history",
+      "words": 654,
+      "body_sha256": "bd75791eff0b23141bbd3ac1e90e2ab0419397cb552f9754a8783ad4b5962dd4"
+    },
+    {
+      "slug": "wikibooks-1854",
+      "title": "Physics Study Guide/Greek alphabet",
+      "category": "science",
+      "revision": 4442899,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4442899",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Physics+Study+Guide%2FGreek+alphabet&action=history",
+      "words": 490,
+      "body_sha256": "bc7e4eaa588cb858a3a27bd915c8ab49d80b1b875922ba1175a2dec6719e0741"
+    },
+    {
+      "slug": "wikibooks-85698",
+      "title": "Basic Algebra",
+      "category": "measurement",
+      "revision": 4005649,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4005649",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra&action=history",
+      "words": 873,
+      "body_sha256": "1cf27a03719fc1968a37e53c469ccacdbf3bf785ac950b69d1db7504476084aa"
+    },
+    {
+      "slug": "wikibooks-151361",
+      "title": "Basic Algebra/Factoring/Factoring a^2-b^2 Binomials",
+      "category": "measurement",
+      "revision": 3573315,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3573315",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FFactoring%2FFactoring+a%5E2-b%5E2+Binomials&action=history",
+      "words": 297,
+      "body_sha256": "f363bef2ba54d0865949725c00f772d73803f13d1c1e4ca6b9aa745251a9df73"
+    },
+    {
+      "slug": "wikibooks-86194",
+      "title": "Basic Algebra/Factoring/Factors of Integers",
+      "category": "measurement",
+      "revision": 4198261,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4198261",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FFactoring%2FFactors+of+Integers&action=history",
+      "words": 971,
+      "body_sha256": "a2a4a4f10245e050796a32b908761c45eb4ca4ca9f0a9ae9a29b2cb75ba6969c"
+    },
+    {
+      "slug": "wikibooks-86198",
+      "title": "Basic Algebra/Factoring/Squares of Binomials",
+      "category": "measurement",
+      "revision": 4057501,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4057501",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FFactoring%2FSquares+of+Binomials&action=history",
+      "words": 464,
+      "body_sha256": "6976c428a8bda3ef5ebc55790dca00590b855fad65f0ce5009c7aa5cbc28bec6"
+    },
+    {
+      "slug": "wikibooks-131761",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Chapter Review",
+      "category": "measurement",
+      "revision": 4595256,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4595256",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FChapter+Review&action=history",
+      "words": 420,
+      "body_sha256": "6f7c9a7c10b9f65937bc099ed94bd9cbfe1cb5b6ec497fc9cc805845e5078627"
+    },
+    {
+      "slug": "wikibooks-130834",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Exponents and Powers",
+      "category": "measurement",
+      "revision": 4408382,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4408382",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FExponents+and+Powers&action=history",
+      "words": 623,
+      "body_sha256": "6b53d051979f7dcd18a8bc697c39c62586f5377dc57cdf2c1ab636d31e0e58be"
+    },
+    {
+      "slug": "wikibooks-130846",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Order of Operations",
+      "category": "measurement",
+      "revision": 3797480,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3797480",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FOrder+of+Operations&action=history",
+      "words": 560,
+      "body_sha256": "a7c22f107c4fa811faec001ba3b2406f70891754766737799556c0e4e7e36e65"
+    },
+    {
+      "slug": "wikibooks-130839",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Simple Operations",
+      "category": "measurement",
+      "revision": 3803565,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3803565",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FSimple+Operations&action=history",
+      "words": 605,
+      "body_sha256": "8dc24275b4a2e343279b70fa5eb631604d05b8399cc5b8925f78a991816ce73b"
+    },
+    {
+      "slug": "wikibooks-130840",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Solving Equations Using Properties of Mathematics",
+      "category": "measurement",
+      "revision": 3777806,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3777806",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FSolving+Equations+Using+Properties+of+Mathematics&action=history",
+      "words": 788,
+      "body_sha256": "68d107494e577222e84379abeb070a46361c897ab50c35f09dc20ef490956341"
+    },
+    {
+      "slug": "wikibooks-130841",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/The Ideas of Algebra",
+      "category": "measurement",
+      "revision": 3557283,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3557283",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FThe+Ideas+of+Algebra&action=history",
+      "words": 223,
+      "body_sha256": "34b93e4debfa999d1a93ad955612a823e1a96fa6119df739d960b85261d2adb3"
+    },
+    {
+      "slug": "wikibooks-236541",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Translating Words into Math Symbols",
+      "category": "measurement",
+      "revision": 4042469,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4042469",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FTranslating+Words+into+Math+Symbols&action=history",
+      "words": 215,
+      "body_sha256": "1be7f1028d01339427dbb06d9a861717bf431ff7eb631dbe0a186ad8ffbea25f"
+    },
+    {
+      "slug": "wikibooks-130843",
+      "title": "Basic Algebra/Introduction to Basic Algebra Ideas/Variables and Expressions",
+      "category": "measurement",
+      "revision": 4314732,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4314732",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Basic+Algebra%2FIntroduction+to+Basic+Algebra+Ideas%2FVariables+and+Expressions&action=history",
+      "words": 497,
+      "body_sha256": "95bf309838cb0ef7d953279129b68b09c769c007ca5cc997019eafd1663fb5b9"
+    },
+    {
+      "slug": "wikibooks-924",
+      "title": "Geometry",
+      "category": "measurement",
+      "revision": 4635955,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4635955",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry&action=history",
+      "words": 400,
+      "body_sha256": "eb56fb2a15f098cc1447c441e1a0d213213195b650f89cdd65afaca54491ed65"
+    },
+    {
+      "slug": "wikibooks-5303",
+      "title": "Geometry/Angles",
+      "category": "measurement",
+      "revision": 4431644,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4431644",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FAngles&action=history",
+      "words": 441,
+      "body_sha256": "dc7e834839dc32bca5a5638c406ed188d63522e8c76e7839483a8c7ebea2a82e"
+    },
+    {
+      "slug": "wikibooks-8337",
+      "title": "Geometry/Area",
+      "category": "measurement",
+      "revision": 4220228,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4220228",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FArea&action=history",
+      "words": 1148,
+      "body_sha256": "789b69e4063c1b9b45835c78644fe8431a1cd8c2a09f07b08f9db1fd4454bd79"
+    },
+    {
+      "slug": "wikibooks-470520",
+      "title": "Geometry/Chapter 1/Introduction",
+      "category": "measurement",
+      "revision": 4445932,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4445932",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+1%2FIntroduction&action=history",
+      "words": 309,
+      "body_sha256": "5c6f501e0d40cfac26585cccea0f515414feb1ce421a293f1cc8ca9c02c4c5e2"
+    },
+    {
+      "slug": "wikibooks-89722",
+      "title": "Geometry/Chapter 10",
+      "category": "measurement",
+      "revision": 3625915,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3625915",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+10&action=history",
+      "words": 630,
+      "body_sha256": "5cd16ab08aad8147874bf40f4f410e43c0fca56bde722aaba366acbd6d469dc0"
+    },
+    {
+      "slug": "wikibooks-160417",
+      "title": "Geometry/Chapter 11",
+      "category": "measurement",
+      "revision": 3691299,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3691299",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+11&action=history",
+      "words": 904,
+      "body_sha256": "876106699d4baeb47326826baec369648050bb6532267ce25533417814cb1184"
+    },
+    {
+      "slug": "wikibooks-127653",
+      "title": "Geometry/Chapter 12",
+      "category": "measurement",
+      "revision": 4206942,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4206942",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+12&action=history",
+      "words": 486,
+      "body_sha256": "fe8f42b0605971e3f991169f55be0699e13cb96bd346ca186c2c63770672ab61"
+    },
+    {
+      "slug": "wikibooks-123862",
+      "title": "Geometry/Chapter 13",
+      "category": "measurement",
+      "revision": 3154710,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3154710",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+13&action=history",
+      "words": 263,
+      "body_sha256": "59d940b2ccf42bc684f92062f2280d7825af8e20f73cd1a3d6ca9f6e2dba431e"
+    },
+    {
+      "slug": "wikibooks-31892",
+      "title": "Geometry/Chapter 14",
+      "category": "measurement",
+      "revision": 3582807,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3582807",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+14&action=history",
+      "words": 488,
+      "body_sha256": "98c488faa74f9abd30c79e891171b86015febe32c4a315be2151939f31735d68"
+    },
+    {
+      "slug": "wikibooks-65100",
+      "title": "Geometry/Chapter 15",
+      "category": "measurement",
+      "revision": 3154718,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3154718",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+15&action=history",
+      "words": 306,
+      "body_sha256": "a1aeb19d779f89277728800e6aeaed3eec3b20bd72814841646a8628ab184107"
+    },
+    {
+      "slug": "wikibooks-105116",
+      "title": "Geometry/Chapter 16",
+      "category": "measurement",
+      "revision": 3154713,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3154713",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+16&action=history",
+      "words": 1036,
+      "body_sha256": "9f685adf8541797b9efdc708a25d35b0cb9f331905ac0c4af444db32c6dc47ac"
+    },
+    {
+      "slug": "wikibooks-161856",
+      "title": "Geometry/Chapter 17",
+      "category": "measurement",
+      "revision": 3558725,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3558725",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Geometry%2FChapter+17&action=history",
+      "words": 263,
+      "body_sha256": "2243e055974135c20cb019471bab026bfb85e88f47344cf789ea062d00271f60"
+    },
+    {
+      "slug": "wikibooks-3317",
+      "title": "Trigonometry",
+      "category": "measurement",
+      "revision": 4584060,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4584060",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry&action=history",
+      "words": 1495,
+      "body_sha256": "bdadd68b79c18724cacfe98aec2f3fc66ae7eb31b5075aa58679256d601fa3c1"
+    },
+    {
+      "slug": "wikibooks-246054",
+      "title": "Trigonometry/A Brief History of Trigonometry",
+      "category": "measurement",
+      "revision": 4328852,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4328852",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FA+Brief+History+of+Trigonometry&action=history",
+      "words": 589,
+      "body_sha256": "1577d0f1ba5fb5cc05abea8b6266cb21077206339ed6aeef8b31769722a72d46"
+    },
+    {
+      "slug": "wikibooks-243648",
+      "title": "Trigonometry/A Square Wave in Sines",
+      "category": "measurement",
+      "revision": 3443709,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3443709",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FA+Square+Wave+in+Sines&action=history",
+      "words": 688,
+      "body_sha256": "0a7895f4c49f8544657baaa751a242744dae8e9f224f7baf6850b256b19e43bd"
+    },
+    {
+      "slug": "wikibooks-242696",
+      "title": "Trigonometry/Addition Formula for Cosines",
+      "category": "measurement",
+      "revision": 3685287,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3685287",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FAddition+Formula+for+Cosines&action=history",
+      "words": 579,
+      "body_sha256": "1049f4820d8821b34f1b892b0bb831d81f123e74a7ab3a27ce7f936f55c23187"
+    },
+    {
+      "slug": "wikibooks-17864",
+      "title": "Trigonometry/Addition Formula for Sines",
+      "category": "measurement",
+      "revision": 4046394,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4046394",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FAddition+Formula+for+Sines&action=history",
+      "words": 859,
+      "body_sha256": "0ebbb3ca3d73ef8bce4385a9fb01e07b3779f5a2172e7f577ddb09c2b0f6da0d"
+    },
+    {
+      "slug": "wikibooks-247201",
+      "title": "Trigonometry/Angles of Elevation and Depression",
+      "category": "measurement",
+      "revision": 3683928,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3683928",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FAngles+of+Elevation+and+Depression&action=history",
+      "words": 447,
+      "body_sha256": "d87cc06208666dd29f3542e173bdf4cdd8a29954198304d333cc89ea494ce0eb"
+    },
+    {
+      "slug": "wikibooks-241800",
+      "title": "Trigonometry/Angles of a triangle sum to 180 Degrees",
+      "category": "measurement",
+      "revision": 4636229,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4636229",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FAngles+of+a+triangle+sum+to+180+Degrees&action=history",
+      "words": 804,
+      "body_sha256": "c12ecb53f2a17de12f9b8305372a33346829bfd22bec1ee4a729e66ef95eccdb"
+    },
+    {
+      "slug": "wikibooks-17269",
+      "title": "Trigonometry/Applications and Models",
+      "category": "measurement",
+      "revision": 4090725,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4090725",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FApplications+and+Models&action=history",
+      "words": 300,
+      "body_sha256": "40e7b105d77e8d00ea85a0bcd0950183dbdf4716824ecece6c232402d723d056"
+    },
+    {
+      "slug": "wikibooks-249342",
+      "title": "Trigonometry/Area of a quadrilateral",
+      "category": "measurement",
+      "revision": 2064895,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2064895",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FArea+of+a+quadrilateral&action=history",
+      "words": 385,
+      "body_sha256": "74df59a5f94bfaa23bf230604ca1c5a613d26e767e68340ca79dcd5c5991cf52"
+    },
+    {
+      "slug": "wikibooks-243702",
+      "title": "Trigonometry/Areas of Triangles",
+      "category": "measurement",
+      "revision": 3099262,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3099262",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FAreas+of+Triangles&action=history",
+      "words": 467,
+      "body_sha256": "60744a17f99003cb0e841aa5b89a06b76b7476b1f64a4e64fcd0ff4dd5c583e2"
+    },
+    {
+      "slug": "wikibooks-243245",
+      "title": "Trigonometry/Beat Frequencies",
+      "category": "measurement",
+      "revision": 3510373,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3510373",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FBeat+Frequencies&action=history",
+      "words": 505,
+      "body_sha256": "690e81a14db3a310e8af9595266da8f6865467abdbbcaccac9da14f4c47e8ce2"
+    },
+    {
+      "slug": "wikibooks-245793",
+      "title": "Trigonometry/Book 2 Introduction",
+      "category": "measurement",
+      "revision": 2551218,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2551218",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Trigonometry%2FBook+2+Introduction&action=history",
+      "words": 441,
+      "body_sha256": "15caad7305ad47fdc6de3c68fcb80eeb5ed5ef4b100f27a1773c336e0f3bc08e"
+    },
+    {
+      "slug": "wikibooks-6823",
+      "title": "Engineering Mechanics",
+      "category": "engineering",
+      "revision": 4443667,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4443667",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Mechanics&action=history",
+      "words": 1043,
+      "body_sha256": "f8c58bce94ecf6672a0e6950d101a54bd457d41015e2b5eba96715e047e29046"
+    },
+    {
+      "slug": "wikibooks-12775",
+      "title": "Statics",
+      "category": "engineering",
+      "revision": 3472089,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3472089",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics&action=history",
+      "words": 224,
+      "body_sha256": "7088ff605aa4deef776b6db5eeaf1e082d26264f68d38ef79328232ce266089c"
+    },
+    {
+      "slug": "wikibooks-124912",
+      "title": "Statics/Force Vectors",
+      "category": "engineering",
+      "revision": 1681064,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=1681064",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FForce+Vectors&action=history",
+      "words": 377,
+      "body_sha256": "4c2f38bfae1b409ed42de768d0728cfa90f75aab10d58bd95ecc50491165570f"
+    },
+    {
+      "slug": "wikibooks-53968",
+      "title": "Statics/Forces As Vectors",
+      "category": "engineering",
+      "revision": 4452735,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4452735",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FForces+As+Vectors&action=history",
+      "words": 823,
+      "body_sha256": "03f69d967712421365e27d218912e68e81ebfbd1fc3c941b52e4b40ab1b889d7"
+    },
+    {
+      "slug": "wikibooks-53729",
+      "title": "Statics/Introduction",
+      "category": "engineering",
+      "revision": 3591190,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3591190",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FIntroduction&action=history",
+      "words": 438,
+      "body_sha256": "627fb1955a76aee687d30b9d1a913f19772ed577e0e86cd8950fa81342e4fe5d"
+    },
+    {
+      "slug": "wikibooks-64942",
+      "title": "Statics/Measurement and Units",
+      "category": "engineering",
+      "revision": 4648719,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4648719",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FMeasurement+and+Units&action=history",
+      "words": 1323,
+      "body_sha256": "89aaa5d7e7766d0d1a67031d520af51aeead011a8908b962ebd038e82729cfae"
+    },
+    {
+      "slug": "wikibooks-109378",
+      "title": "Statics/Method of Joints",
+      "category": "engineering",
+      "revision": 4238342,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4238342",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FMethod+of+Joints&action=history",
+      "words": 310,
+      "body_sha256": "eb696392de2d07416338ac4cca100be0f84241e8e3a364b8699ab06ed0b22f15"
+    },
+    {
+      "slug": "wikibooks-109379",
+      "title": "Statics/Method of Sections",
+      "category": "engineering",
+      "revision": 4242960,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4242960",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FMethod+of+Sections&action=history",
+      "words": 385,
+      "body_sha256": "a392ee29d46ebb232c7468f287a36a54de9141833f0c3abbdbf4106b28a7fd3e"
+    },
+    {
+      "slug": "wikibooks-126789",
+      "title": "Statics/Multiforce Members",
+      "category": "engineering",
+      "revision": 1577698,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=1577698",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FMultiforce+Members&action=history",
+      "words": 442,
+      "body_sha256": "0d8d20f8e566b23d77615279eb88bbc5e7e24a00bc1655fc14c9f0568eac5cea"
+    },
+    {
+      "slug": "wikibooks-53980",
+      "title": "Statics/Newton's Laws and Equilibrium",
+      "category": "engineering",
+      "revision": 3439579,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3439579",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FNewton%27s+Laws+and+Equilibrium&action=history",
+      "words": 445,
+      "body_sha256": "5fa1c4daf5bcabf89a75eba840359fa04b7e117ab85af27400b0ab9bb4380e67"
+    },
+    {
+      "slug": "wikibooks-58438",
+      "title": "Statics/Trusses",
+      "category": "engineering",
+      "revision": 3535138,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3535138",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FTrusses&action=history",
+      "words": 431,
+      "body_sha256": "78e30bd42f4e2210ae789863eb513686abc37f822649ba4036906a08d12e4044"
+    },
+    {
+      "slug": "wikibooks-127644",
+      "title": "Statics/Two-Dimensional Equilibrium",
+      "category": "engineering",
+      "revision": 3357111,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3357111",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FTwo-Dimensional+Equilibrium&action=history",
+      "words": 403,
+      "body_sha256": "563c91ba3279913a0bb17e211031d71d9cc7ce088b339bdcc436d674cccfe916"
+    },
+    {
+      "slug": "wikibooks-75772",
+      "title": "Statics/Vector Math",
+      "category": "engineering",
+      "revision": 3594443,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3594443",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Statics%2FVector+Math&action=history",
+      "words": 899,
+      "body_sha256": "0b17ac96cd318dcbc1e0980bd365a5c87ba7494924b6f056230c70f3f1e38f9e"
+    },
+    {
+      "slug": "wikibooks-88375",
+      "title": "Engineering Tables",
+      "category": "engineering",
+      "revision": 4613455,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4613455",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables&action=history",
+      "words": 310,
+      "body_sha256": "efb7655ec94e9c3cc5c6c3c49dc6b56ac34e8b7527f2216a1710a57ba74df47e"
+    },
+    {
+      "slug": "wikibooks-247995",
+      "title": "Engineering Tables/ASCII Table - Control Characters",
+      "category": "engineering",
+      "revision": 4662891,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4662891",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FASCII+Table+-+Control+Characters&action=history",
+      "words": 433,
+      "body_sha256": "875e0eea0c035f8fede62f4deb1d96a6e50c240220ef44859525b4fb5f2a1f41"
+    },
+    {
+      "slug": "wikibooks-247998",
+      "title": "Engineering Tables/American Wire Gauge",
+      "category": "engineering",
+      "revision": 3254492,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3254492",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FAmerican+Wire+Gauge&action=history",
+      "words": 1308,
+      "body_sha256": "a9fad55b459385407a381da9e3bd8078bad228ac916ad62b0aa8b5930abda9d9"
+    },
+    {
+      "slug": "wikibooks-174290",
+      "title": "Engineering Tables/Chi-Squared Distribution",
+      "category": "engineering",
+      "revision": 4314079,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4314079",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FChi-Squared+Distribution&action=history",
+      "words": 8547,
+      "body_sha256": "1e803a17260821dc39d8a1017dcac9dfa116a7009d8abd77e640c30e4444d609"
+    },
+    {
+      "slug": "wikibooks-192740",
+      "title": "Engineering Tables/Electronic colour codes",
+      "category": "engineering",
+      "revision": 3964847,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3964847",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FElectronic+colour+codes&action=history",
+      "words": 208,
+      "body_sha256": "253212aef9a0ca5e8d9c0867d4c5e370b1d0e24841571938d0b6937ae91b8054"
+    },
+    {
+      "slug": "wikibooks-88615",
+      "title": "Engineering Tables/Fourier Transform Properties",
+      "category": "engineering",
+      "revision": 3257552,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3257552",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FFourier+Transform+Properties&action=history",
+      "words": 238,
+      "body_sha256": "3176a77f1d0c1beb471ef82b9b3064b9832511f69011d7ebb659d1d259506518"
+    },
+    {
+      "slug": "wikibooks-88616",
+      "title": "Engineering Tables/Fourier Transform Table 2",
+      "category": "engineering",
+      "revision": 3577357,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3577357",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FFourier+Transform+Table+2&action=history",
+      "words": 256,
+      "body_sha256": "0bc30bbc0bedc946bdecafc4bfbcaedba43e06351bf34ad15697b170984843e6"
+    },
+    {
+      "slug": "wikibooks-88474",
+      "title": "Engineering Tables/Laplace Transform Table 2",
+      "category": "engineering",
+      "revision": 4315924,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4315924",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FLaplace+Transform+Table+2&action=history",
+      "words": 437,
+      "body_sha256": "1ec22214d088dd2fffa1ef8a2bc6ace2b4819c40b419d2546697e14ea7374d5a"
+    },
+    {
+      "slug": "wikibooks-193125",
+      "title": "Engineering Tables/Metric Threads",
+      "category": "engineering",
+      "revision": 4662947,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4662947",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FMetric+Threads&action=history",
+      "words": 1326,
+      "body_sha256": "38a01ff4487a5c467b6efd49bccf9ab30651009936f5aa3b21709e6ca46ff42d"
+    },
+    {
+      "slug": "wikibooks-174109",
+      "title": "Engineering Tables/Normal Distribution/Far-Right Tail Probability Content",
+      "category": "engineering",
+      "revision": 4662951,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4662951",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FNormal+Distribution%2FFar-Right+Tail+Probability+Content&action=history",
+      "words": 232,
+      "body_sha256": "6aeff7510cd0ebff5c42d786616a1c80cd8e041164fd0cad9fed32ab8198d8b4"
+    },
+    {
+      "slug": "wikibooks-174103",
+      "title": "Engineering Tables/Normal Distribution/Probability Content from –∞ to Z",
+      "category": "engineering",
+      "revision": 3232799,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3232799",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FNormal+Distribution%2FProbability+Content+from+%E2%80%93%E2%88%9E+to+Z&action=history",
+      "words": 721,
+      "body_sha256": "c509040910d3e39afce3685def2de84cef00cb99e263062a08e44c98a001cad2"
+    },
+    {
+      "slug": "wikibooks-174277",
+      "title": "Engineering Tables/Normal Distribution/Probability Content from –∞ to Z (Z≤0)",
+      "category": "engineering",
+      "revision": 3232800,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3232800",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Engineering+Tables%2FNormal+Distribution%2FProbability+Content+from+%E2%80%93%E2%88%9E+to+Z+%28Z%E2%89%A40%29&action=history",
+      "words": 943,
+      "body_sha256": "58c759a6c129253a187a9489e966c0d34a8d13c7e15713dfae8edfc585e0b606"
+    },
+    {
+      "slug": "wikibooks-255343",
+      "title": "High School Engineering/Connecting Engineering Career Fields with Science and Engineering",
+      "category": "engineering",
+      "revision": 4381493,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4381493",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FConnecting+Engineering+Career+Fields+with+Science+and+Engineering&action=history",
+      "words": 1455,
+      "body_sha256": "2fabe3895d02ac71e588426c865d16019dc220caffb3c9209820148b210fbd0e"
+    },
+    {
+      "slug": "wikibooks-255356",
+      "title": "High School Engineering/Connecting Math and Science to the Engineering Design Process",
+      "category": "engineering",
+      "revision": 2971504,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971504",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FConnecting+Math+and+Science+to+the+Engineering+Design+Process&action=history",
+      "words": 2885,
+      "body_sha256": "c62414d0736e0470fd7616b7d891e36dff240bf4ebb12bb07fc1435cbc50c1c9"
+    },
+    {
+      "slug": "wikibooks-255340",
+      "title": "High School Engineering/Connecting Math and Science with Engineering in High School and College",
+      "category": "engineering",
+      "revision": 2971505,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971505",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FConnecting+Math+and+Science+with+Engineering+in+High+School+and+College&action=history",
+      "words": 1989,
+      "body_sha256": "cd6c4e659b5bf8f028acaeaf5f64d5c7fb73e07193005c9c74c4702f276832bf"
+    },
+    {
+      "slug": "wikibooks-237275",
+      "title": "High School Engineering/Discovering Engineering",
+      "category": "engineering",
+      "revision": 3504861,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3504861",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FDiscovering+Engineering&action=history",
+      "words": 2408,
+      "body_sha256": "2282ac152c832e0d6b06deeef796804730d9c5aa34b43846d5ea968cb634d844"
+    },
+    {
+      "slug": "wikibooks-225884",
+      "title": "High School Engineering/Engineering Design",
+      "category": "engineering",
+      "revision": 3504133,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3504133",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FEngineering+Design&action=history",
+      "words": 306,
+      "body_sha256": "22639056027e1e8f6675551d6dd09d20956d4be317713d9d4e5eaee9f74b0cd9"
+    },
+    {
+      "slug": "wikibooks-225883",
+      "title": "High School Engineering/Engineering and Society",
+      "category": "engineering",
+      "revision": 2971508,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971508",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FEngineering+and+Society&action=history",
+      "words": 191,
+      "body_sha256": "821918a8cf3de61a4806c4acae83c4d497553d0c7eb3728afa922ce6e9f1eb0d"
+    },
+    {
+      "slug": "wikibooks-255776",
+      "title": "High School Engineering/Engineering in Ancient Civilizations",
+      "category": "engineering",
+      "revision": 3443686,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3443686",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FEngineering+in+Ancient+Civilizations&action=history",
+      "words": 500,
+      "body_sha256": "524e48302fe5e0b99c11699ec4f744aa7d41b3ab160ce634c35cf3fb08414a4e"
+    },
+    {
+      "slug": "wikibooks-255779",
+      "title": "High School Engineering/Engineering in Medieval and Renaissance Europe",
+      "category": "engineering",
+      "revision": 2971510,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971510",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FEngineering+in+Medieval+and+Renaissance+Europe&action=history",
+      "words": 1618,
+      "body_sha256": "f645484241f44d5a5ca56bd5ae2c280b78ceaa6ba8fdcb702bba92e85d11715a"
+    },
+    {
+      "slug": "wikibooks-255111",
+      "title": "High School Engineering/Global and Societal Impact of Engineering",
+      "category": "engineering",
+      "revision": 4660527,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4660527",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FGlobal+and+Societal+Impact+of+Engineering&action=history",
+      "words": 3000,
+      "body_sha256": "1d68a9eb8dd003aafaa7cdc07e976aaabe021bc077e4b0868a1cad36612764f5"
+    },
+    {
+      "slug": "wikibooks-255775",
+      "title": "High School Engineering/Historical Themes",
+      "category": "engineering",
+      "revision": 2971512,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971512",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FHistorical+Themes&action=history",
+      "words": 608,
+      "body_sha256": "a0f38d82c92ebf9abc3b02800e12670c2a1b8aca360740758c8819cecc863923"
+    },
+    {
+      "slug": "wikibooks-225886",
+      "title": "High School Engineering/History of Engineering",
+      "category": "engineering",
+      "revision": 2971513,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971513",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FHistory+of+Engineering&action=history",
+      "words": 682,
+      "body_sha256": "d2c0894e29fb03d648a26a4b544a935d6712403c304cb8ff1599c25894a4d126"
+    },
+    {
+      "slug": "wikibooks-255319",
+      "title": "High School Engineering/How Math, Science, and Engineering Led to the First Pocket Radio",
+      "category": "engineering",
+      "revision": 2971514,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2971514",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=High+School+Engineering%2FHow+Math%2C+Science%2C+and+Engineering+Led+to+the+First+Pocket+Radio&action=history",
+      "words": 1005,
+      "body_sha256": "372912f08f455902aa9609ffab4073428bdee30ad4303d4c472ddea2a35cdddf"
+    },
+    {
+      "slug": "wikibooks-100905",
+      "title": "Woodworking",
+      "category": "manufacturing",
+      "revision": 3999073,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3999073",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking&action=history",
+      "words": 414,
+      "body_sha256": "92395d08426cc5402be75606110c9c9bc1c30b6791376f9926883679cb0496c6"
+    },
+    {
+      "slug": "wikibooks-381813",
+      "title": "Woodworking/Before you Begin",
+      "category": "manufacturing",
+      "revision": 3190618,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3190618",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking%2FBefore+you+Begin&action=history",
+      "words": 267,
+      "body_sha256": "e49defe99b942d63d18f9d059808511d9e711a69d96e7805a1b73c00d907521b"
+    },
+    {
+      "slug": "wikibooks-152952",
+      "title": "Woodworking/Essential Hand Tools",
+      "category": "manufacturing",
+      "revision": 3391670,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3391670",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking%2FEssential+Hand+Tools&action=history",
+      "words": 484,
+      "body_sha256": "5e938fc0730e012a604c94f135003bea8a36d06f1dfeb65c830e4a4e634ebc69"
+    },
+    {
+      "slug": "wikibooks-113592",
+      "title": "Woodworking/Setting up a home workshop",
+      "category": "manufacturing",
+      "revision": 3269578,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3269578",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking%2FSetting+up+a+home+workshop&action=history",
+      "words": 2003,
+      "body_sha256": "8a08b2ed8ea9a56bccea62681dc902f729a7f74b0e520236aea0cd96ad9b1ec8"
+    },
+    {
+      "slug": "wikibooks-158738",
+      "title": "Woodworking/Sharpening",
+      "category": "manufacturing",
+      "revision": 4100807,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4100807",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking%2FSharpening&action=history",
+      "words": 997,
+      "body_sha256": "6dc93181ffffaab6c65457087140d374d4aad71b1e676ce50d4c61e6b23e2bfc"
+    },
+    {
+      "slug": "wikibooks-381814",
+      "title": "Woodworking/The Woodworkers Library",
+      "category": "manufacturing",
+      "revision": 4597583,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4597583",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking%2FThe+Woodworkers+Library&action=history",
+      "words": 518,
+      "body_sha256": "e8a66f5210390418df9028ff93844ba2f026305a2b4a400ac01e807598b98af6"
+    },
+    {
+      "slug": "wikibooks-223472",
+      "title": "Woodworking/Tool and Workshop Maintenance",
+      "category": "manufacturing",
+      "revision": 2752504,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2752504",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Woodworking%2FTool+and+Workshop+Maintenance&action=history",
+      "words": 213,
+      "body_sha256": "9e758e0b42260b842be09666e0dab79935b687aac52f362864307ad2b2c6516c"
+    },
+    {
+      "slug": "wikibooks-43088",
+      "title": "Circuit Theory",
+      "category": "energy",
+      "revision": 4296658,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4296658",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory&action=history",
+      "words": 570,
+      "body_sha256": "0f67fdea3a482acfeffbca47328f86ce02e36e22ed818a72bb697676f63c1975"
+    },
+    {
+      "slug": "wikibooks-289845",
+      "title": "Circuit Theory/1Initial and Source/Example30",
+      "category": "energy",
+      "revision": 4308217,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4308217",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F1Initial+and+Source%2FExample30&action=history",
+      "words": 515,
+      "body_sha256": "3cd078f8f53f2ee7e69f8c43c10da92d49cf8373da9327df6c40c0a7ad387940"
+    },
+    {
+      "slug": "wikibooks-289225",
+      "title": "Circuit Theory/1Initially Excited",
+      "category": "energy",
+      "revision": 2509814,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2509814",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F1Initially+Excited&action=history",
+      "words": 1682,
+      "body_sha256": "d7d3c316808bba573febf64246533b0dab065bef454470a71f01aacff3a00a03"
+    },
+    {
+      "slug": "wikibooks-289491",
+      "title": "Circuit Theory/1Source Excitement",
+      "category": "energy",
+      "revision": 2512091,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2512091",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F1Source+Excitement&action=history",
+      "words": 303,
+      "body_sha256": "7e39866c5139e24fb8cef7e225d423e5a136e673aa2e731a31ba7848e54c8082"
+    },
+    {
+      "slug": "wikibooks-289654",
+      "title": "Circuit Theory/1Source Excitement/Example 10",
+      "category": "energy",
+      "revision": 4113440,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4113440",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F1Source+Excitement%2FExample+10&action=history",
+      "words": 314,
+      "body_sha256": "1b4572b99fde02903a58f1f5178d699f61c2e74a7578f152587db059bf53b3a5"
+    },
+    {
+      "slug": "wikibooks-289648",
+      "title": "Circuit Theory/1Source Excitement/Example 7",
+      "category": "energy",
+      "revision": 2509818,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2509818",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F1Source+Excitement%2FExample+7&action=history",
+      "words": 275,
+      "body_sha256": "6f8f61ca01f5f0caab3533dd0679a7defb4499c52c72a4f803af6c18b99baa53"
+    },
+    {
+      "slug": "wikibooks-289873",
+      "title": "Circuit Theory/2Initially Excited",
+      "category": "energy",
+      "revision": 2703112,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2703112",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F2Initially+Excited&action=history",
+      "words": 989,
+      "body_sha256": "c3e4375556ac0d320c90dc2ebd12334ee6ea4d2b4cd4873fb392ba3d693d7fb7"
+    },
+    {
+      "slug": "wikibooks-290185",
+      "title": "Circuit Theory/2Source Excitement/Example45",
+      "category": "energy",
+      "revision": 4221925,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4221925",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F2Source+Excitement%2FExample45&action=history",
+      "words": 346,
+      "body_sha256": "a8a8a379c3d6eb2253118f7bb5e679d7ddd4332d105d49c29e108bf28627b20b"
+    },
+    {
+      "slug": "wikibooks-290194",
+      "title": "Circuit Theory/2Source Excitement/Example46",
+      "category": "energy",
+      "revision": 3619956,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3619956",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F2Source+Excitement%2FExample46&action=history",
+      "words": 243,
+      "body_sha256": "c1ef7f4f20b3728e6f5026acc1366cbf83e32eb62881d36ff6dae821532b17aa"
+    },
+    {
+      "slug": "wikibooks-290161",
+      "title": "Circuit Theory/2Source Excitement/Thevenin and Norton",
+      "category": "energy",
+      "revision": 2538473,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2538473",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2F2Source+Excitement%2FThevenin+and+Norton&action=history",
+      "words": 283,
+      "body_sha256": "84b417a9b10dc023973efe9208f1e5de5f54e07bc22fd5d4447a20e96207da55"
+    },
+    {
+      "slug": "wikibooks-290729",
+      "title": "Circuit Theory/Active Filters",
+      "category": "energy",
+      "revision": 2538476,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2538476",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2FActive+Filters&action=history",
+      "words": 389,
+      "body_sha256": "abfb8f8a8a6bb49993edf403cb88ea556bf731cb999e86862873f587448a1b15"
+    },
+    {
+      "slug": "wikibooks-290763",
+      "title": "Circuit Theory/Analog Computer",
+      "category": "energy",
+      "revision": 3664105,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3664105",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Circuit+Theory%2FAnalog+Computer&action=history",
+      "words": 476,
+      "body_sha256": "57a2b5fa5634a44c79d8d129890cfedf2eeed9b0ef56e9f2e461887a3d6f121d"
+    },
+    {
+      "slug": "wikibooks-5659",
+      "title": "Electronics",
+      "category": "energy",
+      "revision": 4600702,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4600702",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics&action=history",
+      "words": 398,
+      "body_sha256": "f99ad41771c112945d9a87c557347dcb7620263773fd3968b5cf0380d6dbdfb7"
+    },
+    {
+      "slug": "wikibooks-6813",
+      "title": "Electronics/AC Voltage and Current",
+      "category": "energy",
+      "revision": 4338271,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4338271",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAC+Voltage+and+Current&action=history",
+      "words": 629,
+      "body_sha256": "bedfca522cb55c5027b20016841c01852b78f3e3219fc3e8b783e3f097cc5b00"
+    },
+    {
+      "slug": "wikibooks-31270",
+      "title": "Electronics/Adders",
+      "category": "energy",
+      "revision": 3165321,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3165321",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAdders&action=history",
+      "words": 949,
+      "body_sha256": "50e5b302a088934a4db3eca3d38fe5145ffe99a7d3cc4c77f5fb451941f5da69"
+    },
+    {
+      "slug": "wikibooks-10954",
+      "title": "Electronics/Amplifiers",
+      "category": "energy",
+      "revision": 4486987,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4486987",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAmplifiers&action=history",
+      "words": 2460,
+      "body_sha256": "cb7f3a9188faa57bc0fcbfbb63140f6c7198da0477e6d9d0f5927dd096215947"
+    },
+    {
+      "slug": "wikibooks-30392",
+      "title": "Electronics/Analog Circuits",
+      "category": "energy",
+      "revision": 3142407,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3142407",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAnalog+Circuits&action=history",
+      "words": 466,
+      "body_sha256": "4a010c3f6b2c81bea66ce3f164c4d81e72184350cd6b525006630a9e1db643c2"
+    },
+    {
+      "slug": "wikibooks-86725",
+      "title": "Electronics/Analog multipliers",
+      "category": "energy",
+      "revision": 3419574,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3419574",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAnalog+multipliers&action=history",
+      "words": 841,
+      "body_sha256": "5bb247672eccc20a9896d14644b45e34523ca0bf853fc9f82769414f4d312cc2"
+    },
+    {
+      "slug": "wikibooks-136982",
+      "title": "Electronics/Analog to Digital Converters",
+      "category": "energy",
+      "revision": 3142405,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3142405",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAnalog+to+Digital+Converters&action=history",
+      "words": 219,
+      "body_sha256": "9e336b209f11b6ad2af1f4d8289e0785efc2ca53fa676fece8b342e88b179ebb"
+    },
+    {
+      "slug": "wikibooks-7396",
+      "title": "Electronics/Audio Electronics",
+      "category": "energy",
+      "revision": 3679817,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3679817",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FAudio+Electronics&action=history",
+      "words": 277,
+      "body_sha256": "efd05fb6ba73583e2b5246abab4d705555b13470af331dff0d2436dc3db11820"
+    },
+    {
+      "slug": "wikibooks-124903",
+      "title": "Electronics/Basic Concepts",
+      "category": "energy",
+      "revision": 4408954,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4408954",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FBasic+Concepts&action=history",
+      "words": 1219,
+      "body_sha256": "9885d1c4b21a267164ff020bc66c5298b3b69c8d2b0bac237ead483a58727a98"
+    },
+    {
+      "slug": "wikibooks-30397",
+      "title": "Electronics/Basic gates",
+      "category": "energy",
+      "revision": 3793424,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3793424",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FBasic+gates&action=history",
+      "words": 647,
+      "body_sha256": "f96784c6615cb3436163c3b28dc21e1f7297d44eb593d3837ffc50da4a2e91f5"
+    },
+    {
+      "slug": "wikibooks-6834",
+      "title": "Electronics/Batteries",
+      "category": "energy",
+      "revision": 3650287,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3650287",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FBatteries&action=history",
+      "words": 3846,
+      "body_sha256": "8e948a06e06062a9dad72b6c5f9badcc2364cae96f17b2a5374189dc88a1227c"
+    },
+    {
+      "slug": "wikibooks-30394",
+      "title": "Electronics/Boolean Algebra",
+      "category": "energy",
+      "revision": 3709518,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3709518",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Electronics%2FBoolean+Algebra&action=history",
+      "words": 1046,
+      "body_sha256": "a1fb49806429b9fa682723d3445dce5f52bf8216c983e8a3bc209da3d5832b54"
+    },
+    {
+      "slug": "wikibooks-45902",
+      "title": "Communication Systems",
+      "category": "communications",
+      "revision": 3598792,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3598792",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems&action=history",
+      "words": 445,
+      "body_sha256": "9b9b7cf7d51c8467b48291b9e16dc0a9eb346c4cf40870ff91b1f96daa5fe038"
+    },
+    {
+      "slug": "wikibooks-165481",
+      "title": "Communication Systems/AM Receivers",
+      "category": "communications",
+      "revision": 4671795,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4671795",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FAM+Receivers&action=history",
+      "words": 1239,
+      "body_sha256": "8ec110c47894a37c9cd96e575049d473d2d4ad5041cb5e9a06c758e2a17dd5b1"
+    },
+    {
+      "slug": "wikibooks-47538",
+      "title": "Communication Systems/Amplitude Modulation",
+      "category": "communications",
+      "revision": 4671796,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4671796",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FAmplitude+Modulation&action=history",
+      "words": 4306,
+      "body_sha256": "3baba8047c89472cfdd3c752a72f903d9f090ba55083a666327cbdbed541387d"
+    },
+    {
+      "slug": "wikibooks-49983",
+      "title": "Communication Systems/Analog Modulation Introduction",
+      "category": "communications",
+      "revision": 1241673,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=1241673",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FAnalog+Modulation+Introduction&action=history",
+      "words": 252,
+      "body_sha256": "6df070a343fc7432c5f88badcf182df3f98f243ca7ee9931e5d8504003f59104"
+    },
+    {
+      "slug": "wikibooks-47421",
+      "title": "Communication Systems/Analog vs. Digital",
+      "category": "communications",
+      "revision": 3536757,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3536757",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FAnalog+vs.+Digital&action=history",
+      "words": 543,
+      "body_sha256": "201d9ccec22e9f862a52cdc3babf7afa138dee04cdaa3142547447a32f74f100"
+    },
+    {
+      "slug": "wikibooks-165166",
+      "title": "Communication Systems/Antennas",
+      "category": "communications",
+      "revision": 4532881,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4532881",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FAntennas&action=history",
+      "words": 2742,
+      "body_sha256": "1e8931d93ad576abd2172254c8ef0d1c923aaac8e715d46f743988964b8eac43"
+    },
+    {
+      "slug": "wikibooks-47653",
+      "title": "Communication Systems/Binary Modulation Schemes",
+      "category": "communications",
+      "revision": 4469338,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4469338",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FBinary+Modulation+Schemes&action=history",
+      "words": 949,
+      "body_sha256": "51ea59b2fe8e7bed137ce65451c25ad84df6cca273901906f536119426269afd"
+    },
+    {
+      "slug": "wikibooks-165590",
+      "title": "Communication Systems/Cellular Systems",
+      "category": "communications",
+      "revision": 4186050,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4186050",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FCellular+Systems&action=history",
+      "words": 1187,
+      "body_sha256": "705fe5bf7a72148c5f645ab736d6dd2ad38d2e7c8e2cd51a765648c5fa9a5017"
+    },
+    {
+      "slug": "wikibooks-47690",
+      "title": "Communication Systems/Coherent Receivers",
+      "category": "communications",
+      "revision": 4481181,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4481181",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FCoherent+Receivers&action=history",
+      "words": 658,
+      "body_sha256": "fb4149294dd4c3025cc94fd1338e5b3784a25941ef090536f44f0f218d69f5b3"
+    },
+    {
+      "slug": "wikibooks-47422",
+      "title": "Communication Systems/Communication Mediums",
+      "category": "communications",
+      "revision": 3230667,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3230667",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FCommunication+Mediums&action=history",
+      "words": 886,
+      "body_sha256": "325a207f2c8085c5a47c0f34c59d38455e656fa9f9af48554d8d3263baeded6e"
+    },
+    {
+      "slug": "wikibooks-52403",
+      "title": "Communication Systems/Communications History",
+      "category": "communications",
+      "revision": 3230668,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3230668",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FCommunications+History&action=history",
+      "words": 506,
+      "body_sha256": "249c1ed0330bbd744e733fc7955b00d3f2f6fcf1dc168d5692a6b3f7ff3fbddb"
+    },
+    {
+      "slug": "wikibooks-47684",
+      "title": "Communication Systems/Communications Introduction",
+      "category": "communications",
+      "revision": 3424233,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3424233",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Communication+Systems%2FCommunications+Introduction&action=history",
+      "words": 1257,
+      "body_sha256": "3b8c1b2792ae360a0ca8e6eaaf07411657c31486c6ebc30774d5645d1a2311fe"
+    },
+    {
+      "slug": "wikibooks-139772",
+      "title": "Operating System Design",
+      "category": "computing",
+      "revision": 4338712,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4338712",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design&action=history",
+      "words": 232,
+      "body_sha256": "2509faa7fe4de8ec7fbf58d67824d77f48064365bfe5ef298f3cda0110301d9c"
+    },
+    {
+      "slug": "wikibooks-139719",
+      "title": "Operating System Design/Case Studies/FAT",
+      "category": "computing",
+      "revision": 3017248,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3017248",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FCase+Studies%2FFAT&action=history",
+      "words": 589,
+      "body_sha256": "d54202f20ffb7d5618eed7eded1fc4b03666dff454998c811d72c57b79407d48"
+    },
+    {
+      "slug": "wikibooks-152809",
+      "title": "Operating System Design/Case Studies/QNX",
+      "category": "computing",
+      "revision": 4413386,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4413386",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FCase+Studies%2FQNX&action=history",
+      "words": 301,
+      "body_sha256": "c6b10117f71545bff835090ad93fa33e83a25bb25f48b0922a2efe391600ec8c"
+    },
+    {
+      "slug": "wikibooks-138516",
+      "title": "Operating System Design/Case Studies/Windows 9x",
+      "category": "computing",
+      "revision": 4532970,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4532970",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FCase+Studies%2FWindows+9x&action=history",
+      "words": 341,
+      "body_sha256": "f84f5b27b5879819d1866012906968496874433569d3006c4c6e4678e124e39e"
+    },
+    {
+      "slug": "wikibooks-15705",
+      "title": "Operating System Design/Case studies",
+      "category": "computing",
+      "revision": 4052366,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4052366",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FCase+studies&action=history",
+      "words": 346,
+      "body_sha256": "73673d021a5da5b1a347738b2c26b4069108e0ef57d6cf031a58112e6da9bad7"
+    },
+    {
+      "slug": "wikibooks-49392",
+      "title": "Operating System Design/Command line interfaces",
+      "category": "computing",
+      "revision": 4595279,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4595279",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FCommand+line+interfaces&action=history",
+      "words": 526,
+      "body_sha256": "9327c851a4cd79171fc222efda7775997dc9c264eaaf41a1c92f07e05dc4bdc8"
+    },
+    {
+      "slug": "wikibooks-138518",
+      "title": "Operating System Design/Concurrency/Deadlock",
+      "category": "computing",
+      "revision": 4207397,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4207397",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FConcurrency%2FDeadlock&action=history",
+      "words": 1638,
+      "body_sha256": "f0511908847ec0823289d3aa9f03c7d2cd79fabb9aff8b3ce367b7b68c93e687"
+    },
+    {
+      "slug": "wikibooks-106259",
+      "title": "Operating System Design/Critical Section Problem/Monitor",
+      "category": "computing",
+      "revision": 2836774,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2836774",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FCritical+Section+Problem%2FMonitor&action=history",
+      "words": 213,
+      "body_sha256": "0c1978f62d5eb44b75714e9648fae834b9024952d3e79356d2952d9eff9b5227"
+    },
+    {
+      "slug": "wikibooks-89389",
+      "title": "Operating System Design/File Sys",
+      "category": "computing",
+      "revision": 2239599,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2239599",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FFile+Sys&action=history",
+      "words": 250,
+      "body_sha256": "1dc763617cdf4eb140a6d7cc280e71c6bf5e3d378a3b292cfe8528cb3747c20d"
+    },
+    {
+      "slug": "wikibooks-263322",
+      "title": "Operating System Design/File Systems/Faults",
+      "category": "computing",
+      "revision": 3176941,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3176941",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FFile+Systems%2FFaults&action=history",
+      "words": 194,
+      "body_sha256": "4ac4fd9ad4fc7fb5a12f304021d46408c3aacd4ac6d41b4f731d27374cd77184"
+    },
+    {
+      "slug": "wikibooks-15731",
+      "title": "Operating System Design/Graphical user interfaces",
+      "category": "computing",
+      "revision": 3476400,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3476400",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FGraphical+user+interfaces&action=history",
+      "words": 705,
+      "body_sha256": "8adebe9dd50a3f1f2439365b6023cc4990b8a814a204eccfc0f237b4a8ea1fad"
+    },
+    {
+      "slug": "wikibooks-92521",
+      "title": "Operating System Design/History",
+      "category": "computing",
+      "revision": 2210621,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2210621",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Operating+System+Design%2FHistory&action=history",
+      "words": 253,
+      "body_sha256": "58e4d419b70508e3133ba06813a6ed5f8b6826ec91ad254036716f00fa07a071"
+    },
+    {
+      "slug": "wikibooks-1672",
+      "title": "Python Programming",
+      "category": "computing",
+      "revision": 4629270,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4629270",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming&action=history",
+      "words": 336,
+      "body_sha256": "784c0b2c5d5cb0fcc93a380a6394db5b5b0c2851785dd81eef30df78241d915a"
+    },
+    {
+      "slug": "wikibooks-139347",
+      "title": "Python Programming/Basic Math",
+      "category": "computing",
+      "revision": 4636172,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4636172",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FBasic+Math&action=history",
+      "words": 872,
+      "body_sha256": "2e7a979f20cf3f12a05aadcbf22c8e787e192d3bd49d249c5ca312d96a4c50bf"
+    },
+    {
+      "slug": "wikibooks-6374",
+      "title": "Python Programming/Basic Syntax",
+      "category": "computing",
+      "revision": 4666591,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4666591",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FBasic+Syntax&action=history",
+      "words": 1037,
+      "body_sha256": "5abde9a652817e6b2eaa48c9c06be80fb745bde1f9b0503696acd6da98cf40bc"
+    },
+    {
+      "slug": "wikibooks-303400",
+      "title": "Python Programming/CGI interface",
+      "category": "computing",
+      "revision": 3678047,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3678047",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FCGI+interface&action=history",
+      "words": 250,
+      "body_sha256": "3b59793e3a83d0064e36e14088ce4b3daecc963fa4653ca256bbd3ba2ebb4c2f"
+    },
+    {
+      "slug": "wikibooks-8412",
+      "title": "Python Programming/Classes",
+      "category": "computing",
+      "revision": 4666592,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4666592",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FClasses&action=history",
+      "words": 4304,
+      "body_sha256": "92dd5171b3cec0337638ce4a6bb5062fa5a90c2a83048f5150ee8a803b25926c"
+    },
+    {
+      "slug": "wikibooks-406069",
+      "title": "Python Programming/Command-line one-liners",
+      "category": "computing",
+      "revision": 4476609,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4476609",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FCommand-line+one-liners&action=history",
+      "words": 235,
+      "body_sha256": "372b7dbed3d7caa2fc15084405d64b0fc5fd337015b7662a6f0a13f765b8de72"
+    },
+    {
+      "slug": "wikibooks-89093",
+      "title": "Python Programming/Conditional Statements",
+      "category": "computing",
+      "revision": 4666594,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4666594",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FConditional+Statements&action=history",
+      "words": 2229,
+      "body_sha256": "b723421e504ada2ac2f5f7a0fb21a867b198f32e728f8d8dff9b127d078e747d"
+    },
+    {
+      "slug": "wikibooks-298779",
+      "title": "Python Programming/Context Managers",
+      "category": "computing",
+      "revision": 4613943,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4613943",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FContext+Managers&action=history",
+      "words": 1399,
+      "body_sha256": "86e2816b85d81a5982024fe2ee9a0921a7aeaa12292b45ca721d932c77d0db39"
+    },
+    {
+      "slug": "wikibooks-8106",
+      "title": "Python Programming/Control Flow",
+      "category": "computing",
+      "revision": 4636173,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4636173",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FControl+Flow&action=history",
+      "words": 1499,
+      "body_sha256": "7960b8180cade3b683dcbbd622894262f23160c95994cc669b6cd01c1af1fb84"
+    },
+    {
+      "slug": "wikibooks-14824",
+      "title": "Python Programming/Creating Python Programs",
+      "category": "computing",
+      "revision": 4636160,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4636160",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FCreating+Python+Programs&action=history",
+      "words": 841,
+      "body_sha256": "80e80dec41aded9f9310d6b41920ab1b8e3d9d8b0d240da1378ad9e5a277a242"
+    },
+    {
+      "slug": "wikibooks-406157",
+      "title": "Python Programming/Cython",
+      "category": "computing",
+      "revision": 3532281,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3532281",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FCython&action=history",
+      "words": 208,
+      "body_sha256": "4c6d06bdee66e249601fc5c86ffacd1f4817e289153a71e89b69872ed63fcd52"
+    },
+    {
+      "slug": "wikibooks-8405",
+      "title": "Python Programming/Data Types",
+      "category": "computing",
+      "revision": 4666597,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4666597",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Python+Programming%2FData+Types&action=history",
+      "words": 2110,
+      "body_sha256": "1cb5a8116e667c19bdbaed4c8eba2f4412a93d1c72c271a845517776935a89c1"
+    },
+    {
+      "slug": "wikibooks-32294",
+      "title": "Software Engineering",
+      "category": "software",
+      "revision": 4473009,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4473009",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Software+Engineering&action=history",
+      "words": 3383,
+      "body_sha256": "668dfb4db761911063a6ad09f5d137fa761617ee0da664faace9aa985e230e16"
+    },
+    {
+      "slug": "wikibooks-45908",
+      "title": "Embedded Systems",
+      "category": "software",
+      "revision": 3793415,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3793415",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems&action=history",
+      "words": 473,
+      "body_sha256": "e22d590d8f73cf348a7d3dda482e7651d9fcfc2f03e8887efa4ba8b3db90bb58"
+    },
+    {
+      "slug": "wikibooks-14224",
+      "title": "Embedded Systems/8051 Microcontroller",
+      "category": "software",
+      "revision": 3659169,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3659169",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2F8051+Microcontroller&action=history",
+      "words": 1433,
+      "body_sha256": "b3fc32d42f10500269ab60b4800a11873201f12a30518688f5e7e7566851d3e6"
+    },
+    {
+      "slug": "wikibooks-80302",
+      "title": "Embedded Systems/ARM Assembly Language",
+      "category": "software",
+      "revision": 4662828,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4662828",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FARM+Assembly+Language&action=history",
+      "words": 589,
+      "body_sha256": "36e8e956f8e60a657481f3b59ae4cc715527cc6b9fa75b8e2c884b08d13fd03e"
+    },
+    {
+      "slug": "wikibooks-80777",
+      "title": "Embedded Systems/ARM Instructions",
+      "category": "software",
+      "revision": 4662827,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4662827",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FARM+Instructions&action=history",
+      "words": 692,
+      "body_sha256": "2fafa09a25a174e1f409cfcac1ea103d34a59f3f3f116584d64ae43d9e03b6dc"
+    },
+    {
+      "slug": "wikibooks-70561",
+      "title": "Embedded Systems/ARM Microprocessors",
+      "category": "software",
+      "revision": 3675939,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3675939",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FARM+Microprocessors&action=history",
+      "words": 1175,
+      "body_sha256": "6415305dc96ebf952afb375e3b5a8485ddb36225cc3b9558fd5539f9b4ae6439"
+    },
+    {
+      "slug": "wikibooks-170968",
+      "title": "Embedded Systems/AT91SAM7S64",
+      "category": "software",
+      "revision": 3232569,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3232569",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FAT91SAM7S64&action=history",
+      "words": 334,
+      "body_sha256": "3d69321ef4efb9402131cd88ca0d735263da1e6698c953b8d61179a0fbcb423a"
+    },
+    {
+      "slug": "wikibooks-46665",
+      "title": "Embedded Systems/Assembly Language",
+      "category": "software",
+      "revision": 3247607,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3247607",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FAssembly+Language&action=history",
+      "words": 659,
+      "body_sha256": "3dc30408b4fce2ea4ed18b44d080a50cbb2387e4feb6e760921c57fdcb4ce3d4"
+    },
+    {
+      "slug": "wikibooks-19427",
+      "title": "Embedded Systems/Atmel AVR",
+      "category": "software",
+      "revision": 4418198,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4418198",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FAtmel+AVR&action=history",
+      "words": 7669,
+      "body_sha256": "e2b7bfee47acc7530aac9d89ba22503262a9025815c67c9a151156c471e7377a"
+    },
+    {
+      "slug": "wikibooks-247045",
+      "title": "Embedded Systems/Atmel AVR/Operating systems and task managers",
+      "category": "software",
+      "revision": 4032515,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4032515",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FAtmel+AVR%2FOperating+systems+and+task+managers&action=history",
+      "words": 1091,
+      "body_sha256": "8b3ff52690f8cf01caf90fdb2cf7954d3c33932469c73abbdf5ba970cd358b6f"
+    },
+    {
+      "slug": "wikibooks-46934",
+      "title": "Embedded Systems/Bootloaders and Bootsectors",
+      "category": "software",
+      "revision": 3232571,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3232571",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FBootloaders+and+Bootsectors&action=history",
+      "words": 353,
+      "body_sha256": "10ae755820624dd32b44645151dc2f5075d8b60acc5a01174ac763dc05f6613e"
+    },
+    {
+      "slug": "wikibooks-46795",
+      "title": "Embedded Systems/C Programming",
+      "category": "software",
+      "revision": 4585327,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4585327",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FC+Programming&action=history",
+      "words": 3186,
+      "body_sha256": "5d6c9d888d6708e4cd2deb957825933e8d2cc4f4be9caccffcdafb9c77e788ac"
+    },
+    {
+      "slug": "wikibooks-48101",
+      "title": "Embedded Systems/Common Protocols",
+      "category": "software",
+      "revision": 4032577,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4032577",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Embedded+Systems%2FCommon+Protocols&action=history",
+      "words": 643,
+      "body_sha256": "649f7493c26163dc076e0b3d7692ad6e65060f7182df3308095556f8e676856b"
+    },
+    {
+      "slug": "wikibooks-17318",
+      "title": "Project Management",
+      "category": "projects",
+      "revision": 3693253,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3693253",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management&action=history",
+      "words": 306,
+      "body_sha256": "4a116e843d5fc74932ce400d85ca874766aa2bf1f33ceb89f1f9143874c39b24"
+    },
+    {
+      "slug": "wikibooks-241743",
+      "title": "Project Management/Fundamentals",
+      "category": "projects",
+      "revision": 2757722,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2757722",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FFundamentals&action=history",
+      "words": 894,
+      "body_sha256": "9c30655932c0befd5e6b058c857cdc93dc7d520d0bda41f00a043a5c7efd7015"
+    },
+    {
+      "slug": "wikibooks-241744",
+      "title": "Project Management/PMBOK",
+      "category": "projects",
+      "revision": 3454209,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3454209",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK&action=history",
+      "words": 338,
+      "body_sha256": "783114e084b5152450311c8513fb9eec61c4399db494486d20d74c6d8317c863"
+    },
+    {
+      "slug": "wikibooks-241748",
+      "title": "Project Management/PMBOK/Communications Management",
+      "category": "projects",
+      "revision": 3843519,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3843519",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FCommunications+Management&action=history",
+      "words": 1161,
+      "body_sha256": "7a71516685da68b9c81c862739ae21aa38846e37bee723624d9db8784dcfd4fc"
+    },
+    {
+      "slug": "wikibooks-290060",
+      "title": "Project Management/PMBOK/Cost Management",
+      "category": "projects",
+      "revision": 3185172,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3185172",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FCost+Management&action=history",
+      "words": 382,
+      "body_sha256": "59e511050b483308e16dbe65d12738df3d690c075b91663246cee48502363d0f"
+    },
+    {
+      "slug": "wikibooks-241749",
+      "title": "Project Management/PMBOK/Human Resources Management",
+      "category": "projects",
+      "revision": 3312270,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3312270",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FHuman+Resources+Management&action=history",
+      "words": 1422,
+      "body_sha256": "76cd9070de3de689e4bf571c77a7daae796f87ce3d599cfaa3a88eb392703031"
+    },
+    {
+      "slug": "wikibooks-18773",
+      "title": "Project Management/PMBOK/Integration Management",
+      "category": "projects",
+      "revision": 3476069,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3476069",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FIntegration+Management&action=history",
+      "words": 1931,
+      "body_sha256": "663475473c529fcf58681412c2389332eb93829754a4b60274542d1d98617cf9"
+    },
+    {
+      "slug": "wikibooks-241747",
+      "title": "Project Management/PMBOK/Quality Management",
+      "category": "projects",
+      "revision": 3206593,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3206593",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FQuality+Management&action=history",
+      "words": 1216,
+      "body_sha256": "714b0c048f3ff0e3df41c1d35a6ebd76e76e7242482aad59261ad2afa33c7cfe"
+    },
+    {
+      "slug": "wikibooks-241750",
+      "title": "Project Management/PMBOK/Risk Management",
+      "category": "projects",
+      "revision": 4412642,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4412642",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FRisk+Management&action=history",
+      "words": 1468,
+      "body_sha256": "e4ca27320e3f6b96ff41ae35b170d5c84ea8a492ea1b7cd4c0f4f3c475943556"
+    },
+    {
+      "slug": "wikibooks-241745",
+      "title": "Project Management/PMBOK/Scope Management",
+      "category": "projects",
+      "revision": 4243562,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4243562",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FScope+Management&action=history",
+      "words": 1413,
+      "body_sha256": "6e1bee68fb7672739fe9333d9577e3b240b196f452a9d078ea18307b38f3182e"
+    },
+    {
+      "slug": "wikibooks-241746",
+      "title": "Project Management/PMBOK/Time Management",
+      "category": "projects",
+      "revision": 4236030,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4236030",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPMBOK%2FTime+Management&action=history",
+      "words": 2767,
+      "body_sha256": "0dce3621dc02090ad0226571d1c8117db03f4dd07728ea139c6df8cda55fa821"
+    },
+    {
+      "slug": "wikibooks-248280",
+      "title": "Project Management/Portfolios/Programs Management",
+      "category": "projects",
+      "revision": 2491411,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2491411",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Project+Management%2FPortfolios%2FPrograms+Management&action=history",
+      "words": 387,
+      "body_sha256": "30e3871f6b16d00975f13f4f793433f30341732b9f5bf7ac5bdec73287aacda1"
+    },
+    {
+      "slug": "wikibooks-87052",
+      "title": "Learning Theories/Adult Learning Theories",
+      "category": "education",
+      "revision": 4620656,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4620656",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FAdult+Learning+Theories&action=history",
+      "words": 3693,
+      "body_sha256": "eb4e3501deedf8b8ad9f226491272d749489a23bfe416b3ade25d33258a66dd2"
+    },
+    {
+      "slug": "wikibooks-87049",
+      "title": "Learning Theories/Behavioralist Theories",
+      "category": "education",
+      "revision": 4414772,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4414772",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FBehavioralist+Theories&action=history",
+      "words": 4117,
+      "body_sha256": "c169f792f60e62df61be46d23783c45c0884332cd5f5fec241e1d83c11a7bb3d"
+    },
+    {
+      "slug": "wikibooks-87050",
+      "title": "Learning Theories/Constructivist Theories",
+      "category": "education",
+      "revision": 4472918,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4472918",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FConstructivist+Theories&action=history",
+      "words": 1361,
+      "body_sha256": "22a798eb4af853ac41e6f07165795d7be93845c25edd70042b4c6c2dea500c0a"
+    },
+    {
+      "slug": "wikibooks-87060",
+      "title": "Learning Theories/Knowledge Management: Challenges",
+      "category": "education",
+      "revision": 4044488,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4044488",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FKnowledge+Management%3A+Challenges&action=history",
+      "words": 2173,
+      "body_sha256": "73324c55011eeec37523d37cf6188c75157a48317f9910286fb3370e50eb5587"
+    },
+    {
+      "slug": "wikibooks-87063",
+      "title": "Learning Theories/Knowledge Management: Change",
+      "category": "education",
+      "revision": 2669015,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2669015",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FKnowledge+Management%3A+Change&action=history",
+      "words": 3536,
+      "body_sha256": "bb3f5cf4a18c641353fff4dd3f2e6dd2474c38d3348bfa870335ad3860cf11c2"
+    },
+    {
+      "slug": "wikibooks-87062",
+      "title": "Learning Theories/Knowledge Management: Leadership",
+      "category": "education",
+      "revision": 2669002,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2669002",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FKnowledge+Management%3A+Leadership&action=history",
+      "words": 2507,
+      "body_sha256": "64437e1ca72b9f51bf5f9edbb24e2b176a25aea99055cdbf4d778edb60d1aa8c"
+    },
+    {
+      "slug": "wikibooks-87061",
+      "title": "Learning Theories/Knowledge Management: Processes",
+      "category": "education",
+      "revision": 531844,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=531844",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FKnowledge+Management%3A+Processes&action=history",
+      "words": 3240,
+      "body_sha256": "c69e14afdd01c299244cdd391e01c52f2c7ca371f408d27c10675aae17c4b5ba"
+    },
+    {
+      "slug": "wikibooks-87056",
+      "title": "Learning Theories/Organizational Learning: Agents",
+      "category": "education",
+      "revision": 4093890,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4093890",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FOrganizational+Learning%3A+Agents&action=history",
+      "words": 2601,
+      "body_sha256": "b76ccb4dae3efb1eea2d8fcf973a28839821679d7a48c5f41b19314e2f87f248"
+    },
+    {
+      "slug": "wikibooks-87053",
+      "title": "Learning Theories/Organizational Learning: Contributions by Discipline",
+      "category": "education",
+      "revision": 2614902,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=2614902",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FOrganizational+Learning%3A+Contributions+by+Discipline&action=history",
+      "words": 2077,
+      "body_sha256": "7ae6c86f266c2bbf991d6314f17f8789a02126d8a90c670615534bb0e00087c4"
+    },
+    {
+      "slug": "wikibooks-87055",
+      "title": "Learning Theories/Organizational Learning: Influencing Factors",
+      "category": "education",
+      "revision": 3908949,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3908949",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FOrganizational+Learning%3A+Influencing+Factors&action=history",
+      "words": 2975,
+      "body_sha256": "fc9408e6468f0de16e224dfa752e71683747f12e07477e54a06480f339fc8727"
+    },
+    {
+      "slug": "wikibooks-87058",
+      "title": "Learning Theories/Organizational Learning: Interorganizational",
+      "category": "education",
+      "revision": 4474577,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=4474577",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FOrganizational+Learning%3A+Interorganizational&action=history",
+      "words": 1659,
+      "body_sha256": "2fa1a61c69b6222f688780707cae03e4971fafb47128e86b5801e6f5fe4d96be"
+    },
+    {
+      "slug": "wikibooks-87059",
+      "title": "Learning Theories/Organizational Learning: Practice",
+      "category": "education",
+      "revision": 3345924,
+      "source_url": "https://en.wikibooks.org/w/index.php?oldid=3345924",
+      "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FOrganizational+Learning%3A+Practice&action=history",
+      "words": 2361,
+      "body_sha256": "6f861b8fa635eab89f3169296a41dcc4742d07ad9433ffff442ac703651f7502"
+    }
+  ],
+  "skipped": [
+    {
+      "title": "Horticulture/Seed Saving",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Horticulture/Plant Propagation",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Horticulture/Soil Testing",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Organic Horticulture",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Sustainable Agriculture",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Metalworking",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Manufacturing",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    },
+    {
+      "title": "Systems Engineering",
+      "reason": "{'code': 'missingtitle', 'info': \"The page you specified doesn't exist.\", '*': 'See https://en.wikibooks.org/w/api.php for API usage. Subscribe to the mediawiki"
+    }
+  ]
+}

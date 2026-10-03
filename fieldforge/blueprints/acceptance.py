@@ -1,0 +1,166 @@
+"""User-owned, bounded acceptance rules evaluated without model judgment or code."""
+
+from __future__ import annotations
+
+import math
+import re
+
+from fieldforge.blueprints.clearance import evaluate_pair
+from fieldforge.blueprints.engineering import bounds
+from fieldforge.blueprints.geometry import RELATIONS, analyze_envelopes
+
+# metric: (maker or all, unit, target description, label, value type)
+METRICS = {
+    "requirement.exists": ("all", "count", "Requirement ID", "Requirement retained", "number"),
+    "step.exists": ("all", "count", "Step ID", "Step retained", "number"),
+    "envelope.x": ("engineering", "mm", "", "Overall X span", "number"),
+    "envelope.y": ("engineering", "mm", "", "Overall Y span", "number"),
+    "envelope.z": ("engineering", "mm", "", "Overall Z span", "number"),
+    "part.size_x": ("engineering", "mm", "Part ID", "Part X size", "number"),
+    "part.size_y": ("engineering", "mm", "Part ID", "Part Y size", "number"),
+    "part.size_z": ("engineering", "mm", "Part ID", "Part Z size", "number"),
+    "part.material": ("engineering", "text", "Part ID", "Part material", "string"),
+    "part.count": ("engineering", "count", "", "Number of parts", "number"),
+    "geometry.overlap_pairs": ("engineering", "count", "", "Overlapping envelope pairs", "number"),
+    "geometry.connected_groups": ("engineering", "count", "", "Touching/overlapping groups", "number"),
+    "geometry.face_contact_pairs": ("engineering", "count", "", "Face-contact envelope pairs", "number"),
+    "pair.clearance": ("engineering", "mm", "Part IDs A/B", "Pair clearance", "number"),
+    "pair.gap_x": ("engineering", "mm", "Part IDs A/B", "Pair X gap", "number"),
+    "pair.gap_y": ("engineering", "mm", "Part IDs A/B", "Pair Y gap", "number"),
+    "pair.gap_z": ("engineering", "mm", "Part IDs A/B", "Pair Z gap", "number"),
+    "pair.relation": ("engineering", "text", "Part IDs A/B", "Pair relation", "string"),
+    "project.duration": ("project", "day", "", "Dependency schedule duration", "number"),
+    "phase.duration": ("project", "day", "Phase ID", "Phase duration", "number"),
+    "phase.finish": ("project", "day", "Phase ID", "Phase finish day", "number"),
+    "component.count": ("software", "count", "", "Number of components", "number"),
+    "component.exists": ("software", "count", "Component ID", "Component retained", "number"),
+    "component.kind": ("software", "text", "Component ID", "Component kind", "string"),
+    "component.trust_zone": ("software", "text", "Component ID", "Component trust zone", "string"),
+}
+RULE_FIELDS = {"id", "label", "metric", "target", "operator", "value", "unit"}
+IDENTIFIER = re.compile(r"[A-Za-z][A-Za-z0-9_-]{0,39}")
+
+
+def validate_rules(mode, rules):
+    if not isinstance(rules, list) or len(rules) > 30:
+        raise ValueError("Acceptance limits must be a list of at most 30 rules.")
+    ids = set()
+    for rule in rules:
+        if not isinstance(rule, dict) or set(rule) != RULE_FIELDS:
+            raise ValueError("Acceptance rule has missing or unexpected fields.")
+        for key in ("id", "label", "metric", "target", "operator", "unit"):
+            if not isinstance(rule[key], str) or len(rule[key]) > 160 or any(ord(c) < 32 for c in rule[key]):
+                raise ValueError("Invalid acceptance rule text.")
+        if not IDENTIFIER.fullmatch(rule["id"]) or rule["id"] in ids or not rule["label"].strip():
+            raise ValueError("Acceptance rules need unique IDs and a label.")
+        ids.add(rule["id"])
+        spec = METRICS.get(rule["metric"])
+        if spec is None or spec[0] not in (mode, "all"):
+            raise ValueError("Acceptance metric is not supported by this maker.")
+        _, unit, target, _, kind = spec
+        if rule["unit"] != unit:
+            raise ValueError(f"{rule['id']}: acceptance metric requires {unit} units.")
+        if rule["metric"].startswith("pair."):
+            parts = rule["target"].split("/")
+            if len(parts) != 2 or parts[0] == parts[1] or not all(IDENTIFIER.fullmatch(p) for p in parts):
+                raise ValueError(f"{rule['id']}: select two distinct part IDs as A/B.")
+        elif (target and not IDENTIFIER.fullmatch(rule["target"])) or (not target and rule["target"]):
+            raise ValueError(f"{rule['id']}: invalid acceptance target ID.")
+        value = rule["value"]
+        if kind == "number":
+            if (type(value) not in (int, float) or not 0 <= value <= 1_000_000_000
+                    or not math.isfinite(value) or rule["operator"] not in ("<=", "=", ">=")):
+                raise ValueError(f"{rule['id']}: use a finite nonnegative numeric limit and <=, = or >=.")
+            if rule["metric"].endswith(".exists") and (value != 1 or rule["operator"] != "="):
+                raise ValueError("Retention rules must equal 1.")
+        elif (not isinstance(value, str) or not value.strip() or len(value) > 160
+              or any(ord(c) < 32 for c in value) or rule["operator"] != "="):
+            raise ValueError(f"{rule['id']}: text limits require exact equality and 1 to 160 characters.")
+        if rule["metric"] == "pair.relation" and value not in RELATIONS:
+            raise ValueError("Pair relation must be overlap, face_contact, edge_contact, point_contact or separated.")
+
+
+def _unique(items, target):
+    found = [row for row in items if row["id"] == target]
+    if len(found) != 1:
+        raise ValueError(f"Target {target} is missing or has duplicate IDs.")
+    return found[0]
+
+
+def _measure(design, metric, target, phase_schedule, geometry):
+    if metric.startswith("geometry."):
+        if geometry["status"] != "analyzed":
+            raise ValueError("Envelope analysis unresolved: " + " ".join(geometry["problems"]))
+        return geometry[metric.split(".")[1]]
+    if metric in ("requirement.exists", "step.exists", "component.exists"):
+        collection = {"requirement.exists": "requirements", "step.exists": "steps",
+                      "component.exists": "components"}[metric]
+        _unique(design[collection], target)
+        return 1
+    if metric.endswith(".count"):
+        items = design["parts" if metric == "part.count" else "components"]
+        if len({row["id"] for row in items}) != len(items):
+            raise ValueError("Cannot count items with duplicate IDs.")
+        return len(items)
+    if metric.startswith("envelope."):
+        parts = design["parts"]
+        if not parts or any(any(size <= 0 for size in row["size_mm"]) for row in parts):
+            raise ValueError("Overall span needs positive, dimensioned parts.")
+        axis = "xyz".index(metric[-1])
+        return bounds(parts)[1][axis]
+    if metric.startswith("part."):
+        part = _unique(design["parts"], target)
+        if metric == "part.material":
+            return part["material"]
+        if any(size <= 0 for size in part["size_mm"]):
+            raise ValueError("Part dimensions must be positive.")
+        return part["size_mm"]["xyz".index(metric[-1])]
+    if metric == "phase.duration":
+        return _unique(design["phases"], target)["duration_days"]
+    if metric in ("project.duration", "phase.finish"):
+        if not phase_schedule:
+            raise ValueError("A valid dependency schedule is required.")
+        return (max(row["end"] for row in phase_schedule) if metric == "project.duration"
+                else _unique(phase_schedule, target)["end"])
+    component = _unique(design["components"], target)
+    return component[metric.split(".")[1]]
+
+
+def evaluate_rules(mode, design, rules, phase_schedule, *, geometry=None, pairs=None):
+    """Return pass/fail/unresolved results; callers turn non-passes into blockers."""
+    validate_rules(mode, rules)
+    pair_rules = any(rule["metric"].startswith("pair.") for rule in rules)
+    if ((geometry is None and any(rule["metric"].startswith(("geometry.", "pair.")) for rule in rules))
+            or (pairs is None and pair_rules)):
+        analysis = analyze_envelopes(design["parts"])
+        geometry, pairs = analysis["summary"], analysis["pairs"]
+    by_pair = {tuple(pair["part_ids"]): pair for pair in pairs or []} if pair_rules else {}
+    results = []
+    for rule in rules:
+        row = {**rule, "actual": None, "status": "unresolved", "detail": ""}
+        try:
+            if rule["metric"].startswith("pair."):
+                if geometry["status"] != "analyzed":
+                    raise ValueError("Envelope analysis unresolved: " + " ".join(geometry["problems"]))
+                pair = by_pair.get(tuple(sorted(rule["target"].split("/"))))
+                if pair is None:
+                    raise ValueError(f"Part pair {rule['target']} is missing or ambiguous.")
+                row.update(evaluate_pair(rule, pair))
+                results.append(row)
+                continue
+            actual = _measure(design, rule["metric"], rule["target"], phase_schedule, geometry)
+            row["actual"] = actual
+            expected = rule["value"]
+            if isinstance(expected, str):
+                passed = actual == expected
+            else:
+                # Absorb floating arithmetic noise only, not engineering tolerances.
+                equal = math.isclose(actual, expected, rel_tol=0, abs_tol=1e-7)
+                passed = equal or (rule["operator"] == "<=" and actual < expected) or (
+                    rule["operator"] == ">=" and actual > expected)
+            row["status"] = "passed" if passed else "failed"
+            row["detail"] = f"{actual} {rule['unit']}; expected {rule['operator']} {expected} {rule['unit']}."
+        except ValueError as exc:
+            row["detail"] = str(exc)
+        results.append(row)
+    return results

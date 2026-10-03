@@ -1,0 +1,15 @@
+The Wikibooks reference article text in packs/*.json is adapted from the identified
+Wikibooks contributors under Creative Commons Attribution-ShareAlike 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Each article preserves the source title, exact revision URL, contributor-history
+URL, license, and an explanation of the text-only adaptation. Images are not
+redistributed. These articles remain subject to the attribution and share-alike
+requirements of their license. This notice applies to the article collection,
+not to FieldForge's application code or unrelated imported documents.
+
+The material is provided without warranties. Community text is not independent
+engineering, medical, or clinical verification. No FieldForge review date is
+asserted. Archived guidance may be incomplete, outdated or locally inapplicable.
+
+See packs/catalog.json for the full revision and attribution inventory.
