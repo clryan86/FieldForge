@@ -1,0 +1,11 @@
+--- a/fieldforge/navigation/regional_index.py
++++ b/fieldforge/navigation/regional_index.py
+@@ -406,7 +406,7 @@
+ def inspect_index(path, *, cancel=None, progress=None):
+     path = Path(path).absolute()
+     before = signature(path)
+-    with _connect(path, fingerprint=before, cancel=cancel, seconds=30) as con:
++    with _connect(path, fingerprint=before, cancel=cancel, seconds=180) as con:
+         metadata = _receipt(con)
+         if con.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
+             raise ValueError('Prepared-map integrity check failed.')
