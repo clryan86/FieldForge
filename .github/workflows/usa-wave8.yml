@@ -1,0 +1,57 @@
+name: USA map sources wave eight
+on:
+  push:
+    branches: [chatgpt/usa-batch-wave8-20261003]
+    paths: [.github/workflows/usa-wave8.yml]
+permissions:
+  contents: read
+jobs:
+  source-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'pytest>=8,<10'
+      - run: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_usa_acquire.py tests/test_usa_provider_dates.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-wave8-tool-source
+          path: |
+            tools/usa_maps/
+            tests/test_usa_acquire.py
+            tests/test_usa_provider_dates.py
+            .github/workflows/usa-wave8.yml
+          retention-days: 14
+  acquire:
+    needs: source-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        region: [indiana, minnesota, tennessee, south-carolina]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire bounded public source and verify saved snapshot
+        run: |
+          mkdir usa-acquisition
+          python tools/usa_maps/acquire.py --output usa-acquisition --region '${{ matrix.region }}' --max-mib 512
+          python tools/usa_maps/acquire.py --output usa-acquisition --region '${{ matrix.region }}' --verify-only
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-wave8-${{ matrix.region }}
+          path: usa-acquisition/
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 14
