@@ -1,0 +1,50 @@
+name: USA source tool checks
+on:
+  push:
+    branches: [chatgpt/usa-batch-wave3]
+    paths:
+      - .github/workflows/usa-tool-tests.yml
+      - tools/usa_maps/**
+      - tests/test_usa_acquire.py
+      - tests/test_usa_provider_dates.py
+      - tests/test_usa_prepare.py
+permissions:
+  contents: read
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.12']
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python }}'
+      - run: python -m pip install 'pytest>=8,<10'
+      - name: Source acquisition tests only - regional backend tested separately
+        run: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q tests/test_usa_acquire.py tests/test_usa_provider_dates.py
+      - run: python -m compileall -q tools/usa_maps
+  source:
+    needs: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Archive exact tools and test source, not the desktop application
+        run: |
+          mkdir tool-delivery
+          git archive --format=zip --prefix=FieldForge-USA-Tools/ HEAD tools/usa_maps tests/test_usa_acquire.py tests/test_usa_provider_dates.py tests/test_usa_prepare.py .github/workflows/usa-wave3.yml .github/workflows/usa-tool-tests.yml > tool-delivery/FieldForge-USA-Tools-source.zip
+          git rev-parse HEAD > tool-delivery/source-commit.txt
+          sha256sum tool-delivery/FieldForge-USA-Tools-source.zip > tool-delivery/SHA256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fieldforge-usa-wave3-tool-source
+          path: tool-delivery/
+          retention-days: 14
