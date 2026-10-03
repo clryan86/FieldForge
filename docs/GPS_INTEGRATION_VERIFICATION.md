@@ -77,3 +77,35 @@ Windows CI prints individual test names for diagnosis. The preceding updated
 run passed all three Python/wheel jobs, Linux GUI and both browser jobs; Windows
 jobs were still running at this follow-up. Frozen-binary verification remains a
 required gate and is not claimed by these local build-input tests.
+
+## Windows compatibility repair — 2026-10-03
+
+Run 37092436078 timed out on both Windows versions. Its logs showed a two-MiB
+parameter value being used as a test label, overwhelming console output and
+preventing usable failure reporting. Parameter IDs now use bounded size/hash
+labels for long strings/bytes. All MBTiles collection lines are below 512
+characters, including the same oversized tile input; no test payload was reduced.
+Windows map/GPS tests run in a separate required job with a 15-minute limit,
+while existing Windows workflows retain a 30-minute limit and both matrix
+versions report independently.
+
+Map-related fixes address the reported failures:
+
+- `.gitattributes` preserves exact runtime-data and pinned-notice bytes on
+  Windows. A checkout with `core.autocrlf=true` preserved all 13 files and the
+  declared overview hash. This also protects the notice checksums during builds.
+- GPX, image and place readers compare ctime before/after within the same file
+  API. Path `stat` and descriptor `fstat` can give ctime different meanings on
+  Windows; their cross-check still compares device, inode, size and mtime. Both
+  full before/after checks remain, so descriptor changes and path replacement
+  are rejected. Regression tests simulate differing clocks and changed files
+  across all three readers. Upstream context:
+  https://github.com/python/cpython/issues/157671
+- Filename coverage uses spaces, Unicode and `#` on every platform; the literal
+  `?` case runs on POSIX because Windows forbids that filename character.
+
+Local verification: **311 focused reader checks passed**; the full Linux/Tk
+suite passed **2,295 tests, 15 browser skips, 2 existing PDF deprecation warnings
+in 131.03s**. Ruff and staged whitespace checks passed. Windows and frozen-app
+results must come from the Actions run for this repair, not the earlier cancelled
+runs or these local simulations.

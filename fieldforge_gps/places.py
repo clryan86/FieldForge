@@ -369,7 +369,9 @@ def read_catalog(
     flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0)
     descriptor = os.open(path, flags)
     try:
-        if _identity(os.fstat(descriptor)) != identity:
+        opened_identity = _identity(os.fstat(descriptor))
+        # Windows path/descriptor ctime values need not share a meaning.
+        if opened_identity[:4] != identity[:4]:
             raise ValueError("Place file changed before reading. Reopen the intended version.")
         blocks, size = [], 0
         while True:
@@ -381,7 +383,7 @@ def read_catalog(
             if size > MAX_BYTES:
                 raise ValueError("Place file grew beyond the 16 MiB limit.")
             blocks.append(block)
-        if _identity(os.fstat(descriptor)) != identity or _identity(path.stat()) != identity:
+        if _identity(os.fstat(descriptor)) != opened_identity or _identity(path.stat()) != identity:
             raise ValueError("Place file changed during reading. No catalogue accepted.")
     finally:
         os.close(descriptor)

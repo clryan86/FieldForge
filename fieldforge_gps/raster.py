@@ -53,6 +53,10 @@ def _png(image):
     return output.getvalue()
 
 
+def _signature(info):
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+
 def tile_png(data: bytes, declared_format: str) -> bytes:
     """Decode a JPEG/WebP tile in its worker and return metadata-free PNG bytes."""
     expected = TILE_FORMATS.get(declared_format.lower())
@@ -98,7 +102,7 @@ def read_reference(source, *, consent=False, cancel=None) -> ReferenceImage:
     info = path.lstat()
     if not stat.S_ISREG(info.st_mode) or not 1 <= info.st_size <= MAX_IMAGE_BYTES:
         raise ValueError("Choose a regular image file of at most 64 MiB; links are not accepted.")
-    identity = (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+    identity = _signature(info)
     flags = (
         os.O_RDONLY
         | getattr(os, "O_BINARY", 0)
@@ -107,13 +111,9 @@ def read_reference(source, *, consent=False, cancel=None) -> ReferenceImage:
     )
     with os.fdopen(os.open(path, flags), "rb") as stream:
         opened = os.fstat(stream.fileno())
-        if identity != (
-            opened.st_dev,
-            opened.st_ino,
-            opened.st_size,
-            opened.st_mtime_ns,
-            opened.st_ctime_ns,
-        ):
+        # Keep path and descriptor ctime checks separate: Windows can return
+        # creation time through stat and change time through fstat.
+        if not stat.S_ISREG(opened.st_mode) or identity[:4] != _signature(opened)[:4]:
             raise ValueError("Image changed before reading; choose the intended file again.")
         chunks = []
         size = 0
@@ -128,10 +128,7 @@ def read_reference(source, *, consent=False, cancel=None) -> ReferenceImage:
                 raise ValueError("Image exceeds 64 MiB.")
         finished = os.fstat(stream.fileno())
     final = path.lstat()
-    if any(
-        identity != (s.st_dev, s.st_ino, s.st_size, s.st_mtime_ns, s.st_ctime_ns)
-        for s in (finished, final)
-    ):
+    if _signature(opened) != _signature(finished) or identity != _signature(final):
         raise ValueError("Image changed during reading; no image accepted.")
     data = b"".join(chunks)
     Image = pillow()

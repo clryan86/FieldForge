@@ -95,9 +95,15 @@ def test_official_mbtiles_coordinate_example(tmp_path):
     assert m.read_tiles(p, ((11, 327, 1256),))[0].state == "missing"
 
 
-@pytest.mark.parametrize("name", ["space # ? café.mbtiles", "UPPER.MBTILES"])
+@pytest.mark.parametrize("name", ["space # café.mbtiles", "UPPER.MBTILES"])
 def test_uri_quoting_and_unicode(tmp_path, name):
     p = m.inspect_pack(pack_file(tmp_path, name=name), consent=True)
+    assert m.read_tiles(p, ((0, 0, 0),))[0].state == "ready"
+
+
+@pytest.mark.skipif(__import__("os").name == "nt", reason="Windows forbids ? in file names")
+def test_literal_uri_query_character_in_posix_filename(tmp_path):
+    p = m.inspect_pack(pack_file(tmp_path, name="literal?.mbtiles"), consent=True)
     assert m.read_tiles(p, ((0, 0, 0),))[0].state == "ready"
 
 

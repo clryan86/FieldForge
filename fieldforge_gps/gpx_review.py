@@ -324,7 +324,9 @@ def read_gpx(
     fd = os.open(path, flags)
     with os.fdopen(fd, "rb") as stream:
         opened = os.fstat(stream.fileno())
-        if not stat.S_ISREG(opened.st_mode) or _signature(before) != _signature(opened):
+        # Windows stat/fstat can report different meanings for ctime. Compare
+        # that field only within the same API, retaining both before/after checks.
+        if not stat.S_ISREG(opened.st_mode) or _signature(before)[:4] != _signature(opened)[:4]:
             raise ValueError("GPX file changed before reading. Review was not replaced.")
         chunks = []
         total = 0
@@ -340,7 +342,7 @@ def read_gpx(
         after = os.fstat(stream.fileno())
     if (
         _signature(opened) != _signature(after)
-        or _signature(after) != _signature(path.lstat())
+        or _signature(before) != _signature(path.lstat())
         or total != opened.st_size
     ):
         raise ValueError("GPX file changed during reading. Review was not replaced.")
