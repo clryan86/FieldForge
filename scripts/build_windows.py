@@ -1,8 +1,8 @@
 """Build/verify an unsigned Windows x64 onedir archive. Run on Windows, not Linux.
 
 Dependencies are installed explicitly by CI before this script. No data, secrets,
-credentials or user databases are read. Runtime notices are copied from installed
-component distributions, not paraphrased or replaced with a new project license.
+credentials or user databases are read. Runtime notices come from installed
+components or version-matched upstream copies, never a new project license.
 """
 
 from __future__ import annotations
@@ -22,6 +22,10 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+TCLTK_NOTICE_HASHES = {
+    "Tcl": "c0a69a2bfd757361ec7e6143973b103c90409316b49e9c88db26ad6388e79f16",
+    "Tk": "2cde822b93ca16ae535c954b7dfe658b4ad10df2a193628d1b358f1765e8b198",
+}
 
 
 def digest(path: Path) -> str:
@@ -30,6 +34,21 @@ def digest(path: Path) -> str:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             value.update(block)
     return value.hexdigest()
+
+
+def tcltk_notice(name: str, directory: Path, version: str) -> Path:
+    for candidate in (directory / "license.terms", directory.parent / "license.terms"):
+        if candidate.is_file():
+            return candidate
+    # CPython's Windows installer can omit the standalone notice files.
+    # These exact upstream copies apply only to the runtime version below.
+    if version == "8.6.15" and name in TCLTK_NOTICE_HASHES:
+        source = ROOT / "packaging/notices/tcltk-8.6.15" / f"{name}-license.terms"
+        if source.is_file() and digest(source) == TCLTK_NOTICE_HASHES[name]:
+            return source
+    raise FileNotFoundError(
+        f"{name} license.terms is required for runtime {version}; do not ship without it"
+    )
 
 
 def component_notices(destination: Path) -> None:
@@ -45,16 +64,15 @@ def component_notices(destination: Path) -> None:
         root.withdraw()
         libraries = {"Tcl": Path(str(root.tk.call("info", "library"))),
                      "Tk": Path(str(root.tk.call("set", "tk_library")))}
+        versions = {"Python": platform.python_version(),
+                    **{name: str(root.tk.call("package", "provide", name)) for name in libraries}}
     finally:
         root.destroy()
     for name, directory in libraries.items():
-        # Official CPython Windows distributions normally put these alongside scripts.
-        candidates = [directory / "license.terms", directory.parent / "license.terms"]
-        notice = next((p for p in candidates if p.is_file()), None)
-        if notice is None:
-            raise FileNotFoundError(f"{name} license.terms is required; do not ship without it")
+        notice = tcltk_notice(name, directory, versions[name])
         shutil.copy2(notice, destination / f"{name}-license.terms")
-    versions = {"Python": platform.python_version()}
+        if notice.parent == ROOT / "packaging/notices/tcltk-8.6.15":
+            shutil.copy2(notice.parent / "SOURCES.json", destination / "TCLTK-NOTICE-SOURCES.json")
     for name in ("pypdf", "pyinstaller", "pyserial", "Pillow"):
         package = importlib.metadata.distribution(name)
         notices = [item for item in package.files or () if

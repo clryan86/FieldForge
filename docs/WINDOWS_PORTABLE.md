@@ -89,7 +89,9 @@ is the September 30, 2026 maintenance/security release; the Windows 3.12 source
 compatibility job does not supply the runtime distributed in this archive.
 Both source compatibility on Windows 3.13.16 and the frozen binary smoke test
 are required. No fallback to an older packaged interpreter is allowed. Component
-license texts are included under THIRD-PARTY-NOTICES. This milestone does not
+license texts are included under THIRD-PARTY-NOTICES. When the Windows Python
+installer omits standalone Tcl/Tk terms, exact upstream copies are accepted
+only for runtime 8.6.15 after checksum verification; their provenance is included. This milestone does not
 choose or change the FieldForge project's redistribution license.
 
 CI tests the copied application from a new path with spaces/Unicode, away from

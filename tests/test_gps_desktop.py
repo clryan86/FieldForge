@@ -12,7 +12,7 @@ from fieldforge.ui.gps import GPSWorkspace, install_gps_menu
 
 
 @pytest.fixture
-def root():
+def root(monkeypatch):
     import tkinter as tk
 
     gc.collect()
@@ -24,6 +24,11 @@ def root():
         pytest.skip("Graphical integration runs in the dedicated CI jobs")
     errors = []
     window.report_callback_exception = lambda *args: errors.append(args)
+
+    def unexpected_dialog(*args, **kwargs):
+        pytest.fail(f"Unexpected desktop error dialog: {args}")
+
+    monkeypatch.setattr("tkinter.messagebox.showerror", unexpected_dialog)
     yield window
     try:
         window.destroy()

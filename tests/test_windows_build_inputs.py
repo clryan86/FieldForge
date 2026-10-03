@@ -26,6 +26,8 @@ def components(tmp_path, monkeypatch):
             return str(self.path)
     closed = []
     def call(*args):
+        if args[:2] == ("package", "provide"):
+            return "fixture"
         return TclPath(directories["tcl8.6" if args == ("info", "library") else "tk8.6"])
     monkeypatch.setattr(tk, "Tk", lambda: SimpleNamespace(tk=SimpleNamespace(call=call),
                         withdraw=lambda: None, destroy=lambda: closed.append(True)))
@@ -50,6 +52,7 @@ def test_component_notices_handle_tcl_objects_and_copy_exact_license_bytes(compo
     assert json.loads((destination / "COMPONENTS.json").read_text())["pypdf"] == "fixture"
     assert (destination / "pyinstaller-0-LICENSE.txt").read_bytes() == b"Synthetic pyinstaller license\n"
     assert (destination / "pyserial-0-LICENSE.txt").read_bytes() == b"Synthetic pyserial license\n"
+    assert (destination / "Pillow-0-LICENSE.txt").read_bytes() == b"Synthetic Pillow license\n"
 
 
 def test_missing_tk_notice_still_blocks_distribution(components):
@@ -82,3 +85,21 @@ def test_bundle_allows_only_exact_fictional_map_at_expected_path(tmp_path):
     database.write_bytes(b"Private data")
     with pytest.raises(ValueError, match="Unexpected data file"):
         build_windows.validate_bundle_file(database, bundle)
+
+
+@pytest.mark.parametrize("name", ["Tcl", "Tk"])
+def test_matching_upstream_notice_fills_missing_installer_file(tmp_path, name):
+    notice = build_windows.tcltk_notice(name, tmp_path, "8.6.15")
+    assert build_windows.digest(notice) == build_windows.TCLTK_NOTICE_HASHES[name]
+    assert b"notice is included verbatim" in notice.read_bytes()
+    with pytest.raises(FileNotFoundError, match="runtime 8.6.16"):
+        build_windows.tcltk_notice(name, tmp_path, "8.6.16")
+
+
+def test_modified_upstream_notice_still_blocks_distribution(tmp_path, monkeypatch):
+    notice = tmp_path / "packaging/notices/tcltk-8.6.15/Tcl-license.terms"
+    notice.parent.mkdir(parents=True)
+    notice.write_bytes(b"Not the original terms")
+    monkeypatch.setattr(build_windows, "ROOT", tmp_path)
+    with pytest.raises(FileNotFoundError, match="Tcl license.terms is required"):
+        build_windows.tcltk_notice("Tcl", tmp_path / "runtime", "8.6.15")

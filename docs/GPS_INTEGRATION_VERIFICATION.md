@@ -58,3 +58,22 @@ Focused GPX/image/installation regression after these fixes: **110 passed in
 4.63s**, with Ruff and the corrected installed-wheel resource check passing.
 The first run's Linux GUI and both browser jobs passed. Final platform/build
 outcomes belong to the subsequent CI run for the updated commit.
+
+## Windows build-input follow-up
+
+The prior branch's Windows portable job (run 36965937481, job 110712768317)
+failed before this integration because the installed Tcl `license.terms` was
+absent. Matching upstream Tcl/Tk 8.6.15 notices are now retained under
+`packaging/notices/`, with exact CPython source-dependency commit references and
+SHA-256 hashes. The build reads the actual Tcl/Tk runtime versions and only uses
+these fallback files when the version and hash match. Missing, modified or
+unknown-version notices still block distribution. There is no build-time notice
+download and no change to the project license.
+
+Packaging/runtime unit checks: **30 passed**. Combined packaging, desktop and
+image checks: **45 passed in 4.10s**. Unexpected error dialogs in the new desktop
+tests fail immediately instead of awaiting an unattended modal response;
+Windows CI prints individual test names for diagnosis. The preceding updated
+run passed all three Python/wheel jobs, Linux GUI and both browser jobs; Windows
+jobs were still running at this follow-up. Frozen-binary verification remains a
+required gate and is not claimed by these local build-input tests.
