@@ -1445,6 +1445,8 @@ def test_revision_review_guards_busy_unapplied_changed_requirements_baseline_and
 
 
 def test_revision_apply_write_failure_retains_candidate_as_unsaved_draft(reader, tmp_path, monkeypatch):
+    from pathlib import Path
+
     from blueprint_fixtures import document
 
     from fieldforge.blueprints.projects import create_project
@@ -1464,7 +1466,9 @@ def test_revision_apply_write_failure_retains_candidate_as_unsaved_draft(reader,
         def fail(*_a, **_kw):
             raise OSError("Simulated disk write failure")
 
-        monkeypatch.setattr("fieldforge.blueprints.projects.os.replace", fail)
+        # Python 3.10 caches os.replace in pathlib's accessor; patch the actual
+        # file-replacement boundary consistently across supported runtimes.
+        monkeypatch.setattr(Path, "replace", fail)
         review.apply()
         assert maker.revision_review is None
         assert maker.blueprint["design"]["title"] == "Candidate design" and maker.dirty
