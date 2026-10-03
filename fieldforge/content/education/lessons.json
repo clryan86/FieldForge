@@ -94,6 +94,62 @@
       "scope": "Background mathematics reference. FieldForge explanations, numbers, exercises and answers are original; no textbook text or images are reproduced.",
       "publisher": "OpenStax, Rice University",
       "accessed_on": "2026-10-02"
+    },
+    "ufli": {
+      "title": "UFLI Foundations Toolbox",
+      "url": "https://ufli.education.ufl.edu/foundations/toolbox/",
+      "scope": "Further resources for systematic phonics and connected-text practice. This FieldForge sequence, word examples and passages are original and are not UFLI lessons or an implementation of its full program.",
+      "publisher": "University of Florida Literacy Institute",
+      "accessed_on": "2026-10-03"
+    },
+    "unlike-fractions": {
+      "title": "Prealgebra 2e: Add and Subtract Fractions with Different Denominators",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/4-5-add-and-subtract-fractions-with-different-denominators",
+      "scope": "Background mathematics reference. Explanations, numbers, exercises and answers here are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "fraction-operations": {
+      "title": "Prealgebra 2e: Multiply and Divide Fractions",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/4-2-multiply-and-divide-fractions",
+      "scope": "Background mathematics reference. Explanations, numbers, exercises and answers here are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "integers": {
+      "title": "Prealgebra 2e: Add Integers",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/3-2-add-integers",
+      "scope": "Background mathematics reference. Explanations, numbers, exercises and answers here are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "equations": {
+      "title": "Prealgebra 2e: Solve Equations Using the Division and Multiplication Properties of Equality",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/8-2-solve-equations-using-the-division-and-multiplication-properties-of-equality",
+      "scope": "Background mathematics reference. Explanations, numbers, exercises and answers here are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "matter": {
+      "title": "States of Matter",
+      "url": "https://www.grc.nasa.gov/www/k-12/BGP/state.html",
+      "scope": "Background on solids, liquids, gases and plasma. The classification activity is an original introductory example, not a comprehensive particle-physics model.",
+      "publisher": "NASA Glenn Research Center",
+      "accessed_on": "2026-10-03"
+    },
+    "seeds": {
+      "title": "Starting seeds indoors",
+      "url": "https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/starting-seeds-indoors",
+      "scope": "Background on seed starting and germination; the fictional observations and questions in this lesson are original. Local species and growing conditions vary.",
+      "publisher": "University of Minnesota Extension",
+      "accessed_on": "2026-10-03"
+    },
+    "map-symbols": {
+      "title": "Topographic Map Symbols",
+      "url": "https://www.usgs.gov/educational-resources/topographic-map-symbols",
+      "scope": "Background on reading map legends. The small grid, symbols, scale and questions here are fictional classroom examples, not USGS maps or a navigation plan.",
+      "publisher": "U.S. Geological Survey",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -979,6 +1035,627 @@
         "peer-teaching",
         "learning-record",
         "alphabetical-order"
+      ]
+    },
+    {
+      "id": "25",
+      "edition": "2026-10-03",
+      "title": "Extend letter sounds and short-vowel words",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "05",
+        "06"
+      ],
+      "goal": "Build on the first five letters to read and spell more regular short English words.",
+      "materials": "Large letter cards and the example words below. Work through this lesson across several sessions rather than introducing every new sound at once.",
+      "lesson": [
+        "Review m, a, t, s and p first. Introduce a few additional consonants at a time using the first sound in these example words: b-bag, c-cat, d-dog, f-fan, g-gap, h-hat, j-jam, k-kit, l-lip, n-net, r-rat, v-van, w-web, y-yet and z-zip. These examples teach selected common correspondences, not every possible sound of each letter. Here c represents the sound also used by k, and g is the sound in gap, not the one in gem.",
+        "Add short vowels with explicit spoken examples: a in map, e in pen, i in pin, o in hot and u in cup. English accents differ; have a proficient speaker model a consistent local pronunciation. Contrast pen and pin by attending to the middle sound, but recognize that some accents merge certain vowel contrasts. Do not classify an accent difference as a learning failure.",
+        "Say the whole word, identify its sounds, then match cards to them. For net, connect n-e-t to the spoken word and blend from left to right. Change one card at a time in net, pet, pen, pin, and discuss how the word changes. Use only letters and sounds already introduced to that learner; the printed sequence is not a required one-day schedule.",
+        "Two additional spellings need special explanation. In box, x represents the two sounds /k/ and /s/, so three letters do not imply three sounds. In quit, qu represents /k/ followed by /w/ in this word; show q and u together. For spelling, ask the learner to listen through the whole word and then read back the cards they selected. Include a new word using the taught patterns to check transfer beyond a memorized list."
+      ],
+      "practice": [
+        "Build pen, then change one letter to make pin. Which sound changed?",
+        "Read and sort these words by their middle vowel letter: cat, cup, hot, lip, bed.",
+        "In the word box, how many letters are written, and what two sounds does x represent?"
+      ],
+      "answers": [
+        "Replace e with i; the middle vowel changes from the local short-e sound to the local short-i sound. Discuss accent variation when relevant.",
+        "a: cat; u: cup; o: hot; i: lip; e: bed. Model any not-yet-taught sound before expecting independent reading.",
+        "Three letters. Here x represents /k/ followed by /s/."
+      ],
+      "adaptation": "Teach a manageable subset, revisit it, and add more when the learner can use it. English letter names are not substitutes for the sounds in these words. Later lessons introduce spellings with several letters working together.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "phonics",
+        "short-vowels",
+        "letter-sounds",
+        "word-building"
+      ]
+    },
+    {
+      "id": "26",
+      "edition": "2026-10-03",
+      "title": "Read consonant blends without losing sounds",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "25"
+      ],
+      "goal": "Read and spell short words with adjacent consonants while keeping each consonant sound.",
+      "materials": "Letter cards, a writing surface and space to draw one box for each speech sound.",
+      "lesson": [
+        "In a consonant blend, adjacent consonants retain their individual sounds. At the beginning of stop, hear /s/ followed by /t/ before the vowel. Blend s-t-o-p smoothly into the whole word. A common mistake is to omit one consonant, turning stop into top. Another is to insert an extra vowel between the consonants; model the local pronunciation without an added syllable.",
+        "Compare related words: top and stop, lip and slip, cap and clap. Point to the added letter and explain the changed sound sequence. The extra consonant can change the meaning of the word. Ask the learner to read both words in a changed order so their answer depends on print, not the tutor's previous pattern.",
+        "Blends also appear at the end of words: hand, lamp, nest and best. Say hand slowly and place a mark for /h/, the short vowel, /n/ and /d/. Then choose the letters and reread the whole word. In ordinary speech some final consonants may be subtle; provide a clear model without insisting that a learner abandon their accent.",
+        "Use an original sentence after the words are familiar: 'Sam can clap.' Introduce can as c-a-n before reading, and review the capital S. Ask who can clap and invite a demonstration or explanation. For a second sentence, use 'Pam has a lamp.' Teach has explicitly: its final s is pronounced /z/ in ordinary English, and the small word a may use an unstressed vowel. These are taught correspondences, not permission to guess unfamiliar words from context."
+      ],
+      "practice": [
+        "What letter and sound are added when lip becomes slip?",
+        "Build lamp and hand, then point to the two final consonants in each.",
+        "Read 'Sam can clap.' Who can clap?"
+      ],
+      "answers": [
+        "s and /s/ are added before l.",
+        "Lamp ends in m-p; hand ends in n-d. Each consonant represents a separate sound in these examples.",
+        "Sam can clap. Check both the printed words and the meaning, with support for any newly introduced word."
+      ],
+      "adaptation": "Begin with one type of blend, then mix initial and final examples. Let a learner select cards rather than write when handwriting is not the target. Correct a missing sound by returning to the letters and blending again.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "consonant-blends",
+        "decoding",
+        "spelling"
+      ]
+    },
+    {
+      "id": "27",
+      "edition": "2026-10-03",
+      "title": "Two-letter spellings: sh, ch, th, ng and ck",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "26"
+      ],
+      "goal": "Recognize common consonant digraphs and distinguish two letters representing one sound from a blend.",
+      "materials": "Cards for individual letters plus cards showing sh, ch, th, ng and ck together.",
+      "lesson": [
+        "A digraph is a pair of letters that represents one speech sound in a particular spelling. In ship, sh represents the initial sound; do not read it as /s/ then /h/. Compare ship with slip: sh is a digraph in ship, while s-l is a two-sound blend in slip. Count the sounds with a proficient speaker before counting letters.",
+        "Teach sh with shop and fish, ch with chip and much, and ng with ring and sing. In the usual pronunciation of sing, ng represents one sound, not that sound followed by a hard /g/. These are examples of specific correspondences; English ch can represent different sounds in other words, so the lesson does not claim a universal rule.",
+        "The spelling th represents two related sounds. Compare thin with this. For many speakers, the throat vibrates for th in this but not for th in thin. A learner may notice that difference by gently resting their own fingers on their throat, or simply by listening. Explain that this variation is normal for the spelling; both words need to be taught in context.",
+        "At the end of back and duck, ck represents the single /k/ sound. This spelling commonly follows a short vowel at the end of a one-syllable base word, but do not extend that observation to every word ending in /k/. Build duck as d-u-ck, then connect it to the full letter sequence d-u-c-k. Read the original practice sentence 'Chad can shop.' Introduce Chad as a name using ch plus the familiar a and d."
+      ],
+      "practice": [
+        "Compare ship and slip. Which contains a digraph, and which begins with a blend?",
+        "How many speech sounds are in duck in the modeled pronunciation? Name the spelling for its final sound.",
+        "Read ring, chip and thin, then identify the digraph in each."
+      ],
+      "answers": [
+        "Ship contains sh; slip begins with the separate sounds of s and l.",
+        "Three sounds: /d/, the short-u vowel, and /k/. The final sound is written ck.",
+        "ring: ng; chip: ch; thin: th. Check the taught pronunciation with appropriate accent awareness."
+      ],
+      "adaptation": "Do not require physical contact with anyone else's face or throat. Offer hearing, speech or tactile supports suitable to the learner. Continue with explicit instruction in unfamiliar spellings rather than treating these examples as complete coverage.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "digraphs",
+        "sh",
+        "ch",
+        "th",
+        "ng",
+        "ck"
+      ]
+    },
+    {
+      "id": "28",
+      "edition": "2026-10-03",
+      "title": "Silent-e patterns and long vowels",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "27"
+      ],
+      "goal": "Compare several short-vowel words with related final-e spellings and recognize that the pattern has exceptions.",
+      "materials": "Letter cards including e and the word pairs in this lesson.",
+      "lesson": [
+        "Compare cap and cape. In cape, the final e is not pronounced as a separate sound, and a has the vowel sound heard in the letter name A. This is often called a long vowel. Here 'long' names a sound category; it does not mean the learner should simply hold a short vowel for more time.",
+        "Try the pairs kit-kite, hop-hope and not-note. Point to the final e and compare the vowel sounds in each pair. Build one word with cards, add e, and read the new word. Explain the meaning too: a kit is a collection of items, while a kite is a different object. Meaning checks follow attention to the spelling rather than replace it.",
+        "Teach additional examples explicitly: name, same, bike and home. Final-e words are not all alike. In have and give, the vowel does not follow the simple long-vowel pattern illustrated above. Identify the familiar consonant sounds, then directly teach the unexpected vowel. Calling an entire word irregular should not hide the parts whose sound-letter relationships the learner already knows.",
+        "Read the original sentence 'Kate can ride a bike.' Introduce Kate as a name, ride as r-i-d-e with long i, and the unstressed word a before expecting independence. Ask what Kate can do. Then change bike to a different word only after teaching its spelling. The sentence is a reading exercise, not an instruction to ride. Revisit cap-cape and kit-kite in a new order to check the learner is using the spelling pattern."
+      ],
+      "practice": [
+        "Add e to hop. Read both words and describe the vowel change.",
+        "Choose the final-e word in each pair: tap/tape, pin/pine, mat/mate.",
+        "Why should a learner not assume that the a in have sounds like the a in same?"
+      ],
+      "answers": [
+        "Hop becomes hope; the short-o vowel changes to the long-o sound in these words, with local pronunciation variation.",
+        "Tape, pine and mate. Read the paired forms to hear the change.",
+        "The pattern has exceptions. Have needs its vowel pronunciation taught explicitly; the final e does not guarantee a long vowel."
+      ],
+      "adaptation": "Introduce one vowel pattern at a time and contrast several familiar words. Expand later into vowel teams and other syllable patterns; this lesson does not teach every long-vowel spelling.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "silent-e",
+        "long-vowels",
+        "phonics",
+        "spelling-patterns"
+      ]
+    },
+    {
+      "id": "29",
+      "edition": "2026-10-03",
+      "title": "Word endings: plurals and past tense",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "28"
+      ],
+      "goal": "Recognize selected -s, -es and -ed endings, connect them to meaning and notice pronunciation changes.",
+      "materials": "Word cards for cat, bag, bus, jump, play and land, with ending cards s, es and ed.",
+      "lesson": [
+        "An ending can change a word's meaning while keeping a recognizable base. One cat becomes two cats; one bag becomes two bags. Both plural endings are written s, but cats ends with /s/ and bags with /z/ in ordinary English. Teach the sound in the whole word, not the assumption that the spelling s always has one pronunciation.",
+        "Bus becomes buses: an -es spelling and an additional spoken syllable. Compare one bus with two buses in a sentence. Other plural spellings need later instruction; for example, child becomes children rather than childs. This lesson starts with a few regular forms and explicitly marks one exception instead of presenting a complete plural rule.",
+        "For many regular verbs, -ed indicates past time. Compare 'We jump' with 'We jumped'. In jumped, -ed sounds /t/ and does not add a syllable. In played, it sounds /d/; teach play as a new base word with ay representing the long-a sound. In landed, the ending adds a syllable. Listen to whole words and show that the same written ending has different spoken forms.",
+        "Keep spelling changes separate from the first practice. The examples jump, play and land simply add ed, while a word such as hop needs a doubled p in hopped and a word such as ride has an irregular past form, rode. These additional patterns require explicit teaching. For the current exercise, build the taught base, attach the ending, read it, and use it in a sentence that makes the meaning clear."
+      ],
+      "practice": [
+        "Make cat, bag and bus plural and read the results.",
+        "Sort jumped, played and landed into: ending sounds /t/, ending sounds /d/, or ending adds a syllable.",
+        "Why is adding ed to ride not enough to write its ordinary past-tense form?"
+      ],
+      "answers": [
+        "Cats, bags and buses. Their endings are pronounced differently: /s/, /z/, and an extra syllable, respectively.",
+        "Jumped: /t/; played: /d/; landed: an extra syllable, commonly /id/ or /əd/ depending on accent.",
+        "Ride is irregular in this use; its past tense is rode. The learner needs that form taught and practiced rather than inventing rided."
+      ],
+      "adaptation": "Use real objects or drawings to contrast one and more than one. For tense, contrast now with a clearly stated past time. This is an English morphology introduction, not a general rule for other languages.",
+      "references": [
+        "reading"
+      ],
+      "tags": [
+        "suffixes",
+        "plurals",
+        "past-tense",
+        "morphology"
+      ]
+    },
+    {
+      "id": "30",
+      "edition": "2026-10-03",
+      "title": "Connected reading with an explicit word preview",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "29"
+      ],
+      "goal": "Prepare for a short passage, read it accurately with support, and distinguish stated details from an inference.",
+      "materials": "The original passage and word preview below. A fluent English-speaking partner can supply pronunciations.",
+      "lesson": [
+        "Preview these words before the passage: Kate, Sam, shop, red, bag, three, pens, and, ten, clips, put, on, desk. Kate follows the final-e pattern. Shop uses sh. Three introduces the long-e spelling ee after the th-r blend. Pens ends with voiced /z/. And is a-n-d, though often reduced in speech. Put is an explicitly taught exception to the short-u pattern of cup. On uses the local short-o vowel; desk ends with the blend s-k.",
+        "Also preview these exact forms: has with final /z/; the, often pronounced with an unstressed vowel; 'At the shop' as the location phrase; and 'puts', built from put plus /s/. Do not call a word independently decodable for a learner until its necessary correspondences have been taught. The preview identifies the passage's new support instead of silently assuming it.",
+        "Original passage: 'At the shop, Kate has a red bag. Sam has three pens and ten clips. Sam puts the pens in the bag. Kate puts the bag on the desk.' Read one sentence at a time. If a word causes difficulty, return to its letters and the preview, model it if needed, and then reread the complete sentence. The word in uses i-n; review it before an independent attempt if needed.",
+        "Ask the learner to show where the passage states the bag's color. Ask what is put into the bag, and whether it says where the clips end up. After clarification, reread for a comfortable phrasing rather than speed. An inference such as 'the bag now contains pens' follows from the third sentence if no unmentioned change is assumed; a claim that the clips are in it is unsupported. A tutor may read aloud for comprehension practice, but should record that support separately from independent reading."
+      ],
+      "practice": [
+        "What color is Kate's bag? Find the supporting words.",
+        "Who puts the pens in the bag, and who puts the bag on the desk?",
+        "Does the passage say the ten clips are put in the bag?"
+      ],
+      "answers": [
+        "Red; the first sentence says Kate has a red bag.",
+        "Sam puts the pens in; Kate puts the bag on the desk.",
+        "No. It says Sam has ten clips but does not describe where they go."
+      ],
+      "adaptation": "Read the preview aloud when necessary. The short passage is for practice with known and explicitly introduced words, not a validated reading-level assessment. Use adult-appropriate discussion when teaching adults.",
+      "references": [
+        "reading",
+        "comprehension"
+      ],
+      "tags": [
+        "connected-reading",
+        "word-preview",
+        "comprehension",
+        "reading-practice"
+      ]
+    },
+    {
+      "id": "31",
+      "edition": "2026-10-03",
+      "title": "Build a paragraph around one main idea",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "09",
+        "10"
+      ],
+      "goal": "Write a short paragraph whose details support one clear main idea and revise an unrelated sentence.",
+      "materials": "Paper or a writing surface; dictation to a scribe is an option when composition is the goal.",
+      "lesson": [
+        "A paragraph groups related sentences so a reader can follow an idea. An introductory practice paragraph may begin with a sentence naming its focus, then give details. This is a useful teaching pattern, not a rule that every paragraph must have exactly the same shape or number of sentences.",
+        "Original example: 'Our learning shelf is easier to use now. We put number books together and placed a large label below them. We left space for returned notebooks. A learner can find a book without moving the entire pile.' The main idea is improved organization of the shelf. Each detail explains a change or a result relevant to that idea.",
+        "Now insert 'A blue bird flew past the window' after the second sentence. The added detail may be true in a fictional story, but it does not support the paragraph's focus. Remove it or move it to a different paragraph. Revision concerns the relationship among ideas, not simply making every sentence longer.",
+        "Plan your own paragraph by naming a reader and a purpose. List two or three details that help that reader understand the main idea. Draft the sentences, read them aloud, and ask a partner to identify the main idea without being told. If the partner identifies something different, check whether your details or wording led them there. Revise meaning first; then check capitals, punctuation, spacing and the spellings currently being studied."
+      ],
+      "practice": [
+        "State the main idea of the learning-shelf paragraph in your own words.",
+        "Explain why the blue-bird sentence is out of place.",
+        "Write a paragraph explaining one improvement to a familiar learning space."
+      ],
+      "answers": [
+        "The shelf has been organized to make it easier to use or find items; other accurate paraphrases are acceptable.",
+        "It introduces an unrelated event without explaining the shelf's organization or usefulness.",
+        "Assess whether the paragraph has a recognizable focus, supporting details, and a clear connection among sentences. Different content and lengths can succeed."
+      ],
+      "adaptation": "Accept spoken planning, drawing and dictation. Do not infer weak ideas from slow handwriting. When the learner is ready, compare a descriptive paragraph with a paragraph that explains a process.",
+      "references": [
+        "writing"
+      ],
+      "tags": [
+        "paragraph-writing",
+        "main-idea",
+        "supporting-details",
+        "revision"
+      ]
+    },
+    {
+      "id": "32",
+      "edition": "2026-10-03",
+      "title": "Write a short narrative with a clear sequence",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "31"
+      ],
+      "goal": "Write or tell an original short narrative with a setting, a connected sequence and an understandable ending.",
+      "materials": "Three planning boxes labeled beginning, middle and end; fictional characters can replace personal experiences.",
+      "lesson": [
+        "A narrative tells about events. For this exercise, decide who is involved, where the events happen and what changes. A simple plan can fit three boxes: the starting situation, an event or difficulty, and what happens afterward. Not every story requires danger, a moral or a dramatic problem.",
+        "Original example: 'Lena brought her notebook to the learning table. When she opened it, a loose picture slipped onto the floor. She picked it up and placed it inside a folded paper pocket. At the end of the session, the picture was still with her notes.' The events connect through the notebook and picture; the ending shows the result of Lena's action.",
+        "Words such as first, later and finally can help signal order, but adding them does not fix events that are logically disconnected. Ask what caused a change and whether the reader has enough information to follow it. If a new person suddenly appears in the ending, introduce that person earlier or remove the unexplained action.",
+        "Draft a short story using invented details or a low-stakes experience you choose to share. Read it to a partner, who retells the sequence. If the retelling differs from your intent, ask which sentence caused confusion and revise it. Add a concrete detail when it helps the reader imagine an event; remove one if it distracts from the sequence. End by checking the conventions already taught, without treating a first draft as a finished publication."
+      ],
+      "practice": [
+        "What changes between the beginning and end of Lena's story?",
+        "Put these events in order: found the notebook; noticed it was missing; looked under the table.",
+        "Write an original four- or five-sentence story, then ask a partner to retell it."
+      ],
+      "answers": [
+        "The loose picture is initially unprotected, then is kept in a paper pocket with the notes.",
+        "Noticed it was missing; looked under the table; found the notebook.",
+        "Accept a coherent sequence with enough context to follow the events and an ending related to them. The suggested sentence count is a practice constraint, not a definition of a narrative."
+      ],
+      "adaptation": "Never require disclosure of distressing or private experiences. Learners can dictate, draw a sequence or tell it in their strongest language while separately practicing written English.",
+      "references": [
+        "writing"
+      ],
+      "tags": [
+        "narrative-writing",
+        "story-sequence",
+        "storytelling"
+      ]
+    },
+    {
+      "id": "33",
+      "edition": "2026-10-03",
+      "title": "Write an explanation with evidence and limits",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "23",
+        "31"
+      ],
+      "goal": "Explain an observation using relevant evidence while separating what was measured from what is uncertain.",
+      "materials": "This invented record: Monday, Shelf A had 8 notebooks; Tuesday, Shelf A had 11 notebooks; no other shelves were counted.",
+      "lesson": [
+        "An explanation should make its question clear. For the sample record, ask 'How did the count on Shelf A change?' A supported answer is 'The recorded count rose by three notebooks from Monday to Tuesday.' The evidence is the two counts, and the calculation is 11 - 8 = 3. Label this dataset as fictional in any classroom display.",
+        "A stronger claim, 'Three new notebooks were donated to the library', does not follow from those counts alone. Notebooks might have moved from another shelf, and the data say nothing about donations. A writer can offer possibilities, but must mark them as possibilities and say what extra evidence would distinguish them.",
+        "Plan an explanation using four prompts: the question, the relevant observation, the reasoning connecting them, and a limit or next question. Original draft: 'Shelf A's recorded count increased by three between the two counts. We calculated this by subtracting eight from eleven. We did not count other shelves, so the record does not show whether the library's total changed.' This communicates useful knowledge without pretending to know everything.",
+        "Identify where an observation came from. A classroom record might name the observer, date, location and counting method. When using a published source, record its title, publisher and relevant section, and distinguish a summary from a direct quotation. Paraphrase only what you understand; changing a few words while retaining an author's distinctive passage is not original writing. For this exercise, use the invented record and your own explanation."
+      ],
+      "practice": [
+        "Write the numerical change recorded for Shelf A.",
+        "Why can the record not establish that the library received three donations?",
+        "Write a short explanation that includes the evidence and one limitation."
+      ],
+      "answers": [
+        "An increase of three notebooks, since 11 - 8 = 3.",
+        "The counts concern one shelf, not how items entered the library. Transfers or other changes could account for them.",
+        "Look for accurate counts, the difference of three, a clear reasoning link, and an explicit limit such as the absence of a whole-library count."
+      ],
+      "adaptation": "Use learners' own harmless observations when available, with permission and privacy in mind. Acknowledging uncertainty should strengthen accuracy, not prevent stating the narrower conclusion the evidence supports.",
+      "references": [
+        "writing",
+        "comprehension"
+      ],
+      "tags": [
+        "explanatory-writing",
+        "evidence",
+        "reasoning",
+        "uncertainty"
+      ]
+    },
+    {
+      "id": "34",
+      "edition": "2026-10-03",
+      "title": "Add and subtract fractions with different denominators",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "15"
+      ],
+      "goal": "Rename unlike fractions as equal-sized parts, combine or compare them, and check whether the result is reasonable.",
+      "materials": "Equal-length paper strips, a number line and a pencil. All fractions in the lesson refer to a stated common whole.",
+      "lesson": [
+        "A half and a third describe different-sized parts. To add them, first express both using the same part size. Divide one whole strip into six equal lengths: one half covers three sixths, and one third covers two sixths. Therefore 1/2 + 1/3 = 3/6 + 2/6 = 5/6. The denominator remains six because the pieces are still sixths.",
+        "An equivalent fraction multiplies numerator and denominator by the same nonzero number. For 1/2, multiplying both by three gives 3/6. For 1/3, multiplying both by two gives 2/6. This changes the description, not the amount. A common denominator need not be the smallest possible one, though smaller common denominators often make arithmetic easier.",
+        "For subtraction, rename first as well. Consider 3/4 - 1/6. Twelfths work for both fractions: 3/4 = 9/12 and 1/6 = 2/12. Subtracting gives 7/12. Check by adding back: 7/12 + 2/12 = 9/12. The answer should be positive and smaller than 3/4 because a positive amount was removed.",
+        "Sometimes the result exceeds one. For 2/3 + 3/4, use twelfths: 8/12 + 9/12 = 17/12 = 1 and 5/12. The mixed-number form names a whole plus the remaining fraction. Do not add numerator to numerator and denominator to denominator; 1/2 + 1/2 is one whole, not 2/4. Use a strip or line to challenge an implausible symbolic answer."
+      ],
+      "practice": [
+        "Calculate 1/3 + 1/4 using twelfths.",
+        "Calculate 5/6 - 1/4 and check by adding back.",
+        "Calculate 3/4 + 1/2 and express the result as a mixed number."
+      ],
+      "answers": [
+        "4/12 + 3/12 = 7/12.",
+        "10/12 - 3/12 = 7/12; adding 3/12 back gives 10/12 = 5/6.",
+        "3/4 + 2/4 = 5/4 = 1 and 1/4."
+      ],
+      "adaptation": "Keep the whole visible. Use two equal-length strips rather than differently sized drawings. Offer a multiplication table for finding common multiples when fraction meaning, rather than recall speed, is the goal.",
+      "references": [
+        "unlike-fractions"
+      ],
+      "tags": [
+        "unlike-fractions",
+        "common-denominator",
+        "fraction-addition",
+        "fraction-subtraction"
+      ]
+    },
+    {
+      "id": "35",
+      "edition": "2026-10-03",
+      "title": "Multiply and divide fractions with meaning",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "34"
+      ],
+      "goal": "Interpret a fraction of an amount and the number of fractional groups that fit into an amount.",
+      "materials": "Paper rectangles, strips and a pencil. Use practice amounts rather than medication or chemical examples.",
+      "lesson": [
+        "Multiplying by a fraction can mean taking that fraction of an amount. Half of three quarters is 1/2 x 3/4 = 3/8. Draw a rectangle with four equal columns, shade three, then divide every column into two equal pieces. Half of the shaded area contains three of the rectangle's eight equal pieces. Multiplication does not always make a positive number larger.",
+        "For the symbolic calculation, multiply the numerators together and the denominators together: (a/b) x (c/d) = (a x c)/(b x d), with b and d nonzero. For 2/3 x 3/5, this gives 6/15 = 2/5. Dividing numerator and denominator by the same nonzero common factor simplifies the written fraction without changing its value.",
+        "Division can ask how many groups of a given size fit. How many quarter-lengths fit into three quarters of a unit strip? Three: (3/4) / (1/4) = 3. When the divisor is a nonzero fraction, dividing by it is equivalent to multiplying by its reciprocal. Thus (2/3) / (4/5) = (2/3) x (5/4) = 10/12 = 5/6. Keep the original order of the amounts; reversing a division changes the question.",
+        "Check a quotient by multiplying it by the divisor. Here (5/6) x (4/5) = 2/3, which recovers the starting amount. A fraction's reciprocal interchanges numerator and denominator only when its value is nonzero. Zero has no reciprocal, and division by zero is undefined. In a practical problem, state the units and whether partial groups are allowed before deciding how to report the quotient."
+      ],
+      "practice": [
+        "Find 2/5 of 3/4 and simplify.",
+        "How many one-sixth-unit lengths fit into a half-unit length?",
+        "Calculate (3/5) / (9/10), then check the result with multiplication."
+      ],
+      "answers": [
+        "(2/5) x (3/4) = 6/20 = 3/10.",
+        "Three, because 1/2 = 3/6 and (1/2) / (1/6) = 3.",
+        "(3/5) x (10/9) = 30/45 = 2/3. Check: (2/3) x (9/10) = 18/30 = 3/5."
+      ],
+      "adaptation": "Use drawn pieces before rules. Ask whether the result ought to be larger or smaller than the starting amount, and explain why. This lesson does not cover every interpretation of division or mixed-number procedure.",
+      "references": [
+        "fraction-operations"
+      ],
+      "tags": [
+        "fraction-multiplication",
+        "fraction-division",
+        "reciprocal"
+      ]
+    },
+    {
+      "id": "36",
+      "edition": "2026-10-03",
+      "title": "Negative numbers, order and change",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "13"
+      ],
+      "goal": "Locate integers on a number line, distinguish a value from its distance to zero and add signed changes.",
+      "materials": "A number line with equal intervals labeled from -10 to 10.",
+      "lesson": [
+        "Integers include zero, positive whole numbers and their negatives: ..., -3, -2, -1, 0, 1, 2, 3, .... Positive values are to the right of zero on this line; negative values are to the left. A number farther right is greater. Thus -2 is greater than -7 even though seven is a larger distance from zero than two.",
+        "Opposite integers are equally far from zero on opposite sides: 4 and -4. The absolute value is the distance from zero, so |-4| = 4 and |4| = 4. Distance is not negative. Do not confuse the negative sign in a value with a subtraction operation, although the same printed symbol is often used for both.",
+        "Adding a signed change can be shown by movement. Start at -3 and add +5: move five steps right and arrive at 2. Start at 4 and add -6: move six steps left and arrive at -2. If both addends are negative, movement continues left: -2 + (-3) = -5. Parentheses clarify which minus sign belongs to a number.",
+        "Subtracting a number is equivalent to adding its opposite. For 2 - 5, add -5 and get -3. For 2 - (-5), add +5 and get 7. Check the result by adding the subtracted number back: 7 + (-5) = 2. A familiar signed measurement such as temperature can illustrate a value and a change, but a Celsius reading is not a count of 'negative heat' and should not be interpreted that way."
+      ],
+      "practice": [
+        "Put -4, 3, -1 and 0 in increasing order.",
+        "Calculate -5 + 8 and 3 + (-7).",
+        "Calculate 4 - (-2). What are the absolute values of -6 and 6?"
+      ],
+      "answers": [
+        "-4, -1, 0, 3.",
+        "3 and -4, respectively.",
+        "6. Both absolute values are 6 because both values lie six units from zero."
+      ],
+      "adaptation": "Use a large floor-free tabletop line or tactile marks. State the starting value before every movement. Move toward symbolic rules after the learner can explain the direction and size of the change.",
+      "references": [
+        "integers"
+      ],
+      "tags": [
+        "integers",
+        "negative-numbers",
+        "number-line",
+        "absolute-value"
+      ]
+    },
+    {
+      "id": "37",
+      "edition": "2026-10-03",
+      "title": "Find an unknown with a simple equation",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14",
+        "36"
+      ],
+      "goal": "Represent a missing amount with a letter, solve a one-step equation and verify the solution in the original statement.",
+      "materials": "Paper, counters or a drawing of two equal groups. A physical balance is optional and not required.",
+      "lesson": [
+        "An equation states that two expressions have the same value. A letter such as x can stand for an unknown number. In x + 7 = 19, the missing number is 12 because 12 + 7 = 19. Here x is a variable, while the multiplication sign in earlier lessons was also written x; use words or a dot when needed to avoid confusion.",
+        "To keep an equality true, apply the same permitted operation to both sides. Subtract seven from each side of x + 7 = 19: the left becomes x and the right becomes 12. Do not remove a term from one side without a matching operation on the other. A drawing of equal totals can make this relationship visible.",
+        "In 4n = 28, the notation 4n means four times n. Divide both sides by four to obtain n = 7. Check by substituting seven: 4 x 7 = 28. Dividing by zero is not permitted. For p/3 = 5, multiply both sides by three to get p = 15; checking 15/3 confirms five.",
+        "Connect symbols to a story. Four identical packs contain twenty-eight practice cards altogether. If each pack has n cards, 4n = 28 and n = 7 cards per pack. The story assumes equal pack sizes. Without that assumption, the total alone would not identify every pack's contents. Always check the units and assumptions as well as the arithmetic. These one-step examples prepare for equations with more operations; they do not cover every algebraic situation."
+      ],
+      "practice": [
+        "Solve x + 9 = 23 and check.",
+        "Solve 6a = 42 and b/5 = 4.",
+        "Three equal bundles contain 27 pencils. Write an equation for pencils per bundle and solve it."
+      ],
+      "answers": [
+        "x = 14; 14 + 9 = 23.",
+        "a = 7, checked by 6 x 7 = 42; b = 20, checked by 20/5 = 4.",
+        "3p = 27, so p = 9 pencils per bundle, under the equal-bundle assumption."
+      ],
+      "adaptation": "Start with a blank box instead of a letter when the notation is unfamiliar. Invite learners to explain what a symbol means in words before manipulating it. Keep calculations separate from unsupported real-world assumptions.",
+      "references": [
+        "equations"
+      ],
+      "tags": [
+        "algebra",
+        "equations",
+        "unknowns",
+        "substitution"
+      ]
+    },
+    {
+      "id": "38",
+      "edition": "2026-10-03",
+      "title": "Observe solids, liquids and gases",
+      "track": "science-foundations",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22"
+      ],
+      "goal": "Classify familiar examples by observed properties and distinguish a substance from its state.",
+      "materials": "A solid block, a small quantity of room-temperature water and two stable open containers of different shapes. A facilitator handles pouring; keep water away from electrical equipment.",
+      "lesson": [
+        "Solid, liquid and gas are three familiar states of matter. Under ordinary classroom conditions, a solid block keeps a recognizable shape; liquid water flows and takes the shape of the part of a container it occupies; a gas spreads to fill the available container space. These descriptions are introductory approximations. Solids can deform, and temperature or pressure can change a material's behavior.",
+        "Observe the block on the table and then in an empty container. Its shape does not change merely because the container changes. Next, pour the same small amount of water into the second container without spilling. Its visible shape changes. A taller water level in a narrower container does not by itself mean there is more water. State what was kept the same and what changed.",
+        "Air is a mixture of gases, not empty nothingness. A gas need not be visible. Water vapor is gaseous water and is invisible; the visible mist often called 'steam' consists of tiny liquid droplets. These distinctions prevent using visibility alone as the test for a state. This activity involves no boiling, heating, closed pressure vessels or unknown substances.",
+        "Water can be ice, liquid water or water vapor while remaining the same chemical substance. Melting and freezing change state; a change of state is not the same as producing a different substance. Other states, including plasma, exist, so the three categories in this lesson are not an exhaustive list. Record observations first, then add a carefully qualified explanation. A flowing pile of sand is made of solid grains; how a collection pours does not by itself make each grain a liquid."
+      ],
+      "practice": [
+        "Classify a wooden block, liquid water and the air in an open room using the three familiar categories.",
+        "The same water is poured into a narrower container and its level rises. Does that establish an increase in the amount of water?",
+        "Is invisible water vapor a gas or a liquid? Are the visible droplets in mist the same state?"
+      ],
+      "answers": [
+        "Block: solid; liquid water: liquid; air: a mixture of gases, under ordinary room conditions.",
+        "No. Shape and level depend on the container. If none was added, removed or spilled during the brief transfer, the transferred amount is the same within ordinary measurement limits.",
+        "Water vapor is a gas. The visible droplets in mist are liquid water."
+      ],
+      "adaptation": "Use drawings and a facilitator's demonstration if handling materials is difficult. Ask for properties and counterexamples rather than memorizing a list. Follow later with more detailed particle models and temperature measurements.",
+      "references": [
+        "matter"
+      ],
+      "tags": [
+        "states-of-matter",
+        "solid",
+        "liquid",
+        "gas",
+        "observation"
+      ]
+    },
+    {
+      "id": "39",
+      "edition": "2026-10-03",
+      "title": "Seeds, germination and an observation record",
+      "track": "science-foundations",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "16",
+        "20",
+        "22"
+      ],
+      "goal": "Describe germination at an introductory level and interpret a dated record without treating an unfinished observation as a final result.",
+      "materials": "Paper and the fictional seed record below. Actual planting is optional and should follow instructions for a known seed type; no seed handling or tasting is needed for this lesson.",
+      "lesson": [
+        "A viable seed contains a plant embryo and stored resources that support early development. Germination begins growth under suitable conditions. Water availability, oxygen and temperature matter, and light requirements differ among seed types. A seed that does not germinate during a short observation is not automatically dead; conditions, dormancy or time may explain the result.",
+        "For this classroom exercise, define the recorded event before counting: a visible root has emerged. Use one named seed type, the same observation method and clear dates. Record a count without uprooting a plant to look for hidden growth. A real project needs suitable care and local guidance; the dataset below is invented for learning how to describe evidence.",
+        "Fictional record for eight seeds: day 0, zero with visible roots; day 2, three with visible roots; day 4, six with visible roots. These are cumulative counts, so day 4 does not mean six additional seedlings. By day 4, 6/8 = 3/4 = 75% meet the recorded criterion. Two have not yet met it. Do not call that 75% a measured result for a real seed product or a prediction for other growing conditions.",
+        "Draw a table with columns for date, observation count, conditions and notes. If a visit is missed, write 'not observed' rather than zero. A drawing can show root or leaf changes, but label what you actually saw. To compare conditions later, choose a clear question, suitable repeated groups and a plan that avoids changing many factors at once. The present one-group record describes a sequence; it does not identify which condition caused germination."
+      ],
+      "practice": [
+        "How many of the eight seeds had not shown a visible root by day 4 in the fictional record?",
+        "What percentage met the visible-root criterion by day 4? Explain the calculation.",
+        "Can this one-group record prove that a particular temperature caused the observed growth?"
+      ],
+      "answers": [
+        "Two, because 8 - 6 = 2. Their later outcome is not given.",
+        "75%, because 6/8 = 3/4 = 0.75 = 75%.",
+        "No. It gives observations under one set of conditions, not a controlled comparison of temperatures or proof of a cause."
+      ],
+      "adaptation": "Use the paper dataset when live materials are unavailable. If planting, a responsible facilitator should select suitable seeds, avoid treated or unknown seeds for handling exercises, manage hygiene, and keep small seeds away from children who may swallow them.",
+      "references": [
+        "seeds"
+      ],
+      "tags": [
+        "germination",
+        "seeds",
+        "plant-observation",
+        "cumulative-data"
+      ]
+    },
+    {
+      "id": "40",
+      "edition": "2026-10-03",
+      "title": "Read a map legend, grid and scale",
+      "track": "geography-foundations",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21"
+      ],
+      "goal": "Use a fictional map's own legend and north arrow, locate features on a grid and convert a map length using its stated scale.",
+      "materials": "Squared paper and a pencil. All places and distances in this lesson are fictional paper exercises.",
+      "lesson": [
+        "A map represents selected features using symbols. Its legend explains what its symbols mean; a symbol is not guaranteed to have the same meaning on every map. Draw a square for a reading room, a circle for a garden and a triangle for a tower, and write these meanings in a legend. These are classroom choices, not claimed universal mapping symbols.",
+        "Draw a grid with horizontal x values 0 through 5 increasing right and vertical y values 0 through 4 increasing upward. Put a north arrow pointing upward. On this map, right is east, down is south and left is west. Place the reading room at (1, 1), garden at (4, 1) and tower at (4, 3). These ordered pairs are grid coordinates, not latitude and longitude.",
+        "Suppose each grid interval represents 50 meters. The garden is three intervals east of the reading room, or 150 meters in the map model. The tower is two intervals north of the garden, or 100 meters. Following those two segments totals 250 meters. This is not the straight-line distance between the first and last points, and a line on a map does not establish that a real route is passable.",
+        "A scale ratio such as 1:1,000 means one unit on the map represents 1,000 of the same units in the represented area. Thus 1 cm represents 1,000 cm, or 10 m. Enlarging or shrinking a printed map changes that representative ratio unless its labeling is updated; a graphic scale bar changes with a uniform copy and can still be used. Real maps also need a date, source and appropriate projection information. This lesson introduces paper reading, not a field navigation procedure."
+      ],
+      "practice": [
+        "In the fictional grid, what direction and how many intervals take you from the garden to the tower?",
+        "At 50 meters per interval, what is the length of that segment?",
+        "On a map correctly printed at 1:1,000, what represented length corresponds to 3 cm?"
+      ],
+      "answers": [
+        "North, two intervals: from (4, 1) to (4, 3).",
+        "100 meters.",
+        "3,000 cm = 30 meters. Keep the units consistent before converting."
+      ],
+      "adaptation": "Provide large-print or tactile symbols and describe positions verbally. Rotate the paper and use the north arrow to show why 'top of the page' should not automatically be treated as north on an arbitrary map.",
+      "references": [
+        "map-symbols"
+      ],
+      "tags": [
+        "map-reading",
+        "legend",
+        "coordinates",
+        "map-scale",
+        "geography"
       ]
     }
   ]

@@ -8,7 +8,7 @@ benchmark claim, factual validation, or proof that designs are safe or complete.
 ## Setup and reproducibility
 
 These recorded results use the pre-education-expansion corpus below. The current
-bundle also contains 24 Education Foundations drafts; rerunning with it produces
+bundle also contains 40 Education Foundations drafts; rerunning with it produces
 a different corpus fingerprint. These historical scores are not measurements of
 that expanded corpus.
 

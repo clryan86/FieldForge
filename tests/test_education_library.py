@@ -35,7 +35,7 @@ def no_network(*args, **kwargs):
 def test_shipped_lessons_match_editable_source_and_have_complete_learning_paths():
     source = json.loads((ROOT / "fieldforge/content/education/lessons.json").read_text("utf-8"))
     articles, entries = compile_lessons(source)
-    assert len(articles) == 24
+    assert len(articles) == 40
     assert read_pack("education-foundations.json") == envelope(articles)
     combined = read_pack("reference-library.json")
     by_slug = {row["slug"]: row for row in combined["data"]["articles"]}
@@ -53,15 +53,23 @@ def test_shipped_lessons_match_editable_source_and_have_complete_learning_paths(
     original = [row for row in combined["data"]["articles"] if not row["slug"].startswith(PREFIX)]
     assert len(original) == 267
     assert digest(original) == "954331fda1b1e03b20b5c7a1520b4a17a8fc25c167e660596b72a01c06f98e42"
+    # Earlier education imports must extend without --replace or losing private notes.
+    assert envelope(articles[:24])["checksum"] == (
+        "f0fb92291612e3149a370add027597226dacee4b7b391b78707a46dee9c7c7c6"
+    )
+    assert {row["edition"] for row in entries[:24]} == {"2026-10-02"}
+    assert {row["edition"] for row in entries[24:]} == {"2026-10-03"}
 
 
 @pytest.mark.parametrize("use_fts", [True, False])
+@pytest.mark.parametrize("previous_lessons", [0, 24])
 def test_upgrade_preserves_existing_articles_and_notes_and_is_searchable_offline(
-    tmp_path, monkeypatch, use_fts
+    tmp_path, monkeypatch, use_fts, previous_lessons
 ):
     monkeypatch.setattr(socket, "socket", no_network)
     all_rows = read_pack("reference-library.json")["data"]["articles"]
-    old_rows = [row for row in all_rows if not row["slug"].startswith(PREFIX)]
+    old_rows = [row for row in all_rows if not row["slug"].startswith(PREFIX)
+                or int(row["slug"][len(PREFIX):]) <= previous_lessons]
     old_pack = tmp_path / "old.json"
     old_pack.write_bytes(canonical(envelope(old_rows)))
     library = KnowledgeLibrary(tmp_path / "library.db", use_fts=use_fts)
@@ -70,29 +78,32 @@ def test_upgrade_preserves_existing_articles_and_notes_and_is_searchable_offline
     original = library.get(slug)
     library.annotate(slug, bookmarked=True, note="Personal note survives the education update")
     result = install_reference_library(library)
-    assert result == {"imported": 24, "unchanged": 267, "annotations": 0, "packs": 1}
-    assert library.count() == 291
+    assert result == {"imported": 40 - previous_lessons, "unchanged": 267 + previous_lessons,
+                      "annotations": 0, "packs": 1}
+    assert library.count() == 307
     assert library.get(slug) == original
     assert library.annotation(slug) == {
         "bookmarked": True, "note": "Personal note survives the education update"
     }
-    assert len(library.browse(100, category="education")) == 36
+    assert len(library.browse(100, category="education")) == 52
     for query, expected in (("phonics", "05"), ("remainders", "14"),
-                            ("percentages", "16"), ("timetable", "19")):
+                            ("percentages", "16"), ("timetable", "19"),
+                            ("digraphs", "27"), ("equations", "37"),
+                            ("germination", "39"), ("legend", "40")):
         hits = library.search(query, 100, category="education")
         assert PREFIX + expected in {hit.slug for hit in hits}
     repeat = install_reference_library(library)
-    assert repeat["imported"] == 0 and repeat["unchanged"] == 291
+    assert repeat["imported"] == 0 and repeat["unchanged"] == 307
 
 
 def test_standalone_education_pack_import_and_conflict_rollback(tmp_path, monkeypatch):
     monkeypatch.setattr(socket, "socket", no_network)
     library = KnowledgeLibrary(tmp_path / "separate.db")
     result = import_pack(library, PACKS / "education-foundations.json")
-    assert result == {"imported": 24, "unchanged": 0, "annotations": 0}
-    assert library.count() == 24
+    assert result == {"imported": 40, "unchanged": 0, "annotations": 0}
+    assert library.count() == 40
     other = KnowledgeLibrary(tmp_path / "conflict.db")
-    slug = PREFIX + "24"
+    slug = PREFIX + "40"
     other.upsert(KnowledgeArticle(slug, "Local lesson", "Keep my local version", "education"))
     other.annotate(slug, bookmarked=True, note="Private adaptation")
     with pytest.raises(ValueError, match="different content"):

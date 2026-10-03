@@ -46,6 +46,7 @@ def compile_lessons(source):
     articles, catalog = [], []
     for lesson in lessons:
         lesson_id = lesson["id"]
+        edition = lesson.get("edition", source["edition"])
         if any(item not in seen for item in lesson["prerequisites"]):
             raise ValueError("prerequisites must refer to earlier lessons")
         seen.add(lesson_id)
@@ -72,7 +73,7 @@ def compile_lessons(source):
                 f"Scope: {item['scope']}" for item in references
             ),
             "SOURCE AND REUSE\nBy FieldForge (AI-assisted draft). Original education content, "
-            f"edition {source['edition']}. No independent review date is asserted.\n"
+            f"edition {edition}. No independent review date is asserted.\n"
             f"License for this original lesson: {LICENSE}\n"
             "No third-party textbook text or images are reproduced. External references "
             "retain their own rights and are not bundled. All lesson instructions, practice "
@@ -83,7 +84,7 @@ def compile_lessons(source):
             "body": body, "category": "education",
             "tags": sorted({"education", "education-foundations", "original-draft",
                             "offline-lesson", lesson["track"], *lesson["tags"]}),
-            "source_title": f"FieldForge Education Foundations, edition {source['edition']}",
+            "source_title": f"FieldForge Education Foundations, edition {edition}",
             "source_url": "https://github.com/clryan86/FieldForge",
             "source_publisher": "FieldForge (AI-assisted draft)", "reviewed_on": "",
             "safety_level": "caution", "license": LICENSE,
@@ -93,7 +94,7 @@ def compile_lessons(source):
         articles.append(row)
         catalog.append({
             "slug": row["slug"], "title": row["title"], "category": "education",
-            "origin": "fieldforge-original", "edition": source["edition"],
+            "origin": "fieldforge-original", "edition": edition,
             "source_file": "fieldforge/content/education/lessons.json",
             "source_url": row["source_url"], "contributors": row["source_publisher"],
             "words": len(body.split()), "body_sha256": row["checksum"],
