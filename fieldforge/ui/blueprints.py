@@ -29,6 +29,7 @@ from fieldforge.ui.blueprint_acceptance import AcceptanceLimits
 from fieldforge.ui.blueprint_diagnostics import BlueprintDiagnostics
 from fieldforge.ui.blueprint_evidence import BlueprintEvidence
 from fieldforge.ui.blueprint_history import ProjectHistory
+from fieldforge.ui.blueprint_parameters import PartParameters
 from fieldforge.ui.blueprint_preview import DrawingPreview
 from fieldforge.ui.lifecycle import release_tk_references
 
@@ -56,6 +57,7 @@ class BlueprintMaker(ttk.Frame):
         super().__init__(parent, padding=12)
         self.library, self.mode = library, mode
         self.blueprint = None
+        self.part_editor = None
         self.dirty = False
         self.busy = False
         self._closed = False
@@ -123,6 +125,8 @@ class BlueprintMaker(ttk.Frame):
         self.result.pack(fill="both", expand=True)
         ttk.Label(edit_page, text="Edit the structured design, then Apply edits. "
                   "Manual edits invalidate the previous model critique.", wraplength=950).pack(anchor="w")
+        if mode == "engineering":
+            ttk.Button(edit_page, text="Edit part dimensions and position…", command=self.edit_part).pack(anchor="w", pady=4)
         self.editor = ScrolledText(edit_page, wrap="none", undo=True)
         self.editor.pack(fill="both", expand=True, pady=4)
         ttk.Button(edit_page, text="Apply edits and recompute", command=self.apply_edits).pack(anchor="e")
@@ -369,6 +373,17 @@ class BlueprintMaker(ttk.Frame):
             self.history.after_change("edited", "Apply manual design edits")
         except (ValueError, TypeError, RecursionError) as exc:
             self.status.set("Edits not applied: " + str(exc))
+
+    def edit_part(self):
+        if self.busy or self.blueprint is None or not self._edits_applied():
+            return
+        if self.part_editor is not None:
+            self.part_editor.lift()
+            return
+        try:
+            self.part_editor = PartParameters(self)
+        except ValueError as exc:
+            self.status.set(str(exc))
 
     def open_saved(self):
         if self.busy or not self._can_replace():

@@ -741,6 +741,171 @@ def test_blueprint_project_refine_compare_edit_restore_and_reopen(reader, monkey
         studio.destroy()
 
 
+def test_part_editor_previews_units_and_regressions_then_records_one_draft_revision(reader, tmp_path):
+    import copy
+
+    from test_blueprint_clearance import limit
+    from test_blueprint_geometry import pair
+
+    from fieldforge.blueprints.projects import create_project, load_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    value = pair((15, 0, 0))
+    value["request"]["acceptance_rules"] = [limit()]
+    path = tmp_path / "parts.ffproject.json"
+    project = create_project(path, "Part edits", value)
+    disk_before = path.read_bytes()
+    try:
+        maker.show_blueprint(value, dirty=False)
+        maker.load_request(maker.blueprint)
+        maker.history.project, maker.history.path = project, path
+        baseline = copy.deepcopy(maker.blueprint)
+        maker.edit_part()
+        editor = maker.part_editor
+        assert editor is not None
+        editor.geometry("760x650")
+        editor.part.set("P2")
+        editor._select_part()
+        editor.positions[0].set("1.2 cm")
+        editor.sizes[2].set(".5 in")
+        editor.preview_changes()
+        root.update()
+        assert "regressed" in editor.changes.get("1.0", "end")
+        assert editor.preview.highlighted == {"P2"}
+        assert editor.candidate["blueprint"]["design"]["parts"][1]["size_mm"][2] == 12.7
+        assert editor.apply_button.winfo_ismapped() and editor.changes.winfo_height() > 100
+        assert editor.apply_button.winfo_rootx() + editor.apply_button.winfo_width() <= editor.winfo_rootx() + editor.winfo_width()
+        assert maker.blueprint == baseline and path.read_bytes() == disk_before and not maker.has_unsaved_changes()
+        # Choosing a new part cannot silently discard the unapplied candidate.
+        editor.part.set("P1")
+        editor._select_part()
+        assert editor.part.get() == "P2" and editor.candidate is not None
+        editor.apply()
+        root.update()
+        assert maker.part_editor is None and not maker.has_unsaved_changes()
+        assert maker.blueprint["request"]["acceptance_rules"] == [limit()]
+        assert maker.blueprint["design"]["parts"][1]["position_mm"] == [12, 0, 0]
+        assert maker.blueprint["review"] is None and maker.blueprint["status"] == "needs_revision"
+        saved = load_project(path)
+        assert len(saved["revisions"]) == 2 and saved["revisions"][1]["kind"] == "edited"
+        assert saved["revisions"][0] == project["revisions"][0]
+        maker.history.undo()
+        assert maker.blueprint["design"]["parts"][1]["position_mm"] == [15, 0, 0]
+        assert len(load_project(path)["revisions"]) == 3
+    finally:
+        studio.destroy()
+
+
+def test_part_editor_blocks_busy_pending_stale_and_unpreviewed_edits_and_can_cancel(reader, monkeypatch):
+    import copy
+
+    from test_blueprint_geometry import pair
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    value = pair()
+    try:
+        maker.show_blueprint(value, dirty=False)
+        maker.busy = True
+        maker.edit_part()
+        maker.busy = False
+        assert maker.part_editor is None
+        maker.editor.insert("end", "pending")
+        maker.edit_part()
+        assert maker.part_editor is None
+        maker.show_blueprint(value, dirty=False)
+        original = copy.deepcopy(maker.blueprint)
+        maker.edit_part()
+        editor = maker.part_editor
+        editor.sizes[0].set("1 ft")
+        editor.preview_changes()
+        assert editor.candidate is not None
+        editor.sizes[0].set("2 ft")
+        assert editor.candidate is None and str(editor.apply_button["state"]) == "disabled"
+        editor.apply()
+        assert maker.blueprint == original and "Preview" in editor.status.get()
+        editor.preview_changes()
+        maker.editor.insert("end", "pending")
+        editor.apply()
+        assert maker.blueprint == original
+        maker.show_blueprint(value, dirty=False)
+        # Even an externally applied change to another part invalidates the captured baseline.
+        changed = copy.deepcopy(value)
+        changed["design"]["parts"][1]["position_mm"][0] = 20
+        changed["design_sha256"] = digest(changed["design"])
+        maker.show_blueprint(changed)
+        editor.apply()
+        assert "Close and reopen" in editor.status.get()
+        assert maker.blueprint["design"] == changed["design"]
+        monkeypatch.setattr("fieldforge.ui.blueprint_parameters.messagebox.askyesno", lambda *_a, **_k: False)
+        editor.close()
+        assert maker.part_editor is editor
+        monkeypatch.setattr("fieldforge.ui.blueprint_parameters.messagebox.askyesno", lambda *_a, **_k: True)
+        editor.close()
+        root.update()
+        assert maker.part_editor is None and maker.blueprint["design"] == changed["design"]
+    finally:
+        studio.destroy()
+
+
+@pytest.mark.parametrize("failure", ["concurrent_writer", "disk_failure"])
+def test_part_editor_preserves_project_and_draft_on_save_conflict(reader, tmp_path, monkeypatch, failure):
+    import copy
+    from pathlib import Path
+
+    from test_blueprint_geometry import pair
+
+    from fieldforge.blueprints.engine import digest
+    from fieldforge.blueprints.projects import append_revision, create_project, head, load_project
+    from fieldforge.ui.blueprints import BlueprintStudio
+
+    root, _frame, library, _errors = reader
+    studio = BlueprintStudio(root, library)
+    maker = studio.makers["engineering"]
+    value = pair()
+    path = tmp_path / "parts.ffproject.json"
+    project = create_project(path, "Part edits", value)
+    try:
+        maker.show_blueprint(value, dirty=False)
+        maker.history.project, maker.history.path = project, path
+        original = copy.deepcopy(maker.blueprint)
+        maker.edit_part()
+        editor = maker.part_editor
+        editor.sizes[0].set("20")
+        editor.preview_changes()
+        candidate = copy.deepcopy(editor.candidate["blueprint"])
+        if failure == "concurrent_writer":
+            external = copy.deepcopy(value)
+            external["design"]["title"] = "External update"
+            external["design_sha256"] = digest(external["design"])
+            append_revision(path, external, expected_head=head(project))
+        else:
+            def fail(*_a, **_kw):
+                raise OSError("Simulated disk failure")
+            monkeypatch.setattr(Path, "replace", fail)
+        disk_before = path.read_bytes()
+        editor.apply()
+        assert path.read_bytes() == disk_before
+        if failure == "concurrent_writer":
+            assert maker.blueprint == original and maker.part_editor is editor
+            assert editor.candidate["blueprint"] == candidate
+            assert "changed on disk" in editor.status.get()
+            assert len(load_project(path)["revisions"]) == 2
+        else:
+            assert maker.blueprint == candidate and maker.has_unsaved_changes()
+            assert maker.part_editor is None and "Draft kept in memory" in maker.status.get()
+            assert len(load_project(path)["revisions"]) == 1
+    finally:
+        studio.destroy()
+
+
 def test_measured_failures_prepare_user_reviewed_revision_without_changing_design(reader, monkeypatch):
     import copy
 

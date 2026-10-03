@@ -12,7 +12,7 @@ from fieldforge.ui.blueprint_geometry import GeometryInspector
 
 
 class DrawingPreview(ttk.Frame):
-    def __init__(self, parent, configure_clearance=None):
+    def __init__(self, parent, configure_clearance=None, *, notice_text=None):
         super().__init__(parent)
         self.images = {}
         self.highlighted = set()
@@ -28,9 +28,10 @@ class DrawingPreview(ttk.Frame):
                             values=("Fit width", "100%", "150%", "200%"))
         zoom.pack(side="left")
         zoom.bind("<<ComboboxSelected>>", self.redraw)
-        ttk.Label(self, text="Drawings are illustrative. The Blueprint and checks tab contains "
-                  "the complete text equivalent; exported SVGs retain full vector detail.",
-                  wraplength=900).pack(fill="x", pady=4)
+        self.notice = ttk.Label(self, text=notice_text or "Drawings are illustrative. The Blueprint and checks tab contains "
+                                "the complete text equivalent; exported SVGs retain full vector detail.", wraplength=900)
+        self.notice.pack(fill="x", pady=4)
+        self.bind("<Configure>", lambda event: self.notice.configure(wraplength=max(200, event.width - 16)))
         self.pages = ttk.Notebook(self)
         self.pages.pack(fill="both", expand=True)
         frame = self.sheet = ttk.Frame(self.pages)

@@ -317,6 +317,61 @@ These commands exit 0 when the comparison completes, even if it finds regression
 inspect `acceptance.outcomes` and unresolved results. Invalid input exits 2.
 Use `check` for the existing current-design acceptance exit status.
 
+### Edit part measurements with a checked preview
+
+In the engineering maker, open **Edit design → Edit part dimensions and position**.
+Select a part by ID, then edit its X/Y/Z size and position without rewriting the
+design JSON. This works offline with no model. Sizes must be positive; positions
+may be zero. Both are limited to 1,000,000 mm after conversion, matching the
+existing recorded-envelope format. Part IDs must be unique before using this editor.
+
+Each field accepts an optional unit: `mm`, `cm`, `m`, `in` or `ft`; bare numbers
+mean millimeters. Units may be mixed across fields. Examples: `250 mm`, `25 cm`,
+`0.25 m`, `12 in` and `1 ft`. Decimal/scientific notation is supported, with exact
+conversion factors of 25.4 mm/in and 304.8 mm/ft. Fractions, expressions, thousands
+separators and implicit feet/inch quote notation are rejected. Converted values
+that cannot be represented faithfully by the blueprint's JSON number format are
+rejected, including values that would underflow to zero. The app does not silently
+round a measurement or infer a manufacturing tolerance.
+
+**Preview changes** prepares an isolated candidate and recomputes every check.
+Its drawing highlights the selected part. **Checks and comparison** shows changed
+dimensions/positions, contacts and clearances, original-limit regressions or new
+passes, and current blocking issues. The main design and project file remain
+unchanged. Typing another value invalidates the candidate and disables Apply until
+another preview. Reset discards the pending inputs; switching parts cannot silently
+discard them. Closing with unapplied input asks whether to discard it.
+
+**Apply as draft revision** changes only the selected part's measurements, keeps
+all request/acceptance rules intact, invalidates the previous model critique and
+records an edited revision when a project is open. Undo/restoration preserves prior
+revisions. A candidate with failed checks may be retained as a draft; applying is
+not a pass or certification. Pending raw JSON edits, unapplied limits, a busy maker,
+or a changed baseline block application. A stale project writer cannot replace
+newer history; if writing the new revision fails, the applied draft remains in
+memory for saving.
+
+Material schedules, calculation inputs, connections and build steps are **not
+automatically rewritten** when a dimension changes. Review these dependencies and
+use the AI refinement workflow when broader changes are needed. The tool edits
+axis-aligned envelopes; it is not a parametric CAD constraint solver or a verified
+fabrication workflow.
+
+The matching CLI command exports the revised drawings/report and a `comparison/`
+folder containing before/after snapshots and recomputed outcomes:
+
+```bash
+fieldforge-blueprints edit-part shelf-draft/blueprint.json SHELF --size 900mm 500mm 18mm --position 1m 0 600mm --output shelf-adjusted
+# Either vector may be omitted to preserve that part of the original record.
+fieldforge-blueprints edit-part shelf-draft/blueprint.json SHELF --size "3 ft" "20 in" "0.75 in" --output shelf-imperial-input
+```
+
+It requires a new output directory and preserves the source file. Exit 0 means
+the export completed, including drafts needing revision; invalid input or an
+existing destination exits 2. An interrupted export can leave an incomplete folder;
+retry with a new destination. All original version-1 blueprint/project files keep
+their existing format and historical hashes.
+
 ### Diagnose failures and guide AI revisions
 
 Open **Refine with AI → Measured failures** to inspect the applied design without
@@ -590,8 +645,8 @@ Next implementation gates:
   These makers currently use Tk desktop and Python CLI; this change does not
   implement Android/iOS inference or certify macOS/Linux packaging.
 
-Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report}.py` contains the
-headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_diagnostics,blueprint_evidence}.py` contains
+Architecture: `fieldforge/blueprints/{schema,checks,acceptance,clearance,constraints,diagnostics,evidence,engine,engineering,geometry,geometry_report,render,projects,comparison,comparison_report,parameters}.py` contains the
+headless design engine; `fieldforge/ui/{blueprints,blueprint_preview,blueprint_geometry,blueprint_history,blueprint_acceptance,blueprint_diagnostics,blueprint_evidence,blueprint_parameters}.py` contains
 the desktop; `fieldforge/content` holds the reference pack. Existing knowledge,
 backup, retrieval and local-assistant modules remain the shared foundation.
 

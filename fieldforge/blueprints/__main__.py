@@ -18,6 +18,7 @@ from fieldforge.blueprints.diagnostics import diagnose_blueprint
 from fieldforge.blueprints.engine import BlueprintRequest, _json, digest, generate_blueprint
 from fieldforge.blueprints.evidence import retrieve_blueprint_evidence
 from fieldforge.blueprints.geometry import analyze_envelopes
+from fieldforge.blueprints.parameters import prepare_part_edit
 from fieldforge.blueprints.projects import (
     append_revision,
     checkout,
@@ -83,6 +84,12 @@ def main(argv=None):
     export = commands.add_parser("export")
     export.add_argument("source", type=Path)
     export.add_argument("destination", type=Path)
+    edit_part = commands.add_parser("edit-part", help="Edit one part's measurements and export a draft plus comparison")
+    edit_part.add_argument("source", type=Path)
+    edit_part.add_argument("part_id")
+    edit_part.add_argument("--size", nargs=3, metavar=("X", "Y", "Z"), help="Sizes, positive; mm by default or explicit cm/m/in/ft")
+    edit_part.add_argument("--position", nargs=3, metavar=("X", "Y", "Z"), help="Nonnegative positions; mm by default or explicit units")
+    edit_part.add_argument("--output", type=Path, required=True, help="New export directory")
     limits = commands.add_parser("apply-limits", help="Apply user limits and export a new offline report")
     limits.add_argument("source", type=Path)
     limits.add_argument("limits", type=Path)
@@ -167,6 +174,14 @@ def main(argv=None):
                       "status": value["status"], "validation": value["validation"]}
         elif args.command == "export":
             result = {"directory": str(export_blueprint(load_blueprint(args.source), args.destination))}
+        elif args.command == "edit-part":
+            before = load_blueprint(args.source)
+            proposal = prepare_part_edit(before, args.part_id, size=args.size, position=args.position)
+            value = proposal["blueprint"]
+            export_blueprint(value, args.output)
+            export_comparison(before, value, args.output / "comparison")
+            result = {"directory": str(args.output), "status": value["status"], "notice": proposal["notice"],
+                      "validation": value["validation"], "acceptance_outcomes": proposal["comparison"]["acceptance"]["outcomes"]}
         elif args.command == "compare":
             before, after = load_blueprint(args.before), load_blueprint(args.after)
             result = compare_results(before, after) if args.results or args.output else compare_designs(before, after)
