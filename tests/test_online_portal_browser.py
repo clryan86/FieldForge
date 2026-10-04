@@ -78,7 +78,7 @@ def test_homepage_connection_warning_can_cancel_without_any_api_request(portal_p
     expect(page.locator("#skillsPreview")).to_contain_text("Self-reported profile labels: Medical care and first aid")
     assert not any("/api/" in url for url in calls)
     expect(page.locator("#mapAcquisitionTitle")).to_have_text("Worldwide map sources and purchase holds")
-    expect(page.get_by_text("limited labels from embedded point names")).to_be_visible()
+    expect(page.get_by_text("bounded labels for named points, roads, and areas")).to_be_visible()
     for title in (
         "Survival levels & emergency action cards",
         "Medical, hospital & pharmacy reference",
