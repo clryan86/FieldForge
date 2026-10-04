@@ -67,6 +67,14 @@ def vector_tile():
     )
 
 
+def named_place_tile(name="FieldForge Junction"):
+    value = _text(1, name)
+    feature = _packed(2, [0, 0]) + _uint(3, 1) + _packed(4, [9, _zigzag(2048), _zigzag(2048)])
+    layer = (_text(1, "place") + _bytes(2, feature) + _text(3, "name")
+             + _bytes(4, value) + _uint(5, 4096) + _uint(15, 2))
+    return _bytes(3, layer)
+
+
 def _image(data):
     with Image.open(io.BytesIO(data)) as image:
         return image.convert("RGBA")
@@ -79,6 +87,14 @@ def test_vector_tile_renders_polygon_and_styled_major_road():
         assert image.getpixel((20, 20))[:3] == (168, 207, 224)
         assert image.getpixel((128, 128))[:3] != image.getpixel((128, 120))[:3]
         assert image.getpixel((128, 120))[:3] == (168, 207, 224)
+
+
+def test_vector_tile_draws_bounded_source_name_labels():
+    labeled = render_vector_tile(named_place_tile())
+    unlabeled = render_vector_tile(named_place_tile(""))
+    with _image(labeled) as label_image, _image(unlabeled) as plain_image:
+        changed = sum(a != b for a, b in zip(label_image.tobytes(), plain_image.tobytes()))
+        assert changed > 20  # Marker pixels are identical; the name added the extra ink.
 
 
 @pytest.mark.parametrize("bad", [b"", b"bad", b"\x1f\x8bcorrupt", b"\x1a\x05abc"])

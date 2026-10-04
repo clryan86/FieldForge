@@ -158,7 +158,7 @@ class MapsTab(ttk.Frame):
         self.credit_label = fixed_label(8, 44, self.attribution)
         self.footer = fixed_label(9, 58, self.status)
         self.bind("<Configure>", self._wrap, add=True)
-        self._blank("Open a local MBTiles pack to begin.\n\nRaster tiles and basic vector previews work offline. Publisher styles and labels are not applied to vector packs.\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
+        self._blank("Open a local MBTiles pack to begin.\n\nRaster tiles and basic vector previews work offline. Vector previews include limited labels from embedded point names; publisher styles and label rules are not applied.\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
         self._buttons()
 
     def _wrap(self, event):
@@ -313,7 +313,7 @@ class MapsTab(ttk.Frame):
                                           filetypes=[("MBTiles map", "*.mbtiles")])
         if path:
             if messagebox.askyesno("Open a trusted offline map?", "Only open a map pack you trust and have permission to use. "
-                                   "This build supports flat, indexed PNG/JPEG/WebP raster MBTiles and PBF vector MBTiles with a basic preview style. Publisher styles, sprites, fonts and labels are not applied. "
+                                   "This build supports flat, indexed PNG/JPEG/WebP raster MBTiles and PBF vector MBTiles with a basic preview style and limited labels from embedded point names. Publisher styles, sprites, fonts and label rules are not applied. "
                                    "No malware, accuracy or route-safety check is performed. The file stays external to your database backups. Continue?",
                                    parent=self):
                 self.open_path(path)
@@ -596,7 +596,7 @@ class MapsTab(ttk.Frame):
                     "Metadata below is supplied by the pack, not independently checked or fetched. HTML/URLs remain inert text.\n\n"
                     + "\n\n".join(f"{key}:\n{value}" for key, value in pack.metadata)
                     + "\n\nLIMITS\n" + "\n".join(pack.warnings)
-                    + "\n\nFlat/indexed raster MBTiles and gzip-compressed PBF vector MBTiles with a basic preview style; publisher styles, fonts, sprites and labels are not applied. Normalized/views are unsupported. "
+                    + "\n\nFlat/indexed raster MBTiles and gzip-compressed PBF vector MBTiles with a basic preview style and limited point-name labels; publisher styles, fonts, sprites and label rules are not applied. Normalized/views are unsupported. "
                     "The file signature detects ordinary changes, not malicious tampering or full integrity. "
                     "Only open trusted data with an up-to-date Python/Tk/SQLite installation.\n\n" + NOTICE)
         text.configure(state="disabled")

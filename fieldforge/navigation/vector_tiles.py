@@ -1,9 +1,10 @@
 """Bounded, dependency-light Mapbox Vector Tile (MVT) preview renderer.
 
-This renders common geometry layers from an offline PBF MBTiles tile into a
-plain PNG. It deliberately does not execute a publisher's MapLibre style,
-fonts, glyph ranges, sprites, filters, or expressions. It is a basic offline
-preview style, not a full cartographic style engine.
+This renders common geometry layers and bounded source-name labels from an
+offline PBF MBTiles tile into a plain PNG. It deliberately does not execute a
+publisher's MapLibre style, fonts, glyph ranges, sprites, filters, or
+expressions. It is a basic offline preview style, not a full cartographic
+style engine.
 """
 
 from __future__ import annotations
@@ -18,6 +19,8 @@ MAX_FIELDS = 200_000
 MAX_FEATURES = 20_000
 MAX_COMMANDS = 250_000
 TILE_PIXELS = 256
+MAX_LABELS = 96
+MAX_LABEL_LENGTH = 48
 
 
 def _varint(data: bytes, offset: int) -> tuple[int, int]:
@@ -237,10 +240,47 @@ def _style(layer: str, properties: dict):
     return "minor"
 
 
+def _label(layer: str, properties: dict):
+    """Return a bounded source label and stable priority for named features."""
+    if not any(token in layer for token in ("place", "poi", "name", "peak", "label")):
+        return None
+    value = next((properties.get(key) for key in ("name:en", "name:latin", "name")
+                  if isinstance(properties.get(key), str) and properties[key].strip()), None)
+    if value is None:
+        return None
+    value = " ".join("".join(char for char in value if char.isprintable()).split())[:MAX_LABEL_LENGTH]
+    if not value:
+        return None
+    kind = str(properties.get("class", "")).lower()
+    tier = 0 if layer == "place" and kind in {"continent", "country", "state", "province"} else 1
+    tier += 0 if properties.get("capital") in (True, 1, "yes") else 1
+    try:
+        rank = float(properties.get("rank", 99))
+    except (TypeError, ValueError):
+        rank = 99
+    return tier, rank, value
+
+
+def _place_label(draw, image, font, point, value, occupied):
+    x, y = point
+    box = draw.textbbox((x + 4, y + 2), value, font=font, stroke_width=2)
+    width, height = box[2] - box[0], box[3] - box[1]
+    left = min(max(2, box[0]), TILE_PIXELS - width - 2)
+    top = min(max(2, box[1]), TILE_PIXELS - height - 2)
+    rect = (left - 2, top - 1, left + width + 2, top + height + 1)
+    if any(rect[0] < other[2] and rect[2] > other[0]
+           and rect[1] < other[3] and rect[3] > other[1] for other in occupied):
+        return False
+    draw.text((left, top), value, font=font, fill="#26392f", stroke_width=2,
+              stroke_fill="#f4f3ec")
+    occupied.append(rect)
+    return True
+
+
 def render_vector_tile(data: bytes) -> bytes:
     """Render common MVT geometry into a 256 px RGBA PNG preview tile."""
     try:
-        from PIL import Image, ImageDraw
+        from PIL import Image, ImageDraw, ImageFont
     except ImportError as exc:
         raise ValueError('Vector preview needs Pillow; install FieldForge with the "maps" extra.') from exc
 
@@ -248,10 +288,15 @@ def render_vector_tile(data: bytes) -> bytes:
     image = Image.new("RGBA", (TILE_PIXELS, TILE_PIXELS), "#e9e6dc")
     try:
         parsed = []
+        labels = []
         for layer, extent, features in _layers(data):
             for geom_type, properties, commands in features:
                 paths = _geometry(commands, extent) if geom_type in (1, 2, 3) else []
-                parsed.append((_style(layer, properties), geom_type, paths))
+                style = _style(layer, properties)
+                parsed.append((style, geom_type, paths))
+                label = _label(layer, properties)
+                if label and geom_type == 1 and paths and paths[0]:
+                    labels.append((label, paths[0][0]))
         draw = ImageDraw.Draw(image)
         fills = {"water": "#a8cfe0", "green": "#c7d9b4", "building": "#d4c8bd"}
         strokes = {"road": ("#ffffff", "#d1a871", 3, 1),
@@ -285,6 +330,12 @@ def render_vector_tile(data: bytes) -> bytes:
                 color = "#566f47" if kind == "point" else "#715f53"
                 for x, y in (point for path in paths for point in path):
                     draw.ellipse((x - 2, y - 2, x + 2, y + 2), fill=color)
+        font = ImageFont.load_default(size=10)
+        occupied = []
+        for (_, _, value), point in sorted(labels, key=lambda item: (item[0][0], item[0][1], item[0][2])):
+            if len(occupied) >= MAX_LABELS:
+                break
+            _place_label(draw, image, font, point, value, occupied)
         result = io.BytesIO()
         image.save(result, format="PNG", optimize=False)
         return result.getvalue()

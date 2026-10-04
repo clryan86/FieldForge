@@ -52,8 +52,9 @@ while deliberately supporting only an indexed, ordinary-table PNG subset:
 - Zoom levels actually observed between 0 and 22. Metadata `minzoom`/`maxzoom`
   does not invent levels. An observed level is not evidence of full coverage.
 - Square raster tiles, 256 or 512 pixels. The latter are subsampled to a
-  256-pixel logical footprint. PBF vector tiles receive a basic geometry preview
-  style, without publisher styles, fonts, sprites, filters, expressions or labels.
+  256-pixel logical footprint. PBF vector tiles receive a basic preview style
+  with limited labels from embedded point-feature names. Publisher styles, fonts,
+  sprites, filters, expressions and label-placement rules are not applied.
   There is no lower/higher-zoom substitution or resampling beyond retina-tile
   reduction.
 - SQLite rollback-mode header and no nonempty WAL/journal/SHM sidecars. Use a

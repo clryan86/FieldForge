@@ -26,8 +26,9 @@ specific MBTiles subset:
 - Gzip-compressed Mapbox Vector Tile data declared as `format=pbf`, decoded from
   ordinary `metadata` and `tiles` tables through the same indexed read-only path.
   FieldForge draws common land, water, building, road, boundary, rail and point
-  geometries with a built-in preview palette. It does not apply publisher
-  MapLibre styles, filters, sprites, font glyphs, symbol placement or labels.
+  geometries with a built-in preview palette. It places a limited set of labels
+  from names embedded in point features. It does not apply publisher MapLibre
+  styles, filters, sprites, font glyphs, or publisher symbol-placement rules.
 - Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
   256-screen-pixel logical footprint. There is no extra detail invented from a
   lower zoom, no resampling fallback from another level and no remote fallback.
