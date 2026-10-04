@@ -233,7 +233,10 @@ def test_coordinate_discovery_and_address_handoff_work_offline(portal_page, oper
     page.locator("#resetMapFilters").click()
     expect(page.locator("#mapCatalog .map-card")).to_have_count(4)
     expect(page.locator("#mapCoverageNote")).to_be_empty()
-    expect(page.get_by_role("link", name="Download County", exact=True)).to_have_attribute("aria-disabled", "true")
+    # Disconnect removes href, so this disabled anchor has no implicit link role.
+    county_download = page.locator('#mapCatalog a[aria-label="Download County"]')
+    expect(county_download).to_have_attribute("aria-disabled", "true")
+    assert county_download.get_attribute("href") is None
     page.set_viewport_size({"width": 390, "height": 844})
     _assert_no_horizontal_overflow(page)
     assert len(calls) == before
