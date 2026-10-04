@@ -321,6 +321,17 @@ class MapsTab(ttk.Frame):
                                    parent=self):
                 self.open_path(path)
 
+    def open_prepared_region(self):
+        if self._disposed:
+            return None
+        if self._regional_window is not None and not self._regional_window._disposed:
+            self._regional_window.lift()
+            return self._regional_window
+        from fieldforge.ui.regional_index import RegionalIndexWindow
+
+        self._regional_window = RegionalIndexWindow(self)
+        return self._regional_window
+
     def open_path(self, path):
         """Called after the file picker/trust confirmation; tests use synthetic trusted packs."""
         if self._disposed:
@@ -330,26 +341,6 @@ class MapsTab(ttk.Frame):
         self.status.set("Reading map metadata and observed zoom levels; nothing is downloaded or copied into your database.")
         self._blank("Opening trusted map pack…")
         self._start("open", inspect_pack, path)
-
-    def open_prepared_region(self):
-        if self._disposed:
-            return
-        if self._regional_window is not None:
-            try:
-                if self._regional_window.winfo_exists():
-                    self._regional_window.lift()
-                    self._regional_window.focus_force()
-                    return
-            except tk.TclError:
-                pass
-            self._regional_window = None
-        from fieldforge.ui.regional_index import RegionalIndexWindow
-        self._regional_window = RegionalIndexWindow(self.winfo_toplevel())
-        self._regional_window.bind("<Destroy>", self._regional_window_destroyed, add=True)
-
-    def _regional_window_destroyed(self, event):
-        if self._regional_window is not None and event.widget is self._regional_window:
-            self._regional_window = None
 
     def close_map(self):
         self._stop_request()
