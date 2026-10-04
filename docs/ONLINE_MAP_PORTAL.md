@@ -52,6 +52,7 @@ files remain available. The application does not reconnect automatically.
 | Reopen a saved place | No | Existing FieldForge waypoint database |
 | Load or refresh the portal catalog | Yes | Operator's published catalog |
 | Filter and sort an already loaded catalog | No | Metadata retained in the session |
+| Prepare, save or import a map download list | No, once the catalog is loaded | Selected map metadata and file sizes |
 | Download a new map | Yes | Operator's immutable map file |
 | Reopen a completed map download | No | Local MBTiles or image file |
 | Request new driving-route alternatives | Yes | Configured routing server |
@@ -66,6 +67,48 @@ graph. A saved route supplies the chosen path and instructions at the time it
 was requested. It does not update for a road closure, changing conditions,
 traffic, or a departure from that route. Alternative requests can return only
 one route if the provider has no suitable alternatives.
+
+## Select maps for a short online session
+
+In the browser, check **Include in download list** on the maps you want. A
+selection stays selected across catalog pages, sorting, filtering and a
+disconnect. **Your map download list** shows the number of maps and their total
+file size. Review the selected entries, remove any you do not need, then choose
+**Save download list**. The resulting JSON contains the selected metadata,
+checksums and source details; it does not contain the map files or start transfers.
+Save it before closing the page. Browser selections are not written to browser
+storage, and address/route inputs are not included in map lists.
+
+In the desktop's **Online Maps → Map downloads**, select a catalog row and use
+**Add selected to list**. Alternatively, open **Review / import list…** and import
+the JSON saved by the browser or another FieldForge session. Import works
+offline. Review the count, total size, filenames and required portal. The list
+never changes the configured URL or starts a connection automatically. Use
+**Copy required portal** if you need to paste its URL into the connection field.
+
+When ready, connect to that portal explicitly and press **Download list**.
+FieldForge refreshes the catalog once and checks every selected record is still
+current before starting map transfers. It downloads the maps sequentially,
+retains their provenance, and shows progress through the combined file sizes.
+Verified files appear under **Downloaded maps**; the app does not open a separate
+viewer for every item. The displayed total is map-file bytes, excluding catalog
+and network overhead. It is not billing or a paid allowance.
+
+**Stop downloads**, **Cancel task**, or **Disconnect** interrupts unfinished work.
+Completed maps remain available offline, and the selected list is retained.
+Retrying the list rechecks its current catalog records and fully verifies
+matching local maps by size, SHA-256 and provenance, reusing them without another
+file download. A changed, incomplete or conflicting existing local file is
+preserved and reported; it is never overwritten. If the catalog changed, remove
+obsolete selections and build a current list. Byte-range resumption of an
+unfinished individual file is not implemented; that file starts again on retry.
+
+Lists hold up to **100 maps**, reject duplicate IDs and portable-filename
+collisions, and use the bounded 8 MiB local JSON import. They retain one portal
+origin and cannot redirect individual downloads to other hosts. **Save list…**
+writes a new local JSON file without overwriting existing files. Save a desktop
+list before closing FieldForge if you want to use it after restarting. Clearing
+or removing a selection never deletes a downloaded map.
 
 ## Local files and portability
 

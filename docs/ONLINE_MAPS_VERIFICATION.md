@@ -7,6 +7,28 @@ files, and offline route overlay. The earlier clean baseline used for the Tk
 control described below was `68e5011d7b6cec4552e82b8985b449dac78b182f`.
 See [Online map portal](ONLINE_MAP_PORTAL.md) for operation and supported formats.
 
+## Map download lists and verified batch transfers
+
+The next extension adds portable map selections to the browser and native
+desktop. Selections show total file bytes and survive filtering/disconnection;
+JSON export/import is local. The desktop explicitly connects to the list's
+portal, checks the current catalog and downloads sequentially. Completed maps
+are retained on interruption and verified locally before reuse on a retry.
+Partial-file byte-range resumption remains future work.
+
+Python 3.12.14 local headless result: **2,162 passed**, 529 GUI/browser skips,
+78 subtests passed and two existing PDF-fixture deprecation warnings. Ruff and
+JavaScript syntax checks pass. Real desktop and browser workflows are required
+by the PR's CI jobs, including Windows publication and frozen delivery checks.
+
+The new local HTTP tests cover saved-list round trips, origin binding, bounded
+imports, duplicate IDs/names, stale catalogs, exact-byte reuse, changed local
+bytes/provenance, no overwrite, stopping before the next file and cleanup during
+an active transfer. GUI tests cover review/import/export, offline editing,
+explicit batch start, cancellation, foreign-portal controls and Tk cleanup.
+The browser test exports selections across pages/filters while offline, then
+imports and downloads that exact list with a separately connected real client.
+
 ## Portal home, consent, map discovery and inventory extension
 
 The subsequent portal extension adds a default-No connection warning and

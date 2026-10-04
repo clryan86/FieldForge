@@ -21,16 +21,23 @@ from tkinter.scrolledtext import ScrolledText
 from fieldforge.navigation.places import PlaceStore, coordinate, coordinate_text
 from fieldforge.online.client import PortalCancelled, PortalClient, PortalError, PortalOffline
 from fieldforge.online.compat import Address, address_csv, save_new
+from fieldforge.online.download_list import (
+    download_maps,
+    load_download_list,
+    make_download_list,
+    save_download_list,
+)
 from fieldforge.online.models import validate_portal_url
 from fieldforge.online.storage import PortalLibrary
 from fieldforge.ui.map_catalog_filters import CatalogFilters
+from fieldforge.ui.map_download_list import MapDownloadListWindow
 from fieldforge.ui.online_compat import OnlineMapWindow as OnlineMapWindow
 from fieldforge.ui.portal_connection import confirm_connection, open_portal
 from fieldforge_gps.tk_cleanup import TkCleanupMixin
 
 HEALTH_CHECK_MS = 30_000
-_NETWORK = {"connect", "health", "search", "catalog", "route", "download"}
-_WRITES = {"save_route", "export_gpx", "import_route", "save_place_csv"}
+_NETWORK = {"connect", "health", "search", "catalog", "route", "download", "download_list"}
+_WRITES = {"save_route", "export_gpx", "import_route", "save_place_csv", "save_download_list", "import_download_list"}
 _ERRORS = (OSError, ValueError, sqlite3.Error, PortalError)
 
 
@@ -91,6 +98,8 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self._results = ()
         self._catalog = ()
         self._catalog_loaded = False
+        self._download_list = None
+        self._download_list_window = None
         self._confirming = False
         self._connection_url = ""
         self._routes = ()
@@ -244,6 +253,12 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self.progress = ttk.Progressbar(actions, mode="determinate", maximum=100)
         self.progress.grid(row=0, column=2, sticky="ew", padx=(5, 8))
         ttk.Label(actions, textvariable=self.transfer_info, width=22).grid(row=0, column=3)
+        self.add_to_list_button = ttk.Button(actions, text="Add selected to list", command=self.add_to_download_list)
+        self.add_to_list_button.grid(row=1, column=0, sticky="w", pady=(5, 0))
+        self.review_list_button = ttk.Button(actions, text="Review / import list…", command=self.review_download_list)
+        self.review_list_button.grid(row=1, column=1, padx=7, pady=(5, 0))
+        self.list_summary = tk.StringVar(value="0 maps selected · 0 B")
+        ttk.Label(actions, textvariable=self.list_summary).grid(row=1, column=2, columnspan=2, sticky="w", pady=(5, 0))
         self.catalog_filters = CatalogFilters(panel, changed=self._render_catalog)
         self.catalog_filters.grid(row=1, column=0, sticky="ew", pady=(0, 6))
         box, self.maps_tree = self._tree(panel, {
@@ -440,6 +455,9 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self.portal_home_button.configure(state="normal" if self.connected else "disabled")
         self.refresh_catalog_button.configure(state="normal" if catalog else "disabled")
         self.download_button.configure(state="normal" if catalog and self.library is not None and self._selected(self.maps_tree, self._catalog) else "disabled")
+        self.add_to_list_button.configure(state="normal" if idle and self._selected(self.maps_tree, self._catalog) else "disabled")
+        if self._download_list_window is not None:
+            self._download_list_window.update_state()
         self.open_map_button.configure(state="normal" if self._selected(self.local_maps_tree, self._local_maps) else "disabled")
         self.route_button.configure(state="normal" if self._available("routing") and idle else "disabled")
         for button in (self.save_route_button, self.export_gpx_button):
@@ -557,9 +575,12 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
     def disconnect(self):
         if self._disposed:
             return
+        downloading_list = self._operation == "download_list"
         if self._operation in _NETWORK:
             self._cancel_work()
         self._offline()
+        if downloading_list:
+            self.refresh_local()
         self.status.set("Disconnected. Selected coordinates and downloaded files remain available offline.")
         self._buttons()
 
@@ -568,24 +589,31 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             return
         connecting = self._operation in {"connect", "health"}
         routing = self._operation == "route"
+        downloading_list = self._operation == "download_list"
         self._cancel_work()
         if connecting:
             self._offline()
         self.status.set("Task cancelled. Previously selected coordinates and saved files are unchanged.")
         if routing:
             self._label_retained_route("Previous selection retained; new route request cancelled.")
+        if downloading_list:
+            self.refresh_local()
+            self.status.set("Download list stopped. Completed maps remain offline; retry the list to reuse verified files.")
         self._buttons()
 
     def _poll(self, future, operation, generation):
         self._poll_id = None
         if self._disposed or generation != self._generation:
             return
-        if operation == "download":
+        if operation in {"download", "download_list"}:
             try:
-                token, done, total = self._progress.get_nowait()
+                update = self._progress.get_nowait()
+                token, done, total = update[:3]
                 if token == generation:
                     self.transfer_info.set(f"{_size(done)} / {_size(total)}")
                     self.progress.configure(value=100 * done / total if total else 0)
+                    if operation == "download_list" and len(update) == 4:
+                        self.status.set(update[3])
             except queue.Empty:
                 pass
         if not future.done():
@@ -611,6 +639,8 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             if operation == "route":
                 self._label_retained_route("Previous selection retained; new route request failed.")
             self.status.set("Could not complete " + operation.replace("_", " ") + ": " + str(exc))
+            if operation == "download_list":
+                self.refresh_local()
         self._buttons()
 
     def _complete(self, operation, result):
@@ -660,6 +690,16 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             self.refresh_local()
             self.status.set(f"Downloaded and verified {Path(result).name}. Opening the local copy…")
             self._open_map_path(Path(result))
+        elif operation == "download_list":
+            self.progress.configure(value=100)
+            self.transfer_info.set("List ready offline")
+            self.refresh_local()
+            self.status.set(f"{len(result)} selected maps verified and ready offline. Open them from Downloaded maps.")
+        elif operation == "import_download_list":
+            self._set_download_list(result)
+            self.status.set("Download list imported locally. Review its portal and total size, then connect explicitly when ready.")
+        elif operation == "save_download_list":
+            self.status.set(f"Map list saved: {Path(result).name}. This file contains the selection and source details, not map bytes.")
         elif operation == "save_route":
             self.refresh_local()
             self.status.set(f"Route saved for offline use: {Path(result).name}.")
@@ -850,6 +890,114 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self.status.set(f"Downloading {asset['title']}. It becomes available offline after checksum verification.")
         directory = self.library.maps_directory
         self._start("download", lambda cancel: client.download(asset, directory, cancel=cancel, progress=progress))
+
+    def _set_download_list(self, document):
+        self._download_list = document
+        maps = document["maps"] if document else []
+        self.list_summary.set(f"{len(maps)} maps selected · {_size(document['total_bytes'] if document else 0)}")
+        if self._download_list_window is not None:
+            self._download_list_window.render()
+        self._buttons()
+
+    def add_to_download_list(self):
+        if self._disposed or self.busy or self._choosing_file:
+            return
+        asset = self._selected(self.maps_tree, self._catalog)
+        if asset is None:
+            return
+        try:
+            document = self._download_list or make_download_list(self._connection_url, [])
+            if document["portal"] != self._connection_url:
+                raise ValueError("This list belongs to another portal. Save and clear it before adding maps from here.")
+            by_id = {item["id"]: item for item in document["maps"]}
+            if asset["id"] in by_id and by_id[asset["id"]] != asset:
+                raise ValueError("This map changed. Remove its old selection before adding the new version.")
+            by_id[asset["id"]] = asset
+            self._set_download_list(make_download_list(document["portal"], list(by_id.values())))
+            self.status.set("Map added to the download list. Review its total size before starting; no file was downloaded.")
+        except ValueError as exc:
+            self.status.set(str(exc))
+
+    def remove_from_download_list(self, selected):
+        if self._disposed or self.busy or self._choosing_file or self._download_list is None:
+            return
+        document = self._download_list
+        self._set_download_list(make_download_list(document["portal"], [item for item in document["maps"] if item["id"] not in selected]))
+
+    def clear_download_list(self):
+        if not self._disposed and not self.busy and not self._choosing_file:
+            self._set_download_list(None)
+
+    def review_download_list(self):
+        if self._disposed:
+            return
+        if self._download_list_window is None:
+            self._download_list_window = MapDownloadListWindow(self, _size)
+        self._download_list_window.deiconify()
+        self._download_list_window.lift()
+
+    def copy_download_list_portal(self):
+        if self._disposed or self._download_list is None:
+            return
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(self._download_list["portal"])
+            self.status.set("Required portal copied. Paste it into the portal URL field, then choose Connect when ready.")
+        except tk.TclError as exc:
+            self.status.set("Could not copy the required portal: " + str(exc))
+
+    def import_download_list(self):
+        if self._disposed or self.busy or self._choosing_file:
+            return
+        self._choosing_file = True
+        try:
+            source = filedialog.askopenfilename(parent=self._download_list_window or self,
+                                               title="Import a FieldForge map download list",
+                                               filetypes=(("Map download list", "*.json"),))
+        finally:
+            self._choosing_file = False
+        if source and not self._disposed:
+            self._start("import_download_list", lambda _cancel: load_download_list(source))
+
+    def export_download_list(self):
+        if self._disposed or self.busy or self._choosing_file or not self._download_list or not self._download_list["maps"]:
+            return
+        document = self._download_list
+        self._choosing_file = True
+        try:
+            destination = filedialog.asksaveasfilename(parent=self._download_list_window or self,
+                                                      title="Save map download list (new file)",
+                                                      initialfile="fieldforge-map-list.json", defaultextension=".json",
+                                                      filetypes=(("Map download list", "*.json"),))
+        finally:
+            self._choosing_file = False
+        if destination and not self._disposed:
+            self._start("save_download_list", lambda _cancel: save_download_list(document, destination))
+
+    def download_list(self):
+        if (self._disposed or self.busy or self._choosing_file or self.library is None
+                or not self._available("catalog") or not self._download_list or not self._download_list["maps"]):
+            return
+        if self._connection_url != self._download_list["portal"]:
+            self.status.set("Connect explicitly to the portal named in the download list before starting it.")
+            return
+        client, document, directory = self.client, self._download_list, self.library.maps_directory
+        token, progress_queue = self._generation + 1, self._progress
+
+        def progress(done, total, detail):
+            try:
+                progress_queue.get_nowait()
+            except queue.Empty:
+                pass
+            try:
+                progress_queue.put_nowait((token, done, total, detail))
+            except queue.Full:
+                pass
+
+        self.progress.configure(value=0)
+        self.transfer_info.set("Checking selection…")
+        self.status.set(f"Preparing {len(document['maps'])} selected maps · {_size(document['total_bytes'])} total file size.")
+        self._start("download_list", lambda cancel: download_maps(client, document, directory, cancel=cancel, progress=progress))
 
     def refresh_local(self):
         if self._disposed or self.busy:
@@ -1079,6 +1227,8 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         if self._disposed:
             return
         self._disposed = True
+        if self._download_list_window is not None:
+            self._download_list_window.destroy()
         self.catalog_filters.close()
         # These variables belong to this tab. Remove the detail-panel traces as
         # well as the endpoint traces before any callback can retain a closed UI.

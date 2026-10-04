@@ -1164,3 +1164,137 @@ def test_filters_preserve_download_identity_and_work_offline(screen):
     assert not panel.maps_tree.get_children()
     assert "no matches" in panel.catalog_filters.count.get()
     assert client.calls == before
+
+
+def _two_list_maps(screen, client):
+    maps = tuple(dict(screen.factory.asset, id=key, title=key.title(), filename=key + ".mbtiles",
+                      download_path=f"/api/v1/maps/{key}/download") for key in ("north", "south"))
+    client.catalog = lambda **kwargs: maps
+    screen.panel.refresh_catalog()
+    wait(screen.root, screen.panel)
+    return maps
+
+
+def test_download_list_survives_filters_and_offline_export_import(screen, tmp_path, monkeypatch):
+    client = connect(screen)
+    panel = screen.panel
+    maps = _two_list_maps(screen, client)
+    for index in range(2):
+        panel.maps_tree.selection_set(str(index))
+        panel.add_to_list_button.invoke()
+    assert len(panel._download_list["maps"]) == 2
+    assert panel._download_list["total_bytes"] == sum(item["bytes"] for item in maps)
+    panel.catalog_filters.query.set("not present")
+    assert len(panel._download_list["maps"]) == 2
+    panel.disconnect()
+    before = list(client.calls)
+    panel.review_list_button.invoke()
+    window = panel._download_list_window
+    assert window.tree.get_children() == ("north", "south")
+    assert not enabled(window.download_button)
+    target = tmp_path / "offline-list.json"
+    monkeypatch.setattr("tkinter.filedialog.asksaveasfilename", lambda **kwargs: str(target))
+    window.save_button.invoke()
+    wait(screen.root, panel)
+    assert target.exists()
+    window.clear_button.invoke()
+    assert panel._download_list is None
+    monkeypatch.setattr("tkinter.filedialog.askopenfilename", lambda **kwargs: str(target))
+    window.import_button.invoke()
+    wait(screen.root, panel)
+    assert len(panel._download_list["maps"]) == 2 and not panel.connected
+    assert client.calls == before
+    assert "2 maps" in window.info.get()
+    window.tree.selection_set("north")
+    window.remove()
+    assert [item["id"] for item in panel._download_list["maps"]] == ["south"]
+    window.close()
+    assert panel._download_list_window is None
+
+
+def test_download_list_batch_reuses_files_without_opening_every_map(screen):
+    client = connect(screen)
+    panel = screen.panel
+    _two_list_maps(screen, client)
+    for index in range(2):
+        panel.maps_tree.selection_set(str(index))
+        panel.add_to_download_list()
+    panel.review_download_list()
+    window = panel._download_list_window
+    assert enabled(window.download_button)
+    window.download_button.invoke()
+    wait(screen.root, panel)
+    assert len(panel._local_maps) == 2, panel.status.get()
+    assert not screen.opened
+    assert "ready offline" in panel.status.get()
+    assert len([call for call in client.calls if call[0] == "download"]) == 2
+    window.download_button.invoke()
+    wait(screen.root, panel)
+    assert len([call for call in client.calls if call[0] == "download"]) == 2
+    assert enabled(window.remove_button) is False
+
+
+def test_invalid_list_import_preserves_selection_and_does_not_switch_portals(screen, tmp_path, monkeypatch):
+    from fieldforge.online.download_list import make_download_list, save_download_list
+
+    client = connect(screen)
+    panel = screen.panel
+    maps = _two_list_maps(screen, client)
+    panel.maps_tree.selection_set("0")
+    panel.add_to_download_list()
+    original = panel._download_list
+    broken = tmp_path / "broken.json"
+    broken.write_text('{"kind":"not a list"}')
+    monkeypatch.setattr("tkinter.filedialog.askopenfilename", lambda **kwargs: str(broken))
+    panel.import_download_list()
+    wait(screen.root, panel)
+    assert panel._download_list is original
+    foreign = tmp_path / "foreign.json"
+    save_download_list(make_download_list("https://other.example.invalid", list(maps)), foreign)
+    monkeypatch.setattr("tkinter.filedialog.askopenfilename", lambda **kwargs: str(foreign))
+    before = list(client.calls)
+    panel.import_download_list()
+    wait(screen.root, panel)
+    panel.review_download_list()
+    assert not enabled(panel._download_list_window.download_button)
+    panel.download_list()
+    assert "portal named" in panel.status.get()
+    panel._download_list_window.copy_portal_button.invoke()
+    assert panel.clipboard_get() == "https://other.example.invalid"
+    assert panel.portal_url.get() == "https://portal.example.invalid"
+    assert client.calls == before
+
+
+def test_download_list_cancel_drops_late_completion_and_retains_selection(screen):
+    client = connect(screen)
+    panel = screen.panel
+    _two_list_maps(screen, client)
+    panel.maps_tree.selection_set("0")
+    panel.add_to_download_list()
+    selected = panel._download_list
+    delayed = client.delay("download")
+    panel.review_download_list()
+    panel.download_list()
+    wait_until(screen.root, delayed.started.is_set)
+    assert enabled(panel._download_list_window.stop_button)
+    assert not enabled(panel._download_list_window.clear_button)
+    panel.cancel_task()
+    assert delayed.cancel.is_set()
+    delayed.release.set()
+    wait(screen.root, panel)
+    assert panel._download_list is selected and not screen.opened
+    assert "stopped" in panel.status.get()
+
+
+def test_download_list_window_releases_its_tk_variables_on_parent_destruction(screen):
+    import weakref
+
+    panel = screen.panel
+    panel.review_download_list()
+    window = panel._download_list_window
+    variable = weakref.ref(window.info)
+    panel.destroy()
+    screen.root.update()
+    assert panel._download_list_window is None
+    assert variable() is None
+    assert window.owner is None

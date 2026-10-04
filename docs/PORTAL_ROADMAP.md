@@ -26,6 +26,11 @@ created by this code change. Operators must configure and deploy their portal.
   24 cards so a large catalog does not build thousands of cards at once.
 - Immutable map publishing and the inventory builder use the same validator,
   hash calculation and provenance schema. They never fetch public map tiles.
+- Browser and native desktop map lists retain up to 100 selections across
+  filtering and disconnection and show their combined size. A saved JSON list
+  can be imported offline and downloaded explicitly from its original portal.
+  Sequential downloads preserve completed files; retry verifies and reuses
+  matching local copies. Lists do not enable billing or bypass map licenses.
 
 ## Reserved home-page sections
 
@@ -92,12 +97,14 @@ from a generic license or this engineering note.
 4. Use a hosted payment service; verify signed webhooks and idempotent orders.
    Entitlements and byte accounting must be enforced by the server, never by
    hiding links in the browser. Never store payment-card details in FieldForge.
-5. Add resumable, verified transfers, progress/cancel controls and a selected-pack
-   list with total bytes. Specify charging for retries before enabling metering.
+5. Extend the verified map lists and progress/cancel controls with byte-range
+   resumption of interrupted individual files. Completed files are already
+   verified and reused on a list retry. Specify charging for retries before
+   enabling metering; selection totals are not a billing ledger.
 6. Test interrupted and duplicate requests, refund/revocation flows and privacy
    retention. Already downloaded files must remain usable without online checks.
 7. Only then replace the draft tier text with actual terms and purchase controls.
 
-Next engineering priority: complete the regional maps and image workflow, then
-download selection/resume. Leave the knowledge placeholders until real bundles
+Next engineering priority: regional map publication and byte-range transfer
+resumption. Leave the knowledge placeholders until real bundles
 and their import contracts are ready; do not populate a catalog with fake files.

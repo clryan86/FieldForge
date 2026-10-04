@@ -108,8 +108,11 @@ def test_map_filters_paging_and_correct_download_survive_disconnect(portal_page,
     page.locator("#mapOrder").select_option("smallest")
     expect(page.locator("#mapsStatus")).to_contain_text("25 of 26")
     expect(page.locator("#mapCatalog .map-card")).to_have_count(24)
+    page.get_by_role("checkbox", name="Add Island 000 to download list", exact=True).check()
     page.locator("#mapNext").click()
     expect(page.locator("#mapCatalog .map-card h3")).to_have_text("Island 024")
+    page.get_by_role("checkbox", name="Add Island 024 to download list", exact=True).check()
+    expect(page.locator("#downloadListTotal")).to_contain_text("2 maps")
     assert len(calls) == before  # All discovery is local to the loaded catalog.
     with page.expect_download() as captured:
         page.get_by_role("link", name="Download Island 024", exact=True).click()
@@ -128,6 +131,52 @@ def test_map_filters_paging_and_correct_download_survive_disconnect(portal_page,
     expect(page.locator("#mapCatalog .map-card h3").first).to_have_text("Synthetic test overview")
     expect(page.locator("#mapCatalog .download-link").first).to_have_attribute("aria-disabled", "true")
     assert len(calls) == before
+    expect(page.locator("#downloadListTotal")).to_contain_text("2 maps")
+    with page.expect_download() as exported:
+        page.locator("#saveDownloadList").click()
+    selection = tmp_path / "browser-list.json"
+    exported.value.save_as(selection)
+    from fieldforge.online.client import PortalClient
+    from fieldforge.online.download_list import download_maps, load_download_list
+
+    document = load_download_list(selection)
+    assert document["portal"] == url
+    assert document["total_bytes"] == 2 * image.stat().st_size
+    assert [item["id"] for item in document["maps"]] == ["island-000", "island-024"]
+    assert all(item["source"] == "Éclair Survey" for item in document["maps"])
+    # A separate desktop connection is explicit; importing the list did not connect.
+    client = PortalClient(document["portal"])
+    assert not client.connected
+    client.connect()
+    try:
+        downloaded = download_maps(client, document, tmp_path / "from-browser-list")
+        assert len(downloaded) == 2 and all(path.read_bytes() == image.read_bytes() for path in downloaded)
+    finally:
+        client.disconnect()
+    page.locator("#clearDownloadList").click()
+    expect(page.locator("#downloadListTotal")).to_contain_text("0 maps")
+    expect(page.locator("#saveDownloadList")).to_be_disabled()
+
+
+def test_changed_catalog_keeps_selected_snapshot_and_disables_its_download(portal_page, operated_portal):
+    from playwright.sync_api import expect
+
+    page, _context, _calls = portal_page
+    url, _provider, _source, asset = operated_portal
+    page.goto(url, wait_until="networkidle")
+    _connect(page)
+    page.get_by_role("checkbox", name="Add Synthetic test overview to download list", exact=True).check()
+    page.locator("#downloadListDetails").evaluate("node => node.open = true")
+    changed = dict(asset, title="Changed catalog title")
+    page.route("**/api/v1/maps", lambda route: route.fulfill(json={"maps": [changed]}))
+    page.locator("#disconnect").click()
+    _connect(page)
+    expect(page.locator("#downloadListItems")).to_contain_text("Synthetic test overview")
+    expect(page.locator("#downloadListItems")).to_contain_text("Unavailable or changed")
+    expect(page.locator("#downloadListItems .download-link")).to_have_attribute("aria-disabled", "true")
+    assert page.locator("#downloadListItems .download-link").get_attribute("href") is None
+    page.set_viewport_size({"width": 390, "height": 844})
+    _assert_no_horizontal_overflow(page)
 
 
 def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp_path):
