@@ -112,6 +112,17 @@
       <div id="mapCatalog" class="map-grid"></div>
       <div class="catalog-pages"><button id="mapPrevious" type="button" class="secondary" disabled>Previous maps</button><span id="mapPage" class="small" role="status"></span><button id="mapNext" type="button" class="secondary" disabled>Next maps</button></div>
       <p class="bottom-note">Only maps actually published to this portal appear here. Coverage, version, attribution and license accompany each download. The desktop app checks map size and SHA-256 before installing a download.</p>
+      <section aria-labelledby="mapAcquisitionTitle">
+        <h3 id="mapAcquisitionTitle">Worldwide map sources and purchase holds</h3>
+        <div class="pack-grid">
+        <article class="pack"><span class="badge">Free source · preparation required</span><h3>Worldwide OpenStreetMap coverage</h3><p class="muted">Geofabrik provides free, regularly updated regional OSM source extracts. These are source data, not ready-to-open MBTiles. They require a tile-building pipeline, map-style attribution, and ODbL review before FieldForge can publish packages.</p><p><a href="https://download.geofabrik.de/" target="_blank" rel="noopener noreferrer">Browse Geofabrik extracts</a> · <a href="https://operations.osmfoundation.org/policies/tiles/" target="_blank" rel="noopener noreferrer">OSM tile-server use policy</a></p></article>
+        <article class="pack"><span class="badge">Paid · quote and license required</span><h3>Worldwide vector streets and places</h3><p class="muted">MapTiler Planet offers up-to-date global OpenStreetMap-based vector tiles. FieldForge currently opens raster MBTiles only; it cannot render vector/PBF MBTiles. Confirm offline redistribution rights and pack format, and finish vector rendering before purchase.</p><p><a href="https://www.maptiler.com/on-prem-datasets/dataset/osm/" target="_blank" rel="noopener noreferrer">Inspect the global dataset</a> · <a href="https://www.maptiler.com/data/pricing/" target="_blank" rel="noopener noreferrer">Request the B2C/B2B-capable Custom quote</a></p></article>
+        <article class="pack"><span class="badge">Paid · high-resolution quote required</span><h3>Worldwide satellite imagery</h3><p class="muted">MapTiler offers global satellite datasets for offline/on-prem use. Its published medium-resolution imagery uses 2020–2021 source imagery and WebP MBTiles; high-resolution licensing requires a tailored quote. FieldForge must verify the licensed file and offline redistribution terms before publishing it.</p><p><a href="https://www.maptiler.com/on-prem-datasets/dataset/satellite-2021/" target="_blank" rel="noopener noreferrer">Inspect the global medium-resolution dataset</a> · <a href="https://www.maptiler.com/satellite/" target="_blank" rel="noopener noreferrer">Ask about high-resolution/offline licensing</a></p></article>
+        <article class="pack"><span class="badge">Free · U.S. marine charts</span><h3>NOAA nautical MBTiles</h3><p class="muted">NOAA publishes regional MBTiles derived from its electronic navigational charts and updates baseline packages weekly. This is a U.S. marine-chart source, not worldwide land/street coverage.</p><p><a href="https://distribution.charts.noaa.gov/ncds/index.html" target="_blank" rel="noopener noreferrer">Find NOAA regional MBTiles</a></p></article>
+        </div>
+      </section>
+      <p class="bottom-note">Purchase hold: do not buy MapTiler On-prem Standard for FieldForge distribution. The listed $2,500/year tier is limited to one internal production app and excludes B2C/B2B; the Custom tier is the one that lists consumer/business use and requires a quote. No paid data is included or for sale here.</p>
+      <p class="bottom-note">Existing regional files: four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota (about 1.45 GiB total download). They are prepared <code>.ffmap</code> indexes with original source files, not MBTiles; the road graphs are unavailable. These files are not hosted in this portal or yet supported by the current GitHub build.</p>
     </section>
     <!-- Publisher TODO: fulfill docs/PORTAL_ROADMAP.md for each pack; only show a download after the actual file, rights, size and checksum are verified. -->
     <section class="card maps-section" aria-labelledby="libraryTitle">
@@ -346,140 +357,410 @@
     function download(data,type,filename){const url=URL.createObjectURL(new Blob([data],{type}));const link=el("a");link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}
     byId("downloadPlace").addEventListener("click",()=>{
       if(!state.selectedAddress)return;
-      try{const exported=placeCsv(state.selectedAddress);download(exported.data,"text/csv;charset=utf-8","fieldforge-place.csv");status("searchStatus",exported.shortened?"Place CSV download started. Its name or source was shortened for FieldForge's import limits; also save full source details to retain the complete record.":"Place CSV download started. Open it in FieldForge's local place catalog to reuse these coordinates offline.");}
-      catch(error){status("searchStatus",error.message,true);}
-    });
-    byId("downloadPlaceDetails").addEventListener("click",()=>{if(state.selectedAddress)download(JSON.stringify(state.selectedAddress,null,2),"application/json","fieldforge-place.source.json");});
-    const MAX_ROUTE_DOCUMENT_BYTES=8*1024*1024;
-    function routeDocument(route){
-      // Match the desktop's complete UTF-8 file limit, including this envelope.
-      // The shared route schema separately reserves space for saved metadata.
-      const data=JSON.stringify({schema_version:1,kind:"planned-route",saved_at:new Date().toISOString(),route});
-      if(new Blob([data]).size>MAX_ROUTE_DOCUMENT_BYTES)throw new Error("This route file exceeds FieldForge's 8 MiB import limit. Split the trip into shorter routes and download each one.");
-      return data;
-    }
-    byId("downloadRoute").addEventListener("click",()=>{
-      if(!state.selected)return;
-      try{download(routeDocument(state.selected),"application/json",state.selected.id+".route.json");status("routeStatus","Route JSON download started. Import the downloaded file into FieldForge for offline directions.");}
-      catch(error){status("routeStatus",error.message,true);}
-    });
-    function xml(value){return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");}
-    function gpxLongitude(value){return value===180?-180:value;}
-    function decimal(value){
-      const number=String(value);if(!/[eE]/.test(number))return number;
-      const [coefficient,exponent]=number.toLowerCase().split("e");const sign=coefficient.startsWith("-")?"-":"";
-      const [whole,fraction=""]=coefficient.replace("-","").split(".");const digits=whole+fraction;const point=whole.length+Number(exponent);
-      if(point<=0)return sign+"0."+"0".repeat(-point)+digits;if(point>=digits.length)return sign+digits+"0".repeat(point-digits.length);
-      return sign+digits.slice(0,point)+"."+digits.slice(point);
-    }
-    byId("downloadGpx").addEventListener("click",()=>{
-      const route=state.selected;if(!route)return;
-      const description="Planned driving route generated "+route.created_at+". This is a saved plan, not a recorded trip or live traffic information. Source: "+route.source+". Attribution: "+route.attribution+". License: "+route.license+". Planned distance: "+route.distance_m+" m; estimated duration: "+route.duration_s+" s. Turn instructions remain in the saved FieldForge route JSON.";
-      const lines=['<?xml version="1.0" encoding="UTF-8"?>','<gpx version="1.1" creator="FieldForge Online Maps 1" xmlns="http://www.topografix.com/GPX/1/1">','<metadata><name>'+xml(route.title)+'</name><desc>'+xml(description)+'</desc><time>'+xml(route.created_at)+'</time></metadata>','<trk><name>'+xml(("PLANNED ROUTE — "+route.title).slice(0,160))+'</name><desc>'+xml(description)+'</desc><src>'+xml(route.source)+'</src><type>planned-route</type><trkseg>'];
-      for(const [lon,lat]of route.geometry)lines.push('<trkpt lat="'+decimal(lat)+'" lon="'+decimal(gpxLongitude(lon))+'"/>');
-      lines.push('</trkseg></trk></gpx>');download(lines.join("\n"),"application/gpx+xml",route.id+".gpx");
-    });
-    function bytes(size){for(const [divisor,label] of [[1024**3,"GiB"],[1024**2,"MiB"],[1024,"KiB"]])if(size>=divisor)return(size/divisor).toFixed(1)+" "+label;return size+" bytes";}
-    const MAX_LIST_MAPS=100;
-    function mapIdentity(map){return JSON.stringify([map.id,map.filename,map.format,map.download_path,map.bytes,String(map.sha256).toLowerCase(),map.version,map.coverage,map.source||"",map.attribution,map.license]);}
-    function localMapName(name){let value=name.replace(/[^A-Za-z0-9._-]+/g,"_").replace(/^\.+/,"");if(!value||/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i.test(value.split(".")[0]))value="map_"+value;return value.toLowerCase();}
-    function updateSelectionChecks(){for(const checkbox of document.querySelectorAll("[data-map-selection]"))checkbox.checked=state.mapSelections.has(checkbox.dataset.mapSelection);}
-    function chooseMap(map,checked){
-      if(checked){
-        if(state.mapSelections.size>=MAX_LIST_MAPS&&!state.mapSelections.has(map.id)){status("downloadListStatus","A list can hold up to 100 maps. Save this list before starting another.",true);updateSelectionChecks();return;}
-        if(Array.from(state.mapSelections.values()).some(item=>item.id!==map.id&&localMapName(item.filename)===localMapName(map.filename))){status("downloadListStatus","These maps would have the same local filename. Put them in separate lists.",true);updateSelectionChecks();return;}
-        state.mapSelections.set(map.id,JSON.parse(JSON.stringify(map)));
-      }else state.mapSelections.delete(map.id);
-      status("downloadListStatus","List updated locally. No map files were downloaded. Save the list before closing this page.");
-      renderDownloadList();updateSelectionChecks();updateAvailability();
-    }
-    function renderDownloadList(){
-      const maps=Array.from(state.mapSelections.values()),total=maps.reduce((sum,map)=>sum+map.bytes,0),catalog=new Map(state.maps.map(map=>[map.id,map]));
-      byId("downloadListTotal").textContent=maps.length+" map"+(maps.length===1?"":"s")+" · "+bytes(total)+" total";
-      byId("saveDownloadList").disabled=!maps.length;byId("clearDownloadList").disabled=!maps.length;
-      const container=byId("downloadListItems");container.replaceChildren();
-      if(!maps.length)container.append(el("li","No maps selected yet."));
-      for(const map of maps){
-        const latest=catalog.get(map.id),current=Boolean(latest&&mapIdentity(latest)===mapIdentity(map));
-        const row=el("li");row.append(el("p",map.title+" · "+map.filename+" · "+bytes(map.bytes)+" · "+map.format.toUpperCase()));
-        const actions=el("div",undefined,"actions"),remove=el("button","Remove","secondary");remove.type="button";remove.setAttribute("aria-label","Remove "+map.title+" from download list");remove.addEventListener("click",()=>chooseMap(map,false));
-        const link=el("a","Download this map","button download-link");link.download=map.filename;link.dataset.downloadPath=map.download_path;link.dataset.current=String(current);link.addEventListener("click",event=>{if(!current||!available("catalog"))event.preventDefault();});actions.append(link,remove);row.append(actions);
-        if(!current)row.append(el("p","Unavailable or changed in the loaded catalog. Remove this selection and choose a current map before downloading.","hint"));
-        container.append(row);
-      }
-    }
-    byId("clearDownloadList").addEventListener("click",()=>{state.mapSelections.clear();renderDownloadList();updateSelectionChecks();updateAvailability();status("downloadListStatus","Selection cleared. Downloaded files are unchanged.");});
-    byId("saveDownloadList").addEventListener("click",()=>{
-      const maps=Array.from(state.mapSelections.values());if(!maps.length)return;
-      try{
-        const document={schema_version:1,kind:"map-download-list",portal:window.location.origin,maps,total_bytes:maps.reduce((sum,map)=>sum+map.bytes,0)},data=JSON.stringify(document,null,2);
-        if(new Blob([data]).size>8*1024*1024)throw new Error("The list exceeds the 8 MiB import limit. Save fewer maps per list.");
-        download(data,"application/json","fieldforge-map-list.json");status("downloadListStatus","List saved for FieldForge. Import it, review the total size, then connect explicitly to download its maps. Map files are not included in this list.");
-      }catch(error){status("downloadListStatus",error.message,true);}
-    });
-    function fold(value){return String(value).normalize("NFKD").toLowerCase().replace(/\p{M}/gu,"");}
-    function mapFilterPoint(){
-      const raw=[byId("mapLatitude").value,byId("mapLongitude").value],values=raw.map(value=>value.trim());
-      if(values.every(value=>!value))return null;
-      if(values.some(value=>!value))throw new Error("Enter both latitude and longitude, or clear both to show all maps.");
-      if(raw.some(value=>value.length>40)||values.some(value=>!(/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/).test(value)))throw new Error("Enter signed decimal degrees only; no commas, direction letters or expressions.");
-      const point=values.map(Number);
-      for(const [index,limit] of [[0,90],[1,180]])if(!Number.isFinite(point[index])||Math.abs(point[index])>limit)throw new Error((index===0?"Latitude":"Longitude")+" must be between "+(-limit)+" and "+limit+" degrees.");
-      return point;
-    }
-    function mapBounds(map){
-      const bounds=map.coverage;
-      return Array.isArray(bounds)&&bounds.length===4&&bounds.every((value,index)=>typeof value==="number"&&Number.isFinite(value)&&Math.abs(value)<=(index%2?90:180))&&bounds[1]<=bounds[3]?bounds:null;
-    }
-    function mapContains(map,point){
-      const bounds=mapBounds(map);if(!bounds)return false;
-      const [west,south,east,north]=bounds,[latitude,longitude]=point;
-      const longitudes=Math.abs(longitude)===180?[longitude,-longitude]:[longitude];
-      return south<=latitude&&latitude<=north&&longitudes.some(lon=>west<=east?west<=lon&&lon<=east:lon>=west||lon<=east);
-    }
-    function resetMapFilters(){for(const id of ["mapFilter","mapLatitude","mapLongitude"])byId(id).value="";byId("mapKind").value="all";byId("mapOrder").value="title";}
-    function findMapsForPlace(result){
-      selectAddress(result);resetMapFilters();
-      byId("mapLatitude").value=formatCoordinate(result.latitude);byId("mapLongitude").value=formatCoordinate(result.longitude);
-      renderMaps();byId("mapsTitle").scrollIntoView({block:"start"});
-      status("searchStatus","Place coordinates filled the map filter. Only the loaded catalog is used.");
-    }
-    function renderMaps(pageIndex=0){
-      const terms=fold(byId("mapFilter").value).trim().split(/\s+/).filter(Boolean),kind=byId("mapKind").value,order=byId("mapOrder").value;
-      let point=null,pointError="";try{point=mapFilterPoint();}catch(error){pointError=error.message;}
-      const maps=pointError?[]:state.maps.filter(map=>(!point||mapContains(map,point))&&(kind==="all"||(map.format==="mbtiles"?"mbtiles":"image")===kind)&&terms.every(term=>fold([map.title,map.coverage,map.filename,map.source||"",map.format].join(" ")).includes(term)));
-      maps.sort((a,b)=>(order==="smallest"?a.bytes-b.bytes:order==="largest"?b.bytes-a.bytes:0)||fold(a.title).localeCompare(fold(b.title))||a.id.localeCompare(b.id));
-      const pageCount=Math.max(1,Math.ceil(maps.length/24));state.mapPage=Math.max(0,Math.min(pageCount-1,pageIndex));
-      for(const id of ["mapFilter","mapKind","mapOrder","resetMapFilters","mapLatitude","mapLongitude"])byId(id).disabled=!state.catalogLoaded;
-      byId("mapPrevious").disabled=state.mapPage===0;byId("mapNext").disabled=state.mapPage>=pageCount-1;
-      byId("mapPage").textContent=maps.length?"Page "+(state.mapPage+1)+" of "+pageCount:"";
-      const container=byId("mapCatalog");container.replaceChildren();
-      status("mapsStatus",!state.catalogLoaded?"Connect and refresh the catalog when ready; no map request was sent.":pointError||(state.maps.length?(maps.length+" of "+state.maps.length+" published maps · filters use only the loaded catalog"+(maps.length?"":" · No matches. Reset or broaden your filters.")):"No map files have been published yet. Available regions will appear here as maps are added."),Boolean(pointError));
-      status("mapCoverageNote",point&&state.catalogLoaded?state.maps.filter(map=>!mapBounds(map)).length+" maps without numeric bounds hidden. Bounds suggest candidates; inspect map detail and zoom coverage.":"");
-      for(const map of maps.slice(state.mapPage*24,(state.mapPage+1)*24)){
-        if(!/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/.test(map.id)||map.download_path!=="/api/v1/maps/"+map.id+"/download")continue;
-        const card=el("article",undefined,"map-card");card.append(el("p",map.format.toUpperCase()+" · "+bytes(map.bytes),"eyebrow"),el("h3",map.title),el("p",Array.isArray(map.coverage)?"Bounds (W, S, E, N): "+map.coverage.join(", "):map.coverage,"muted"),el("p","Version "+map.version,"small"));
-        const actions=el("div",undefined,"actions");const link=el("a","Download map","button download-link");link.dataset.downloadPath=map.download_path;link.download=map.filename;link.setAttribute("aria-label","Download "+map.title);link.addEventListener("click",event=>{if(!available("catalog"))event.preventDefault();});actions.append(link);
-        const details=el("details");details.append(el("summary","Attribution, license & checksum"),el("p",map.attribution,"provenance"),el("p",map.license,"provenance"),el("div","SHA-256: "+map.sha256,"checksum"));
-        const choice=el("label",undefined,"map-choice"),checkbox=el("input");checkbox.type="checkbox";checkbox.dataset.mapSelection=map.id;checkbox.checked=state.mapSelections.has(map.id);checkbox.setAttribute("aria-label","Add "+map.title+" to download list");checkbox.addEventListener("change",()=>chooseMap(map,checkbox.checked));choice.append(checkbox,el("span","Include in download list"));card.append(choice);
-        const metadata=el("button","Save map details","secondary");metadata.type="button";metadata.addEventListener("click",()=>download(JSON.stringify(map,null,2),"application/json",map.id+"-details.json"));details.append(metadata);card.append(actions,details);container.append(card);
-      }
-      renderDownloadList();updateAvailability();
-    }
-    for(const id of ["mapFilter","mapLatitude","mapLongitude"])byId(id).addEventListener("input",()=>renderMaps());
-    for(const id of ["mapKind","mapOrder"])byId(id).addEventListener("change",()=>renderMaps());
-    byId("resetMapFilters").addEventListener("click",()=>{resetMapFilters();renderMaps();});
-    byId("mapPrevious").addEventListener("click",()=>renderMaps(state.mapPage-1));
-    byId("mapNext").addEventListener("click",()=>renderMaps(state.mapPage+1));
-    byId("connect").addEventListener("click",connect);
-    byId("disconnect").addEventListener("click",()=>disconnect());
-    byId("consent").addEventListener("change",()=>{if(!byId("consent").checked)disconnect();});
-    for(const endpoint of ["start","end"])for(const axis of ["Latitude","Longitude"])byId(endpoint+axis).addEventListener("input",()=>{byId(endpoint+"Label").textContent="Coordinates entered manually.";updateRouteSelection();});
-    window.addEventListener("offline",()=>disconnect("Connection lost. Downloaded files remain usable offline. Press Connect when your network is available."));
-    window.addEventListener("online",()=>{updateAvailability();if(!state.sessionActive)status("connectionStatus","Network available. Press Connect when you want online services.");});
-    setInterval(()=>{if(state.sessionActive&&state.reachable&&navigator.onLine&&!state.searchBusy&&!state.routeBusy&&document.visibilityState==="visible")checkConnection(false);},30000);
-    // Opening the page and a later network-online event never start API work.
-    renderDownloadList();updateAvailability();
-  </script>
-</body>
-</html>
+      try{const exported=placeCsv(state.selectedAddress);download(exported.data,"text/csv;charset=utf-8","fieldforge-place.csv");status("searchStatus",exported.shortened?"Place CSV download started. Its name or source was shortened for FieldForge's import limits; also save full source details to retain the complete record.":…4266 tokens truncated…ile__).parent / "data/FICTIONAL-MAP.mbtiles"
+    destination = tmp_path / "fictional.mbtiles"
+    shutil.copyfile(source, destination)
+    return {"id": "fictional-grid", "title": "FICTIONAL test grid — not real coverage",
+            "filename": destination.name, "kind": "mbtiles", "size": source.stat().st_size,
+            "sha256": hashlib.sha256(source.read_bytes()).hexdigest(), "coverage": "Fictional only",
+            "updated": "2026-10-04", "source": "FieldForge original test fixture",
+            "attribution": "FieldForge fictional fixture", "license": "Synthetic fixture; retain notice"}
+
+
+@pytest.fixture
+def portal(tmp_path, map_entry):
+    provider_calls = []
+    def provider(environ, start):
+        provider_calls.append((environ["PATH_INFO"], environ.get("QUERY_STRING", "")))
+        if environ["PATH_INFO"] == "/search":
+            value = [{"display_name": "Fictional Beacon Plaza <test>", "lat": "10.125", "lon": "20.25"},
+                     {"display_name": "Fictional Beacon Park", "lat": "10.2", "lon": "20.3"}]
+        else:
+            value = {"code": "Ok", "routes": [{"distance": 1234.5, "duration": 321,
+                     "geometry": {"type": "LineString", "coordinates": [[20.25, 10.125], [20.3, 10.2], [20.5, 10.4]]},
+                     "legs": [{"summary": "Fictional Beacon Road", "steps": [
+                         {"name": "Fictional Beacon Road", "distance": 700, "duration": 180,
+                          "maneuver": {"type": "depart", "location": [20.25, 10.125]}},
+                         {"name": "Fictional Plaza Lane", "distance": 534.5, "duration": 141,
+                          "maneuver": {"type": "turn", "modifier": "right", "location": [20.3, 10.2]}},
+                         {"name": "", "distance": 0, "duration": 0,
+                          "maneuver": {"type": "arrive", "location": [20.5, 10.4]}},
+                     ]}]}]}
+        return map_portal.Portal.reply(start, "200 OK", value)
+    with serving(provider) as provider_url:
+        config = {"version": 1, "maps": [map_entry],
+                  "geocoder": {"url": provider_url, "name": "Fictional geocoder", "attribution": "Original fixture",
+                               "license": "Original synthetic fixture data"},
+                  "router": {"url": provider_url, "name": "Fictional routing", "attribution": "Original fixture",
+                             "license": "Original synthetic fixture data"}}
+        app = map_portal.Portal(config, folder=tmp_path)
+        with serving(app) as url:
+            yield url, app, provider_calls
+
+
+def connected(portal):
+    client = online.PortalSession()
+    client.connect(portal[0], consent=True)
+    return client
+
+
+def invoke(app, path, method="GET", payload=None, headers=None):
+    raw = json.dumps(payload).encode() if payload is not None else b""
+    environ = {"PATH_INFO": path, "REQUEST_METHOD": method, "wsgi.input": io.BytesIO(raw),
+               "CONTENT_TYPE": "application/json", "CONTENT_LENGTH": str(len(raw)),
+               "wsgi.url_scheme": "http", "HTTP_HOST": "127.0.0.1:8765",
+               "SERVER_NAME": "127.0.0.1", "SERVER_PORT": "8765", "SERVER_PROTOCOL": "HTTP/1.1",
+               "QUERY_STRING": "", "SCRIPT_NAME": "", **(headers or {})}
+    captured = []
+    response = app(environ, lambda status, fields: captured.append((status, dict(fields))))
+    try:
+        body = b"".join(response)
+    finally:
+        if hasattr(response, "close"):
+            response.close()
+    return *captured[0], body
+
+
+def test_offline_default_and_unconsented_connect_do_not_touch_network(monkeypatch):
+    monkeypatch.setattr(compat, "open_request", lambda *a, **kw: pytest.fail("No network allowed"))
+    client = online.PortalSession()
+    assert not client.ready
+    with pytest.raises(online.OnlineError):
+        client.connect("https://portal.example")
+    for action in (client.maps, lambda: client.search("Fictional"), lambda: client.route((1, 2), (3, 4))):
+        with pytest.raises(online.OnlineError):
+            action()
+
+
+def test_real_http_search_select_save_and_read_offline(portal, tmp_path):
+    client = connected(portal)
+    results = client.search("Fictional Beacon")
+    assert len(results) == 2 and results[0].latitude == 10.125 and results[0].longitude == 20.25
+    assert len(portal[2]) == 1
+    assert client.search("Fictional Beacon") == results  # Provider cache, no second upstream call.
+    assert len(portal[2]) == 1
+    client.disconnect()
+    path = tmp_path / "saved-place.csv"
+    online.save_new(path, online.address_csv(results[0]))
+    catalog = read_catalog(path, consent=True, wgs84_confirmed=True)
+    assert catalog.places[0].latitude == results[0].latitude
+    assert "Original fixture" in catalog.places[0].source
+    assert "<test>" in catalog.places[0].name
+    with pytest.raises(online.Cancelled):
+        client.search("another query")
+    assert len(portal[2]) == 1
+
+
+def test_real_route_uses_lon_lat_upstream_but_exports_correct_gpx(portal, tmp_path):
+    client = connected(portal)
+    value = client.route((10.125, 20.25), (10.4, 20.5))
+    upstream_path, upstream_query = portal[2][0]
+    positions = upstream_path.rsplit("/", 1)[1].split(";")
+    assert [[float(number) for number in point.split(",")] for point in positions] == [
+        [20.25, 10.125], [20.5, 10.4],
+    ]
+    query = urllib.parse.parse_qs(upstream_query)
+    assert query["steps"] == ["true"] and query["alternatives"] == ["true"]
+    client.disconnect()
+    path = tmp_path / "planned.gpx"
+    raw = online.route_gpx(value)
+    online.save_new(path, raw)
+    document = parse_gpx(raw)
+    assert document.point_count == 3
+    assert "PLANNED" in document.tracks[0].name
+    assert b"not a recorded" in raw and b"Original fixture" in raw
+    root = ET.fromstring(raw)
+    assert not root.findall(".//{*}trkpt/{*}time")  # Planning metadata may have a time; GPS fixes may not.
+
+
+def test_legacy_singular_route_endpoint_preserves_geometry_and_provenance(portal):
+    status, _, raw = invoke(portal[1], "/api/v1/route", "POST",
+                            {"start": [10.125, 20.25], "end": [10.4, 20.5]})
+    assert status.startswith("200")
+    route = json.loads(raw)
+    assert route["profile"] == "driving"
+    assert route["coordinates"] == [[20.25, 10.125], [20.3, 10.2], [20.5, 10.4]]
+    assert route["distance_m"] == 1234.5 and route["duration_s"] == 321
+    assert route["source"] == "Fictional routing" and route["attribution"] == "Original fixture"
+    assert route["license"] == "Original synthetic fixture data"
+    query = urllib.parse.parse_qs(portal[2][0][1])
+    assert query["steps"] == ["true"] and query["alternatives"] == ["true"]
+    assert parse_gpx(online.route_gpx(route)).point_count == 3
+
+
+def test_map_download_verified_and_opens_offline_without_overwriting(portal, tmp_path, map_entry):
+    client = connected(portal)
+    item, = client.maps()
+    path = tmp_path / "download.mbtiles"
+    assert client.download(item, path) == path
+    client.disconnect()
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == map_entry["sha256"]
+    note = json.loads(path.with_name(path.name + ".source.json").read_text())
+    assert note["attribution"] == item.attribution
+    from fieldforge_gps.mbtiles import inspect_pack
+    assert inspect_pack(path, consent=True).levels
+    client = connected(portal)
+    with pytest.raises(FileExistsError):
+        client.download(item, path)
+    assert not list(tmp_path.glob(".fieldforge-*"))
+
+
+def test_map_checksum_failure_discards_partial_and_preserves_other_files(portal, tmp_path):
+    client = connected(portal)
+    item, = client.maps()
+    item = online.MapItem.parse({**asdict(item), "sha256": "0" * 64})
+    path = tmp_path / "bad.mbtiles"
+    with pytest.raises(online.OnlineError, match="checksum|SHA-256"):
+        client.download(item, path)
+    assert not path.exists() and not path.with_name(path.name + ".source.json").exists()
+    assert not list(tmp_path.glob(".fieldforge-*"))
+
+
+def test_disconnect_during_download_removes_temporary_file(portal, tmp_path, monkeypatch):
+    client = connected(portal)
+    item, = client.maps()
+    original = compat.open_request
+    def cancel_after_open(*args, **kwargs):
+        response = original(*args, **kwargs)
+        client.disconnect()
+        return response
+    monkeypatch.setattr(compat, "open_request", cancel_after_open)
+    path = tmp_path / "cancelled.mbtiles"
+    with pytest.raises(online.Cancelled):
+        client.download(item, path)
+    assert not path.exists() and not list(tmp_path.glob(".fieldforge-*"))
+
+
+def test_connection_loss_does_not_erase_saved_results_or_retry(monkeypatch, portal):
+    client = connected(portal)
+    old = client.search("Fictional")
+    calls = []
+    def failed(*args, **kwargs):
+        calls.append(args)
+        raise OSError("unreachable")
+    monkeypatch.setattr(compat, "open_request", failed)
+    with pytest.raises(online.OnlineError, match="reach"):
+        client.search("Another")
+    assert not client.ready and old[0].latitude == 10.125
+    with pytest.raises(online.Cancelled):
+        client.maps()
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("url", ["http://remote.example", "file:///etc/passwd", "https://user:secret@portal.example",
+                                 "https://portal.example/?secret=1", "https://portal.example/#fragment",
+                                 "https://portal.example/\n", "https://portal.example:999999", "https://x\\y"])
+def test_invalid_portal_urls_rejected_without_requests(url, monkeypatch):
+    monkeypatch.setattr(compat, "open_request", lambda *a, **kw: pytest.fail("Must reject before network"))
+    with pytest.raises(ValueError):
+        online.PortalSession().connect(url, consent=True)
+
+
+def test_redirect_is_not_followed():
+    calls = []
+    def app(environ, start):
+        calls.append(environ["PATH_INFO"])
+        start("302 Found", [("Location", "http://127.0.0.1:9/not-authorized"), ("Content-Length", "0")])
+        return [b""]
+    with serving(app) as url:
+        with pytest.raises(online.OnlineError, match="redirect"):
+            online.PortalSession().connect(url, consent=True)
+    assert calls == ["/api/v1/status"]
+
+
+@pytest.mark.parametrize("change", [{"filename": "../secret.mbtiles"}, {"filename": "CON.mbtiles"},
+                                    {"filename": "map.exe"}, {"size": True}, {"size": online.MAX_MAP + 1},
+                                    {"sha256": "missing"}, {"id": "../map"}, {"license": ""}, {"kind": "vector"}])
+def test_catalogue_limits_and_portable_paths(map_entry, change):
+    with pytest.raises(ValueError):
+        online.MapItem.parse({**map_entry, **change})
+
+
+def test_map_changed_after_catalogue_is_not_served(portal, tmp_path):
+    (tmp_path / "fictional.mbtiles").write_bytes(b"replaced")
+    status, _, _ = invoke(portal[1], "/api/v1/maps/fictional-grid/file")
+    assert status.startswith("503")
+
+
+def test_legacy_file_download_alias_serves_the_exact_catalogued_bytes(portal, map_entry):
+    status, headers, raw = invoke(portal[1], "/api/v1/maps/fictional-grid/file")
+    assert status.startswith("200")
+    assert len(raw) == map_entry["size"] == int(headers["Content-Length"])
+    assert hashlib.sha256(raw).hexdigest() == map_entry["sha256"]
+
+
+def test_legacy_long_source_and_version_survive_catalogue_and_download(tmp_path, map_entry):
+    source = "Original synthetic source: " + "reference-record-" * 20
+    version = "2026-10-04-" + "licensed-export-" * 16
+    entry = {**map_entry, "source": source, "updated": version}
+    app = map_portal.Portal({"version": 1, "maps": [entry]}, folder=tmp_path)
+    status, _, raw = invoke(app, "/api/v1/maps")
+    assert status.startswith("200")
+    wire, = json.loads(raw)["maps"]
+    assert wire["source"] == source and wire["updated"] == version
+    assert wire["version"] == version
+    with serving(app) as url:
+        client = connected((url,))
+        item, = client.maps()
+        assert item.source == source and item.updated == version
+        destination = tmp_path / "long-metadata.mbtiles"
+        client.download(item, destination)
+        client.disconnect()
+    note = json.loads(destination.with_name(destination.name + ".source.json").read_text())
+    assert note["source"] == source and note["updated"] == version
+
+
+@pytest.mark.parametrize("kind", ["geocoder", "router"])
+def test_legacy_provider_without_license_has_an_explicit_migration_error(tmp_path, kind):
+    configuration = {"version": 1, kind: {
+        "url": "https://provider.example", "name": "Original synthetic provider",
+        "attribution": "Original synthetic fixture attribution",
+    }}
+    with pytest.raises(ValueError, match="(?i)license") as raised:
+        map_portal.Portal(configuration, folder=tmp_path)
+    message = str(raised.value).lower()
+    assert any(word in message for word in ("required", "add", "must", "missing", "supply"))
+
+
+@pytest.mark.parametrize("host", ["portal.example", "localhost.attacker.example", "127.0.0.1:8766"])
+def test_wsgi_rejects_unconfigured_host_even_with_matching_origin(portal, host):
+    status, _, _ = invoke(portal[1], "/api/v1/search", "POST", {"query": "Fictional"},
+                          {"HTTP_HOST": host, "HTTP_ORIGIN": "http://" + host})
+    assert status.startswith("403")
+    assert not portal[2]
+
+
+def test_wsgi_accepts_explicit_public_origin_for_https_proxy_host(tmp_path):
+    app = map_portal.Portal({"version": 1, "public_origin": "https://maps.example"}, folder=tmp_path)
+    status, _, raw = invoke(app, "/api/v1/status", headers={
+        "HTTP_HOST": "maps.example", "HTTP_ORIGIN": "https://maps.example", "wsgi.url_scheme": "https",
+    })
+    assert status.startswith("200") and json.loads(raw)["api_version"] == 1
+
+
+def test_unconfigured_provider_and_same_origin_controls(tmp_path):
+    app = map_portal.Portal({"version": 1}, folder=tmp_path)
+    status, _, data = invoke(app, "/api/v1/status")
+    assert status.startswith("200") and json.loads(data)["capabilities"] == {"geocoding": False, "routing": False}
+    status, _, _ = invoke(app, "/api/v1/search", "POST", {"query": "Fictional"})
+    assert status.startswith("503")
+    status, _, _ = invoke(app, "/api/v1/search", "POST", {"query": "Fictional"}, {"HTTP_ORIGIN": "https://other.example"})
+    assert status.startswith("403")
+
+
+def test_provider_gate_has_no_background_queue_or_public_default(portal):
+    client = connected(portal)
+    client.search("first")
+    with pytest.raises(online.OnlineError, match="busy"):
+        client.search("second")
+    assert len(portal[2]) == 1
+    for url in ("https://nominatim.openstreetmap.org", "https://router.project-osrm.org"):
+        with pytest.raises(ValueError, match="owned or contracted|licensed service|community.*demo"):
+            map_portal.Provider({"url": url, "name": "No default", "attribution": "Example",
+                                 "license": "Original synthetic fixture data"}, "geocoder")
+
+
+@pytest.mark.parametrize("coordinates", [[[0, float("nan")], [1, 1]], [[0, 91], [1, 1]], [[True, 0], [1, 1]], [[0, 0]]])
+def test_invalid_route_geometry_never_becomes_a_saved_file(coordinates):
+    valid = {"profile": "driving", "coordinates": [[0, 0], [1, 1]], "source": "Fixture",
+             "attribution": "Fixture", "license": "Original synthetic fixture data",
+             "created_at": "2026-10-04T00:00:00Z", "distance_m": 1, "duration_s": 1}
+    assert parse_gpx(online.route_gpx(valid)).point_count == 2
+    with pytest.raises(ValueError):
+        online.route_gpx({**valid, "coordinates": coordinates})
+
+
+def test_new_file_write_preserves_existing_destination(tmp_path):
+    path = tmp_path / "saved.csv"
+    path.write_bytes(b"already saved")
+    with pytest.raises(FileExistsError):
+        online.save_new(path, b"replacement")
+    assert path.read_bytes() == b"already saved" and not list(tmp_path.glob(".fieldforge-*"))
+
+
+def test_portal_assets_are_local_with_restrictive_csp(portal):
+    status, headers, body = invoke(portal[1], "/")
+    assert status.startswith("200") and b"Address" in body
+    assert b"Worldwide map sources and purchase holds" in body
+    assert b"MapTiler On-prem Standard" in body and b"excludes B2C/B2B" in body
+    assert b"FieldForge currently opens raster MBTiles only" in body
+    assert b"four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota" in body
+    assert b"not hosted in this portal or yet supported by the current GitHub build" in body
+    external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)
+    allowed_hosts = (b"download.geofabrik.de", b"operations.osmfoundation.org",
+                     b"www.maptiler.com", b"distribution.charts.noaa.gov")
+    assert len(external_links) == 7
+    for link in external_links:
+        assert any(host in link for host in allowed_hosts)
+        element = re.search(rb'<a href="' + re.escape(link) + rb'"[^>]*>', body).group(0)
+        assert b'target="_blank"' in element and b'rel="noopener noreferrer"' in element
+    policy = headers["Content-Security-Policy"]
+    assert "default-src 'none'" in policy and "connect-src 'self'" in policy
+    assert "'unsafe-inline'" not in policy and "'unsafe-eval'" not in policy
+    inline_scripts = re.findall(rb"<script>(.*?)</script>", body, flags=re.S)
+    if inline_scripts:
+        for script in inline_scripts:
+            digest = base64.b64encode(hashlib.sha256(script).digest()).decode()
+            assert f"'sha256-{digest}'" in policy
+    else:
+        assert "script-src 'self'" in policy
+    assert b"cdn" not in body
+    assert invoke(portal[1], "/api/v1/maps/../../file")[0].startswith("404")
+
+
+@pytest.mark.parametrize("suffix", ["png", "jpg", "tiff", "webp"])
+def test_image_map_download_decodes_and_preserves_exact_original_bytes(tmp_path, map_entry, suffix):
+    from PIL import Image
+
+    from fieldforge_gps.raster import read_reference
+    source = tmp_path / ("reference." + suffix)
+    Image.new("RGB", (80, 60), "green").save(source)
+    entry = {**map_entry, "filename": source.name, "kind": "image", "size": source.stat().st_size,
+             "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    app = map_portal.Portal({"version": 1, "maps": [entry]}, folder=tmp_path)
+    with serving(app) as url:
+        client = connected((url,))
+        item, = client.maps()
+        destination = tmp_path / ("saved." + suffix)
+        client.download(item, destination)
+        client.disconnect()
+    assert destination.read_bytes() == source.read_bytes()
+    assert read_reference(destination, consent=True)
+
+
+def test_checksum_matching_but_undecodable_image_is_rejected_before_serving(tmp_path, map_entry):
+    source = tmp_path / "fake.png"
+    source.write_bytes(b"not an image")
+    entry = {**map_entry, "filename": source.name, "kind": "image", "size": source.stat().st_size,
+             "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    with pytest.raises(ValueError):
+        map_portal.Portal({"version": 1, "maps": [entry]}, folder=tmp_path)
+    assert not (tmp_path / "saved.png").exists() and not list(tmp_path.glob(".fieldforge-*"))
+    assert not list(tmp_path.glob("*.source.json"))
+
+
+@pytest.mark.parametrize("change", [{"version": True}, {"providers": []}, {"providers": {"geocoding": None}},
+                                   {"name": None}, {"capabilities": {"geocoding": "true", "routing": False}}])
+def test_malformed_status_does_not_enable_connection(monkeypatch, change):
+    valid = {"version": 1, "name": "Fixture", "providers": {"geocoding": {
+        "name": "Fixture", "attribution": "Fixture", "license": "Original synthetic fixture data"}},
+        "capabilities": {"geocoding": True, "routing": False}}
+    monkeypatch.setattr(compat, "request_json", lambda *a, **kw: valid)
+    baseline = online.PortalSession()
+    baseline.connect("https://portal.example", consent=True)
+    assert baseline.ready
+    baseline.disconnect()
+    status = {**valid, **change}
+    monkeypatch.setattr(compat, "request_json", lambda *a, **kw: status)
+    client = online.PortalSession()
+    with pytest.raises(ValueError):
+        client.connect("https://portal.example", consent=True)
+    assert not client.ready
+
+
+def test_concurrent_provider_request_rejected_without_queuing(portal):
+    provider = portal[1].geocoder
+    with provider.lock:
+        with pytest.raises(map_portal.Busy):
+            provider.search("Fictional")
+    assert not portal[2]

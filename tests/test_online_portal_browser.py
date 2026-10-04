@@ -63,7 +63,10 @@ def test_homepage_connection_warning_can_cancel_without_any_api_request(portal_p
     page.goto(operated_portal[0], wait_until="networkidle")
     expect(page.locator("#libraryTitle")).to_have_text("Knowledge & program packs")
     expect(page.locator("#tiersTitle")).to_have_text("Packages for the amount you need")
-    expect(page.locator(".pack")).to_have_count(15)
+    expect(page.locator(".pack")).to_have_count(19)
+    expect(page.locator("#mapAcquisitionTitle")).to_have_text("Worldwide map sources and purchase holds")
+    expect(page.locator("section[aria-labelledby='mapAcquisitionTitle'] .pack")).to_have_count(4)
+    expect(page.get_by_text("Purchase hold: do not buy MapTiler On-prem Standard for FieldForge distribution.")).to_be_visible()
     assert not any("/api/" in url for url in calls)
     page.remove_listener("dialog", _accept_connection)
     warnings = []
