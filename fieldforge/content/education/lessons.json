@@ -318,6 +318,48 @@
       "scope": "Background on chart labeling and numerical axes, including zero baselines for bars. The counts, chart descriptions and exercises here are original fictional examples; no source chart is reproduced.",
       "publisher": "UK Government Analysis Function",
       "accessed_on": "2026-10-03"
+    },
+    "two-step-equations": {
+      "title": "Prealgebra 2e: Solve Equations with Variables and Constants on Both Sides",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/8-3-solve-equations-with-variables-and-constants-on-both-sides",
+      "scope": "Further mathematics background. FieldForge's explanations, numerical examples, exercises and answers are original; no textbook text or diagrams are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "inequalities": {
+      "title": "Intermediate Algebra 2e: Solve Linear Inequalities",
+      "url": "https://openstax.org/books/intermediate-algebra-2e/pages/2-5-solve-linear-inequalities",
+      "scope": "Further mathematics background. FieldForge's explanations, numerical examples, exercises and answers are original; no textbook text or diagrams are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "square-roots": {
+      "title": "Prealgebra 2e: Simplify and Use Square Roots",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/5-7-simplify-and-use-square-roots",
+      "scope": "Further mathematics background. FieldForge's explanations, numerical examples, exercises and answers are original; no textbook text or diagrams are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "file-extensions": {
+      "title": "Common file name extensions in Windows",
+      "url": "https://support.microsoft.com/en-US/Windows/Experience/Storage-FileManagement/common-file-name-extensions-in-windows",
+      "scope": "Background on filename extensions and why renaming is not format conversion. The folder plan, fictional filenames and paper exercises are original and do not require Windows or any particular application.",
+      "publisher": "Microsoft Support",
+      "accessed_on": "2026-10-03"
+    },
+    "data-backups": {
+      "title": "How to Protect the Data Stored on Your Devices",
+      "url": "https://www.cisa.gov/resources-tools/training/how-protect-data-stored-your-devices",
+      "scope": "Background on keeping separate backups and protecting removable backup storage. The paper scenario, version record and disposable-file restore exercise are original teaching examples, not a complete security plan.",
+      "publisher": "Cybersecurity and Infrastructure Security Agency (CISA)",
+      "accessed_on": "2026-10-03"
+    },
+    "algorithms": {
+      "title": "Computational Thinking and CS Unplugged",
+      "url": "https://www.csunplugged.org/en/computational-thinking/",
+      "scope": "Background on sequence, decisions, repetition and precise algorithms. FieldForge's card-sorting procedure, trace and exercises are original; no CS Unplugged activity or image is reproduced.",
+      "publisher": "CS Unplugged, University of Canterbury",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -3813,6 +3855,499 @@
         "zero-baseline",
         "misleading-graphs",
         "rate-comparison"
+      ]
+    },
+    {
+      "id": "89",
+      "edition": "2026-10-03",
+      "title": "Choose a word's meaning using context and a reference",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "08",
+        "43",
+        "60"
+      ],
+      "goal": "Explain a plausible word meaning, check it against a supplied reference entry, and distinguish guessing meaning from decoding a word.",
+      "materials": "Paper and the miniature original word entries below; an additional dictionary is optional.",
+      "lesson": [
+        "Read these sentences: 'Rae rested beside the bank of the stream. Later Rae took a savings record to the bank.' The spelling and pronunciation of bank stay the same here, but the surrounding words indicate different meanings. In this lesson's short reference entry, bank can mean the ground along a river or an institution that handles money. Choose the meaning that fits each sentence and name the clue that supports it.",
+        "Use a deliberate meaning-check routine. First identify and read the written word with the spelling knowledge already taught, asking for help with unfamiliar spelling. Then read the whole sentence and nearby sentences. Propose a meaning, consult an available word entry or knowledgeable facilitator, and substitute a short explanation to see whether the passage still makes sense. Context can help check meaning; it is not a reason to guess a different written word from its first letter.",
+        "Here are two more original miniature entries: reserve, as a verb, can mean keep something for a later need or arrange for its future use; sturdy, as an adjective, means strongly made and not easily damaged. In 'Reserve two clean sheets for tomorrow's signs', reserve means keep them for later use. In 'The sturdy box held the cards without bending', the second clause supplies evidence for sturdy. These entries cover the senses used here, not every possible use.",
+        "Keep a vocabulary record with the word, the sentence, an explanation in familiar language and a new example. Word parts can suggest a meaning, but they do not settle every case. A learner who sees re- at the start of reserve cannot safely interpret the whole word as 'serve again'. If context leaves several meanings possible, record the uncertainty and seek more information rather than treating the first suggestion as certain."
+      ],
+      "practice": [
+        "Explain bank in 'The canoe touched the bank' and identify a supporting clue.",
+        "Use the supplied entry to explain 'Please reserve a seat for the visitor'. Does this mean serve the seat again?",
+        "Write a new sentence using sturdy, then explain how your sentence shows its meaning."
+      ],
+      "answers": [
+        "The ground along a river or stream; canoe is the clue in this example. A longer passage could supply additional location evidence.",
+        "Arrange for the visitor to have a seat available. No; the whole word and its context determine the sense, not an invented re- + serve split.",
+        "For example: 'The sturdy stand held the books without wobbling.' Accept a sentence that conveys strength or solid construction and an explanation linking that quality to the example."
+      ],
+      "adaptation": "Read the sentences aloud when decoding is still developing. Invite equivalent explanations in the learner's strongest language, then connect them to the English term. Keep meaning practice and independent word-reading assessment distinct.",
+      "references": [
+        "reading",
+        "comprehension"
+      ],
+      "tags": [
+        "context-clues",
+        "multiple-meanings",
+        "dictionary",
+        "vocabulary-record"
+      ]
+    },
+    {
+      "id": "90",
+      "edition": "2026-10-03",
+      "title": "Revise a paragraph using a reader's questions",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "31",
+        "33",
+        "75",
+        "76"
+      ],
+      "goal": "Use specific feedback to revise missing information and organization, then check sentence conventions without inventing facts.",
+      "materials": "Paper, the original draft and verified planning facts below, and a reader or facilitator.",
+      "lesson": [
+        "Revision changes what a piece of writing communicates; proofreading checks details such as spelling and punctuation. Start with purpose and reader needs. This original draft is meant to invite people to a practice session: 'We will do it in the usual place. Bring things. It starts later. Everyone can help.' A reader asks what activity is planned, where it meets, what to bring and when it begins. These questions identify gaps rather than merely calling the paragraph bad.",
+        "Use this fictional planning record as the only source of missing facts: the session is a card-labeling practice; it meets in Room B on Tuesday at 14:00; participants may bring a pencil, and spare pencils will be provided; no prior experience is needed. A possible revision is: 'Join the card-labeling practice in Room B on Tuesday at 14:00. Bring a pencil if you have one; spare pencils will be available. No prior experience is needed.' Every added detail has support in the record.",
+        "Ask a reader to state the message back and identify any unresolved question. If the reader asks when the session ends, the writer cannot infer that from its start time. Mark the missing detail for confirmation. Do not solve a communication gap by inventing a convenient fact. Order the known details so that the reader can find the action, location, time and preparation without reconstructing them from scattered remarks.",
+        "Compare the first and revised drafts. Explain which change answered each reader question and which uncertainty remains. Next proofread the revised text for agreement, complete sentences and punctuation. Preserve an earlier copy when possible so the learner can see the revision process. Feedback should name an observable need, such as 'I cannot find the location', and allow the writer to make a reasoned change rather than replacing the learner's voice wholesale."
+      ],
+      "practice": [
+        "Which verified details replace 'the usual place' and 'later'?",
+        "A reader asks whether the session finishes at 15:00. What should the writer do?",
+        "Revise 'Bring things' using only the planning record, and explain why your wording is more useful."
+      ],
+      "answers": [
+        "Room B and Tuesday at 14:00. Include both the day and time when stating the schedule.",
+        "Ask the organizer or mark the end time as unconfirmed. The record gives no finish time, so 15:00 cannot be presented as established.",
+        "For example: 'Bring a pencil if you have one; spare pencils will be available.' It specifies the item and explains that bringing one is optional rather than a condition of participation."
+      ],
+      "adaptation": "A learner may dictate the draft and revisions or use movable sentence strips. Limit one revision round to a few meaningful reader questions, then let the learner explain and choose changes.",
+      "references": [
+        "writing"
+      ],
+      "tags": [
+        "revision",
+        "reader-feedback",
+        "proofreading",
+        "missing-information"
+      ]
+    },
+    {
+      "id": "91",
+      "edition": "2026-10-03",
+      "title": "Read a supported account and track a changed plan",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "59",
+        "79",
+        "89"
+      ],
+      "goal": "Retell an original account in sequence, identify the reason for a changed plan, and separate direct evidence from uncertain inference.",
+      "materials": "The original passage below and paper for a three-event timeline; a facilitator can read it aloud.",
+      "lesson": [
+        "Preview these words before reading: display means an arrangement people can look at; revise means change a draft; edge means an outside boundary; arrow is a mark showing direction; visitor means someone coming to a place. Say each word, examine its spelling with help and use it orally. The passage contains spelling patterns beyond the earliest lessons. It is supported reading, not a claim that all beginning readers can decode it independently. A facilitator may first read it aloud while the learner follows.",
+        "Original fictional passage, part 1: 'Nia and Tomas planned a display of twelve paper maps for the learning room. They laid the maps in three rows on the large table. Each map had a label at its lower edge. Nia stood beside the table and read the labels aloud. Tomas could follow each label, so they thought the display was ready. Before the room opened, Tomas tried the route a visitor would use. He entered through the doorway and paused. From there, the first row hid parts of the labels in the second row. He moved closer, but one label was still covered.'",
+        "Passage, part 2: 'Tomas described the covered label instead of saying that all the maps were wrong. Nia suggested moving every map to the wall. They checked the space and found room for only eight maps there. Next they tried raising the labels on folded paper stands while leaving the maps on the table. From the doorway, Tomas could now read the second row. They added one arrow showing where the display began. They had tested the arrangement from one route, but visitors might enter another way. Nia wrote a note to ask the first visitors which labels were hard to find. The maps were ready for a first trial, and the pair kept the note beside them.'",
+        "Retell the initial plan, the observed problem and the revised arrangement. The passage directly reports a covered label and limited wall space. It supports an inference that the pair valued checking the visitor's view, because they tested that route and planned to ask visitors. It does not prove that every visitor could read every label. Point to the words behind an answer and distinguish an inference from a statement the narrator makes explicitly. Reread to resolve uncertainty rather than relying on memory alone."
+      ],
+      "practice": [
+        "Why did Nia and Tomas revise the display after first thinking it was ready?",
+        "Why did they not move all twelve maps to the wall, and what did they try instead?",
+        "Does the passage establish that every visitor can read every label? Give evidence for your answer."
+      ],
+      "answers": [
+        "Tomas checked from the visitor's doorway route and found that a row of maps hid labels. The earlier check beside the table had missed this view.",
+        "The wall had room for only eight maps. They used folded paper stands to raise the labels on the table and added a starting arrow.",
+        "No. They tested one route and one reader, and the final note asks visitors which labels are hard to find. Other routes and readers remained to be checked."
+      ],
+      "adaptation": "Split the passage across two sessions if needed. Compare independent reading with listening comprehension separately. A learner may retell with drawings or orally; assessment should ask for sequence and evidence, not an exact memorized sentence.",
+      "references": [
+        "reading",
+        "comprehension"
+      ],
+      "tags": [
+        "supported-reading",
+        "changed-plan",
+        "text-evidence",
+        "retelling"
+      ]
+    },
+    {
+      "id": "92",
+      "edition": "2026-10-03",
+      "title": "Keep quotations, paraphrases and source notes distinct",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "23",
+        "33",
+        "55",
+        "60"
+      ],
+      "goal": "Quote a short original statement accurately, paraphrase without changing its limits, and attach enough source information to find it again.",
+      "materials": "The two fictional source cards in the lesson and paper with columns for source, exact words, own-word summary and questions.",
+      "lesson": [
+        "Source notes let a reader distinguish someone else's statement from the writer's interpretation. For this exercise, use two invented cards, not real research. Card A is 'Room trial note', written by fictional helper Leni on 5 May, paragraph 1: 'Six of the ten readers found the blue label first.' Card B is 'Follow-up note', written by fictional helper Ivo on 6 May, paragraph 1: 'We did not ask the readers why they chose a label.' All people, dates and observations on these cards are part of an original teaching scenario.",
+        "A quotation repeats exact words and marks them as quoted. Copy Card A's sentence within quotation marks and name Card A, its author, date and paragraph. Check the words against the source rather than quoting from memory. A paraphrase expresses the meaning in your own wording while still identifying the source. For example: 'Leni's trial note reports that 6 out of 10 readers noticed the blue label before the others.' The count and limited trial remain part of the claim.",
+        "A paraphrase is not permission to strengthen a claim. 'Most people always prefer blue' changes a ten-reader observation about what was found first into a universal preference claim. Card B further shows that the reason was not recorded. Keep observation, explanation and your own question in separate parts of the note. Combining the cards supports a cautious report of the result and its limit; it does not reveal why the readers acted that way.",
+        "For an actual source, record its title, author or organization, date when given, and a page, paragraph, section or stable link that allows another person to locate it. Use 'date not given' when needed. A source note is evidence of where a statement came from, not proof that the statement is correct or permission to reproduce an entire work. These short invented cards can be copied for this exercise; other publications keep their own reuse conditions."
+      ],
+      "practice": [
+        "Quote Card B's sentence exactly and attach the supplied identifying information.",
+        "Paraphrase Card A while retaining the count and the limited observation.",
+        "Explain two ways 'Everyone liked blue best' changes the evidence."
+      ],
+      "answers": [
+        "'We did not ask the readers why they chose a label.' Source: Ivo, Follow-up note, 6 May, paragraph 1; a fictional teaching card. Accept double quotation marks with the same exact sentence.",
+        "For example: 'According to Leni's Room trial note, 5 May, paragraph 1, six of ten readers found the blue label before any other label.' Accept equivalent wording that preserves the count and source.",
+        "Everyone replaces six of ten with all people; liked best turns finding a label first into a preference. The cards do not establish either broader claim."
+      ],
+      "adaptation": "Use large-print source cards and color-code exact words, paraphrase and interpretation. A learner may dictate the note. Extend later to a suitable real source with clear reuse conditions and accessible location information.",
+      "references": [
+        "writing",
+        "primary-sources"
+      ],
+      "tags": [
+        "quotation",
+        "paraphrase",
+        "source-notes",
+        "attribution"
+      ]
+    },
+    {
+      "id": "93",
+      "edition": "2026-10-03",
+      "title": "Solve two-step equations and check the original statement",
+      "track": "mathematics",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "37",
+        "81",
+        "84"
+      ],
+      "goal": "Undo two operations while keeping both sides equal, then verify a solution by substitution.",
+      "materials": "Paper; counters or a drawn balance can represent the first positive-number examples.",
+      "lesson": [
+        "An equation states that two expressions have equal values. In 4x + 3 = 31, x represents an unknown number. Think of four equal groups plus three extra units. Subtract 3 from both sides to obtain 4x = 28, then divide both sides by 4 to obtain x = 7. Writing each balanced step makes the reason visible. Changing just one side would usually destroy the equality being solved.",
+        "Check the proposed value in the original equation: 4 x 7 + 3 = 31. The multiplication sign in that check is written x in plain text; the variable x in 4x means an unknown number. A facilitator can use a dot or say 'four times seven' to avoid confusion. The check matters because a correct-looking final number can still come from a copied sign or arithmetic error. For 5y - 8 = 17, add 8 on both sides first, then divide by 5, giving y = 5.",
+        "A variable may occur on both sides. Solve 6n + 2 = 4n + 18 by subtracting 4n from each side: 2n + 2 = 18. Then subtract 2 and divide by 2 to get n = 8. Substitution gives 50 on each side. Describing this as 'moving a term' can hide the action; state the actual equal operation. These examples have one solution, but not every equation does. The statement z + 2 = z + 5 would imply 2 = 5 and has no solution.",
+        "Connect a solution back to its context when a problem supplies one. If a fictional event has a setup cost of 3 tokens plus 4 tokens per participant and a total of 31 tokens, the equation yields 7 participants. Tokens here are invented units, not a price quote. Check that the number makes sense for what x represents. An unrestricted numerical equation can have a fractional answer even when a particular counting situation requires a whole number."
+      ],
+      "practice": [
+        "Solve 3a + 5 = 26 and check it in the original equation.",
+        "Solve 7b - 9 = 26 and state the first operation on both sides.",
+        "Solve 5c + 4 = 2c + 25, then explain why c + 1 = c + 4 has no solution."
+      ],
+      "answers": [
+        "Subtract 5: 3a = 21. Divide by 3: a = 7. Check: 3 times 7 + 5 = 26.",
+        "Add 9 to both sides: 7b = 35; then divide by 7, so b = 5. Check: 35 - 9 = 26.",
+        "Subtract 2c and then 4 to get 3c = 21, so c = 7. Both original sides equal 39. Subtracting c from c + 1 = c + 4 would require 1 = 4, which is false."
+      ],
+      "adaptation": "Begin with positive whole-number solutions, then revisit signed numbers or fractions when those prerequisites are secure. Read each operation aloud and give time to check the original equation rather than racing through symbolic steps.",
+      "references": [
+        "two-step-equations"
+      ],
+      "tags": [
+        "two-step-equations",
+        "inverse-operations",
+        "substitution",
+        "balance"
+      ]
+    },
+    {
+      "id": "94",
+      "edition": "2026-10-03",
+      "title": "Represent an inequality and test its boundary",
+      "track": "mathematics",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "36",
+        "37",
+        "93"
+      ],
+      "goal": "Solve a simple inequality, explain an open or closed boundary, and check how multiplication by a negative number affects order.",
+      "materials": "Paper for a number line and a pencil; mark symbols clearly as <, >, <= and >=.",
+      "lesson": [
+        "An inequality compares values rather than declaring them equal. Write x < 5 for values less than 5; write x <= 5 for values less than or equal to 5. On a number line, use an open circle at 5 when 5 is excluded and a filled circle when it is included. A line or arrow to the left shows smaller values. State the allowed kinds of numbers too: a measured length may vary continuously, while a count of notebooks is a nonnegative whole number.",
+        "Solve x + 4 <= 11 by subtracting 4 from both sides, giving x <= 7. The boundary value 7 works because 7 + 4 = 11, and equality is allowed. The value 6 also works; 8 does not. For 3t > 18, divide by positive 3 to obtain t > 6. A solution is a set of values, not just the boundary number. Check one value on each side when drawing the result.",
+        "Multiplying or dividing both sides by a negative number reverses the inequality direction. Compare 2 < 5 with -2 > -5 after multiplying by -1: order changes on the number line. Thus -2y <= 10 becomes y >= -5 after division by -2. Check y = 0: 0 <= 10 is true. Check y = -6: 12 <= 10 is false. These checks help catch the common error of keeping the old direction.",
+        "Apply a context restriction after solving. Suppose an empty practice box weighs 2 kg and each identical model inside it weighs 3 kg. A fictional capacity limit of 17 kg gives 2 + 3n <= 17, so n <= 5. Since n counts models, acceptable values are 0, 1, 2, 3, 4 and 5. Negative values and fractions would satisfy some abstract inequalities but cannot be counts of whole models in this situation. This is a mathematics scenario, not guidance on a real container's rating."
+      ],
+      "practice": [
+        "Solve r + 6 < 10. Is 4 included, and which way should the number-line arrow point?",
+        "Solve -3s >= 12 and test s = -5 and s = 0.",
+        "A fictional card holder uses 1 space for its label plus 2 spaces per card, with at most 10 spaces available. What is the greatest whole-number count of cards?"
+      ],
+      "answers": [
+        "r < 4. Use an open circle at 4 and an arrow to the left; 4 is excluded.",
+        "s <= -4, reversing the sign after division by -3. For -5, 15 >= 12 is true; for 0, 0 >= 12 is false.",
+        "1 + 2n <= 10 gives n <= 4.5. The largest allowed whole number is 4; five cards would need 11 spaces."
+      ],
+      "adaptation": "Compare a few concrete values before introducing the symbols. Use raised or enlarged boundary markers when helpful. Keep the words 'at most', 'less than', 'at least' and 'greater than' attached to examples rather than memorizing them without context.",
+      "references": [
+        "inequalities"
+      ],
+      "tags": [
+        "inequalities",
+        "number-line",
+        "boundary",
+        "negative-multiplier"
+      ]
+    },
+    {
+      "id": "95",
+      "edition": "2026-10-03",
+      "title": "Connect squares, square roots and measured area",
+      "track": "mathematics",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "18",
+        "66",
+        "81",
+        "86"
+      ],
+      "goal": "Find the principal square root of a perfect square, estimate a non-square root between whole numbers, and distinguish a root from the solutions to an equation.",
+      "materials": "A squared-paper grid or a drawing of equal square tiles; paper for multiplication checks.",
+      "lesson": [
+        "Squaring a number means multiplying it by itself: 6 squared, written 6^2 here, is 36. A square with side length 6 cm has area 36 square centimetres. Reversing that area question asks for the nonnegative side length whose square is 36. The principal square root of 36 is 6, written sqrt(36) in this plain-text lesson. A square root is not the same as dividing by 2; half of 36 is 18, whose square is 324.",
+        "Useful small perfect squares include 0, 1, 4, 9, 16, 25, 36, 49, 64, 81 and 100. Generate them by multiplying each whole number from 0 through 10 by itself. Check any remembered result by multiplication. Because 7^2 = 49 and 8^2 = 64, sqrt(50) lies between 7 and 8. It is a little above 7; a finer estimate needs further calculation. Do not call a rounded estimate exact.",
+        "Distinguish a named principal root from solving an equation. The principal root sqrt(49) is 7. The equation x^2 = 49 has two real solutions, 7 and -7, because either number multiplied by itself gives 49. In an ordinary side-length problem choose the nonnegative length. A negative number such as -9 has no real square root because the square of every real number is nonnegative. Other number systems exist, but this lesson stays with real numbers.",
+        "Keep units consistent when using area. If a square has area 81 square metres, its side is 9 metres. If its area is 81 square centimetres, its side is 9 centimetres instead. The area unit has two length factors, while the side unit has one. An area alone determines this side calculation only when the shape is known to be a square; many rectangles with unequal sides can have the same area."
+      ],
+      "practice": [
+        "Find sqrt(64), and list the real solutions of q^2 = 64.",
+        "Between which consecutive whole numbers does sqrt(30) lie? Show the square checks.",
+        "A square patch on a paper plan has area 144 square centimetres. Find its side length. Would the same area determine the sides of every rectangle?"
+      ],
+      "answers": [
+        "The principal root is 8. The equation has q = 8 and q = -8; both square to 64.",
+        "Between 5 and 6, because 25 < 30 < 36.",
+        "12 cm, because 12 times 12 = 144. No: a 9 cm by 16 cm rectangle also has area 144 square centimetres, with different side lengths."
+      ],
+      "adaptation": "Build square arrays before using root notation. Read sqrt aloud as 'the principal square root of'. Let learners retain a small square table while focusing on reasoning and units.",
+      "references": [
+        "square-roots"
+      ],
+      "tags": [
+        "square-roots",
+        "perfect-squares",
+        "principal-root",
+        "area-units"
+      ]
+    },
+    {
+      "id": "96",
+      "edition": "2026-10-03",
+      "title": "Convert area and volume units by counting dimensions",
+      "track": "mathematics",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "18",
+        "61",
+        "62",
+        "68"
+      ],
+      "goal": "Explain why length, area and volume conversions use different factors, then convert simple metric examples and check their units.",
+      "materials": "Paper for a square and cube sketch; a ruler is optional because the drawings need not be full size.",
+      "lesson": [
+        "A metre contains 100 centimetres, so a 2 m length is 200 cm. An area uses two lengths. Imagine a 1 m by 1 m square divided into centimetre squares: there are 100 along each side, giving 100 times 100 = 10,000 squares. Thus 1 square metre equals 10,000 square centimetres. Multiplying by only 100 would count a single row instead of the whole surface.",
+        "Use the unit factor for the dimension being converted. A 0.3 square metre paper design has area 0.3 times 10,000 = 3,000 square centimetres. Conversely, 25,000 square centimetres divided by 10,000 gives 2.5 square metres. A useful check is direction: expressing the same area in smaller units requires more of them. Do not change the physical area when changing only its numerical description.",
+        "Volume uses three lengths. A cube 1 m on each edge is 100 cm by 100 cm by 100 cm, so its volume is 1,000,000 cubic centimetres. Separately, 1 litre is 1 cubic decimetre, or a cube 10 cm on each edge, so 1 litre equals 1,000 cubic centimetres. One millilitre equals 1 cubic centimetre. A litre names volume, while a metre names length; converting between them requires a shape and dimensions, not a single length-only factor.",
+        "Write a conversion as a short explanation with units. A fictional rectangular model 20 cm long, 10 cm wide and 15 cm high has geometric volume 3,000 cubic centimetres, which is 3 litres. The calculation uses three lengths in the same unit. For a real container, outside dimensions do not establish usable capacity because walls and shape matter. Here all dimensions describe the ideal inside rectangular space. Drawing and labeling that assumption is part of the answer."
+      ],
+      "practice": [
+        "Convert 1.4 square metres into square centimetres and explain the factor used.",
+        "Convert 7,500 cubic centimetres into litres. How many millilitres is it?",
+        "Find the volume in cubic centimetres and litres of an ideal rectangular space 25 cm by 8 cm by 10 cm. Explain why adding 25 + 8 + 10 would not give volume."
+      ],
+      "answers": [
+        "14,000 square centimetres. Multiply by 100 in each of two length dimensions, giving a factor of 10,000.",
+        "7.5 litres and 7,500 millilitres, using 1,000 cubic centimetres per litre and 1 cubic centimetre per millilitre.",
+        "25 times 8 times 10 = 2,000 cubic centimetres = 2 litres. Adding the three lengths gives a length total, not a count of cubic units filling the space."
+      ],
+      "adaptation": "Use sketches and label each edge before calculating. Keep this practice separate from dosing, construction or container-safety decisions. Learners may use a calculator after explaining the conversion factor.",
+      "references": [
+        "measurement",
+        "volume"
+      ],
+      "tags": [
+        "area-conversion",
+        "volume-conversion",
+        "dimensional-reasoning",
+        "litres"
+      ]
+    },
+    {
+      "id": "97",
+      "edition": "2026-10-03",
+      "title": "Organize practice files and recognize their formats",
+      "track": "digital-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "10",
+        "44",
+        "90"
+      ],
+      "goal": "Use a simple folder plan, distinguish filename, location and format, and explain why changing an extension does not convert a file.",
+      "materials": "Paper file cards are sufficient; optionally use an offline device and only disposable practice files in a new practice folder.",
+      "lesson": [
+        "A file stores a named item of data; a folder organizes files and other folders. For a paper exercise, draw a main folder called Learning, with Drafts and Shared inside it. Put a card named map-note-v1.txt in Drafts. Its filename is map-note-v1.txt, while Learning / Drafts / map-note-v1.txt describes its location within this example. Two folders can contain files with the same filename, so the name alone may not identify the intended item.",
+        "Many filenames end with an extension, such as .txt for plain text, .png for an image or .pdf for a PDF document. It is a clue about the format and applications that may handle it, not a guarantee about the actual contents. Renaming map-note.txt to map-note.pdf changes the name; it does not transform the text into a PDF. Format conversion requires a suitable application's export or conversion feature and a check of the resulting file.",
+        "Choose names that communicate purpose and revision. For these practice cards, map-note-v1.txt and map-note-v2.txt make a revision difference visible. A date can help if everyone uses a stated order, such as year-month-day. Avoid labels such as final-final-newest when several people need to know which copy was approved. Put a short index card beside the folders saying which version is ready to share and which is still a draft.",
+        "Copying creates another file at a chosen destination; moving changes where the selected file is kept. Before either action, identify the source, destination and intended result. If an existing name conflicts, stop and compare instead of automatically replacing it. After working with disposable practice files, open the intended result to check content and location. Device menus differ, so this lesson teaches the concepts without relying on a particular sequence of buttons. Paper cards can model every step offline."
+      ],
+      "practice": [
+        "Two cards are named notes.txt, one in Drafts and one in Shared. What information distinguishes them?",
+        "Will renaming a .txt file to .png turn its text into an image? Explain.",
+        "You want to keep a draft and place a separate copy in Shared. Choose copy or move, and state two checks before considering the task done."
+      ],
+      "answers": [
+        "Their folder locations, together with the filenames, distinguish them in this plan. Read the contents or revision record to determine which version is intended.",
+        "No. Renaming changes the filename, not the stored format. A suitable tool must create or export an actual image if that is the intended result.",
+        "Copy. Check that the original is still in Drafts and that the Shared copy opens with the expected content. Also check that no different existing file was replaced."
+      ],
+      "adaptation": "Use large paper cards, spoken folder paths or an accessible file manager. Do not use private records for practice. Advance to a device only when the learner can predict where each practice copy will remain.",
+      "references": [
+        "file-extensions"
+      ],
+      "tags": [
+        "files-and-folders",
+        "file-extension",
+        "copy-and-move",
+        "version-names"
+      ]
+    },
+    {
+      "id": "98",
+      "edition": "2026-10-03",
+      "title": "Plan a separate backup and rehearse a restore",
+      "track": "digital-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "24",
+        "97"
+      ],
+      "goal": "Explain what a backup can recover, distinguish an earlier backup from the latest working file, and verify a practice restore without overwriting the original.",
+      "materials": "Paper cards labeled working copy, backup and restore check; optionally a disposable text file and a separate storage device used with its owner's permission.",
+      "lesson": [
+        "A backup is a recoverable copy kept for use if the working data is lost or damaged. Two files on the same device can help with an accidental edit, but both may be lost if that device fails. A separate storage location reduces that shared failure risk. An offline removable backup can also be kept disconnected when it is not being updated or checked, so a problem affecting the working device is less able to alter it at the same time.",
+        "Trace this original paper scenario. On Monday, the working card contains 'maps: 8', and a separate backup card is copied from it. On Tuesday, the working card is corrected to 'maps: 11', but the backup is not updated. If the working card is lost on Wednesday, the Monday backup recovers 8, not 11. It preserves useful earlier data but misses the later correction. Record the backup date and what it contains so that recovery expectations match the copy that actually exists.",
+        "Rehearse recovery using a disposable practice file or paper cards. Create a harmless original such as a two-line lesson note, make a separate backup, and label its version. Restore or copy the backup into a new RestoreCheck folder, leaving the working original untouched. Open the restored practice file and compare its lines with the expected backup version. A backup's presence alone does not demonstrate that the needed content can be read and recovered.",
+        "Make a small plan stating what to copy, where a separate copy will be kept, when to update it, who can access it and how to test recovery. A synchronized folder may quickly copy a deletion or unwanted change, so do not assume synchronization provides recoverable history without checking its features. Keep private information protected and decide how any required recovery keys will remain available. This introductory exercise establishes habits; the appropriate backup plan depends on the data and devices involved."
+      ],
+      "practice": [
+        "In the Monday-to-Wednesday scenario, what count can the existing backup recover, and what is missing?",
+        "Why are two copies on one device insufficient protection against that device failing?",
+        "Describe a restore check that leaves the original practice file intact and states what success looks like."
+      ],
+      "answers": [
+        "It can recover the Monday count of 8. Tuesday's correction to 11 is missing because the backup predates it.",
+        "The same failure can make both copies unavailable. A copy in a separate storage location can reduce that common failure risk.",
+        "Copy or restore the known backup into a new RestoreCheck folder, open it and compare its contents with the expected backup version. The working original stays in place; matching readable content demonstrates this practice recovery."
+      ],
+      "adaptation": "Use only fictional paper records or disposable files. Do not delete an original to test a backup. Let learners explain what would be recoverable after each scenario before introducing actual device operations.",
+      "references": [
+        "data-backups"
+      ],
+      "tags": [
+        "backup",
+        "restore-check",
+        "recovery",
+        "separate-copy"
+      ]
+    },
+    {
+      "id": "99",
+      "edition": "2026-10-03",
+      "title": "Trace an algorithm with decisions and repetition",
+      "track": "digital-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "11",
+        "46",
+        "81"
+      ],
+      "goal": "Follow an explicit paper algorithm, record changing values, and test empty input and a boundary case.",
+      "materials": "Cards showing the whole numbers 2, 7, 5 and 8; two labeled piles and a record sheet. No computer is needed.",
+      "lesson": [
+        "An algorithm is an explicit procedure for a task. State its permitted input and desired output before writing steps. In this original exercise, the input is a finite list of cards, each showing a readable whole number. The output is two piles: Low for numbers below 5 and High for numbers at least 5, plus the number of cards in High. A threshold rule must say where exactly 5 belongs; 'small numbers here and big numbers there' is too vague.",
+        "Use this procedure: Set the High count to 0 and make both output piles empty. While an unread card remains, take the next unread card. If its number is at least 5, put it in High and add 1 to the High count; otherwise put it in Low. Mark that card as processed and continue with the next unread card. When none remain, report both piles and the High count. The conditional chooses one action; the loop repeats the card-processing steps.",
+        "Trace the input 2, 7, 5, 8 in that order. After 2, Low contains 2 and the High count is 0. After 7, High contains 7 and its count is 1. After 5, High contains 7 and 5 and its count is 2. After 8, High contains 7, 5 and 8 and its count is 3. Record each state instead of skipping to the answer. Each pass handles one previously unread card, so a finite input eventually runs out.",
+        "Test cases reveal mistakes in a procedure. An empty input should produce two empty piles and a count of 0. A single card marked 5 belongs in High; using 'greater than 5' would misclassify it. If the count is reset to 0 inside every pass, it will not accumulate correctly. A damaged card with no readable number violates the input assumption: stop and request clarification rather than inventing a value. Testing several cases can expose errors, although examples alone do not prove every possible program correct."
+      ],
+      "practice": [
+        "Trace the input 6, 1, 5. State each final pile and the High count.",
+        "What should happen with no cards, and why must 5 be tested separately from 4 and 6?",
+        "A learner puts 'set High count to 0' at the start of every loop pass. For input 7, 8, what final count results, and where should that step go?"
+      ],
+      "answers": [
+        "High contains 6 and 5; Low contains 1; High count is 2. The running counts are 1, 1 and 2.",
+        "Both piles remain empty and the count is 0. Five tests the exact boundary where >= differs from >; four and six alone would not expose that mistake.",
+        "The faulty final count is 1 because the second pass erases the first pass's count before adding 1. Initialize the count once before the loop."
+      ],
+      "adaptation": "Replace written numbers with counted dots when appropriate, while keeping the threshold explicit. Let one learner execute and another record the trace. No account, programming language or internet connection is required.",
+      "references": [
+        "algorithms"
+      ],
+      "tags": [
+        "algorithm",
+        "loop",
+        "conditional",
+        "trace-table",
+        "boundary-case"
+      ]
+    },
+    {
+      "id": "100",
+      "edition": "2026-10-03",
+      "title": "Complete a small learning project and show the evidence",
+      "track": "teaching",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "04",
+        "24",
+        "78",
+        "90",
+        "92"
+      ],
+      "goal": "Plan a manageable literacy-and-numeracy project, produce a checkable result, and distinguish supported performance from independent performance.",
+      "materials": "Fictional card records, paper for a plan and result, and a facilitator or partner; a device is optional.",
+      "lesson": [
+        "Choose a small task that combines skills the learner has already practiced. This original capstone is a trial lending record for a fictional set of learning cards. Its purpose is to tell the next helper how many cards should be present and which changes need checking. Use these invented facts: the group begins with 18 cards; 4 are lent out; 3 new cards are added; the closing physical count is 16. Do not substitute real personal borrowing records for this practice.",
+        "Agree on a plan and success criteria before starting. The learner will calculate the expected closing count, compare it with the physical count, write a short handover note, and explain one check to perform next. The expected count is 18 - 4 + 3 = 17, so the physical count is one lower. This difference is evidence of a discrepancy, not proof that a particular person lost a card. A useful next step is to recheck the count and recorded movements.",
+        "Produce a first draft, let a partner ask clarifying questions, and revise. A possible handover is: 'The record predicts 17 cards after four loans and three additions. We counted 16, one fewer than expected. Please recount the cards and check whether every movement was recorded.' Keep the calculation, first draft, feedback and revision together. A simple rubric checks four visible features: correct calculation, clear comparison, an actionable next check, and wording that separates evidence from an unsupported explanation.",
+        "Assess both the product and how it was made. Record whether each rubric feature was shown independently, with a prompt, or after a worked model. These labels guide the next lesson rather than serving as a grade-equivalence certificate. Ask the learner to explain the subtraction and addition, then try a new set of numbers later to check transfer. A completed document alone cannot show independent understanding if a helper supplied all its wording and calculations. Finish by choosing one specific skill to revisit and one piece of evidence to collect next time."
+      ],
+      "practice": [
+        "For a new trial, start with 25 cards, lend 6 and add 2. The physical count is 21. Calculate the expected count and discrepancy.",
+        "Write a two- or three-sentence handover for that new trial without inventing the cause of the discrepancy.",
+        "A helper supplies the calculation but the learner writes a clear note independently. How should the record distinguish these performances, and what should the next check target?"
+      ],
+      "answers": [
+        "Expected 25 - 6 + 2 = 21. The physical count matches; the discrepancy is 0 cards.",
+        "For example: 'The record predicts 21 cards after six loans and two additions. We counted 21, so this count matches the record.' Accept clear equivalent wording without claiming that this proves every past record was correct.",
+        "Record the calculation as supported and the writing features as independent where actually observed. Next use a fresh numerical example to see whether the learner can select and explain the operations without the helper supplying them."
+      ],
+      "adaptation": "Let the learner dictate, draw or type the result according to the skill being assessed. Separate handwriting or device access from reasoning. Adapt the fictional topic to an age-respectful interest while keeping the evidence, rubric and support record explicit.",
+      "references": [
+        "study",
+        "writing"
+      ],
+      "tags": [
+        "capstone",
+        "learning-project",
+        "rubric",
+        "transfer",
+        "support-record"
       ]
     }
   ]

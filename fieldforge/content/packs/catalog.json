@@ -4466,6 +4466,269 @@
         "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-89",
+      "title": "Education 89: Choose a word's meaning using context and a reference",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 721,
+      "body_sha256": "641a7ad68e146098f0902e9d48053624b5d57d05e38eba257592fa3328f2fc36",
+      "prerequisites": [
+        "fieldforge-education-08",
+        "fieldforge-education-43",
+        "fieldforge-education-60"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-90",
+      "title": "Education 90: Revise a paragraph using a reader's questions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 670,
+      "body_sha256": "14cb5d569c939a626294b8a751a63322410d0e7e23d9b0d98ed0da9023460749",
+      "prerequisites": [
+        "fieldforge-education-31",
+        "fieldforge-education-33",
+        "fieldforge-education-75",
+        "fieldforge-education-76"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-91",
+      "title": "Education 91: Read a supported account and track a changed plan",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 827,
+      "body_sha256": "ce5942d17591fbc2ea3db4517486b84ced8cc3871c35f32d0a6c28bec09a3ea5",
+      "prerequisites": [
+        "fieldforge-education-59",
+        "fieldforge-education-79",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-92",
+      "title": "Education 92: Keep quotations, paraphrases and source notes distinct",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 752,
+      "body_sha256": "32feb8f905ac65ed2b5584aee03f5b2d4c9091e77d79d15fb5f0db7755f20afa",
+      "prerequisites": [
+        "fieldforge-education-23",
+        "fieldforge-education-33",
+        "fieldforge-education-55",
+        "fieldforge-education-60"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://www.loc.gov/programs/teachers/getting-started-with-primary-sources/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-93",
+      "title": "Education 93: Solve two-step equations and check the original statement",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 703,
+      "body_sha256": "4c01e1d59139de3446985e4f99230d9ec31c1fc431e03c29c403b53b355e865e",
+      "prerequisites": [
+        "fieldforge-education-37",
+        "fieldforge-education-81",
+        "fieldforge-education-84"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/8-3-solve-equations-with-variables-and-constants-on-both-sides"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-94",
+      "title": "Education 94: Represent an inequality and test its boundary",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 702,
+      "body_sha256": "6815c10818a5325fb1dd9b901a800c56e4c41ac59f69d1fff5691e3eb46719f3",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-37",
+        "fieldforge-education-93"
+      ],
+      "references": [
+        "https://openstax.org/books/intermediate-algebra-2e/pages/2-5-solve-linear-inequalities"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-95",
+      "title": "Education 95: Connect squares, square roots and measured area",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 660,
+      "body_sha256": "2e9477c18f39d981c6da525b9d2c7b5a45730f430e8996165cb86431857b4498",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-66",
+        "fieldforge-education-81",
+        "fieldforge-education-86"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-7-simplify-and-use-square-roots"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-96",
+      "title": "Education 96: Convert area and volume units by counting dimensions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 701,
+      "body_sha256": "cbb0c04b329614a78a209d46ed9e34e92d11989ae94153d7fa6244355b77bf6d",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-18",
+        "fieldforge-education-61",
+        "fieldforge-education-62",
+        "fieldforge-education-68"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement",
+        "https://openstax.org/books/prealgebra-2e/pages/9-6-solve-geometry-applications-volume-and-surface-area"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-97",
+      "title": "Education 97: Organize practice files and recognize their formats",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 701,
+      "body_sha256": "10714bce275678c321a4f3b1092c29a4a0c161721db6ee8944c4b38ad1564320",
+      "prerequisites": [
+        "fieldforge-education-10",
+        "fieldforge-education-44",
+        "fieldforge-education-90"
+      ],
+      "references": [
+        "https://support.microsoft.com/en-US/Windows/Experience/Storage-FileManagement/common-file-name-extensions-in-windows"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-98",
+      "title": "Education 98: Plan a separate backup and rehearse a restore",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 714,
+      "body_sha256": "74dfe57df159b08ba136eb6084d5eefb496f7a2e6ea7b20bd8227e7c053b529e",
+      "prerequisites": [
+        "fieldforge-education-24",
+        "fieldforge-education-97"
+      ],
+      "references": [
+        "https://www.cisa.gov/resources-tools/training/how-protect-data-stored-your-devices"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-99",
+      "title": "Education 99: Trace an algorithm with decisions and repetition",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 719,
+      "body_sha256": "5fdc03f4f42cd9590efd756b418972ba02d317e085ab3c57600b7e36e35face2",
+      "prerequisites": [
+        "fieldforge-education-11",
+        "fieldforge-education-46",
+        "fieldforge-education-81"
+      ],
+      "references": [
+        "https://www.csunplugged.org/en/computational-thinking/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-100",
+      "title": "Education 100: Complete a small learning project and show the evidence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 807,
+      "body_sha256": "1c7936c0717128152a6a17f9d3379ae5f1b87e51ed1a7f3d44aced3dd29151ce",
+      "prerequisites": [
+        "fieldforge-education-04",
+        "fieldforge-education-24",
+        "fieldforge-education-78",
+        "fieldforge-education-90",
+        "fieldforge-education-92"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [
