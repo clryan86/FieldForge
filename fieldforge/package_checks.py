@@ -232,6 +232,60 @@ def verify_blueprint_workspace(root, directory: Path) -> None:
         home.destroy()
 
 
+def verify_education_workspace(root, directory: Path) -> None:
+    """Check bundled teaching data and a real attempt/save/restore UI workflow."""
+    from fieldforge.app import FieldForgeApp
+    from fieldforge.core.recovery import create_verified_backup, restore_verified_copy
+    from fieldforge.knowledge.education import StudyStore, worksheet
+    from fieldforge.ui.education import EducationTab
+
+    app = FieldForgeApp(directory / "education.db")
+    tab = EducationTab(root, app.db.path)
+    try:
+        _require(len(tab.catalog) == 177, "Education catalogue missing from the bundle")
+        tab.open_lesson("guide-length")
+        tab.response.insert("1.0", "11")
+        tab.check_button.invoke()
+        _require(tab.work.result == "retry" and "end position" in tab.feedback.get("1.0", "end"),
+                 "Education misconception feedback is missing")
+        tab.hint_button.invoke()
+        tab.response.delete("1.0", "end")
+        tab.response.insert("1.0", "8")
+        tab.reasoning.insert("1.0", "Subtract the 3 cm start from the 11 cm endpoint.")
+        tab.check_button.invoke()
+        _require(tab.work.result == "correct" and tab.work.hints == 1,
+                 "Education numeric check lost its support record")
+        tab.next.invoke()
+        tab.previous.invoke()
+        _require(tab.response.get("1.0", "end-1c") == "8", "Education navigation lost an answer")
+        tab.move_question(4)
+        tab.response.insert("1.0", "The length is fixed while the counting unit changes.")
+        tab.reveal_button.invoke()
+        tab.explained_button.invoke()
+        _require(tab.work.reflection == "explained it" and tab.work.result == "draft",
+                 "Written explanations were incorrectly treated as automatically checked")
+        _require(tab.save_current(), "Education work could not be saved")
+        lesson, question, expected = tab.lesson, tab.question, tab.work
+    finally:
+        tab.destroy()
+    backup = create_verified_backup(app.db.path, directory / "education.ffbackup")
+    recovered = restore_verified_copy(backup, directory / "education-restored.db", active_database=app.db.path)
+    store = StudyStore(recovered)
+    _require(store.read(lesson.id, question) == expected, "Education work did not survive a full backup")
+    records = tuple(store.read(lesson.id, q) for q in lesson.questions)
+    output = worksheet(lesson, records)
+    _require(expected.response in output and "<details>" in output, "Offline worksheet export is incomplete")
+    (directory / "education-worksheet.html").write_text(output, encoding="utf-8")
+    reopened = EducationTab(root, recovered)
+    try:
+        reopened.open_lesson(lesson.id)
+        reopened.move_question(4)
+        _require(reopened.response.get("1.0", "end-1c") == expected.response,
+                 "Recovered education response is not visible in the UI")
+    finally:
+        reopened.destroy()
+
+
 def verify_installation() -> dict[str, object]:
     import tkinter as tk
 
@@ -298,11 +352,13 @@ def verify_installation() -> dict[str, object]:
             tk_version = str(tk_root.tk.call("info", "patchlevel"))
             verify_gps_workspace(tk_root)
             verify_blueprint_workspace(tk_root, root_path)
+            verify_education_workspace(tk_root, root_path)
         finally:
             tk_root.destroy()
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
+        checks.append("Education: 177 lessons, misconception feedback, hints, numeric check, self-review, saved responses, backup/restore and offline worksheet")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

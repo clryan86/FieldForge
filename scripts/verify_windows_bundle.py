@@ -51,7 +51,7 @@ def main() -> None:
         data = json.loads(result.stdout)
         if not (data["status"] == "passed" and data["packaged"] and data["platform"] == "win32"
                 and data["python"] == "3.13.16"
-                and data["build"]["source_commit"] == source_commit and len(data["checks"]) == 9):
+                and data["build"]["source_commit"] == source_commit and len(data["checks"]) == 10):
             raise RuntimeError(f"Incomplete Windows build verification: {data}")
         if sentinel.read_bytes() != b"Not a database: this must remain unchanged":
             raise RuntimeError("Diagnostic touched the inherited user database path")

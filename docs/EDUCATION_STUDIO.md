@@ -1,0 +1,71 @@
+# Education workspace
+
+Open **Education** beside Blueprints, or use **Go to section → Education** in a
+compact window. It works immediately with bundled content, even in an existing
+database where the reference library has not been installed.
+
+The default **Guided: Measure & plan** course contains five original lessons:
+
+1. Fractions: equal parts, equivalent amounts and a fraction of a length.
+2. Length: nonzero ruler starts, metric units and reverse checks.
+3. Area and perimeter: boundary versus surface and consistent units.
+4. Scale drawings: object versus drawing dimensions and area scaling.
+5. Paper panel plan: combine the preceding ideas and review an incomplete claim.
+
+Each includes a diagram with a text description, worked reasoning, four numeric
+exercises and one explanation task. These are paper exercises; they are not
+construction specifications. The existing 172 Education Foundations lessons
+are also available by track or through **All lessons**. Their article text and
+library notes are preserved. These reference lessons use written self-review;
+they have not all been rewritten into the guided course format.
+
+## Practice workflow
+
+Read the goal and worked examples, then select **Practice & explain**. Write an
+answer and explain your method. **Check number** accepts exact integers, decimals
+or fractions in the displayed unit, without units typed into the number field.
+For example, `3/8` and `0.375` match, while `0.38` does not. Matching a numeric value
+does not verify the explanation or a requested simplified form.
+
+Wrong answers that match an authored common mistake receive a specific prompt.
+Other wrong answers get a units/representation check. **One hint** reveals the
+next hint without exposing every hint at once. **Show worked answer** provides
+reasoning or comparison criteria. The two reflection buttons record your own
+judgment after comparing; they never assign an automatic prose grade.
+
+Drafts save after a short typing pause, on question/lesson changes, before full
+backup, and on normal desktop close. Check the status line for save failures.
+The UI retains unsaved text and blocks navigation/close when a write fails.
+**Export worksheet** can preserve that text even when the database write fails.
+It creates a new HTML file and will not overwrite an existing file. The answer
+key is collapsed; open it before printing if answers should appear on paper.
+Use **Resume saved practice** to return to the most recently saved question.
+If another window changed a response, export your draft and use **Reload saved
+answer** to load the current record; discarding a different draft requires confirmation.
+
+One database holds one practice record per question, not separate learner
+profiles. Exported worksheets and database backups contain personal responses.
+Hints/reveals remain recorded on that question; editing an answer clears its
+current check and self-review but preserves the support history. The app cannot
+detect other help used, and it does not infer independent mastery.
+
+## Content and storage boundaries
+
+The five guided lessons add 25 exercises to the original 516 reference prompts.
+They are AI-assisted teaching drafts, not independently educator-reviewed or
+validated with learner outcomes. Instructional design background is the
+[IES study guide](https://ies.ed.gov/ncee/wwc/PracticeGuide/1); this does not mean
+that IES evaluated or endorsed FieldForge. The original examples, answer keys,
+common-mistake feedback and diagrams are CC BY-SA 4.0.
+
+Private responses use the `education_work_v1` table in the active SQLite database.
+Full database snapshots preserve this table; article-only exports do not.
+Question content fingerprints keep revised prompts from inheriting stale check
+results. Existing versions of work remain in the database. Concurrent saves use
+revision checks, so another open window cannot silently replace an older draft.
+
+Automated checks cover exact arithmetic, misconception feedback, draft edits,
+self-review, concurrent writes, real backup/restore, HTML escaping, UI navigation,
+minimum-window controls and the normal desktop entry point. The packaged Windows
+self-test repeats an actual attempt/hint/save/restore/export workflow using
+temporary records. These software checks are not teaching-effectiveness evidence.

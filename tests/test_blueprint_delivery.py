@@ -143,6 +143,12 @@ def test_normal_desktop_has_blueprints_beside_dashboard_and_keeps_existing_secti
         book = next(child for child in root.winfo_children() if isinstance(child, ttk.Notebook))
         labels = [book.tab(tab, "text") for tab in book.tabs()]
         assert labels[:2] == ["Dashboard", "Blueprints"]
+        assert labels[2] == "Education"
+        education = root.nametowidget(book.tabs()[2])
+        assert len(education.catalog) == 177
+        book.select(education)
+        root.update()
+        assert education.title.winfo_ismapped()
         assert {"Maps", "Online Maps", "Knowledge Library", "Places"} <= set(labels)
         home = next(root.nametowidget(tab) for tab in book.tabs() if book.tab(tab, "text") == "Blueprints")
         assert isinstance(home, BlueprintHome)

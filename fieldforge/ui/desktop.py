@@ -32,6 +32,7 @@ def run() -> None:
     from fieldforge.ui.assistant import add_ask_library_tab
     from fieldforge.ui.blueprint_home import BlueprintHome
     from fieldforge.ui.build_info import install_help_menu
+    from fieldforge.ui.education import EducationTab
     from fieldforge.ui.emergency_actions import ActionWorkspace
     from fieldforge.ui.gps import install_gps_menu
     from fieldforge.ui.household import HouseholdTab
@@ -76,6 +77,8 @@ def run() -> None:
     notebook.add(dashboard_tab, text="Dashboard")
     blueprints_tab = BlueprintHome(notebook, app.knowledge)
     notebook.add(blueprints_tab, text="Blueprints")
+    education_tab = EducationTab(notebook, app.db.path)
+    notebook.add(education_tab, text="Education")
     notebook.add(inventory_tab, text="Inventory")
     notebook.add(planners_tab, text="Power Planner")
     notebook.add(emergency_tab, text="Emergency Mode")
@@ -134,7 +137,7 @@ def run() -> None:
         if (not supplies_panel.can_close() or not household_panel.can_close()
                 or not emergency_panel.can_close() or not places_panel.can_close()
                 or not recovery_tab.can_close() or not online_maps_panel.can_close()
-                or not blueprints_tab.can_close()):
+                or not blueprints_tab.can_close() or not education_tab.can_close()):
             return
         if knowledge_tab.busy:
             messagebox.showinfo(
@@ -236,7 +239,8 @@ def run() -> None:
 
     def save_before_backup() -> bool:
         return (supplies_panel.can_close() and household_panel.can_close()
-                and emergency_panel.can_close() and places_panel.can_close() and original_backup_guard())
+                and emergency_panel.can_close() and places_panel.can_close()
+                and education_tab.can_close() and original_backup_guard())
 
     recovery_tab.before_backup = save_before_backup
 
