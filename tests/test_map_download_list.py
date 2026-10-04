@@ -2,7 +2,9 @@
 
 import copy
 import json
+import os
 from threading import Event
+from types import SimpleNamespace
 
 import pytest
 from test_online_integration import operated_portal as operated_portal
@@ -15,6 +17,7 @@ from fieldforge.online.download_list import (
     make_download_list,
     save_download_list,
     validate_download_list,
+    verified_local_map,
 )
 from fieldforge.online.models import ValidationError
 
@@ -111,6 +114,33 @@ def test_retry_reuses_exact_local_maps_and_reports_total(selection):
     assert all(0 <= done <= total == document["total_bytes"] for done, total, _detail in progress)
     assert download_maps(client, document, directory) == ready
     assert len(calls) == 2  # No second download of either completed map.
+
+
+@pytest.mark.parametrize("changes_during_read", [False, True])
+def test_reuse_allows_distinct_path_handle_ctime_but_rejects_changes(selection, monkeypatch, changes_during_read):
+    document, client, _calls, directory = selection
+    target = download_maps(client, document, directory)[0]
+    identity = target.stat()
+    original = os.fstat
+    reads = []
+
+    def windows_handle_stat(fd):
+        result = original(fd)
+        if (result.st_dev, result.st_ino) != (identity.st_dev, identity.st_ino):
+            return result
+        reads.append(fd)
+        fields = {name: getattr(result, name) for name in
+                  ("st_dev", "st_ino", "st_mode", "st_size", "st_mtime_ns", "st_ctime_ns")}
+        fields["st_ctime_ns"] += 1000 + (len(reads) if changes_during_read else 0)
+        return SimpleNamespace(**fields)
+
+    monkeypatch.setattr(os, "fstat", windows_handle_stat)
+    if changes_during_read:
+        with pytest.raises(ValidationError, match="existing files were preserved"):
+            verified_local_map(directory, document["maps"][0], document["portal"])
+    else:
+        assert verified_local_map(directory, document["maps"][0], document["portal"]) == target
+    assert len(reads) == 2 and target.is_file()
 
 
 @pytest.mark.parametrize("damage", ["bytes", "provenance", "orphan", "timestamp"])

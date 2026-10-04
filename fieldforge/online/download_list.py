@@ -99,7 +99,10 @@ def verified_local_map(directory, asset, portal, cancel=None):
     digest = hashlib.sha256()
     with os.fdopen(os.open(target, flags), "rb") as stream:
         opened = os.fstat(stream.fileno())
-        if not stat.S_ISREG(opened.st_mode) or _signature(before) != _signature(opened):
+        # Windows may expose different ctime precision through a path and a
+        # handle. Compare identity/size/mtime across APIs, then compare the
+        # complete signatures within each API before and after the read.
+        if not stat.S_ISREG(opened.st_mode) or _signature(before)[:4] != _signature(opened)[:4]:
             raise ValidationError(error)
         remaining = asset["bytes"]
         while chunk := stream.read(min(1024 * 1024, remaining + 1)):

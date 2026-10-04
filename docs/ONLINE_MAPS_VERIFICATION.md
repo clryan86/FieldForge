@@ -16,7 +16,7 @@ portal, checks the current catalog and downloads sequentially. Completed maps
 are retained on interruption and verified locally before reuse on a retry.
 Partial-file byte-range resumption remains future work.
 
-Python 3.12.14 local headless result: **2,162 passed**, 529 GUI/browser skips,
+Python 3.12.14 local headless result: **2,164 passed**, 529 GUI/browser skips,
 78 subtests passed and two existing PDF-fixture deprecation warnings. Ruff and
 JavaScript syntax checks pass. Real desktop and browser workflows are required
 by the PR's CI jobs, including Windows publication and frozen delivery checks.
@@ -28,6 +28,14 @@ an active transfer. GUI tests cover review/import/export, offline editing,
 explicit batch start, cancellation, foreign-portal controls and Tk cleanup.
 The browser test exports selections across pages/filters while offline, then
 imports and downloads that exact list with a separately connected real client.
+
+The initial hosted run caught a queued-selection event in the GUI test and a
+Windows path/handle ctime precision difference in completed-map verification.
+The test now processes the selection event before clicking Add. Reuse compares
+identity, size and mtime across path/handle APIs, then compares each API's full
+signature across the read and verifies SHA-256. Two additional regressions
+accept stable cross-API ctime differences while rejecting a change during the
+read. The PR links the corrected platform run and its Windows package.
 
 ## Portal home, consent, map discovery and inventory extension
 
