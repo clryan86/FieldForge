@@ -211,7 +211,7 @@ jobs:
       - name: Blueprint desktop, imports and archive compatibility
         env:
           FIELDFORGE_REQUIRE_GUI: "1"
-        run: python -m pytest -o addopts='' --capture=sys -q -ra tests/test_blueprint_delivery.py tests/test_knowledge_ui.py tests/test_blueprints.py tests/test_blueprint_acceptance.py tests/test_blueprint_clearance.py tests/test_blueprint_comparison.py tests/test_blueprint_diagnostics.py tests/test_blueprint_drawings.py tests/test_blueprint_evidence.py tests/test_blueprint_geometry.py tests/test_blueprint_parameters.py tests/test_blueprint_projects.py tests/test_blueprint_review_files.py tests/test_blueprint_revision.py tests/test_local_model.py tests/test_database_archive.py tests/test_reference_library.py tests/test_education_library.py
+        run: python -m pytest -o addopts='' --capture=sys -q -ra tests/test_education_studio.py tests/test_blueprint_delivery.py tests/test_knowledge_ui.py tests/test_blueprints.py tests/test_blueprint_acceptance.py tests/test_blueprint_clearance.py tests/test_blueprint_comparison.py tests/test_blueprint_diagnostics.py tests/test_blueprint_drawings.py tests/test_blueprint_evidence.py tests/test_blueprint_geometry.py tests/test_blueprint_parameters.py tests/test_blueprint_projects.py tests/test_blueprint_review_files.py tests/test_blueprint_revision.py tests/test_local_model.py tests/test_database_archive.py tests/test_reference_library.py tests/test_education_library.py
 
   windows-download:
     # Publish only the verified build of main, never a pull request's code/token.
@@ -236,7 +236,7 @@ jobs:
           assert report['status'] == 'passed' and report['packaged']
           assert report['build']['source_commit'] == os.environ['GITHUB_SHA']
           assert report['relocated_away_from_source'] and report['inherited_user_data_untouched']
-          assert len(report['checks']) == 9
+          assert len(report['checks']) == 10
           PY
       - name: Publish downloadable development build
         working-directory: delivery
@@ -247,6 +247,8 @@ jobs:
           tag="desktop-${GITHUB_RUN_NUMBER}-${GITHUB_SHA:0:7}"
           cat > RELEASE.txt <<'NOTES'
           Download **FieldForge-Windows-x64.zip**, extract the entire folder, then open **FieldForge.exe**. Python is included.
+
+          **Education** is now a main desktop section: five guided measurement-to-blueprint lessons, diagrams, 25 guided exercises with hints and common-mistake feedback, and all 172 original reference lessons. Responses and explanations save locally and survive full database backup/restore. Export a printable offline worksheet with a separate answer key. Numeric checks and written self-review are clearly distinguished; no model is required.
 
           **Blueprints** is beside Dashboard. Choose **Create layout from dimensions** to enter parts and generate drawings without an AI model. Save, edit and export from the engineering workspace. The optional AI makers require a separately installed local Ollama model.
 

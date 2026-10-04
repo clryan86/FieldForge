@@ -13,6 +13,12 @@ rectangular part envelopes; structural analysis and fabrication CAD are not
 implemented. AI design quality and education learning outcomes have not been
 independently evaluated.
 
+**Education is a main desktop tab.** Start with the five guided **Measure & plan**
+lessons: diagrams, worked examples, practice, hints, and feedback for common
+mistakes. All 172 original education lessons are searchable in the same workspace.
+Responses and explanations save on this device and in full database backups;
+export an offline worksheet for printing. See [Education workspace](docs/EDUCATION_STUDIO.md).
+
 For the ready-to-run Windows program, open [Releases](https://github.com/clryan86/FieldForge/releases)
 and choose **FieldForge-Windows-x64.zip** from a tested desktop build. Extract the
 whole ZIP, then open **FieldForge.exe**. GitHub's **Code → Download ZIP** supplies

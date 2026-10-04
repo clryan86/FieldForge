@@ -26,6 +26,23 @@ the three makers. AI generation requires a separately installed Ollama model.
 These are draft layouts: rectangular part envelopes, not joints, structural
 analysis or fabrication-ready CAD. Real-model design quality is not benchmarked.
 
+EDUCATION
+Education is a main desktop tab after Blueprints. At smaller window sizes use
+Go to section → Education. Start with Guided: Measure & plan for five connected
+lessons on fractions, measurement, area, scale drawings and a paper plan review.
+Choose Practice & explain to attempt new questions, ask for hints and compare
+worked answers. All 172 original reference lessons are searchable using All lessons.
+No library import, internet or AI model is needed for this section.
+
+Responses and explanations save on this device automatically, when changing
+questions, before a full backup and on normal close. Numeric answers are checked
+exactly; prose responses are self-reviewed, not AI-graded. Equivalent fractions
+and decimals are accepted, but rounded approximations are not. The saved record
+distinguishes shown hints, answer reveals and self-review. It does not measure mastery.
+This version has one personal practice record per database, not separate learner
+profiles. Export worksheet saves the current lesson and responses to a new HTML
+file with a collapsible answer key. Open it in a browser to read or print offline.
+
 YOUR EXISTING DATA
 The default is %USERPROFILE%\.fieldforge\playground.db, matching the existing
 Start FieldForge.cmd source launcher. FIELDFORGE_DB overrides the default.
@@ -60,7 +77,9 @@ Check Installation.cmd runs opt-in checks on generated temporary examples, not
 your selected database. It checks bundled lessons, PDF text extraction through
 the helper process, original PDF preservation, full snapshot recovery, portable
 HTML generation, map tile reading and Tk image decoding. On Windows it also opens
-the blueprint form, creates a layout and verifies saved/exported geometry. It opens
+the blueprint form, creates a layout and verifies saved/exported geometry. It also
+attempts education questions, checks feedback, saves and restores practice, and
+exports a worksheet using generated records. It opens
 and normally closes a recovered desktop and the recovery-only window. Temporary
 files are removed normally, not securely erased. No diagnostic report is uploaded
 or automatically written into your application database. The command prints its

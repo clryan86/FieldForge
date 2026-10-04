@@ -115,6 +115,12 @@ def _summarize(database: Path) -> tuple[tuple[tuple[str, int | None], ...], tupl
             if not {"household_members", "knowledge_articles"}.intersection(objects):
                 raise ValueError("archive contains SQLite data, but no recognized FieldForge records")
             warnings = []
+            if "education_work_v1" in objects:
+                required = {"lesson", "question", "fingerprint", "payload", "revision"}
+                if not required <= columns("education_work_v1"):
+                    raise ValueError("unrecognized education practice schema in backup")
+                counts.append(("Education practice records", db.execute(
+                    "SELECT COUNT(*) FROM education_work_v1").fetchone()[0]))
             for table, key, expected in (("metadata", "schema_version", "2"),
                                           ("knowledge_state", "pathways_schema", "1")):
                 if table in objects:

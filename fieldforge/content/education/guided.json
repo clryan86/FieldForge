@@ -1,0 +1,601 @@
+{
+  "edition": "guided-study-2026-10-04",
+  "license": "CC BY-SA 4.0",
+  "authorship": "Original AI-assisted FieldForge teaching drafts, not independently educator-reviewed.",
+  "references": [
+    "Instructional design background: IES / What Works Clearinghouse, Organizing Instruction and Study to Improve Student Learning. Worked examples, practice, explanations and diagrams inform the design; this course has not been validated by the guide. Accessed 2026-10-04.\nhttps://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+    "Mathematical background: OpenStax, Prealgebra 2e, 9.4 Use Properties of Rectangles, Triangles, and Trapezoids. FieldForge's examples and questions are original. Accessed 2026-10-04.\nhttps://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids"
+  ],
+  "lessons": [
+    {
+      "id": "guide-fractions",
+      "title": "1 · Fractions you can see and explain",
+      "track": "Guided: Measure & plan",
+      "goal": "Name a fraction of a stated whole, recognize equivalent fractions, and find a fraction of a length.",
+      "materials": "Paper, pencil and optional ruler. All dimensions are fictional learning examples. No construction or tool use is required.",
+      "paragraphs": [
+        "START WITH A PREDICTION\nDraw a strip and split it into four equal pieces. Shade two. Before calculating, decide whether this is less than, equal to, or more than half the strip. Say what the whole is.",
+        "BUILD THE IDEA\nA fraction counts equal parts of one stated whole. The denominator tells how many equal parts make the whole; the numerator counts selected parts. Two of four equal parts is 2/4. Unequal pieces cannot be counted as fourths just because there are four pieces. The size of the whole matters: half a long strip need not equal half a short strip.",
+        "WORKED EXAMPLE · SAME AMOUNT, DIFFERENT PARTS\n1. Start with a 20 cm strip. One half is 10 cm.\n2. Split the same strip into four equal pieces. Each is 20 ÷ 4 = 5 cm.\n3. Two pieces measure 2 × 5 = 10 cm. So 2/4 and 1/2 describe the same portion of this whole.\nCheck: both cover exactly the same length, even though the piece count differs.",
+        "WORKED EXAMPLE · A FRACTION OF A LENGTH\nFind 3/4 of a 28 cm strip. First find one fourth: 28 ÷ 4 = 7 cm. Then take three: 3 × 7 = 21 cm. Check that 21 cm is less than the whole 28 cm and more than half (14 cm). Dividing by the numerator first would answer a different question.",
+        "YOUR TURN\nUse Practice for new numbers. Write the number or fraction in the answer field and explain your grouping in the explanation field. Equivalent exact answers such as 1/2 and 0.5 are accepted. For a non-terminating decimal, use a fraction rather than a rounded approximation.",
+        "CHECK YOUR EXPLANATION\nIf you added 1/2 and 1/4 as 2/6, make both pieces the same size first: one half is two fourths, so two fourths plus one fourth is three fourths. The denominator names the part size; it is not a count to add. On another day, draw a new strip and explain this without looking at the worked example."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "A strip is divided into eight equal parts. Three are shaded. What fraction is shaded?",
+          "answer": "3/8",
+          "unit": "of the whole",
+          "explanation": "Eight equal parts make the whole; three are selected. The fraction is 3/8, which is less than 1/2 because 3 is less than 4 of the eight parts.",
+          "hints": [
+            "Which count describes all the equal parts?",
+            "Put the shaded count over the total count."
+          ],
+          "mistakes": [
+            [
+              "8/3",
+              "The numerator counts the shaded parts. You reversed the selected count and the whole-part count."
+            ]
+          ],
+          "id": "q1"
+        },
+        {
+          "kind": "number",
+          "prompt": "Six of twelve equal parts are shaded. Express the shaded amount as a fraction or decimal.",
+          "answer": "1/2",
+          "unit": "of the whole",
+          "explanation": "Divide both counts by 6: 6/12 = 1/2. The exact-value checker also accepts equivalent values; check for yourself that your written fraction is simplified.",
+          "hints": [
+            "Pair each shaded part with one unshaded part.",
+            "Divide numerator and denominator by the same common factor."
+          ],
+          "mistakes": [
+            [
+              "1/6",
+              "Simplifying must divide BOTH counts by the same number, so the amount stays the same."
+            ]
+          ],
+          "id": "q2"
+        },
+        {
+          "kind": "number",
+          "prompt": "What is 3/4 of a 32 cm strip?",
+          "answer": "24",
+          "unit": "cm",
+          "explanation": "One fourth is 32 ÷ 4 = 8 cm. Three fourths is 3 × 8 = 24 cm. It lies between half the length (16 cm) and the whole (32 cm).",
+          "hints": [
+            "Find one of the four equal parts first.",
+            "One fourth is 8 cm. How long are three such parts?"
+          ],
+          "mistakes": [
+            [
+              "8",
+              "You found one fourth. The question asks for three of those equal parts."
+            ],
+            [
+              "128",
+              "Multiplying by 4 makes the strip longer. A positive proper fraction of a length must be smaller than the whole."
+            ]
+          ],
+          "id": "q3"
+        },
+        {
+          "kind": "number",
+          "prompt": "Fresh check: what fraction is 1/2 + 1/4 of the SAME whole?",
+          "answer": "3/4",
+          "unit": "of the whole",
+          "explanation": "Use equal-sized pieces: 1/2 = 2/4, then 2/4 + 1/4 = 3/4. Only the selected-part count is added.",
+          "hints": [
+            "Rename the half using fourths.",
+            "Count two fourths plus one fourth."
+          ],
+          "mistakes": [
+            [
+              "1/3",
+              "2/6 equals 1/3. Adding denominators changes the size of the pieces; rename both fractions in fourths first."
+            ]
+          ],
+          "id": "q4"
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Someone says: 'Half of every strip is the same length.' Explain why this is incomplete using two different whole lengths.",
+          "answer": "Compare your explanation",
+          "unit": "",
+          "explanation": "A complete explanation identifies each whole and calculates its half. For example, half of 10 cm is 5 cm, while half of 18 cm is 9 cm. The fraction is the same; the whole lengths differ. Revise if you gave only a calculation without saying what changed.",
+          "hints": [
+            "State what each number measures. Use a sketch or a concrete example."
+          ],
+          "mistakes": [],
+          "id": "q5"
+        }
+      ],
+      "diagram": {
+        "kind": "fraction",
+        "parts": 8,
+        "selected": 3,
+        "description": "Diagram: a single strip is split into eight equal cells. The first three are shaded and marked X. Selected amount: 3/8 of this whole."
+      },
+      "prerequisites": []
+    },
+    {
+      "id": "guide-length",
+      "title": "2 · Measure from a start point and keep units",
+      "track": "Guided: Measure & plan",
+      "goal": "Subtract ruler endpoints and convert the same length between metres, centimetres and millimetres.",
+      "materials": "Paper, pencil and optional ruler. All dimensions are fictional learning examples. No construction or tool use is required.",
+      "paragraphs": [
+        "START WITH A PREDICTION\nAn object begins at the 2 cm mark and ends at the 9 cm mark. Is its length 9 cm? Sketch both endpoints before answering. Counting the spaces between marks can help.",
+        "BUILD THE IDEA\nA ruler label gives a position. Length is the distance between two positions: end minus start, using the same unit. A broken ruler can still measure if both positions are readable. Here the length is 9 − 2 = 7 cm. Starting at zero makes the subtraction less visible; it does not remove it.",
+        "WORKED EXAMPLE · ENDPOINTS\nA paper edge runs from 1.5 cm to 8 cm. Subtract 8 − 1.5 = 6.5 cm. Check: adding the length back to the start gives 1.5 + 6.5 = 8 cm. Record both unit and result. A display pixel is not a physical centimetre; never measure the on-screen schematic with a real ruler.",
+        "WORKED EXAMPLE · SAME LENGTH, NEW UNIT\n1 m = 100 cm and 1 cm = 10 mm. A 0.45 m strip is 0.45 × 100 = 45 cm, then 45 × 10 = 450 mm. Smaller units require more of them for the same length. Reverse the process: 450 ÷ 10 = 45 cm and 45 ÷ 100 = 0.45 m. The strip never grew.",
+        "COMMON TRAP · CHANGING THE NUMBER BUT LOSING THE UNIT\nWriting 45 alone leaves the length unclear. Before converting, write 'given: 0.45 m; wanted: cm'. Use the known relation, then check whether the numerical size should increase or decrease. For sums, first choose one unit: 20 cm + 0.3 m becomes 20 cm + 30 cm = 50 cm.",
+        "TRY AND EXPLAIN\nPractice uses new endpoints and mixed units. Explain one reverse check. Later, measure an ordinary paper edge twice if a ruler is available; record the markings you could actually read. A conversion does not make a rough physical measurement more precise."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "An edge begins at 3 cm and ends at 11 cm. What is its length?",
+          "answer": "8",
+          "unit": "cm",
+          "explanation": "Length = 11 − 3 = 8 cm. Check: 3 + 8 = 11. The endpoint label 11 cm is a position, not the length from the nonzero start.",
+          "hints": [
+            "Find the gap between the two positions.",
+            "Subtract the starting position from the ending position."
+          ],
+          "mistakes": [
+            [
+              "11",
+              "You reported the end position. The object did not begin at zero."
+            ],
+            [
+              "14",
+              "Adding the positions does not measure the gap between them."
+            ]
+          ],
+          "id": "q1"
+        },
+        {
+          "kind": "number",
+          "prompt": "Convert 0.72 m to centimetres.",
+          "answer": "72",
+          "unit": "cm",
+          "explanation": "0.72 × 100 = 72 cm. A centimetre is a smaller unit than a metre, so this length needs more units. 72 ÷ 100 = 0.72 checks the conversion.",
+          "hints": [
+            "One metre contains 100 centimetres.",
+            "Multiply the metre value by 100."
+          ],
+          "mistakes": [
+            [
+              "7.2",
+              "That uses a factor of 10. There are 100 centimetres per metre."
+            ],
+            [
+              "0.0072",
+              "Dividing goes toward a smaller count. Converting to smaller units needs a larger count."
+            ]
+          ],
+          "id": "q2"
+        },
+        {
+          "kind": "number",
+          "prompt": "Convert 185 mm to centimetres.",
+          "answer": "18.5",
+          "unit": "cm",
+          "explanation": "Ten millimetres make one centimetre, so 185 ÷ 10 = 18.5 cm. Reverse check: 18.5 × 10 = 185 mm.",
+          "hints": [
+            "Centimetres are larger units than millimetres.",
+            "Group the 185 millimetres into groups of ten."
+          ],
+          "mistakes": [
+            [
+              "1850",
+              "Multiplication produces more units, but the target centimetres are larger units."
+            ]
+          ],
+          "id": "q3"
+        },
+        {
+          "kind": "number",
+          "prompt": "Fresh check: a paper strip is 25 cm long and another is 0.4 m long. What is their combined length in centimetres?",
+          "answer": "65",
+          "unit": "cm",
+          "explanation": "Convert 0.4 m to 40 cm, then add 25 + 40 = 65 cm. Adding 25 and 0.4 directly would combine incompatible unit counts.",
+          "hints": [
+            "Convert the metre measurement before adding.",
+            "The second strip is 40 cm long."
+          ],
+          "mistakes": [
+            [
+              "25.4",
+              "You added the raw numbers while the units differed. Convert both lengths to centimetres first."
+            ]
+          ],
+          "id": "q4"
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A learner changes 0.6 m to 60 cm and says the object became 100 times longer. Explain what changed and what stayed fixed.",
+          "answer": "Compare your explanation",
+          "unit": "",
+          "explanation": "State that the physical length is unchanged. The counting unit changed from metres to centimetres; each new unit is one hundredth as long, so the numerical count is multiplied by 100. Include 60 cm ÷ 100 = 0.6 m as a reverse check.",
+          "hints": [
+            "State what each number measures. Use a sketch or a concrete example."
+          ],
+          "mistakes": [],
+          "id": "q5"
+        }
+      ],
+      "diagram": {
+        "kind": "ruler",
+        "start": 2,
+        "end": 9,
+        "maximum": 10,
+        "description": "Diagram: a schematic ruler marked from 0 to 10 cm. A highlighted segment begins at 2 and ends at 9. Seven one-centimetre intervals lie between its endpoints. Not physical screen scale."
+      },
+      "prerequisites": [
+        "guide-fractions"
+      ]
+    },
+    {
+      "id": "guide-area",
+      "title": "3 · Separate the boundary from the surface",
+      "track": "Guided: Measure & plan",
+      "goal": "Choose perimeter or area from a question, justify the units, and check a rectangle using a grid.",
+      "materials": "Paper, pencil and optional ruler. All dimensions are fictional learning examples. No construction or tool use is required.",
+      "paragraphs": [
+        "START WITH A PREDICTION\nImagine placing a line around a paper rectangle, then covering its face with square tiles. These answer different questions. Which one needs a length unit, and which one needs a square unit?",
+        "BUILD THE IDEA\nPerimeter measures the whole boundary. For a rectangle with length L and width W, walk L + W + L + W, or 2 × (L + W). Area counts unit squares covering the surface without overlap. For a rectangle, each of W rows contains L squares: L × W. The dimensions must be in the same unit before either calculation.",
+        "WORKED EXAMPLE · COUNT BOTH\nTake a 6 cm by 4 cm rectangle. Boundary: 6 + 4 + 6 + 4 = 20 cm. Surface: four rows of six 1 cm² squares make 24 cm². The diagram shows the square count. Multiplying 6 cm by 4 cm produces square centimetres; it cannot describe a boundary length.",
+        "WORKED EXAMPLE · CONVERT BEFORE MULTIPLYING\nA paper rectangle is 0.3 m by 20 cm. Convert 0.3 m to 30 cm. Area = 30 × 20 = 600 cm². Check in metres: 0.3 × 0.2 = 0.06 m². One square metre contains 100 × 100 = 10,000 square centimetres, so 0.06 × 10,000 = 600 cm². Linear and area conversion factors differ.",
+        "COMMON TRAP · SAME PERIMETER DOES NOT FORCE SAME AREA\nA 1 cm by 5 cm rectangle has perimeter 12 cm and area 5 cm². A 2 cm by 4 cm rectangle also has perimeter 12 cm, but area 8 cm². Draw both on a grid. The boundary alone does not identify the surface area.",
+        "TRANSFER\nBefore using a drawing to make a material list, name exactly what quantity you need. Covering a face needs area; a line around its edge needs perimeter. These exercises ignore joins, waste and construction constraints. Practice the arithmetic on paper, then explain which real-world information is still missing."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "What is the perimeter of a rectangle 7 cm long and 3 cm wide?",
+          "answer": "20",
+          "unit": "cm",
+          "explanation": "Walk all four sides: 7 + 3 + 7 + 3 = 20 cm. Or calculate 2 × (7 + 3). This is boundary length.",
+          "hints": [
+            "Include both long sides and both short sides.",
+            "Double the sum of one length and one width."
+          ],
+          "mistakes": [
+            [
+              "10",
+              "That counts only one long and one short side. A rectangle has two of each."
+            ],
+            [
+              "21",
+              "7 × 3 counts square units of area. The question asks for boundary length."
+            ]
+          ],
+          "id": "q1"
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the area of that 7 cm by 3 cm rectangle?",
+          "answer": "21",
+          "unit": "cm²",
+          "explanation": "Three rows of seven unit squares give 3 × 7 = 21 cm². The square unit records that you counted a surface.",
+          "hints": [
+            "Imagine rows of one-centimetre squares.",
+            "Multiply the number of squares in a row by the number of rows."
+          ],
+          "mistakes": [
+            [
+              "20",
+              "20 cm is this rectangle's perimeter. Count the surface squares for area."
+            ]
+          ],
+          "id": "q2"
+        },
+        {
+          "kind": "number",
+          "prompt": "A paper rectangle is 0.5 m long and 30 cm wide. Find its area in square centimetres.",
+          "answer": "1500",
+          "unit": "cm²",
+          "explanation": "0.5 m = 50 cm. Area = 50 × 30 = 1500 cm². Check in metres: 0.5 × 0.3 = 0.15 m² = 1500 cm².",
+          "hints": [
+            "First express both dimensions in centimetres.",
+            "The length is 50 cm; multiply by the width of 30 cm."
+          ],
+          "mistakes": [
+            [
+              "15",
+              "0.5 × 30 mixes metre and centimetre counts. Convert the length before multiplying."
+            ],
+            [
+              "160",
+              "160 cm is the perimeter after conversion. Area uses multiplication, not a boundary sum."
+            ]
+          ],
+          "id": "q3"
+        },
+        {
+          "kind": "number",
+          "prompt": "Fresh check: a rectangle has area 48 cm² and width 6 cm. What is its length?",
+          "answer": "8",
+          "unit": "cm",
+          "explanation": "Area = length × width, so length = 48 ÷ 6 = 8 cm. Check: 8 cm × 6 cm = 48 cm².",
+          "hints": [
+            "Which number multiplied by 6 makes 48?",
+            "Divide the area by the known width."
+          ],
+          "mistakes": [
+            [
+              "288",
+              "Multiplying by width again does not undo the area calculation. Use division to find the missing length."
+            ]
+          ],
+          "id": "q4"
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Two rectangles are 2 cm by 6 cm and 3 cm by 5 cm. Compare both perimeters and both areas. Does equal perimeter guarantee equal area?",
+          "answer": "Compare your explanation",
+          "unit": "",
+          "explanation": "First rectangle: perimeter 16 cm, area 12 cm². Second: perimeter 16 cm, area 15 cm². Both perimeters match but the areas differ, so equal perimeter does not guarantee equal area. Include units and explain what the counterexample disproves.",
+          "hints": [
+            "State what each number measures. Use a sketch or a concrete example."
+          ],
+          "mistakes": [],
+          "id": "q5"
+        }
+      ],
+      "diagram": {
+        "kind": "grid",
+        "columns": 6,
+        "rows": 4,
+        "description": "Diagram: a rectangle has six columns and four rows of equal 1 cm² cells. There are 24 cells inside; its boundary consists of sides 6, 4, 6 and 4 cm long."
+      },
+      "prerequisites": [
+        "guide-length"
+      ]
+    },
+    {
+      "id": "guide-scale",
+      "title": "4 · Translate a scale drawing into dimensions",
+      "track": "Guided: Measure & plan",
+      "goal": "Interpret drawing-to-object scale, convert in both directions, and avoid applying a length factor to area.",
+      "materials": "Paper, pencil and optional ruler. All dimensions are fictional learning examples. No construction or tool use is required.",
+      "paragraphs": [
+        "START WITH A PREDICTION\nA scale label says drawing : object = 1 : 10. One centimetre on the drawing represents ten centimetres on the object. Should the drawn length be larger or smaller than the object? The order of the ratio is part of its meaning.",
+        "BUILD THE IDEA\nAt drawing : object = 1 : n, object length = drawing length × n and drawing length = object length ÷ n, when the units match. Written dimensions usually describe the intended object; the little picture may be schematic. Do not measure a resized screen picture to infer a missing dimension.",
+        "WORKED EXAMPLE · READ THE DRAWING\nA paper plan uses 1 : 20. A marked line measures 4 cm on that plan. Object length = 4 × 20 = 80 cm = 0.8 m. Reverse check: 80 ÷ 20 = 4 cm. A note '80 cm' attached to a dimension line already states the object size; it should not be multiplied by the scale again.",
+        "WORKED EXAMPLE · MAKE THE DRAWING\nAn object is 150 cm long. At 1 : 25 its drawn length is 150 ÷ 25 = 6 cm. Its width of 50 cm becomes 2 cm. Draw a 6 cm by 2 cm rectangle and label its intended dimensions 150 cm by 50 cm plus the scale. If the drawing is resized, the labels remain meaningful but ruler measurements no longer use the original scale.",
+        "COMMON TRAP · AREA SCALES IN TWO DIRECTIONS\nAt 1 : 10, a drawn 3 cm by 2 cm rectangle represents 30 cm by 20 cm. Drawn area is 6 cm²; object area is 600 cm². Both dimensions grew by 10, so the area grew by 10 × 10 = 100. Multiplying the drawn area by 10 only accounts for one direction.",
+        "TRANSFER TO BLUEPRINTS\nUse the Blueprints section to enter the intended object dimensions, such as 80 cm, rather than the small drawn length. Its rectangular layout records geometry; completing these paper exercises does not establish the design's structural suitability. Before entering numbers, make a dimension list with names and units."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "At drawing : object = 1 : 10, a line is 6 cm on the drawing. What object length does it represent?",
+          "answer": "60",
+          "unit": "cm",
+          "explanation": "Each drawing centimetre represents 10 object centimetres: 6 × 10 = 60 cm. The object is larger than the drawing.",
+          "hints": [
+            "Read the ratio in the stated direction.",
+            "Multiply the drawn length by ten."
+          ],
+          "mistakes": [
+            [
+              "0.6",
+              "Division gives an even smaller length. This direction goes from the reduced drawing to the larger object."
+            ]
+          ],
+          "id": "q1"
+        },
+        {
+          "kind": "number",
+          "prompt": "An object length is 120 cm. At 1 : 20, how long should the line be on the drawing?",
+          "answer": "6",
+          "unit": "cm",
+          "explanation": "Drawing length = 120 ÷ 20 = 6 cm. Check by multiplying 6 × 20 to recover 120 cm.",
+          "hints": [
+            "You are making a smaller drawing of the object.",
+            "Divide the object length by twenty."
+          ],
+          "mistakes": [
+            [
+              "2400",
+              "Multiplication is the other direction. The drawn length should be smaller than 120 cm."
+            ]
+          ],
+          "id": "q2"
+        },
+        {
+          "kind": "number",
+          "prompt": "A 1 : 10 drawing contains a 4 cm by 3 cm rectangle. What object AREA does it represent?",
+          "answer": "1200",
+          "unit": "cm²",
+          "explanation": "Convert both lengths: 40 cm by 30 cm. Area = 40 × 30 = 1200 cm². Equivalently, 12 cm² × 10² = 1200 cm².",
+          "hints": [
+            "Scale both dimensions before finding area.",
+            "The object is 40 cm by 30 cm."
+          ],
+          "mistakes": [
+            [
+              "120",
+              "You applied the factor to only one dimension. Area grows by the product of both length factors."
+            ],
+            [
+              "140",
+              "140 cm is the object's perimeter. The question asks for square units of area."
+            ]
+          ],
+          "id": "q3"
+        },
+        {
+          "kind": "number",
+          "prompt": "Fresh check: at 1 : 25 a line is 8 cm long on paper. What object length does it represent in metres?",
+          "answer": "2",
+          "unit": "m",
+          "explanation": "8 × 25 = 200 cm, then 200 ÷ 100 = 2 m. Keep the scale step and the unit conversion step separate.",
+          "hints": [
+            "First find the object length in centimetres.",
+            "Convert 200 cm to metres."
+          ],
+          "mistakes": [
+            [
+              "200",
+              "Your scale calculation gives centimetres. The answer field asks for metres."
+            ],
+            [
+              "0.32",
+              "Dividing by 25 goes from object to drawing; this question goes the other way."
+            ]
+          ],
+          "id": "q4"
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A drawing labeled 1 : 20 is enlarged on a screen, but its printed dimension label still says 80 cm. Which number belongs in a blueprint's object-length field, and why?",
+          "answer": "Compare your explanation",
+          "unit": "",
+          "explanation": "Use the intended dimension, 80 cm, provided the drawing's label is the authoritative specification for this exercise. A screen resize changes displayed distances, so measuring the image against a ruler cannot recover the old physical paper scale. Explain that the dimension label is already an object measurement and must not be multiplied by 20 again.",
+          "hints": [
+            "State what each number measures. Use a sketch or a concrete example."
+          ],
+          "mistakes": [],
+          "id": "q5"
+        }
+      ],
+      "diagram": {
+        "kind": "scale",
+        "description": "Diagram: a small rectangle labeled drawing (3 cm × 2 cm) points to a larger rectangle labeled object (30 cm × 20 cm), using drawing : object = 1 : 10. The rectangles are schematic, not measurable screen scale."
+      },
+      "prerequisites": [
+        "guide-area"
+      ]
+    },
+    {
+      "id": "guide-project",
+      "title": "5 · Review a paper panel plan",
+      "track": "Guided: Measure & plan",
+      "goal": "Combine unit conversions, fractions, area and scale; then state what a simple drawing does and does not establish.",
+      "materials": "Paper, pencil and optional ruler. All dimensions are fictional learning examples. No construction or tool use is required.",
+      "paragraphs": [
+        "PROJECT BRIEF\nPlan a fictional rectangular paper display. Its intended outer dimensions are 60 cm by 40 cm. A diagram will use drawing : object = 1 : 10. Two equal rectangular sheets cover the face side by side along its 60 cm dimension, with no overlap or gap in this ideal paper model. Record all assumptions before calculating.",
+        "WORKED PLANNING METHOD · A DIFFERENT EXAMPLE\nFor a 50 cm by 30 cm face at 1 : 5: write 50 ÷ 5 = 10 cm and 30 ÷ 5 = 6 cm for the drawing. Two equal side-by-side sheets are each 25 cm by 30 cm. Their total area is 2 × 25 × 30 = 1500 cm², matching 50 × 30. This agreement checks the ideal partition; it does not check material strength.",
+        "PLAN BEFORE CALCULATING\n1. List the intended object dimensions and requested output units.\n2. Sketch which direction is divided into two sheets.\n3. Calculate each sheet's dimensions.\n4. Compare the sum of sheet areas with the full rectangle.\n5. Convert drawing dimensions independently and check the same ratio in both directions.",
+        "INDEPENDENT PRACTICE\nThe Practice tab returns to the 60 cm by 40 cm brief. Try the first four questions without hints, then use the explanation task to audit an incomplete claim. You may consult earlier lessons at any time; the record distinguishes shown hints and answers, but cannot detect every kind of help you use.",
+        "HANDOVER\nWrite a plain-language note someone else could follow: object dimensions, each sheet's dimensions, units, scale, and the no-gap/no-overlap assumption. Include the checks you performed. If moving to Blueprints, enter object dimensions with explicit units; choose thickness only from an actual specification, not from this face-area exercise.",
+        "REVISIT LATER\nRepeat on another day with a new 80 cm by 30 cm paper face, two equal sheets split along the 80 cm side, and a 1 : 10 diagram. Check independently: each sheet is 40 cm by 30 cm; total area is 2400 cm²; drawing is 8 cm by 3 cm. Explain your method before uncovering these numbers in your notes. These are practice checks, not a pass/fail qualification."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "For the 60 cm by 40 cm brief, what is the LONGER dimension of the 1 : 10 drawing?",
+          "answer": "6",
+          "unit": "cm",
+          "explanation": "60 ÷ 10 = 6 cm. The shorter drawing dimension would be 40 ÷ 10 = 4 cm; both use the same reduction.",
+          "hints": [
+            "The longer object dimension is 60 cm.",
+            "Reduce it by a factor of ten."
+          ],
+          "mistakes": [
+            [
+              "600",
+              "You enlarged the object length. A 1 : 10 drawing is smaller."
+            ],
+            [
+              "4",
+              "That is the shorter drawn dimension. Re-read which side is requested."
+            ]
+          ],
+          "id": "q1"
+        },
+        {
+          "kind": "number",
+          "prompt": "Two equal sheets split the 60 cm side of the face. What is each sheet's width along that side?",
+          "answer": "30",
+          "unit": "cm",
+          "explanation": "Each sheet occupies half of 60 cm: 60 ÷ 2 = 30 cm. Each sheet still spans the other full dimension, 40 cm.",
+          "hints": [
+            "The two widths must add back to 60 cm.",
+            "Find half of 60 cm."
+          ],
+          "mistakes": [
+            [
+              "20",
+              "You halved the other dimension. The brief specifies a split along the 60 cm side."
+            ]
+          ],
+          "id": "q2"
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the combined area of both sheets in the ideal no-gap/no-overlap model?",
+          "answer": "2400",
+          "unit": "cm²",
+          "explanation": "Each sheet is 30 × 40 = 1200 cm². Two sheets total 2400 cm², matching the full face: 60 × 40 = 2400 cm².",
+          "hints": [
+            "Compute one sheet's area, then count both sheets.",
+            "One sheet has area 1200 cm²."
+          ],
+          "mistakes": [
+            [
+              "1200",
+              "That is one sheet. The brief asks for the combined area of both."
+            ],
+            [
+              "200",
+              "200 cm describes the outside perimeter, not the face area."
+            ]
+          ],
+          "id": "q3"
+        },
+        {
+          "kind": "number",
+          "prompt": "Fresh check: write the full 60 cm object length in millimetres for a dimension list.",
+          "answer": "600",
+          "unit": "mm",
+          "explanation": "60 cm × 10 mm/cm = 600 mm. It is still the same length. The drawing's 6 cm should not replace this object dimension.",
+          "hints": [
+            "Each centimetre contains ten millimetres.",
+            "Convert the object dimension, not the drawn dimension."
+          ],
+          "mistakes": [
+            [
+              "60",
+              "The unit changed, so the numerical count must change too."
+            ],
+            [
+              "6",
+              "6 cm is the small drawing length. This asks for the full object length in millimetres."
+            ]
+          ],
+          "id": "q4"
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A handover says: 'The two sheet areas add up correctly, so the display is strong enough.' Review that claim and write a better handover with dimensions, assumptions and limits.",
+          "answer": "Compare your explanation",
+          "unit": "",
+          "explanation": "Include: intended face 60 × 40 cm; each sheet 30 × 40 cm; total ideal area 2400 cm²; 1 : 10 drawing 6 × 4 cm; no overlap or gap. Area equality checks the arithmetic and partition only. It does not establish material strength, thickness, fasteners, support or service conditions. Name those missing inputs rather than certifying a physical design.",
+          "hints": [
+            "State what each number measures. Use a sketch or a concrete example."
+          ],
+          "mistakes": [],
+          "id": "q5"
+        }
+      ],
+      "diagram": {
+        "kind": "grid",
+        "columns": 6,
+        "rows": 4,
+        "description": "Diagram: six columns and four rows represent a 60 cm by 40 cm face. Each cell now represents 10 cm by 10 cm, or 100 cm². The same grid shape can represent different dimensions; read the caption."
+      },
+      "prerequisites": [
+        "guide-fractions",
+        "guide-length",
+        "guide-area",
+        "guide-scale"
+      ]
+    }
+  ]
+}
