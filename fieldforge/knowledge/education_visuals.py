@@ -39,24 +39,29 @@ def counter_scene(diagram: dict, index: int, width: float = 640) -> tuple[Counte
         raise ValueError("Invalid counting step or width")
     groups = diagram["steps"][index]["groups"]
     panel = (width - 24 - 6 * (len(groups) - 1)) / len(groups)
-    result = [CounterMark("text", (width / 2, 10), "Rod = ten ones; circle = one")]
+    legend = "Rod = ten ones; circle = one" if any(g["tens"] for g in groups) else "Each circle represents one"
+    result = [CounterMark("text", (width / 2, 10), legend)]
     for i, group in enumerate(groups):
         left = 12 + i * (panel + 6)
         center = left + panel / 2
         result.append(CounterMark("box", (left, 20, left + panel, 165)))
         result.append(CounterMark("text", (center, 31), group["label"]))
         tens, ones = group["tens"], group["ones"]
-        start = center - (tens * 9 - 2) / 2
+        rod_step = min(16, (panel - 16) / max(1, tens))
+        rod_width = rod_step * .75
+        start = center - ((tens - 1) * rod_step + rod_width) / 2
         for rod in range(tens):
-            x = start + rod * 9
+            x = start + rod * rod_step
             for cell in range(10):
-                y = 46 + cell * 5
-                result.append(CounterMark("ten", (x, y, x + 7, y + 5)))
+                y = 42 + cell * 6
+                result.append(CounterMark("ten", (x, y, x + rod_width, y + 6)))
         columns = min(ones, 5)
-        start = center - max(0, columns - 1) * 10 / 2
+        spacing = min(18, (panel - 16) / max(1, columns))
+        radius = min(6, spacing / 3)
+        start = center - max(0, columns - 1) * spacing / 2
         for one in range(ones):
-            x, y = start + one % 5 * 10, 113 + one // 5 * 11
-            result.append(CounterMark("one", (x - 3, y - 3, x + 3, y + 3)))
+            x, y = start + one % 5 * spacing, 116 + one // 5 * 13
+            result.append(CounterMark("one", (x - radius, y - radius, x + radius, y + radius)))
         if not tens and not ones:
             result.append(CounterMark("text", (center, 89), "Empty: 0"))
     return tuple(result)
@@ -78,7 +83,7 @@ def counters_svg(diagram: dict, index: int) -> str:
         else:
             x, y, right, bottom = mark.coords
             if mark.kind == "one":
-                parts.append(f"<circle cx='{(x + right) / 2}' cy='{(y + bottom) / 2}' r='3' fill='#2c7f99'/>")
+                parts.append(f"<circle cx='{(x + right) / 2}' cy='{(y + bottom) / 2}' r='{(right - x) / 2}' fill='#2c7f99'/>")
             else:
                 fill = "#dcebf0" if mark.kind == "ten" else "none"
                 parts.append(f"<rect x='{x}' y='{y}' width='{right - x}' height='{bottom - y}' "

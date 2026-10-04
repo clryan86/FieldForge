@@ -197,16 +197,21 @@ class EducationTab(ttk.Frame):
         rows = [lesson for lesson in self.catalog
                 if (self.track.get() == "All lessons" or lesson.track == self.track.get())
                 and query in " ".join((lesson.title, lesson.goal, *lesson.paragraphs)).casefold()]
-        self._loading = True
-        self.tree.delete(*self.tree.get_children())
-        for lesson in rows:
-            self.tree.insert("", "end", iid=lesson.id, text=lesson.title)
-        self._loading = False
+        self._populate_lessons(rows)
         if rows:
             selected = self.lesson.id if self.lesson and self.lesson.id in {r.id for r in rows} else rows[0].id
             self.open_lesson(selected)
         else:
             self.status.set("No lessons match. Clear the search or choose All lessons. Your current work remains open.")
+
+    def _populate_lessons(self, rows):
+        self._loading = True
+        try:
+            self.tree.delete(*self.tree.get_children())
+            for lesson in rows:
+                self.tree.insert("", "end", iid=lesson.id, text=lesson.title)
+        finally:
+            self._loading = False
 
     def _select_lesson(self, _event):
         selected = self.tree.selection()
@@ -226,9 +231,15 @@ class EducationTab(ttk.Frame):
             return False
         self.lesson, self.question_index, self.work = lesson, 0, work
         self.diagram_index = 0
-        if self.tree.exists(key):
-            self.tree.selection_set(key)
-            self.tree.see(key)
+        if not self.tree.exists(key):
+            # A prerequisite or saved lesson can be outside the current filter.
+            # Select it in the browser too, so queued selection events cannot
+            # reopen the previously selected lesson after navigation finishes.
+            self.track.set(lesson.track)
+            self.search.set("")
+            self._populate_lessons([item for item in self.catalog if item.track == lesson.track])
+        self.tree.selection_set(key)
+        self.tree.see(key)
         self.title.configure(text=lesson.title)
         values = [self.by_id[key].title for key in lesson.prerequisites]
         self.prerequisite.configure(values=values)

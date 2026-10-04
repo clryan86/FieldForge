@@ -110,6 +110,8 @@ def test_exports_contain_every_step_source_and_escaped_personal_work():
             assert all("href" not in attr for item in diagram.iter() for attr in item.attrib)
         assert "Practice source text" in page
     diagram = deepcopy(course()[0].diagram)
+    assert all(float(dot.attrib["r"]) == 6 for dot in ET.fromstring(counters_svg(diagram, 0)).findall(
+        ".//{http://www.w3.org/2000/svg}circle"))
     diagram["steps"][0]["title"] = "<unsafe> & title"
     assert ET.fromstring(counters_svg(diagram, 0)).find("{http://www.w3.org/2000/svg}title").text == "<unsafe> & title"
 
@@ -182,7 +184,10 @@ def test_gui_default_course_all_steps_legacy_diagrams_and_preserved_practice(roo
     assert not tab.diagram_frame.winfo_ismapped()
     tab.open_lesson("guide-fractions")
     tab.open_prerequisite()
+    root.update()
     assert tab.lesson.id == "number-divide"
+    assert tab.track.get() == "Guided: Numbers & operations"
+    assert tab.tree.selection() == ("number-divide",)
     assert tab.can_close()
     tab.destroy()
     reopened = EducationTab(root, tmp_path / "study.db")
