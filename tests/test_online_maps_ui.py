@@ -1181,6 +1181,7 @@ def test_download_list_survives_filters_and_offline_export_import(screen, tmp_pa
     maps = _two_list_maps(screen, client)
     for index in range(2):
         panel.maps_tree.selection_set(str(index))
+        screen.root.update()
         panel.add_to_list_button.invoke()
     assert len(panel._download_list["maps"]) == 2
     assert panel._download_list["total_bytes"] == sum(item["bytes"] for item in maps)
