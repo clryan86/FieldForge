@@ -65,3 +65,11 @@ run off the UI thread. Clear, permission revocation, replacing a file and close
 remove old imagery; obsolete work cannot repaint it. Regular disk I/O and image
 codec work cannot be forcibly interrupted, so closing requests worker shutdown.
 Images are not stored in the household database or included in its backups.
+
+## Optional online preparation
+
+**Navigation → Online map portal…** supplies explicit address lookup, map downloads
+and planned driving-route GPX when connected to an operator-configured portal.
+The workspace itself continues to read local files offline. See
+[Online map portal](ONLINE_MAP_PORTAL.md) for setup, saving coordinates and maps,
+provider requirements and the limits of planned route geometry.

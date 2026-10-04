@@ -2,7 +2,7 @@
 
 **FieldForge is an offline-first emergency preparedness and survival operations system.**
 
-It is designed to remain useful when the internet, cloud services, cellular networks, or normal infrastructure are unavailable. The project combines local planning tools, resource calculations, household readiness, emergency checklists, an offline knowledge library, and eventually downloadable map packs in one auditable desktop application.
+It is designed to remain useful when the internet, cloud services, cellular networks, or normal infrastructure are unavailable. The project combines local planning tools, resource calculations, household readiness, emergency checklists, an offline knowledge library, and optional downloadable map packs in one auditable desktop application.
 
 > FieldForge is a preparedness and reference tool. It does not replace emergency services, licensed medical care, official evacuation orders, or professional advice.
 
@@ -42,7 +42,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 ### Navigation and mapping
 - Coordinates, distance, bearing, and waypoint tools
-- Offline map-pack interface planned for a later milestone
+- Offline MBTiles and image maps; optional portal downloads, address lookup and planned routes
 - Exportable routes and rendezvous points
 
 ### Privacy and resilience
@@ -127,6 +127,16 @@ layouts are unsupported. **Navigation → Open map image…** opens local map im
 with pan/zoom and an explicit uncalibrated-reference label. Source installations
 use `pip install ".[maps,gps,pdf]"` for image, serial-receiver and PDF support. External map files are **not included in database backups**. See
 [Offline Maps](docs/OFFLINE_MAPS.md) for formats, limits, privacy and separate backups.
+
+## Optional online map portal
+
+**Navigation → Online map portal…** enables address-to-coordinate search, verified
+map downloads and planned driving routes after an explicit connection. Selected
+coordinates can fill the existing place editor; CSV, GPX, MBTiles and image files
+remain usable offline. The browser portal and operator-configured service are
+included. A public deployment, search/routing providers and regional map packs
+still need operator setup; no worldwide data service is bundled. See
+[Online map portal setup and workflow](docs/ONLINE_MAP_PORTAL.md).
 
 ## Windows development application
 

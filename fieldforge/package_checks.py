@@ -123,7 +123,13 @@ def verify_gps_workspace(root) -> None:
 
     workspace = GPSWorkspace(root)
     workers = []
+    portal = None
     try:
+        portal = workspace.open_portal()
+        root.update()
+        _require(portal.session is None and portal.search_entry.instate(["disabled"]),
+                 "Portal must open offline without making requests")
+        portal.close()
         receiver = workspace.open()
         view = receiver.live_map_frame
         workers.append(view._map_reader)
@@ -175,6 +181,9 @@ def verify_gps_workspace(root) -> None:
             _require(callable(serial.Serial), "Packaged serial adapter is unavailable")
     finally:
         workspace.close()
+        if portal is not None:
+            portal.worker.join(2)
+            _require(not portal.worker.is_alive(), "Portal diagnostic worker did not stop")
         for worker in workers:
             worker._thread.join(2)
             _require(not worker._thread.is_alive(), "GPS diagnostic worker did not stop")
@@ -248,7 +257,7 @@ def verify_installation() -> dict[str, object]:
         finally:
             tk_root.destroy()
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
-        checks.append("GPS workspace with fictional tiles/places and JPEG/WebP image rendering; no receiver or recording")
+        checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

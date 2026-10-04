@@ -26,6 +26,7 @@ class PlaceEditor(tk.Toplevel):
         self.store, self.record, self.finished = store, record, finished
         self.changed = False
         self._disposed = False
+        self.online_window = None
         self.title("FieldForge — Edit saved place" if record else "FieldForge — Add a place")
         self.geometry("780x650")
         self.minsize(720, 610)
@@ -57,17 +58,37 @@ class PlaceEditor(tk.Toplevel):
         if point:
             self.note.insert("1.0", point.notes)
         ttk.Label(self, text="Names and coordinates are sensitive even without notes. Records and full backups are unencrypted. "
-                  "No messages, geocoding or online maps are used.", wraplength=680, padding=(16, 10),
+                  "Manual entry works offline. Address lookup sends only searches you enter after connecting to the portal.",
+                  wraplength=680, padding=(16, 10),
                   justify="left").grid(row=7, column=0, columnspan=2, sticky="ew")
         actions = ttk.Frame(self, padding=(16, 0))
         actions.grid(row=8, column=0, columnspan=2, sticky="ew")
         self.save_button = ttk.Button(actions, text="Save place", command=self.save)
         self.save_button.pack(side="right")
         ttk.Button(actions, text="Cancel", command=self.close).pack(side="right", padx=8)
+        ttk.Button(actions, text="Find address online…", command=self.find_address).pack(side="left")
         self.footer = ttk.Label(self, textvariable=self.status, wraplength=680, padding=16, justify="left")
         self.footer.grid(row=9, column=0, columnspan=2, sticky="ew")
         self.initial = self._values()
         self.grab_set()
+
+    def find_address(self):
+        if self.online_window is not None and self.online_window.winfo_exists():
+            self.online_window.lift()
+            return self.online_window
+        from fieldforge.ui.online_maps import OnlineMapWindow
+
+        def use_coordinate(point):
+            self.fields["name"].set(point.label[:200])
+            self.fields["latitude"].set(coordinate_text(point.latitude))
+            self.fields["longitude"].set(coordinate_text(point.longitude))
+            self.note.insert("end", f"\nOnline address match: {point.source}; {point.attribution}. Verify before use.")
+            self.status.set("Online match filled in. Review it and choose Save place; no record has been saved yet.")
+
+        self.online_window = OnlineMapWindow(self, use_coordinate=use_coordinate)
+        self.online_window.return_grab = self
+        self.online_window.grab_set()
+        return self.online_window
 
     def _values(self):
         return (*(self.fields[key].get() for key in self.fields), self.note.get("1.0", "end-1c"))

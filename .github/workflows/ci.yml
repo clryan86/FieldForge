@@ -59,7 +59,7 @@ jobs:
         env:
           FIELDFORGE_REQUIRE_GUI: "1"
         run: |
-          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket_ui.py tests/test_foundations_ui.py tests/test_foundations_integration.py tests/test_originals.py tests/test_originals_ui.py tests/test_originals_integration.py tests/test_places.py tests/test_gpx.py tests/test_places_ui.py tests/test_places_integration.py tests/test_maps.py tests/test_maps_ui.py tests/test_maps_integration.py tests/test_packaged_ui.py tests/test_gps_desktop.py tests/test_raster_maps.py tests/test_image_maps_ui.py tests/test_map_file_identity.py tests/gps_addon'
+          xvfb-run -a sh -c 'python -c "import pypdf; print(pypdf.__version__); import tkinter as tk; root = tk.Tk(); root.destroy()" && python -m pytest -q tests/test_documents_ui.py tests/test_documents_integration.py tests/test_recovery_ui.py tests/test_recovery_integration.py tests/test_supplies_ui.py tests/test_supplies_integration.py tests/test_household_ui.py tests/test_household_integration.py tests/test_emergency_ui.py tests/test_emergency_integration.py tests/test_binder_ui.py tests/test_binder_integration.py tests/test_emergency_actions.py tests/test_emergency_actions_ui.py tests/test_emergency_actions_integration.py tests/test_pdf_import.py tests/test_pdf_import_ui.py tests/test_pdf_import_integration.py tests/test_recreation_ui.py tests/test_recreation_integration.py tests/test_reading_links.py tests/test_reading_links_ui.py tests/test_reading_links_integration.py tests/test_pathways.py tests/test_pathways_ui.py tests/test_pathways_integration.py tests/test_pocket_ui.py tests/test_foundations_ui.py tests/test_foundations_integration.py tests/test_originals.py tests/test_originals_ui.py tests/test_originals_integration.py tests/test_places.py tests/test_gpx.py tests/test_places_ui.py tests/test_places_integration.py tests/test_maps.py tests/test_maps_ui.py tests/test_maps_integration.py tests/test_packaged_ui.py tests/test_gps_desktop.py tests/test_online_portal.py tests/test_online_maps_ui.py tests/test_raster_maps.py tests/test_image_maps_ui.py tests/test_map_file_identity.py tests/gps_addon'
 
   windows-recovery:
     # Keep native Windows/Tcl standard handles stable across test-root teardown.
@@ -104,7 +104,7 @@ jobs:
       - name: Require map, image and GPS workflows on Windows
         env:
           FIELDFORGE_REQUIRE_GUI: "1"
-        run: python -m pytest -o addopts='' --capture=sys -vv --tb=short -ra tests/test_gps_desktop.py tests/test_raster_maps.py tests/test_image_maps_ui.py tests/test_map_file_identity.py tests/test_packaged_ui.py tests/test_windows_build_inputs.py tests/gps_addon
+        run: python -m pytest -o addopts='' --capture=sys -vv --tb=short -ra tests/test_gps_desktop.py tests/test_online_portal.py tests/test_online_maps_ui.py tests/test_raster_maps.py tests/test_image_maps_ui.py tests/test_map_file_identity.py tests/test_packaged_ui.py tests/test_windows_build_inputs.py tests/gps_addon
 
   pocket-browser:
     runs-on: ubuntu-latest
@@ -126,7 +126,7 @@ jobs:
           FIELDFORGE_BROWSER_TESTS: "1"
           FIELDFORGE_BROWSER: ${{ matrix.browser }}
           FIELDFORGE_BROWSER_MODE: "file"
-        run: python -m pytest -o addopts='' -q -ra -s tests/test_pocket_browser.py
+        run: python -m pytest -o addopts='' -q -ra -s tests/test_pocket_browser.py tests/test_online_portal_browser.py
 
   windows-portable:
     needs: [test, text-import-gui, windows-recovery, windows-maps, pocket-browser]

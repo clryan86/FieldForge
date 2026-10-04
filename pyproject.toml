@@ -26,6 +26,7 @@ fieldforge = "fieldforge.cli:main"
 fieldforge-gui = "fieldforge.ui.desktop:run"
 fieldforge-gps = "fieldforge_gps.__main__:main"
 fieldforge-workspace = "fieldforge_gps.live_map_ui:main"
+fieldforge-map-portal = "fieldforge.map_portal:main"
 
 [tool.setuptools.packages.find]
 include = ["fieldforge*"]

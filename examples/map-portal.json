@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "name": "FieldForge map portal",
+  "asset_folder": "maps",
+  "geocoder": null,
+  "router": null,
+  "maps": []
+}
