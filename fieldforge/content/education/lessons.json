@@ -185,6 +185,69 @@
       "scope": "Background on examining source origins, purpose, context and corroboration. All historical records used in the lesson are explicitly fictional teaching examples, not Library of Congress documents.",
       "publisher": "Library of Congress",
       "accessed_on": "2026-10-03"
+    },
+    "decimal-operations": {
+      "title": "Prealgebra 2e: Decimal Operations",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/5-2-decimal-operations",
+      "scope": "Further mathematics reference. The lesson explanations, numerical examples, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "percent-applications": {
+      "title": "Prealgebra 2e: Solve General Applications of Percent",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/6-2-solve-general-applications-of-percent",
+      "scope": "Further mathematics reference. The lesson explanations, numerical examples, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "angles": {
+      "title": "Prealgebra 2e: Use Properties of Angles, Triangles, and the Pythagorean Theorem",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/9-3-use-properties-of-angles-triangles-and-the-pythagorean-theorem",
+      "scope": "Further mathematics reference. The lesson explanations, numerical examples, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "circles": {
+      "title": "Prealgebra 2e: Solve Geometry Applications: Circles and Irregular Figures",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/9-5-solve-geometry-applications-circles-and-irregular-figures",
+      "scope": "Further mathematics reference. The lesson explanations, numerical examples, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "volume": {
+      "title": "Prealgebra 2e: Solve Geometry Applications: Volume and Surface Area",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/9-6-solve-geometry-applications-volume-and-surface-area",
+      "scope": "Further mathematics reference. The lesson explanations, numerical examples, exercises and answers are original; no textbook text or images are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "light": {
+      "title": "Physics: Reflection",
+      "url": "https://openstax.org/books/physics/pages/16-1-reflection",
+      "scope": "Background on ray models and reflected light. The shadow comparison is an original introductory activity and does not cover the full wave behavior of light.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "sound": {
+      "title": "Physics: Wave Properties: Speed, Amplitude, Frequency, and Period",
+      "url": "https://openstax.org/books/physics/pages/13-2-wave-properties-speed-amplitude-frequency-and-period",
+      "scope": "Background on frequency and amplitude. The paper-strip observation and classroom examples are original, qualitative activities rather than acoustic measurements.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "food-webs": {
+      "title": "Aquatic food webs",
+      "url": "https://www.noaa.gov/education/resource-collections/marine-life/aquatic-food-webs",
+      "scope": "Background on producers, consumers, decomposers and food-web connections. The small pond network in the lesson is an explicitly simplified fictional model, not a species survey or NOAA diagram.",
+      "publisher": "National Oceanic and Atmospheric Administration",
+      "accessed_on": "2026-10-03"
+    },
+    "weather-climate": {
+      "title": "What is the difference between weather and climate?",
+      "url": "https://oceanservice.noaa.gov/facts/weather_climate.html",
+      "scope": "Background on weather observations and longer-term climate patterns. The temperature records and interpretation tasks here are fictional and are not a local forecast or climate assessment.",
+      "publisher": "NOAA National Ocean Service",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -2345,6 +2408,669 @@
         "minutes",
         "majority",
         "abstention"
+      ]
+    },
+    {
+      "id": "57",
+      "edition": "2026-10-03",
+      "title": "Read oa, ow and two common oo patterns",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "41",
+        "42"
+      ],
+      "goal": "Read selected long-o and oo words while recognizing that one written pattern can represent different vowel sounds.",
+      "materials": "Cards for boat, coat, road, row, snow, moon, food, book and foot; a proficient speaker to model local English pronunciation.",
+      "lesson": [
+        "In boat, coat and road, oa represents the long-o sound heard in the letter name O. Build boat as b-oa-t, blend it, and connect it to the familiar spoken word. Compare cot with coat to make the changed vowel spelling visible. The two letters work together here; the reader does not pronounce their letter names separately.",
+        "Ow also represents long o in row when row means a line of people, and in snow and grow. Teach each whole word and its meaning. The word row has another pronunciation when it means an argument, and ow represents a different vowel in cow. Therefore, ow is not a reliable instruction to pronounce long o in every word. The next lesson practices the cow pattern explicitly.",
+        "Oo commonly represents the vowel in moon, food and soon, but book, foot and good have a different vowel in many English accents. Sort the printed words after hearing a consistent local model. Do not label every oo word with one sound or treat an accent difference as a reading failure. Blood is another exception to these two groups and needs its own pronunciation taught if introduced.",
+        "Use a short read-and-change routine: read coat, change c to g to make goat, then change t to l to make goal. Explain unfamiliar meanings before a comprehension check, while keeping the decoding task tied to the letters. For spelling practice, say one of the taught words, ask the learner to write or select its letters, and have them read it back. Revisit words in a new order so success does not depend only on a memorized sequence."
+      ],
+      "practice": [
+        "Which vowel spelling is shared by boat and road, and which sound does it represent in these words?",
+        "Sort moon, book, food and foot using the two oo pronunciations modeled in the lesson.",
+        "Why should the learner check the word and meaning before choosing the pronunciation of row?"
+      ],
+      "answers": [
+        "Oa; it represents the long-o sound in these examples.",
+        "Moon and food share one common oo pronunciation; book and foot share the other in many accents. Accept a clearly explained local accent variation.",
+        "The spelling has more than one pronunciation and meaning. A row meaning a line uses long o; a row meaning an argument uses a different vowel."
+      ],
+      "adaptation": "Teach a small group at a time, using spoken vocabulary the learner knows. Preview additional words instead of assuming that mastering this list makes all oa, ow or oo words independently readable.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "vowel-teams",
+        "long-o",
+        "oa",
+        "ow",
+        "oo",
+        "spelling-patterns"
+      ]
+    },
+    {
+      "id": "58",
+      "edition": "2026-10-03",
+      "title": "Read oi, oy, ou and ow vowel patterns",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "57"
+      ],
+      "goal": "Connect selected oi/oy and ou/ow spellings to spoken words and distinguish them from previously taught patterns.",
+      "materials": "Word cards for coin, join, toy, joy, out, loud, cow and town; paper for word sorting.",
+      "lesson": [
+        "Say coin slowly, then normally. In many English accents, its vowel moves from one mouth position toward another within the same syllable; this kind of vowel is called a diphthong. Treat oi as one vowel spelling here, not as two separately spoken letter names. Teach oi with coin and join, and oy with toy and joy. Connect every example to a familiar meaning.",
+        "Teach ou with out and loud, and ow with cow and town. These words share another moving vowel in the modeled accent. Compare the ow in town with the ow in snow from lesson 57. The same two letters can represent different sounds in different words. A whole-word record with an example sentence is more dependable than claiming that one pronunciation always applies.",
+        "Common spelling positions can help organize practice: oi often appears within a word such as coin, while oy often occurs at the end of a base such as toy. This is a useful observation about the selected words, not a complete spelling rule. Similarly, ou does not always have the vowel in out: soup has a different vowel, and young is different again. Introduce those exceptions directly when learners meet them.",
+        "Read the original sentence 'Roy can join the row.' Preview Roy as a name with oy, join with oi, can as c-a-n, and the with its ordinary unstressed vowel. Here row means a line, so ow has long o. Ask what Roy can do, then point to oy, oi and ow and compare their sounds. Meaning helps identify the intended word after instruction; it should not replace looking carefully at the printed letters."
+      ],
+      "practice": [
+        "Sort coin, toy, loud and town by their vowel spellings.",
+        "Read town and snow. Does their shared ow spelling mean that their vowels must sound alike?",
+        "In 'Roy can join the row', which word has oi, and what does row mean here?"
+      ],
+      "answers": [
+        "Oi: coin; oy: toy; ou: loud; ow: town.",
+        "No. Town uses the vowel taught with cow; snow uses long o. Each word's taught pronunciation matters.",
+        "Join contains oi. Row means a line of people or things and is read with long o in this sentence."
+      ],
+      "adaptation": "Compare two spellings per session and revisit earlier vowel teams. Use local pronunciation consistently, with support for additional-language learners. The term diphthong can be omitted initially if the learner can hear and use the contrast without it.",
+      "references": [
+        "reading",
+        "ufli"
+      ],
+      "tags": [
+        "diphthongs",
+        "oi",
+        "oy",
+        "ou",
+        "ow",
+        "phonics"
+      ]
+    },
+    {
+      "id": "59",
+      "edition": "2026-10-03",
+      "title": "Read a short story for accuracy, phrasing and meaning",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "30",
+        "43",
+        "58"
+      ],
+      "goal": "Prepare unfamiliar words, reread a short original passage meaningfully, and separate stated information from an unsupported explanation.",
+      "materials": "The original passage below and a facilitator who can model unfamiliar words. No trip or real-world activity is required.",
+      "lesson": [
+        "Preview the passage's vocabulary before expecting independent reading. Jo is a name pronounced with long o; coat and boat use oa; book uses the book-type oo sound; row means a line and uses long o. Join uses oi, and joins adds a final /z/ sound. Wait uses ai. Review packs, dock, trip, sits and bench, including their adjacent consonants, final -s, ck and ch spellings.",
+        "Directly teach sign with a silent g, says with the vowel in bed in common pronunciation, and worker as a familiar person-word with its local vowel and ending. Delayed means made to happen later: model the whole word, then identify delay plus -ed, pronounced with final /d/ here. Reads is present-time read plus /z/, with long e. Review a, and, the, is, at, in, on and 'a bench' aloud as needed, including reduced vowels in ordinary speech.",
+        "Original passage: 'Jo packs a coat and a book. The boat is at the dock. A sign says, Wait in a row. Jo joins the row. A worker says the trip is delayed. Jo sits on a bench and reads the book.' Read one sentence at a time. If a word is uncertain, return to its spelling and preview, model it if necessary, and reread the sentence. Record which words needed help rather than treating the first attempt as a speed test.",
+        "On a second reading, group words naturally, such as 'at the dock' and 'on a bench', and pause at sentence boundaries. Ask the learner to locate the words that show what Jo does after the announcement. The passage states that the trip is delayed but gives no cause. A storm, broken boat or late worker would be invented explanations. Improvement in this passage is useful practice evidence, not a standardized fluency score or proof of independent reading on every new text."
+      ],
+      "practice": [
+        "Name the two items Jo packs and find the sentence that supports your answer.",
+        "What does the worker announce, and what does Jo do afterward?",
+        "Does the story establish that bad weather caused the delay? Explain, then reread the relevant sentence with appropriate phrasing."
+      ],
+      "answers": [
+        "A coat and a book; the first sentence names both.",
+        "The worker says the trip is delayed. Jo sits on a bench and reads the book.",
+        "No. It states the delay but does not give its cause. Accept a rereading that preserves the words and meaning, with any provided support recorded."
+      ],
+      "adaptation": "Offer a tutor read-aloud when comprehension is the target, or enlarge the text. Do not count assisted reading as independent decoding. With adults, discuss the practical information in the story without imposing a school-age reading label.",
+      "references": [
+        "reading",
+        "comprehension"
+      ],
+      "tags": [
+        "connected-reading",
+        "fluency",
+        "phrasing",
+        "word-preview",
+        "inference"
+      ]
+    },
+    {
+      "id": "60",
+      "edition": "2026-10-03",
+      "title": "Summarize an informational passage without adding claims",
+      "track": "practical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "08",
+        "31",
+        "33"
+      ],
+      "goal": "Identify a passage's main point, select supporting details, and write a brief summary that preserves conditions and uncertainty.",
+      "materials": "Paper and the fictional information note below. A facilitator can read it aloud before the writing task.",
+      "lesson": [
+        "A summary gives the important meaning of a longer text in fewer words. It should help someone answer the main question without reading every detail, while retaining conditions that change the message. First decide what the passage is mainly about, then mark the details needed to explain that point. A summary of instructions may need different details from a summary of a story.",
+        "Original fictional note: 'The learning room will trial a book-loan shelf for four weeks. Members may borrow one book at a time and should return it within seven days. A paper register records the book code, the borrower's chosen member code and the return date. On Friday, helpers will count the books still on the shelf. At the end of four weeks, the group will decide whether to continue the trial.' This describes a proposed process, not measured results from a real program.",
+        "A useful two-sentence summary is: 'The learning room plans a four-week book-loan trial, allowing one book per member at a time for up to seven days. Borrowing is recorded, and the group will decide afterward whether to continue.' This keeps the trial, borrowing limits and review point. The Friday count is omitted because it is less central to this brief overview; it would matter in a helper's task list.",
+        "Compare the inaccurate version 'The room now gives every member a book forever because the trial succeeded.' It changes borrowing into giving, removes the time limit and invents a successful outcome. To check your summary, underline each claim and point to support in the original. Preserve words such as trial, may and decide when they affect certainty or permission, then revise for clear sentences rather than copying every line."
+      ],
+      "practice": [
+        "What is the note's main point, and what two borrowing limits should a member-facing summary preserve?",
+        "Write a two-sentence summary for members that includes the trial length and the later decision.",
+        "Why is 'The group has already decided to keep the shelf permanently' unsupported?"
+      ],
+      "answers": [
+        "It describes a planned book-loan trial. Preserve one book at a time and return within seven days.",
+        "Accept original wording that accurately states a four-week trial, the one-book and seven-day limits, and a decision after the trial. Recording loans is a useful additional detail if space permits.",
+        "The note says the group will decide at the end of four weeks. It reports neither an existing permanent decision nor a successful outcome."
+      ],
+      "adaptation": "Let learners give an oral summary before writing. A partner can check each claim against the source. Change the intended audience to helpers and discuss why the Friday count becomes more important in that version.",
+      "references": [
+        "comprehension",
+        "writing"
+      ],
+      "tags": [
+        "summary",
+        "main-idea",
+        "supporting-details",
+        "conditions",
+        "adult-literacy"
+      ]
+    },
+    {
+      "id": "61",
+      "edition": "2026-10-03",
+      "title": "Add and subtract decimals using place value",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "13",
+        "16",
+        "47"
+      ],
+      "goal": "Align decimal place values, regroup accurately, and check a decimal sum or difference using an inverse operation.",
+      "materials": "Paper ruled into ones, tenths and hundredths columns; optional grids showing a whole divided into 100 equal parts.",
+      "lesson": [
+        "A decimal point separates whole-number places from fractional places. In 6.48, 6 is in the ones place, 4 in the tenths and 8 in the hundredths. Writing 2.7 as 2.70 leaves its value unchanged and makes the hundredths column visible. Add or subtract like-sized units: tenths belong with tenths, not with ones merely because the digits happen to be at the right edge of the page.",
+        "For 6.48 + 2.70, eight hundredths plus zero hundredths gives eight hundredths. Four tenths plus seven tenths gives eleven tenths: regroup ten of them as one whole, leaving one tenth. Six wholes plus two wholes plus the regrouped whole gives nine. The answer is 9.18. A rough check, 6.5 + 2.7 about 9.2, agrees with its size.",
+        "For 8.20 - 3.76, regroup one tenth into ten hundredths so 10 - 6 leaves four hundredths. There is then one tenth available; regroup one of the eight wholes into ten tenths, giving eleven tenths. Eleven minus seven leaves four tenths, and seven wholes minus three leaves four wholes. The result is 4.44. Check by adding 3.76 + 4.44 = 8.20.",
+        "Keep the unit with the answer. Joining lengths of 1.35 m and 0.80 m gives 2.15 m only when the model assumes their lengths add without overlap or waste. Convert unlike units before combining them. Decimal arithmetic changes the numerical representation, not the certainty of a measurement; extra written zeros do not mean an instrument measured more precisely."
+      ],
+      "practice": [
+        "Calculate 3.65 + 1.8, showing aligned decimal places.",
+        "Calculate 7.00 - 2.48 and check by addition.",
+        "A learner writes 0.7 + 0.08 = 0.15. Explain the place-value mistake and correct it."
+      ],
+      "answers": [
+        "3.65 + 1.80 = 5.45.",
+        "4.52; the check is 2.48 + 4.52 = 7.00.",
+        "Seven tenths is 70 hundredths, not seven hundredths. 70 hundredths + 8 hundredths = 78 hundredths, or 0.78."
+      ],
+      "adaptation": "Use shaded hundred-grids to make regrouping visible. Start with addition without regrouping, then add one regrouping step. Read the decimal point aloud if a learner uses a locale where a decimal comma is customary, and label the convention used here.",
+      "references": [
+        "decimal-operations"
+      ],
+      "tags": [
+        "decimals",
+        "decimal-addition",
+        "decimal-subtraction",
+        "regrouping",
+        "place-value"
+      ]
+    },
+    {
+      "id": "62",
+      "edition": "2026-10-03",
+      "title": "Multiply decimals and explain the product's size",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "35",
+        "48",
+        "61"
+      ],
+      "goal": "Use fractional place values to multiply decimals and explain why multiplication can produce a smaller number.",
+      "materials": "Paper, a hundred-grid and optional fraction strips.",
+      "lesson": [
+        "For 1.6 x 0.4, rewrite the factors as 16/10 and 4/10. Multiplying gives 64/100 = 0.64. The whole-number product 16 x 4 supplies 64, while the two factors of ten determine hundredths. A grid can model this as four tenths of a length or amount represented by 1.6 units; the calculation means taking a fraction of the original quantity.",
+        "For 2.4 x 1.3, calculate 24 x 13 = 312 and account for one decimal place in each factor: 312 hundredths = 3.12. Check by decomposition: 2.4 x (1 + 0.3) = 2.4 + 0.72 = 3.12. Counting decimal places is a shorthand for this place-value reasoning, not a reason to line up decimal points as though multiplying were addition.",
+        "When multiplying a positive number by a positive factor below one, the product is smaller than that starting number. Thus half of 1.8 is 0.9. A factor above one increases it, while a factor of one leaves it unchanged and a factor of zero gives zero. These statements concern nonnegative quantities; signed-number cases require their own sign reasoning.",
+        "With small factors, placeholder zeros matter. For 0.24 x 0.3, 24 x 3 = 72, but hundredths times tenths gives thousandths, so the answer is 0.072. An answer of 0.72 would exceed 0.24 even though the factor 0.3 is below one. This size check can catch a misplaced decimal before a second calculation. Keep units appropriate: a length times a dimensionless fraction stays a length."
+      ],
+      "practice": [
+        "Find 1.8 x 0.5 and explain its size compared with 1.8.",
+        "Calculate 0.24 x 0.3, naming the fractional place value of the result.",
+        "Four paper strips each measure 0.75 m in a no-overlap model. What is their total length?"
+      ],
+      "answers": [
+        "0.9; multiplying by one half takes half of 1.8.",
+        "0.072, or 72 thousandths.",
+        "4 x 0.75 m = 3.00 m, equivalently 3 m. This is the stated mathematical model, not an allowance for physical overlap."
+      ],
+      "adaptation": "Use familiar halves and tenths before more complicated decimal factors. Ask for a prediction of larger or smaller before computing. A calculator can check the result after the learner explains the scale and unit.",
+      "references": [
+        "decimal-operations",
+        "fraction-operations"
+      ],
+      "tags": [
+        "decimal-multiplication",
+        "scaling",
+        "hundredths",
+        "thousandths"
+      ]
+    },
+    {
+      "id": "63",
+      "edition": "2026-10-03",
+      "title": "Divide decimals by making an equivalent quotient",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "49",
+        "62"
+      ],
+      "goal": "Scale both parts of a division by the same nonzero factor, compute the quotient, and check it by multiplication.",
+      "materials": "Paper and a number line divided into tenths for a grouping example.",
+      "lesson": [
+        "The expression 4.8 divided by 0.6 can ask how many 0.6-unit groups fit into 4.8 units. Express both in tenths: 48 tenths divided by 6 tenths gives eight groups. Multiplying both the dividend and divisor by ten produces the equivalent division 48 divided by 6. Changing only one would change the question and its answer.",
+        "For 0.84 divided by 0.07, use hundredths: 84 hundredths divided by 7 hundredths = 12. Both numbers were multiplied by 100. Check 12 x 0.07 = 0.84. Choose a power of ten that makes the divisor a whole number; the dividend may become a whole number or remain a decimal, and either is allowed.",
+        "A whole-number divisor can also give a decimal quotient. Sharing 7.5 units equally among three groups gives 2.5 units per group, since 3 x 2.5 = 7.5. Contrast this sharing question with counting groups of size 0.5: 7.5 divided by 0.5 = 15 groups. Write down what the divisor represents and what unit, if any, belongs to the answer.",
+        "Dividing a positive amount by a number below one can make the numerical answer larger because the groups are smaller than one unit. Division by zero is undefined; the scaling method does not make it valid. For a quotient that continues beyond the requested precision, retain exact information until a rounding rule is stated. This lesson's practice uses terminating decimal results so the meaning of the operation stays central."
+      ],
+      "practice": [
+        "Calculate 5.4 divided by 0.9 and check by multiplication.",
+        "Calculate 1.26 divided by 0.06. Which common scaling factor makes the divisor a whole number?",
+        "A learner changes 4.8 divided by 0.6 into 48 divided by 0.6. Why is that not equivalent, and what is the correct scaled expression?"
+      ],
+      "answers": [
+        "6; 6 x 0.9 = 5.4.",
+        "21. Multiply both numbers by 100 to obtain 126 divided by 6; check 21 x 0.06 = 1.26.",
+        "Only the dividend was changed, multiplying the quotient by ten. Scale both by ten: 48 divided by 6 = 8."
+      ],
+      "adaptation": "Begin with repeated 0.5-unit or 0.1-unit groups on a number line. State whether quantities can be subdivided in the scenario. Revisit whole-number division if the grouping idea is uncertain before adding decimal notation.",
+      "references": [
+        "decimal-operations",
+        "division"
+      ],
+      "tags": [
+        "decimal-division",
+        "equivalent-quotient",
+        "scaling",
+        "divisor"
+      ]
+    },
+    {
+      "id": "64",
+      "edition": "2026-10-03",
+      "title": "Find a percent, a part or a whole",
+      "track": "applied-numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "16",
+        "50",
+        "63"
+      ],
+      "goal": "Identify the reference whole in a percent problem and distinguish a change in percentage points from a relative percent change.",
+      "materials": "Paper and the fictional counts of practice cards used below; a hundred-grid is optional.",
+      "lesson": [
+        "A percent expresses a quantity relative to a chosen whole as parts per hundred. If 18 of 60 practice cards are blue, the blue fraction is 18/60 = 0.3 = 30%. The denominator is all 60 cards, not just the nonblue cards. Name the reference group before calculating so the percentage answers the intended question.",
+        "To find a part, multiply the whole by the decimal form of the percent. If 25% of 84 cards have a star, 0.25 x 84 = 21 cards have stars. To find the whole when the part and percent are known, reverse the operation: if 12 starred cards are 30% of all cards, the total is 12 divided by 0.30 = 40. Check that 30% of 40 returns the given 12.",
+        "Changing the reference whole changes a percentage. A group with 6 blue cards and 4 green cards has 60% blue; adding 2 green cards makes 6 of 12 blue, or 50%, even though no blue card was removed. Use this example to separate a change in the fraction from a change in the count of the item itself.",
+        "Suppose a fictional completion rate rises from 60% to 75%. The difference is 15 percentage points. Relative to the starting rate, the increase is 15/60 = 25%. These are different descriptions of the same change. State the reference and use 'percentage points' for subtracting percentage rates. A before-and-after difference alone does not establish what caused the change."
+      ],
+      "practice": [
+        "What percent of 80 cards is a set of 28 cards?",
+        "Find 20% of 95, then find the whole if 9 is 15% of it.",
+        "A rate rises from 40% to 50%. Give the change in percentage points and the relative percent increase."
+      ],
+      "answers": [
+        "28/80 = 0.35 = 35%.",
+        "20% of 95 is 19. If 9 is 15%, the whole is 9/0.15 = 60.",
+        "10 percentage points; relative increase 10/40 = 0.25 = 25%. The reference for the relative increase is the original 40% rate."
+      ],
+      "adaptation": "Use counters and explicit part/whole labels before symbolic formulas. Keep the fictional cards as a neutral context. When comparing real reports later, check that their populations, definitions and time periods are comparable before interpreting percentage differences.",
+      "references": [
+        "percent-applications"
+      ],
+      "tags": [
+        "percent",
+        "part-and-whole",
+        "percentage-points",
+        "relative-change",
+        "denominator"
+      ]
+    },
+    {
+      "id": "65",
+      "edition": "2026-10-03",
+      "title": "Describe angles, perpendicular lines and parallel lines",
+      "track": "geometry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "18"
+      ],
+      "goal": "Classify simple angles by their turn, use a protractor when available, and distinguish parallel from perpendicular lines in a plane.",
+      "materials": "Paper, a straight edge and a square paper corner; a protractor is optional. Drawings can substitute for physical turning.",
+      "lesson": [
+        "Two rays starting at the same point form an angle; the shared point is its vertex. The angle measures the turn between the directions, not the length of the drawn arms. A quarter turn is 90 degrees, a half turn is 180 degrees and a full turn is 360 degrees. Draw a horizontal ray and a vertical ray from the same vertex to show a right angle, then extend either arm without changing the turn.",
+        "An acute angle is greater than zero and less than 90 degrees. An obtuse angle is greater than 90 and less than 180 degrees. A right angle is exactly 90 degrees, and a straight angle is 180 degrees. Use a square paper corner to compare a sketch with 90 degrees. If an angle is labeled with a measure, use that information instead of assuming a rough sketch is drawn accurately to scale.",
+        "To measure with a protractor, place its center mark on the vertex and align its zero line with one ray. Read the scale that starts at zero on that ray, following it to the other ray. A protractor often has two numbered scales; the wrong scale can turn a small acute angle into a reported obtuse one. Estimate the type first as a reasonableness check, and reposition the tool if the vertex or baseline is misaligned.",
+        "In a flat plane, perpendicular lines meet at right angles. Distinct parallel lines never meet even when extended indefinitely. Opposite sides of a rectangle lie on parallel lines, while adjacent sides meet perpendicularly. Two short drawn segments that do not touch are not automatically parallel: their underlying lines may meet beyond the drawn ends. State the plane assumption rather than extending this definition casually to all three-dimensional lines."
+      ],
+      "practice": [
+        "Classify angles of 35, 90 and 125 degrees.",
+        "A right-angle drawing has one arm lengthened. Has its angle changed? Explain.",
+        "Two segments do not meet on a small page. Is that enough evidence that their lines are parallel, and what angle do perpendicular lines make?"
+      ],
+      "answers": [
+        "35 degrees is acute; 90 is right; 125 is obtuse.",
+        "No. Extending an arm along the same ray does not change the directions or the turn between them.",
+        "No; the lines might meet outside the page. Perpendicular lines meet at 90 degrees."
+      ],
+      "adaptation": "Use a tactile corner or verbal turn instructions when drawings are inaccessible. Without a protractor, classify clear examples relative to a right angle rather than claiming precise measurements from a sketch.",
+      "references": [
+        "angles"
+      ],
+      "tags": [
+        "angles",
+        "degrees",
+        "protractor",
+        "parallel",
+        "perpendicular"
+      ]
+    },
+    {
+      "id": "66",
+      "edition": "2026-10-03",
+      "title": "Find triangle angles and area using a perpendicular height",
+      "track": "geometry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "18",
+        "35",
+        "65"
+      ],
+      "goal": "Use the angle sum of a plane triangle and calculate its area from a base and the corresponding perpendicular height.",
+      "materials": "Paper, a straight edge and a drawn rectangle divided by a diagonal. Folding or drawing is sufficient; cutting is optional with suitable supervision.",
+      "lesson": [
+        "A triangle has three straight sides and three interior angles. For a triangle drawn in a flat plane, those angles total 180 degrees. If two are 45 and 65 degrees, the third is 180 - 45 - 65 = 70 degrees. Check by adding all three. This rule applies to plane geometry; do not use a triangle drawn on a curved surface as if it were automatically the same model.",
+        "A right triangle has one 90-degree angle. An acute triangle has all three angles below 90 degrees, while an obtuse triangle has one angle above 90 degrees. A triangle cannot have two right angles or two obtuse angles because that would leave no positive angle for the third vertex under the 180-degree total. Classification by angles is separate from classifying by side lengths.",
+        "Draw a rectangle 8 cm wide and 5 cm high, then connect opposite corners. The diagonal divides it into two equal-area right triangles. The rectangle's area is 40 square centimeters, so each triangle has area 20 square centimeters. For any plane triangle, area is one half of base times the corresponding perpendicular height. Here the base is 8 cm and that height is 5 cm.",
+        "A triangle's sloping side is not automatically its height. Choose a base, then measure the shortest perpendicular distance from the opposite vertex to the line containing that base. In an obtuse triangle, the foot of this perpendicular can lie outside the triangle, on an extension of the base. State which base and height belong together. Area uses square units; adding three side lengths would instead calculate perimeter."
+      ],
+      "practice": [
+        "Two angles of a triangle are 38 and 72 degrees. Find the third and classify the triangle by its angles.",
+        "Find the area of a triangle with base 9 cm and corresponding perpendicular height 4 cm.",
+        "A triangle has base 10 cm, a sloping side 7 cm and corresponding perpendicular height 6 cm. Which two lengths give its area, and what is the result?"
+      ],
+      "answers": [
+        "70 degrees, since 180 - 38 - 72 = 70. All three are below 90, so it is acute.",
+        "One half x 9 x 4 = 18 square centimeters.",
+        "Use base 10 cm and height 6 cm: area 30 square centimeters. The 7 cm sloping side is not the stated perpendicular height."
+      ],
+      "adaptation": "Begin with triangles formed by a rectangle's diagonal before considering obtuse examples. Label the right-angle mark on a height. A model drawn on paper illustrates the rule but a rough drawing should not override its written dimensions.",
+      "references": [
+        "angles",
+        "geometry"
+      ],
+      "tags": [
+        "triangle",
+        "angle-sum",
+        "triangle-area",
+        "perpendicular-height",
+        "base"
+      ]
+    },
+    {
+      "id": "67",
+      "edition": "2026-10-03",
+      "title": "Distinguish a circle's radius, circumference and area",
+      "track": "geometry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "18",
+        "62",
+        "65"
+      ],
+      "goal": "Use radius and diameter correctly, calculate a circle's boundary length and area, and label approximate answers with the right units.",
+      "materials": "Paper, a round lid to trace if available, a ruler and a calculator or multiplication paper. Use the fictional dimensions in the exercises for exact inputs.",
+      "lesson": [
+        "A circle consists of points in a plane at the same distance from a center. That distance is the radius. A diameter crosses the circle through its center and has length twice the radius. Mark a center O, a point A on the boundary, and the segment OA as a radius. Extend its line through O to the opposite boundary to show why a diameter contains two radii.",
+        "Circumference is the distance around the boundary. It equals pi times diameter, or 2 x pi x radius. Pi is a constant whose decimal expansion begins 3.14159; use 3.14 as an approximation in this lesson. A radius of 5 cm gives a diameter of 10 cm and approximate circumference 3.14 x 10 = 31.4 cm. This is a length, not an area.",
+        "The area enclosed by the circle is pi x radius x radius, often written pi r squared. For radius 5 cm, use 3.14 x 5 x 5 = 78.5 square centimeters. Squaring means multiplying the radius by itself, not doubling it. If a problem gives diameter, halve it first before substituting a radius into this area formula.",
+        "Changing size affects boundary and area differently. Doubling a radius doubles circumference because the radius appears once in its formula, but multiplies area by four because it appears twice. A traced physical lid has measurement uncertainty, while the exercise dimensions are idealized. Keep pi symbolic when an exact mathematical result is requested; a value calculated with 3.14 is approximate even when its arithmetic is exact."
+      ],
+      "practice": [
+        "For radius 4 cm, calculate diameter and approximate circumference using pi = 3.14.",
+        "A circle has diameter 14 cm. Find its radius and approximate area using pi = 3.14.",
+        "If a circle's radius triples, by what factors do its circumference and area change?"
+      ],
+      "answers": [
+        "Diameter 8 cm; circumference approximately 3.14 x 8 = 25.12 cm.",
+        "Radius 7 cm; area approximately 3.14 x 7 x 7 = 153.86 square centimeters.",
+        "Circumference triples and area becomes nine times as large. The area contains two factors of the radius."
+      ],
+      "adaptation": "Trace and label a circle before calculating. For a learner not ready for multiplication with decimals, leave answers as a number times pi or supply 3.14 calculations after they choose the correct formula and unit.",
+      "references": [
+        "circles"
+      ],
+      "tags": [
+        "circle",
+        "radius",
+        "diameter",
+        "circumference",
+        "pi",
+        "circle-area"
+      ]
+    },
+    {
+      "id": "68",
+      "edition": "2026-10-03",
+      "title": "Count cubic units and find rectangular-prism volume",
+      "track": "geometry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "18",
+        "62"
+      ],
+      "goal": "Build volume from equal layers, multiply three compatible dimensions, and distinguish volume from area or usable container capacity.",
+      "materials": "Drawn unit cubes or identical small blocks; paper for a rectangular box sketch. The calculations can be completed without an actual container.",
+      "lesson": [
+        "Volume measures three-dimensional space. A cube with edges 1 cm long occupies one cubic centimeter, written cm cubed or cm^3. In a rectangular prism with length 4 cm and width 3 cm, one 1 cm-high layer contains 4 x 3 = 12 such cubes. Five layers give 12 x 5 = 60 cubic centimeters. This explains volume = length x width x height for a rectangular prism.",
+        "Label the dimensions before multiplying, and use the same length unit for all three. A prism 2 m long, 0.5 m wide and 0.25 m high has volume 0.25 cubic meters. If its length were recorded as 200 cm, first convert that to 2 m or convert every dimension to centimeters. Multiplying 200 x 0.5 x 0.25 and attaching cubic meters would silently mix incompatible units.",
+        "Cubic-unit conversions apply the length conversion three times. Because 1 m = 100 cm, a cubic meter contains 100 x 100 x 100 = 1,000,000 cubic centimeters. A liter is 1,000 cubic centimeters, so an ideal rectangular internal space measuring 40 cm by 30 cm by 20 cm has volume 24,000 cubic centimeters, equivalent to 24 liters. These are geometric conversions, not a test of a real container's performance.",
+        "Area and volume answer different questions. The 4 cm by 3 cm base has area 12 square centimeters, while the five-layer prism has volume 60 cubic centimeters. A box's outer dimensions include its walls; they do not directly establish usable internal capacity. Curved corners, contents and fill limits can also matter. Keep this lesson's ideal shape model distinct from planning a real storage or load-bearing system."
+      ],
+      "practice": [
+        "Find the volume of a rectangular prism measuring 2 cm by 3 cm by 4 cm.",
+        "Convert 200 cm to meters, then find the volume for dimensions 200 cm, 0.5 m and 0.25 m.",
+        "An ideal internal rectangular space is 40 cm by 30 cm by 20 cm. Give its volume in cubic centimeters and liters, and name one reason outer dimensions could give a different capacity."
+      ],
+      "answers": [
+        "24 cubic centimeters.",
+        "200 cm = 2 m. Volume 2 x 0.5 x 0.25 = 0.25 cubic meters.",
+        "24,000 cubic centimeters, or 24 liters. Outer dimensions can include wall thickness; rounded interiors or a fill limit can also reduce usable capacity."
+      ],
+      "adaptation": "Stack a few equal layers or draw them before introducing formulas. Use raised outlines or spoken layer counts if a perspective drawing is difficult to interpret. Include the unit with every numerical answer.",
+      "references": [
+        "volume",
+        "measurement"
+      ],
+      "tags": [
+        "volume",
+        "rectangular-prism",
+        "cubic-units",
+        "liters",
+        "capacity"
+      ]
+    },
+    {
+      "id": "69",
+      "edition": "2026-10-03",
+      "title": "Use a simple light-ray model to explain shadows",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "65"
+      ],
+      "goal": "Distinguish emitted, reflected and blocked light, and use a labeled ray sketch to predict a simple shadow change.",
+      "materials": "An ordinary low-brightness flashlight, a card and a paper screen, or a drawn substitute. Keep the light directed at the screen, not at eyes; do not use lasers or sunlight viewed through optics.",
+      "lesson": [
+        "A light source such as a flashlight emits light. An ordinary paper card is visible because it reflects some incoming light toward an observer. A shadow is a region receiving less light from a source because an object blocks its path; it is not a dark substance emitted by the card. Other light in a room can make a shadow less dark than a simple one-source diagram suggests.",
+        "For many everyday situations, draw light rays as straight paths through a uniform medium. This ray model is useful for predicting a card's shadow, though light also has wave behavior and can change direction through reflection or refraction. Label three positions from left to right: source, card, screen. Draw a ray from the source past each edge of the card to show the edges of the blocked region on the screen.",
+        "Keep the flashlight and screen fixed and hold the card between them. Move the card closer to the source while keeping its orientation the same. In the approximate point-source model, its shadow on the fixed screen gets larger. Move it toward the screen and the shadow becomes closer to the card's size. A real flashlight has a finite light-emitting area and optics, so the edges may blur and observations may depart from the ideal sketch.",
+        "Record what changed and what stayed fixed: card position, shadow width, source position and screen position. Repeat a position before claiming a consistent pattern. An opaque card blocks transmission through it; clear plastic may transmit much of the light, while translucent material scatters transmitted light. Describe actual observations rather than assuming every transparent material or light source behaves identically."
+      ],
+      "practice": [
+        "Why can an ordinary paper card be visible even though it is not a light source?",
+        "With source and screen fixed, what does the approximate point-source model predict when the card moves toward the source?",
+        "Give two reasons a real shadow may have a fuzzy edge or be less dark than a one-source ideal sketch suggests."
+      ],
+      "answers": [
+        "It reflects some light from another source toward the observer.",
+        "A larger shadow on the screen, assuming the card stays between them and keeps the same orientation.",
+        "A source with finite size can give partial-shadow edges; other room light can illuminate the nominal shadow. Scattering or the flashlight's optics can also affect the observation."
+      ],
+      "adaptation": "Use a paper diagram if visual observation is unsuitable. A facilitator can describe changes or provide raised ray lines. This activity uses only ordinary low-brightness lighting and a model; it does not require a dark room or concentrated light.",
+      "references": [
+        "light"
+      ],
+      "tags": [
+        "light",
+        "shadow",
+        "ray-model",
+        "reflection",
+        "opaque",
+        "transparent"
+      ]
+    },
+    {
+      "id": "70",
+      "edition": "2026-10-03",
+      "title": "Distinguish vibration, pitch and loudness",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "22",
+        "53"
+      ],
+      "goal": "Describe a vibration and separate the rate of repetition from its size when explaining simple sounds.",
+      "materials": "A strip of stiff paper to flex gently, paper for sketches and the fictional frequency examples below. Listening is optional; no loud sound source is needed.",
+      "lesson": [
+        "A vibration is repeated motion around a resting position. Gently bend and release the free end of a paper strip while holding the other end. It may move back and forth, with the motion gradually decreasing. Count visible repetitions only if they are slow enough to follow; do not pretend this observation measures the much faster pressure changes in ordinary sound.",
+        "Sound in air is a traveling pattern of pressure variations associated with vibrations. Air particles move locally as the disturbance passes; they do not all travel from the source to the listener as a block. A wave transports energy through the medium. Sound requires a medium, unlike light, which can travel through a vacuum. Use a drawn sequence of closer and farther spacing to represent compression and spreading, not literal objects being fired across the room.",
+        "Frequency is the number of complete repetitions per second, measured in hertz. For otherwise comparable simple tones, a higher frequency is heard as a higher pitch: a 400 Hz tone is higher pitched than a 200 Hz tone. Amplitude describes the size of an oscillation. Greater sound-pressure amplitude generally corresponds to a louder sound under comparable listening conditions, but frequency and amplitude are separate properties.",
+        "A louder tone does not automatically have a higher pitch. Draw two fictional wave sketches with the same number of cycles over the same time interval but different heights to represent equal frequency and different amplitude. Label this as a graph of a changing quantity, not the path followed by an individual air particle. Without instruments, use qualitative descriptions and avoid attaching invented frequency or sound-level measurements to the paper strip."
+      ],
+      "practice": [
+        "Which of the fictional simple tones, 200 Hz or 400 Hz, has the higher pitch under comparable conditions?",
+        "Two graphs show five cycles in the same one-second interval, but one has twice the height. What stays the same, and what changes in the model?",
+        "Why is 'turning up the loudness always makes the pitch higher' incorrect?"
+      ],
+      "answers": [
+        "400 Hz. It has more cycles per second.",
+        "Frequency stays at five cycles per second, or 5 Hz; amplitude differs. These are fictional graph values, not a claim that either is an audible tone.",
+        "Loudness is related to amplitude and listening conditions, while pitch is strongly related to frequency. Amplitude can change without changing the repetition rate."
+      ],
+      "adaptation": "Use visible or tactile motion and diagrams for learners who do not hear the demonstration. Do not require listening as the only evidence of understanding. Keep any demonstration gentle and quiet; mathematical frequency examples can be discussed without generating tones.",
+      "references": [
+        "sound"
+      ],
+      "tags": [
+        "sound",
+        "vibration",
+        "frequency",
+        "pitch",
+        "amplitude",
+        "loudness"
+      ]
+    },
+    {
+      "id": "71",
+      "edition": "2026-10-03",
+      "title": "Read food-chain arrows and build a small food web",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "39"
+      ],
+      "goal": "Identify producers, consumers and decomposers in a simple model, and explain why food-web connections do not by themselves predict exact population changes.",
+      "materials": "Paper cards for the organisms in the fictional pond model below. No collection, handling or feeding of real organisms is required.",
+      "lesson": [
+        "Many producers, including green plants and algae, use light energy to make sugars from carbon dioxide and water. Consumers obtain energy by feeding on other organisms or their products. Decomposers such as many bacteria and fungi break down dead organic material and help return nutrients to forms other organisms can use. These roles concern how organisms obtain resources; they are not rankings of importance.",
+        "Use this deliberately simplified fictional pond: algae are eaten by snails; water plants are eaten by insect larvae; a fish eats both snails and those larvae. Draw arrows algae -> snail -> fish and water plant -> insect larva -> fish. In this diagram, each arrow points from a food resource to its eater, showing a direction of energy transfer. Always state the arrow convention because an unlabeled arrow could be interpreted differently.",
+        "The two linked chains make a small food web. Add a dead-material card connected from the organisms, and connect that to decomposers. Matter can cycle through living things, remains and the environment. Energy enters many such systems as light and is eventually dispersed as heat; it is not recycled around a closed food loop in the same way as matter. The drawing omits many organisms and pathways to keep the first model readable.",
+        "If snails become less available, the fish might obtain more food from larvae, lose food overall or change its behavior. The web shows possible connections, not exact quantities or a guaranteed outcome. To predict a real population change, researchers would need information about feeding rates, other resources, habitat and more. Keep the fictional relations separate from claims that every fish, snail or insect species follows this same diet."
+      ],
+      "practice": [
+        "In the fictional algae -> snail -> fish chain, identify the producer and the two consumers.",
+        "What does the arrow snail -> fish mean under this lesson's convention, and why should the convention be labeled?",
+        "Does the diagram prove that removing snails would make the fish population fall by exactly half? Explain."
+      ],
+      "answers": [
+        "Algae are the producer; the snail and fish are consumers in this chain.",
+        "The snail is a food resource for the fish, with energy transferred toward the eater. Labeling the convention prevents confusing it with an arrow showing the predator's action toward prey.",
+        "No. The diagram gives feeding connections, not population sizes, consumption rates or enough other conditions to calculate that outcome. The fish also has another modeled food source."
+      ],
+      "adaptation": "Use organism names and arrow labels as well as pictures. Let learners retell one path before joining paths into a web. For real ecosystems, consult species-specific evidence instead of inferring diets from broad organism names.",
+      "references": [
+        "food-webs"
+      ],
+      "tags": [
+        "food-chain",
+        "food-web",
+        "producer",
+        "consumer",
+        "decomposer",
+        "energy-transfer"
+      ]
+    },
+    {
+      "id": "72",
+      "edition": "2026-10-03",
+      "title": "Separate weather observations from climate conclusions",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "22",
+        "51",
+        "54"
+      ],
+      "goal": "Read a short weather record, describe what it supports, and explain why a few observations cannot establish a long-term climate trend.",
+      "materials": "Paper and the fictional temperature record below. Optional observations can be made from a safe sheltered place; no outdoor storm activity is required.",
+      "lesson": [
+        "Weather describes atmospheric conditions at particular places and times, such as temperature, rainfall and wind. Climate describes patterns over much longer periods, including typical conditions, variability and extremes. A cold day can occur within a warmer long-term pattern, and a hot day alone does not establish a trend. The time span, location and kind of evidence determine what a claim can reasonably say.",
+        "Consider this fictional record of temperatures at one site at 09:00 on four successive days: Monday 12 C, Tuesday 14 C, Wednesday 13 C and Thursday 17 C. The mean of these four readings is 56 divided by 4 = 14 C; their range is 17 - 12 = 5 C. Thursday's reading is highest in this small record. These are four morning observations, not daily maximums or all-day averages.",
+        "For a useful observation log, record the date, time, place, unit, measurement method and any relevant change in conditions or equipment. If Friday's reading is missing, mark it missing rather than entering zero. An instrument moved from shade into direct sunshine may no longer provide a comparable air-temperature reading. A neat table cannot repair inconsistent measurement methods or missing context.",
+        "A supported statement is 'The Thursday 09:00 reading was 5 C above Monday's at this site.' An unsupported one is 'Four readings prove that the region's climate warms by 5 C every four days.' Investigating climate requires much longer, suitably comparable records and analysis that accounts for seasonal variation and other influences. This fictional exercise teaches interpretation; it supplies neither a forecast nor an assessment of any actual locality."
+      ],
+      "practice": [
+        "Calculate the mean and range of the four fictional readings, and state what times they represent.",
+        "If Friday's reading is unavailable, should it be entered as 0 C when computing a mean? Explain.",
+        "Write one claim supported by the record and one additional kind of evidence needed before discussing a long-term climate trend."
+      ],
+      "answers": [
+        "Mean 14 C; range 5 C. They are four 09:00 readings on successive days, not full-day averages.",
+        "No. Missing data is not a measured zero. Mark it missing and state which available observations are included in a calculation.",
+        "For example, Thursday's 09:00 value is 5 C above Monday's. A climate discussion would need a much longer comparable record, including enough seasonal coverage and measurement context; these four readings are insufficient."
+      ],
+      "adaptation": "Use the printed values when a reliable instrument or accessible observation location is unavailable. Read labels aloud and compare claims before calculating. Preserve uncertainty instead of treating a short classroom log as a local climate study.",
+      "references": [
+        "weather-climate"
+      ],
+      "tags": [
+        "weather",
+        "climate",
+        "temperature-record",
+        "missing-data",
+        "trend",
+        "measurement-context"
       ]
     }
   ]
