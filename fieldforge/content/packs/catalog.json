@@ -5004,6 +5004,278 @@
         "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-113",
+      "title": "Education 113: Distinguish weathering, erosion and deposition",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 643,
+      "body_sha256": "0de0e1448712433a0608737d51c3e8a3b5964c366f97c91d97ec15368b1fcc26",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-38",
+        "fieldforge-education-54",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://www.nps.gov/subjects/erosion/about.htm"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-114",
+      "title": "Education 114: Trace more than one path through the rock cycle",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 650,
+      "body_sha256": "1980c268b9ac7ac6f323d9934f26e6f06143a166453aa6f0cbf00afed126ffff",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-102",
+        "fieldforge-education-113"
+      ],
+      "references": [
+        "https://www.nps.gov/subjects/geology/how-rocks-are-classified.htm",
+        "https://www.nps.gov/subjects/erosion/about.htm"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-115",
+      "title": "Education 115: Trace a catchment to an outlet and balance a water model",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 695,
+      "body_sha256": "e19c7564e5a45af42349401ff45afd6efebf2166b50ba47d1923ed4f18dbbd18",
+      "prerequisites": [
+        "fieldforge-education-40",
+        "fieldforge-education-54",
+        "fieldforge-education-78",
+        "fieldforge-education-105"
+      ],
+      "references": [
+        "https://www.usgs.gov/water-science-school/science/watersheds-and-drainage-basins"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-116",
+      "title": "Education 116: Explain seasons using tilt and compare daylight records",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 718,
+      "body_sha256": "4f0e7bd4771a233ad22e33428139546a8e4bd9a5c6ec2ddd3039d1d12ec9bdb5",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-69",
+        "fieldforge-education-72",
+        "fieldforge-education-102"
+      ],
+      "references": [
+        "https://spaceplace.nasa.gov/seasons/en/",
+        "https://oceanservice.noaa.gov/facts/weather_climate.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-117",
+      "title": "Education 117: Read contour intervals and compare slopes on a map",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 669,
+      "body_sha256": "7c7ab81678c0bf4f17c05934bf510267cc1049a6c2eabc8a5bf9410a30b751a6",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-21",
+        "fieldforge-education-40",
+        "fieldforge-education-107"
+      ],
+      "references": [
+        "https://www.usgs.gov/faqs/what-a-topographic-map",
+        "https://www.usgs.gov/educational-resources/topographic-map-symbols"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-118",
+      "title": "Education 118: Read latitude and longitude with explicit coordinate order",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 676,
+      "body_sha256": "e3cdc923937de39a8529f5eb6e36b8a290f098480dd9fdceb55baed541af40cf",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-40",
+        "fieldforge-education-83",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://oceanservice.noaa.gov/facts/latitude.html",
+        "https://oceanservice.noaa.gov/facts/longitude.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-119",
+      "title": "Education 119: Plan a sample before counting a paper population",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 679,
+      "body_sha256": "385276b182172345983c7f3b7b7479fbf8dc518c20d9f81504cde8da5075e89e",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-51",
+        "fieldforge-education-52",
+        "fieldforge-education-87"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-120",
+      "title": "Education 120: Use a dot display to compare whole distributions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 627,
+      "body_sha256": "304a54b888432e062e4088321903c9c1239f9afb3872a8cb949c1af260c1472b",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-51",
+        "fieldforge-education-88"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/2-introduction"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-121",
+      "title": "Education 121: Plot paired observations and limit claims about association",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 648,
+      "body_sha256": "fde8f4dab044a0ff5679b26db2754140bf17139bfd8c3c532b04bfb0fe796f88",
+      "prerequisites": [
+        "fieldforge-education-83",
+        "fieldforge-education-84",
+        "fieldforge-education-87",
+        "fieldforge-education-120"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/12-2-scatter-plots"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-122",
+      "title": "Education 122: Compare an observational record with an assigned-condition trial",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 679,
+      "body_sha256": "884d893409d214e2b240d02c14ddf116e9d8564d90d9e7032eebdd6cd6e199b2",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-87",
+        "fieldforge-education-110",
+        "fieldforge-education-121"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-4-experimental-design-and-ethics"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-123",
+      "title": "Education 123: Clean a small record set while preserving the raw evidence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 706,
+      "body_sha256": "10a0b49964c9804e8d7c5703faca58992ec3d6089b6448680b10665b527ddac3",
+      "prerequisites": [
+        "fieldforge-education-44",
+        "fieldforge-education-61",
+        "fieldforge-education-78",
+        "fieldforge-education-97",
+        "fieldforge-education-111"
+      ],
+      "references": [
+        "https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-124",
+      "title": "Education 124: Write an investigation report with evidence and limits",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 833,
+      "body_sha256": "6d9ad778bf597efed5613047d4e5f7a8bd508e85badec5ccbb6f81cd499c4789",
+      "prerequisites": [
+        "fieldforge-education-33",
+        "fieldforge-education-92",
+        "fieldforge-education-100",
+        "fieldforge-education-119",
+        "fieldforge-education-120",
+        "fieldforge-education-122",
+        "fieldforge-education-123"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [

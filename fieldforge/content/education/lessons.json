@@ -416,6 +416,90 @@
       "scope": "Background on defining a problem, designing, testing and improving a model. FieldForge's paper-display criteria, trial results and exercises are original; no NASA diagram or activity is reproduced and this is not an engineering qualification.",
       "publisher": "NASA/JPL-Caltech Education",
       "accessed_on": "2026-10-03"
+    },
+    "surface-processes": {
+      "title": "Erosion: Water, Wind & Weather — About",
+      "url": "https://www.nps.gov/subjects/erosion/about.htm",
+      "publisher": "U.S. National Park Service",
+      "scope": "Background on weathering, erosion and deposition. FieldForge's event cards, sediment account and questions are original paper exercises; no source activity or image is reproduced.",
+      "accessed_on": "2026-10-03"
+    },
+    "rock-groups": {
+      "title": "How Rocks are Classified",
+      "url": "https://www.nps.gov/subjects/geology/how-rocks-are-classified.htm",
+      "publisher": "U.S. National Park Service",
+      "scope": "Background on classifying rocks by their formation and on the connected rock-type resources. FieldForge's process cards and reasoning exercises are original, not a rock-identification key or a copied diagram.",
+      "accessed_on": "2026-10-03"
+    },
+    "drainage-basins": {
+      "title": "Watersheds and Drainage Basins",
+      "url": "https://www.usgs.gov/water-science-school/science/watersheds-and-drainage-basins",
+      "publisher": "U.S. Geological Survey, Water Science School",
+      "scope": "Background on catchments, drainage divides, nested basins and water budgets. The named outlets and numerical budget here are original fictional models, not local hydrological measurements or flood guidance.",
+      "accessed_on": "2026-10-03"
+    },
+    "earth-seasons": {
+      "title": "What Causes the Seasons?",
+      "url": "https://spaceplace.nasa.gov/seasons/en/",
+      "publisher": "NASA/JPL-Caltech, Space Place",
+      "scope": "Background on Earth's tilt and seasonal sunlight. FieldForge's paper model, daylight records and questions are original; no source illustration or measured local daylight series is reproduced.",
+      "accessed_on": "2026-10-03"
+    },
+    "contours": {
+      "title": "What is a topographic map?",
+      "url": "https://www.usgs.gov/faqs/what-a-topographic-map",
+      "publisher": "U.S. Geological Survey",
+      "scope": "Background on contour lines, elevation and landform representation. The contour descriptions, coordinates and slopes here are original fictional exercises, not a route plan or a survey.",
+      "accessed_on": "2026-10-03"
+    },
+    "latitude": {
+      "title": "What is latitude?",
+      "url": "https://oceanservice.noaa.gov/facts/latitude.html",
+      "publisher": "NOAA National Ocean Service",
+      "scope": "Background on geographic coordinates and their reference lines. The coordinate pairs and label checks here are original teaching examples, not navigation instructions or observations of a real site.",
+      "accessed_on": "2026-10-03"
+    },
+    "longitude": {
+      "title": "What is longitude?",
+      "url": "https://oceanservice.noaa.gov/facts/longitude.html",
+      "publisher": "NOAA National Ocean Service",
+      "scope": "Background on geographic coordinates and their reference lines. The coordinate pairs and label checks here are original teaching examples, not navigation instructions or observations of a real site.",
+      "accessed_on": "2026-10-03"
+    },
+    "sample-plan": {
+      "title": "Introductory Statistics 2e: Data, Sampling, and Variation in Data and Sampling",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on populations, samples, selection and variation. FieldForge's paper grid, selection procedure and counts are original; no source survey or exercise is reproduced.",
+      "accessed_on": "2026-10-03"
+    },
+    "data-displays": {
+      "title": "Introductory Statistics 2e: Descriptive Statistics: Introduction",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/2-introduction",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on displaying a distribution before summarizing it. FieldForge's dot displays, numerical series and comparison questions are original, not textbook examples.",
+      "accessed_on": "2026-10-03"
+    },
+    "scatter-plots": {
+      "title": "Introductory Statistics 2e: Scatter Plots",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/12-2-scatter-plots",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on paired quantitative data and relationship patterns. FieldForge's paired records, plot instructions and interpretation tasks are original fictional examples.",
+      "accessed_on": "2026-10-03"
+    },
+    "study-design": {
+      "title": "Introductory Statistics 2e: Experimental Design and Ethics",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/1-4-experimental-design-and-ethics",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on observations, assigned conditions and comparison design. FieldForge's sorting-task scenarios and critique questions are original paper exercises, not an intervention study or reproduced textbook activity.",
+      "accessed_on": "2026-10-03"
+    },
+    "data-quality": {
+      "title": "The Government Data Quality Framework",
+      "url": "https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework",
+      "publisher": "UK Government, Government Data Quality Hub",
+      "scope": "Background on completeness, uniqueness, validity and documenting data limitations. The record IDs, unit conversions and cleaning log here are original teaching examples, not government data or a compliance assessment.",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -4907,6 +4991,510 @@
         "read-back",
         "revision-status",
         "next-action"
+      ]
+    },
+    {
+      "id": "113",
+      "edition": "2026-10-03",
+      "title": "Distinguish weathering, erosion and deposition",
+      "track": "earth-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "38",
+        "54",
+        "101"
+      ],
+      "goal": "Identify breakdown, transport and settling in an event sequence, and avoid treating one observed change as a complete history.",
+      "materials": "Paper cards for rock, loose sediment, transport and deposit; the fictional observations below.",
+      "lesson": [
+        "Weathering breaks down or alters rock at its location. Erosion removes and transports material. Deposition occurs when transported material is laid down. These processes can act together, but the words describe different parts of a history. A fragment breaking loose without being carried away illustrates weathering; a stream carrying that fragment illustrates transport by erosion; the fragment settling downstream illustrates deposition.",
+        "Arrange this original paper sequence: A crack widens in an exposed rock. Small pieces remain beside it. Later, flowing water carries some pieces downslope. After the flow slows, pieces collect in a lower patch. Label the steps with the relevant process and explain your choice. A place can lose sediment during one event and gain it during another. The labels describe processes, not permanent properties of a location.",
+        "Use an invented sediment account to check a model. A marked paper patch begins with 30 counters. Seven represent material transported out, and three represent material deposited from elsewhere. The closing count is 30 - 7 + 3 = 26. The net loss of four does not mean only four counters moved: ten crossed the patch boundary in the two directions. A before-and-after total can hide the separate transfers that produced it.",
+        "Report observations separately from explanations. 'There are fewer loose pieces in the marked patch' does not by itself identify water, wind or another agent as the cause. Photographs, repeated observations and a clear boundary could help distinguish explanations. The cards simplify processes that vary in speed and conditions; they do not reproduce a landscape's complete history. Keep the model's assumed transfers visible rather than treating an invented count as field evidence."
+      ],
+      "practice": [
+        "Name the process when a rock cracks in place, when a loose piece is carried by a stream, and when that piece settles downstream.",
+        "A model patch starts with 42 counters, loses 9 and receives 5. Find its closing count and net change.",
+        "Why does a net loss of four counters not prove that exactly four counters were transported?"
+      ],
+      "answers": [
+        "Weathering, erosion/transport, and deposition, respectively.",
+        "42 - 9 + 5 = 38 counters; net change is -4, a loss of four.",
+        "The net change combines outgoing and incoming transfers. In the lesson example, seven left and three arrived, so ten crossed the boundary even though the net loss was four."
+      ],
+      "adaptation": "Use large counters or spoken event cards. A learner can explain the sequence without handling rocks or sediment. Ask which observations would be needed to distinguish a model from a real-site claim.",
+      "references": [
+        "surface-processes"
+      ],
+      "tags": [
+        "weathering",
+        "erosion",
+        "deposition",
+        "sediment-budget"
+      ]
+    },
+    {
+      "id": "114",
+      "edition": "2026-10-03",
+      "title": "Trace more than one path through the rock cycle",
+      "track": "earth-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "38",
+        "102",
+        "113"
+      ],
+      "goal": "Connect major rock groups with formation processes and explain why the rock cycle is a network of possible paths rather than one compulsory sequence.",
+      "materials": "Paper cards labeled igneous rock, sediment, sedimentary rock, metamorphic rock and molten material.",
+      "lesson": [
+        "Rock groups describe formation history. Igneous rocks form when molten material cools and solidifies. Many sedimentary rocks form from accumulated sediment that becomes rock through processes such as compaction and cementation; other sedimentary rocks form by chemical or biological processes. Metamorphic rocks form when existing rock changes under conditions such as heat and pressure without melting into magma. The distinction is about processes, not merely color or whether a sample looks layered.",
+        "Make an original arrow network with the five paper cards. One possible route is molten material -> cooling and solidification -> igneous rock -> weathering and erosion -> sediment -> deposition and lithification -> sedimentary rock. Lithification means sediment becoming rock. A second route takes an existing rock through metamorphism without melting. If material melts and later solidifies, the resulting formation process is igneous instead.",
+        "Do not make every card a compulsory stop. An igneous rock can undergo metamorphism without first becoming sedimentary rock. Exposed rocks from more than one group can weather into sediment. Some rocks remain in similar conditions for very long periods. Arrows represent possible transformations under suitable conditions, not a timetable showing that every rock follows the same journey in the same order.",
+        "Use clues cautiously when interpreting a sample description. 'It has layers' is not enough to establish one unique origin, because several processes can produce visible banding or layering. A formation account needs relevant evidence such as composition, texture and geological setting. In these paper exercises, the stated process determines the answer. They practice reasoning about a model rather than identifying an unknown rock from a short verbal clue."
+      ],
+      "practice": [
+        "Which rock group results when molten material cools and solidifies?",
+        "An existing rock changes under heat and pressure without melting. Which formation process is described? How would melting followed by solidification differ?",
+        "Give a possible route from igneous rock to metamorphic rock that does not pass through sedimentary rock."
+      ],
+      "answers": [
+        "Igneous rock.",
+        "Metamorphism. Melting followed by solidification instead forms igneous rock from the melt.",
+        "Existing igneous rock undergoes metamorphism under suitable conditions, without melting. It need not first become sediment or sedimentary rock."
+      ],
+      "adaptation": "Let learners move cards and label arrows orally. Use supplied process descriptions instead of tests on unknown rocks. A facilitator can add geological examples later without presenting appearance alone as conclusive identification.",
+      "references": [
+        "rock-groups",
+        "surface-processes"
+      ],
+      "tags": [
+        "rock-cycle",
+        "igneous",
+        "sedimentary",
+        "metamorphic",
+        "lithification"
+      ]
+    },
+    {
+      "id": "115",
+      "edition": "2026-10-03",
+      "title": "Trace a catchment to an outlet and balance a water model",
+      "track": "earth-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "40",
+        "54",
+        "78",
+        "105"
+      ],
+      "goal": "Define a drainage area relative to a chosen outlet, recognize nested catchments, and account for storage in a simplified water budget.",
+      "materials": "Paper for a fictional stream network with outlets A and B, plus counters for the supplied water amounts.",
+      "lesson": [
+        "A watershed or catchment is an area that contributes drainage to a chosen outlet. Surface drainage divides commonly follow higher ground separating flow toward different outlets. State the outlet before drawing a boundary. A small tributary catchment can lie inside the larger catchment of a downstream river. The boundary describes the drainage question being asked; it does not have to follow a property line or administrative border.",
+        "Draw an original network: two small streams join at A, then a third stream joins farther downstream before B. Water already passing A can continue toward B. The catchment for B includes the catchment for A plus the additional contributing area below A, under this simple model. A statement about 'the watershed' is incomplete if the reader cannot tell whether A or B is the selected outlet.",
+        "Balance an invented water account for a stated interval. The model starts with 20 units of stored water and receives 50 units as precipitation. It loses 30 through the outlet and 15 to the atmosphere, leaving 25 stored: 20 + 50 - 30 - 15 = 25. These quantities use the same volume unit. Storage increased by five, so not all incoming precipitation left during that interval. Record any additional inputs or outputs before applying such an account elsewhere.",
+        "Real drainage includes infiltration, groundwater movement, vegetation and storage, not just immediate surface runoff. A surface sketch alone cannot establish every subsurface pathway or the timing of water reaching an outlet. State this limitation when using the paper network. Neither a catchment boundary nor a balanced volume account establishes water quality. This lesson develops spatial and accounting reasoning from supplied information, rather than a local flood or drinking-water assessment."
+      ],
+      "practice": [
+        "In the network, does the catchment at downstream B include the contributing area above A? State the model assumption.",
+        "A model starts with 12 water units, receives 40 and loses 28 through its outlet plus 9 to the atmosphere. What remains stored?",
+        "Why is precipitation during one interval not necessarily equal to water leaving the outlet during that interval?"
+      ],
+      "answers": [
+        "Yes, in the described connected stream network where water from A continues toward B. B also receives the additional downstream tributary area.",
+        "12 + 40 - 28 - 9 = 15 units, an increase of three from the start.",
+        "Some water can enter or leave storage or transfer to the atmosphere, and flow may include water stored from an earlier interval. Other pathways also need accounting when relevant."
+      ],
+      "adaptation": "Use arrows and counters to distinguish the map from the volume ledger. Keep all quantities in one unit and one stated interval. The exercise requires no access to a stream or real drainage records.",
+      "references": [
+        "drainage-basins"
+      ],
+      "tags": [
+        "catchment",
+        "drainage-divide",
+        "nested-watersheds",
+        "water-budget"
+      ]
+    },
+    {
+      "id": "116",
+      "edition": "2026-10-03",
+      "title": "Explain seasons using tilt and compare daylight records",
+      "track": "earth-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "19",
+        "69",
+        "72",
+        "102"
+      ],
+      "goal": "Distinguish daily rotation from the yearly orbit, relate tilt to opposite seasonal timing, and calculate daylight duration from supplied records.",
+      "materials": "A paper circle with a tilted axis, a fixed Sun marker, and the fictional sunrise/sunset records below.",
+      "lesson": [
+        "Earth rotates, producing the familiar daily pattern of day and night at most locations. Earth also orbits the Sun over a year. Its axis is tilted relative to the direction perpendicular to the orbital plane. Over a year's orbit, the axis keeps approximately the same direction in space. This changes the sunlight angle and daylight duration experienced by each hemisphere through the year. Polar regions have periods when the ordinary daily sunrise-and-sunset pattern does not occur.",
+        "Use a paper Earth at two opposite positions around a Sun marker, keeping its drawn axis pointed in the same page direction. When the Northern Hemisphere tilts toward the Sun, it has its summer season while the Southern Hemisphere has winter; the opposite alignment reverses that timing. Earth's changing distance from the Sun is not the main explanation for these opposite seasons. The drawing is a geometry model, not a scale diagram of astronomical distances.",
+        "Compare original fictional daylight records for one location, using the same time standard and dates without a clock change. Record A has sunrise 06:20 and sunset 17:40, giving 11 hours 20 minutes. Record B has sunrise 05:30 and sunset 18:30, giving 13 hours. B has 1 hour 40 minutes more daylight. These invented times practice elapsed-time calculation; they are not predictions for the learner's location.",
+        "Daylight duration and sunlight angle affect seasonal energy input, but two day-length records do not explain every day's weather. Latitude, oceans, land and atmospheric conditions matter too. Some regions describe seasonal patterns mainly in terms of wet and dry periods. Keep the orbital explanation, the time calculation and local weather observations distinct. A model can explain a broad pattern without determining the temperature or rainfall on a particular day."
+      ],
+      "practice": [
+        "Which motion mainly produces the daily day/night cycle, and which yearly motion works with axial tilt in the seasonal pattern?",
+        "If sunrise is 06:10 and sunset is 18:50 under the same clock standard, how long is daylight?",
+        "Why does a claim that the entire Earth has summer at once because it is closer to the Sun fail to explain the hemispheres?"
+      ],
+      "answers": [
+        "Rotation gives the daily pattern at most locations; Earth's orbit around the Sun, with its tilted axis, gives the yearly change in seasonal sunlight.",
+        "12 hours 40 minutes.",
+        "The hemispheres have opposite seasonal timing even though both belong to the same Earth at nearly the same Sun-Earth distance. The direction of tilt and resulting sunlight pattern are essential."
+      ],
+      "adaptation": "Keep the paper axis orientation fixed as the circle changes orbital position. Use spoken descriptions if a diagram is inaccessible. There is no need to look directly at the Sun or make a real sunrise observation.",
+      "references": [
+        "earth-seasons",
+        "weather-climate"
+      ],
+      "tags": [
+        "axial-tilt",
+        "seasons",
+        "daylight-duration",
+        "rotation-and-orbit"
+      ]
+    },
+    {
+      "id": "117",
+      "edition": "2026-10-03",
+      "title": "Read contour intervals and compare slopes on a map",
+      "track": "geography",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "21",
+        "40",
+        "107"
+      ],
+      "goal": "Read elevation from a contour description, calculate rise relative to horizontal distance, and keep a map interpretation within its evidence.",
+      "materials": "Paper with three nested closed contour lines labeled 100, 110 and 120 metres, plus a marked horizontal map distance.",
+      "lesson": [
+        "A contour connects points of equal elevation relative to the map's stated reference surface. The contour interval is the elevation difference between adjacent regular contours. For the fictional contours 100, 110 and 120 metres, the interval is 10 metres. Elevation is a vertical quantity; map distance along the page represents horizontal distance according to the scale. Read the units for both before comparing them.",
+        "Draw three nested closed contours with elevation increasing inward: 100 m outside, 110 m next and 120 m inside. They describe ground rising inward in this idealized hill sketch. They do not give an exact summit elevation without further information. A point between the 110 and 120 m contours can be described as lying within that elevation band under the simple continuous-slope model; an exact value requires interpolation assumptions or another measurement.",
+        "Compare two fictional routes across the same 20 m elevation gain. Route A covers 100 m horizontally, while B covers 200 m horizontally. Their average rise-to-horizontal-distance ratios are 20/100 = 0.20 and 20/200 = 0.10, often expressed as 20 percent and 10 percent grades. A has the greater average grade. These percentages are not angles in degrees, and the horizontal distance differs from the actual sloping path length.",
+        "On a map with a fixed contour interval and scale, closer contour spacing generally indicates a steeper slope in the direction crossing them. Compare the same elevation change, not an arbitrary number of lines on maps with different intervals. A contour map by itself does not establish trail condition, access or whether a route is suitable. Here the routes are mathematical descriptions for reading the map, not recommendations for real travel."
+      ],
+      "practice": [
+        "What is the interval between contours labeled 240, 260 and 280 m?",
+        "A fictional route rises 15 m over a horizontal distance of 150 m. Calculate its average percent grade.",
+        "Does an innermost contour labeled 120 m prove that the summit is exactly 120 m? Explain."
+      ],
+      "answers": [
+        "20 m between successive contours.",
+        "15/150 times 100 percent = 10 percent. This is a rise/run percentage, not a 10-degree angle.",
+        "No. The line identifies points at 120 m, not the exact summit. Additional contours, a spot elevation or other information would be needed."
+      ],
+      "adaptation": "Use thick or raised contour lines and describe the nested pattern aloud. Distinguish metres of elevation from metres along the map. Keep the exercise on the supplied fictional terrain.",
+      "references": [
+        "contours",
+        "map-symbols"
+      ],
+      "tags": [
+        "contour-interval",
+        "elevation",
+        "percent-grade",
+        "topographic-map"
+      ]
+    },
+    {
+      "id": "118",
+      "edition": "2026-10-03",
+      "title": "Read latitude and longitude with explicit coordinate order",
+      "track": "geography",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "36",
+        "40",
+        "83",
+        "101"
+      ],
+      "goal": "Identify the hemisphere of a coordinate pair, translate a stated signed-degree convention, and explain why order and reference information matter.",
+      "materials": "A simple globe sketch or labeled world grid; use only the fictional coordinate pairs below.",
+      "lesson": [
+        "Latitude states angular position north or south of the equator, from 0 degrees to 90 degrees at either pole. Longitude states angular position east or west of a reference meridian, commonly using values through 180 degrees. These are angles, not distances measured in metres. Latitude lines run around the globe parallel to the equator; longitude meridians meet at the poles.",
+        "For this lesson, write every pair as latitude first, longitude second, using decimal degrees. The fictional pair 18 degrees north, 42 degrees west has northern latitude and western longitude. Under the stated signed convention, north and east are positive and south and west are negative, so it becomes (18, -42). Another system may request longitude first. Read its labels instead of assuming that every pair follows this lesson's order.",
+        "Two points can share latitude while having different longitudes. The pair (18, -42) and the pair (18, -40) share a parallel but are not the same point. A two-degree longitude difference is not a fixed kilometre distance everywhere, because meridians get closer together toward the poles. A detailed location also requires a stated coordinate reference system or datum; writing more decimal places cannot by itself establish measurement accuracy.",
+        "Check coordinates before using them in a record. A latitude of 105 degrees is outside the permitted range, while a longitude of 105 degrees is possible. Preserve hemisphere signs, units and order when copying. If labels are missing, ask which convention was used rather than silently swapping numbers. These examples teach interpretation and data validation; they do not provide a location fix, boundary survey or route to follow."
+      ],
+      "practice": [
+        "Write 12 degrees south, 75 degrees east as a signed decimal pair in the stated latitude-longitude order.",
+        "Under that order, is (105, 20) a valid latitude-longitude pair? Explain.",
+        "Why must a pair labeled longitude, latitude be handled differently from one labeled latitude, longitude?"
+      ],
+      "answers": [
+        "(-12, 75), using negative for south and positive for east.",
+        "No. A latitude of 105 degrees exceeds the range -90 to 90. The second number is within the ordinary longitude range, but that does not repair the first.",
+        "The first and second values describe different coordinates in the two conventions. Reversing them can identify a different point or produce an invalid latitude; retain the stated labels and order."
+      ],
+      "adaptation": "Begin with N, S, E and W labels before signed numbers. A learner may use a tactile globe or oral comparison. Avoid recording personal locations for this practice.",
+      "references": [
+        "latitude",
+        "longitude"
+      ],
+      "tags": [
+        "latitude-longitude",
+        "coordinate-order",
+        "hemisphere",
+        "decimal-degrees"
+      ]
+    },
+    {
+      "id": "119",
+      "edition": "2026-10-03",
+      "title": "Plan a sample before counting a paper population",
+      "track": "data-investigation",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "51",
+        "52",
+        "87"
+      ],
+      "goal": "Define a population and counting rule, choose a sample without selecting preferred results, and distinguish an estimate from a complete count.",
+      "materials": "A paper grid with 16 equal cells, folded number slips 1–16, and the supplied fictional counts.",
+      "lesson": [
+        "A population is the full set about which a question is asked; a sample is the selected part observed. For this original paper model, the population consists of all 16 equal cells on a map containing plant symbols. The question is how many symbols appear per cell on average. Define the counting rule before selection: count a symbol in the cell containing its center, and use one agreed rule if a center falls exactly on a boundary.",
+        "Number the cells 1–16. To choose four distinct cells at random, mix identical folded numbered slips and draw four without replacement, recording the selected IDs before inspecting their counts. Each cell has the same chance of selection in this procedure. Choosing the four busiest-looking cells instead would favor high counts. Random selection reduces this deliberate selection bias, but a small sample can still differ substantially from the whole population by chance.",
+        "In the supplied fictional draw, cells 3, 7, 12 and 15 contain 2, 5, 1 and 4 symbols. The sample total is 12 and the mean is 12/4 = 3 per cell. Multiplying by 16 gives an estimated total of 48 symbols for the full grid. That is an estimate based on the sample, not a verified census. Another fair draw may give a different estimate; keep the selected IDs and individual counts so the calculation can be checked.",
+        "Record what the procedure covers. Counts from four equal paper cells estimate this particular grid, not every garden or region. Unequal cell areas would require a different comparison, such as counts per unit area. A census of all 16 cells could check this small model's actual total. On a larger task, choose the sampling method and desired accuracy deliberately rather than assuming a convenient sample is adequate for every purpose."
+      ],
+      "practice": [
+        "What are the population and sample in the supplied 16-cell model?",
+        "A different four-cell sample has counts 3, 6, 2 and 5. Find its mean and estimated full-grid total.",
+        "Why should the selected cell IDs be recorded before their counts are inspected?"
+      ],
+      "answers": [
+        "The population is all 16 cells; the supplied sample is cells 3, 7, 12 and 15.",
+        "Mean (3 + 6 + 2 + 5)/4 = 4 per cell; estimated total 4 times 16 = 64. It remains an estimate, not a census.",
+        "It helps prevent replacing an inconvenient count with a preferred cell after seeing the results and makes the planned selection auditable."
+      ],
+      "adaptation": "Use large numbered cards or an accessible random-selection method. All symbols can remain on paper. If slips cannot be mixed fairly, describe the limitation instead of labeling a convenience choice random.",
+      "references": [
+        "sample-plan"
+      ],
+      "tags": [
+        "sampling-plan",
+        "population",
+        "without-replacement",
+        "sample-estimate"
+      ]
+    },
+    {
+      "id": "120",
+      "edition": "2026-10-03",
+      "title": "Use a dot display to compare whole distributions",
+      "track": "data-investigation",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "51",
+        "88"
+      ],
+      "goal": "Represent every observation, compare center and spread, and recognize that equal means can hide very different data patterns.",
+      "materials": "Paper with a horizontal number line and two original five-observation datasets.",
+      "lesson": [
+        "A simple dot display places one dot above a number line for each observation, stacking repeated values. Label the quantity and unit, use equal spacing along the number line, and state that each dot represents one observation. This preserves more information than a single average. For the original values 2, 3, 3, 4 and 8 minutes, draw one dot at 2, two at 3, one at 4 and one at 8.",
+        "That first dataset has total 20 minutes, mean 4 minutes, median 3 minutes and range 6 minutes. Most values cluster between 2 and 4, while 8 is separated from them. The high value deserves context, but being unusual does not establish that it is wrong. It might be a recording mistake or a valid longer task. Check the record before deciding whether any correction is justified, and keep a reason for a change.",
+        "Compare a second fictional dataset: 4, 4, 4, 4 and 4 minutes. Its mean is also 4, but its median is 4 and its range is 0. On a dot display all five dots stack at 4. The matching means do not make the distributions interchangeable. When describing typical experience, include a display or information about spread and unusual values rather than reporting only the mean.",
+        "Use a common horizontal scale when comparing the two displays. Count the dots to check that no observation has disappeared, including repeated values. These five-observation examples are too small to establish the usual timing of every task or learner. A careful comparison states what these recorded values show and what information about conditions or selection is missing. The display is a way to inspect evidence, not an automatic judgment of performance."
+      ],
+      "practice": [
+        "For 1, 2, 2, 5 and 5 minutes, state how many dots belong at each value and find the median.",
+        "Find the mean and range of that dataset.",
+        "Two datasets have the same mean. Name two other features to inspect before calling them similar."
+      ],
+      "answers": [
+        "One dot at 1, two at 2 and two at 5; median 2 minutes.",
+        "Total 15; mean 15/5 = 3 minutes. Range 5 - 1 = 4 minutes.",
+        "For example: spread/range, median, clusters, gaps, unusual values, number of observations and collection conditions. Equal means alone do not describe those features."
+      ],
+      "adaptation": "Replace dots with movable counters or a frequency list read aloud. Use the same scale for both groups, and describe stacked dots explicitly for readers who cannot see the plot.",
+      "references": [
+        "data-displays"
+      ],
+      "tags": [
+        "dot-display",
+        "distribution",
+        "same-mean",
+        "spread",
+        "unusual-value"
+      ]
+    },
+    {
+      "id": "121",
+      "edition": "2026-10-03",
+      "title": "Plot paired observations and limit claims about association",
+      "track": "data-investigation",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "83",
+        "84",
+        "87",
+        "120"
+      ],
+      "goal": "Keep two measurements from each observation paired, describe a scatter-plot pattern, and distinguish association from proof of causation.",
+      "materials": "Squared paper or a verbal coordinate list and the four fictional session records below.",
+      "lesson": [
+        "A scatter plot represents two numerical variables measured together. In this original dataset, four practice sessions record helpers and completed cards as pairs: (1, 4), (2, 7), (3, 8) and (4, 13). Use helpers on the horizontal axis and completed cards on the vertical axis. Each point describes one session. Preserve the pairs; sorting each column separately would create combinations that were never recorded.",
+        "The points show an upward association in this small set: sessions with more helpers tend to have more completed cards. The pattern is not an exact fixed rate, because the increases differ. Label units and keep equal intervals on each axis. There is no need to connect successive points with a line; these are separate sessions, not a continuous journey from one point to the next. Two sessions can share the same helper count and have different outputs.",
+        "The plot alone cannot establish that adding a helper caused a particular output increase. Session length, task difficulty, experience or another condition might also differ. For example, longer sessions might both attract more helpers and finish more cards. That possibility is a reason to investigate the design and records, not evidence that this particular alternative actually occurred. Keep a plausible explanation separate from an observed variable.",
+        "A description should state the scope: 'In these four recorded sessions, helper count and completed-card count rise together.' Do not use the pattern to guarantee output for a group of twenty helpers, far outside the observed range of one to four. Even a reasonable-looking line has limits. Additional observations and a suitable comparison design are needed for stronger predictions or causal conclusions."
+      ],
+      "practice": [
+        "Which point represents a session with three helpers and eight completed cards? What does each coordinate mean?",
+        "A fifth session has two helpers and twelve completed cards. Is it allowed to appear above the earlier two-helper point? Explain.",
+        "Why does the upward pattern not prove that adding one helper always produces a fixed number of extra completed cards?"
+      ],
+      "answers": [
+        "(3, 8): horizontal coordinate 3 helpers; vertical coordinate 8 completed cards.",
+        "Yes. Different sessions may have the same horizontal value and different outputs, so both (2, 7) and (2, 12) can appear.",
+        "The observed increases are not constant, and other session conditions may differ. The plot establishes an association in the supplied records, not a universal causal rate."
+      ],
+      "adaptation": "Read coordinate pairs aloud and allow a table in place of a drawn plot. Keep both values from each session together. Use fictional records rather than personal performance rankings.",
+      "references": [
+        "scatter-plots"
+      ],
+      "tags": [
+        "scatter-plot",
+        "paired-data",
+        "association",
+        "causal-claim",
+        "extrapolation"
+      ]
+    },
+    {
+      "id": "122",
+      "edition": "2026-10-03",
+      "title": "Compare an observational record with an assigned-condition trial",
+      "track": "data-investigation",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "87",
+        "110",
+        "121"
+      ],
+      "goal": "Identify whether a condition was assigned, propose a fair comparison for a simple paper task, and explain what random assignment does and does not establish.",
+      "materials": "Paper descriptions of two card-sorting methods and a fictional study-plan worksheet; no participants are required.",
+      "lesson": [
+        "An observational study records conditions as they occur without the investigator assigning the condition being compared. An experiment assigns a condition to examine its effect. In a fictional learning group, people who already use color labels finish a sorting task faster than people who do not. If they chose their own method, this is an observational comparison. Their prior practice, task experience or other differences could help explain the result.",
+        "Design a small original trial on paper. The question is whether adding color to otherwise identical category headings changes completion time for the same card task. Define the outcome and correctness check in advance, use equivalent card sets, and provide the same instructions and time measurement procedure. Randomly assign willing participants to the two heading versions. Random assignment helps avoid choosing groups according to expected performance, but it does not guarantee balanced groups in every small trial.",
+        "Separate random assignment from random sampling. Assignment concerns which condition a participant receives; sampling concerns who enters the study. Randomly assigning a small volunteer group does not make that group representative of every learner. A within-person comparison also needs care: doing one version first may provide practice that helps on the second. Alternating or randomizing order can address some order effects, but the analysis must still reflect how the observations were collected.",
+        "Report both the procedure and its limits. A faster result with many sorting errors may not meet the intended goal, so retain the correctness results. For a real optional classroom activity, explain the task, allow people to decline, and avoid publishing identifiable rankings. The paper exercise is sufficient here. It teaches how to critique a design; it does not establish that either heading version is effective or validate a learning intervention."
+      ],
+      "practice": [
+        "People select their usual sorting method and an observer records times. Is that method comparison observational or assigned by experiment?",
+        "Name two conditions to hold consistent when comparing color-added headings with otherwise identical headings.",
+        "Does random assignment of ten volunteers establish that they represent all learners? Explain the distinction."
+      ],
+      "answers": [
+        "Observational, because the investigator did not assign the compared method.",
+        "Examples include equivalent card tasks, instructions, heading wording and layout apart from color, timing procedure and correctness criteria. Accept two relevant controls tied to the question.",
+        "No. Assignment allocates volunteers to conditions; sampling determines who was selected. The volunteer group may differ from other learners, even if assignment within it is random."
+      ],
+      "adaptation": "Use only the study-plan cards if participation or timing is unsuitable. Let learners critique the method aloud. Keep access needs and correctness measures visible when imagining a real comparison.",
+      "references": [
+        "study-design"
+      ],
+      "tags": [
+        "observational-study",
+        "random-assignment",
+        "random-sampling",
+        "order-effects"
+      ]
+    },
+    {
+      "id": "123",
+      "edition": "2026-10-03",
+      "title": "Clean a small record set while preserving the raw evidence",
+      "track": "data-investigation",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "44",
+        "61",
+        "78",
+        "97",
+        "111"
+      ],
+      "goal": "Distinguish missing, invalid and duplicate records, normalize a stated unit conversion, and document exclusions without silently rewriting the source.",
+      "materials": "A paper copy of five fictional label-width rows and a separate working copy with a change log.",
+      "lesson": [
+        "Begin with a question and a record definition. This original table is intended to contain one width measurement per label ID: A = 11 cm; B = 0 cm; C = blank; D = 0.13 m; A = 11 cm again. The agreed rule requires a positive width and one record per label. Preserve this raw table, then make a working copy. Cleaning should make decisions visible rather than hide inconvenient rows.",
+        "Classify the issues before calculating. C is missing, so its width is unknown; blank does not mean zero. B has a recorded zero, which violates the positive-width rule and needs checking. D uses another unit, but 0.13 m can be converted to 13 cm with that conversion recorded. The repeated A may be a duplicate under the one-record-per-ID rule; confirm its origin rather than treating every repeated value as a duplicate.",
+        "For this exercise, a supplied source note confirms that A's second row was copied accidentally. Retain one A row in the working dataset and record the exclusion. Leave B and C unresolved and exclude them from the mean with an explicit reason. The two usable widths are 11 and 13 cm, giving mean 12 cm. Report two usable measurements out of four distinct intended labels, with one invalid and one missing measurement still unresolved.",
+        "Use a change log with original value, action, reason and evidence. A rule check can establish that a value has the expected format without proving it is accurate. A complete table can still contain incorrect measurements. If later evidence resolves B or C, update the working copy and summary while retaining the history. Do not fill a blank with the mean merely to make the table look complete; any imputation is a separate analysis choice that must be justified and disclosed."
+      ],
+      "practice": [
+        "Why should the blank C row and recorded zero B row be described differently?",
+        "Convert D's 0.13 m to centimetres and calculate the mean of the two usable widths.",
+        "Two different IDs both have width 11 cm. Is that enough reason to delete one as a duplicate?"
+      ],
+      "answers": [
+        "C has no recorded measurement; B has a recorded value that fails the positive-width rule. Both need follow-up, but the observed issues are different.",
+        "D is 13 cm; the usable mean is (11 + 13)/2 = 12 cm. Report that it uses two of four distinct intended labels.",
+        "No. Equal values can be legitimate measurements of different labels. Duplicate detection depends on record identity and the intended recording rule, not just matching numbers."
+      ],
+      "adaptation": "Use paper rows and a separate annotation sheet. A learner may dictate the log. Keep fictional data throughout; this activity does not require altering any live database or personal record.",
+      "references": [
+        "data-quality"
+      ],
+      "tags": [
+        "data-cleaning",
+        "raw-records",
+        "missing-versus-zero",
+        "unit-normalization",
+        "change-log"
+      ]
+    },
+    {
+      "id": "124",
+      "edition": "2026-10-03",
+      "title": "Write an investigation report with evidence and limits",
+      "track": "data-investigation",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "33",
+        "92",
+        "100",
+        "119",
+        "120",
+        "122",
+        "123"
+      ],
+      "goal": "Combine a question, selection method, results and limitations into a short report whose conclusions stay within a fictional dataset.",
+      "materials": "The two supplied paper-grid datasets and a report template with question, method, results, interpretation and next check.",
+      "lesson": [
+        "Use an original paper investigation to connect the steps. Two fictional map zones, A and B, each contain sixteen equal cells representing 1 square metre each. The question is whether their recorded plant-symbol counts differ. Four distinct cells are selected at random without replacement in each zone and counted with the same boundary rule. The supplied counts are A: 2, 3, 4, 3; B: 0, 2, 1, 1. These are invented teaching records, not observations of a real habitat.",
+        "Preserve the individual counts before summarizing. A has sample total 12 and mean 3 symbols per sampled cell; B has total 4 and mean 1. The difference in sample means is 2 symbols per cell. All cells have the same represented area, so these sample means also correspond numerically to symbols per represented square metre. A clear table or dot display can show the spread instead of reducing everything to a single difference.",
+        "Write a bounded interpretation: 'The four sampled A cells averaged 3 symbols, compared with 1 in B, a difference of 2 per cell.' This sample difference does not prove that all A cells have more symbols than all B cells, that the full-zone means equal the sample means, or that a particular environmental factor caused the difference. No environmental treatment was assigned. Additional sampling could investigate how stable the pattern is, while a causal question would need an appropriate design and more information.",
+        "Complete the report with the question, zone and cell definitions, selection procedure, counting rule, raw counts, calculations, limitations and next check. If an observation is missing, state the usable count and how the summary was calculated. Credit the fictional dataset as such rather than attaching the name of an outside organization to its numbers. A reader should be able to reproduce the arithmetic and distinguish a direct result from an explanation that remains untested."
+      ],
+      "practice": [
+        "Calculate the sample mean for each zone and their difference.",
+        "Write one sentence reporting the result and one sentence stating an appropriate limitation.",
+        "If one of B's four observations was not recorded, what should the report disclose before giving an average?"
+      ],
+      "answers": [
+        "A: 12/4 = 3 symbols per cell. B: 4/4 = 1. Difference A minus B = 2 symbols per cell.",
+        "For example: 'The four sampled cells in A averaged 3 symbols and those in B averaged 1.' Limitation: 'These samples do not establish the full-zone means or identify a cause of the difference.' Accept equivalent claims that retain sample size and scope.",
+        "Identify the missing observation, report how many usable observations remain, and explain that the average uses those recorded values rather than replacing the missing value with zero. Retain the raw record and disclose the limitation."
+      ],
+      "adaptation": "Accept an oral report with a recorded calculation or a large-print table. A facilitator can separate reading support from independent data reasoning. Extend the investigation only after the learner can explain what the existing records establish.",
+      "references": [
+        "sample-plan",
+        "writing",
+        "data-quality"
+      ],
+      "tags": [
+        "investigation-report",
+        "sample-mean-difference",
+        "evidence-limits",
+        "reproducible-calculation"
       ]
     }
   ]
