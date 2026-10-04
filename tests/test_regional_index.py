@@ -6,6 +6,7 @@ import json
 import os
 import sqlite3
 import struct
+import zipfile
 from dataclasses import replace
 from pathlib import Path
 from threading import Event
@@ -206,6 +207,64 @@ def test_no_hardlink_support_is_explicit_and_cleans_up(tmp_path, monkeypatch):
     with pytest.raises(OSError, match='hard links'):
         build(tmp_path)
     assert not (tmp_path / 'map.ffmap').exists()
+    assert not list(tmp_path.glob('.fieldforge-index-*'))
+
+
+def test_import_archive_validates_and_extracts_only_the_regional_index(tmp_path):
+    index = build(tmp_path)
+    archive = tmp_path / 'regional-pack.zip'
+    with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED) as package:
+        package.write(index.path, 'South Dakota/map.ffmap')
+        package.writestr('South Dakota/source.osm.pbf', b'not extracted')
+        package.writestr('South Dakota/rights.txt', '© OpenStreetMap contributors')
+    output = tmp_path / 'output'
+    output.mkdir()
+    target = output / 'imported.ffmap'
+    imported = regional.import_archive(archive, target)
+    assert imported.path == target
+    assert imported.metadata == index.metadata
+    assert regional.search_index(imported, 'Map Street').features
+    assert not (output / 'source.osm.pbf').exists()
+    assert not list(tmp_path.glob('.fieldforge-index-*'))
+
+
+@pytest.mark.parametrize('member_name', ('../map.ffmap', 'folder/../map.ffmap'))
+def test_import_archive_rejects_unsafe_index_paths(tmp_path, member_name):
+    index = build(tmp_path)
+    archive = tmp_path / 'unsafe.zip'
+    with zipfile.ZipFile(archive, 'w') as package:
+        package.writestr(member_name, index.path.read_bytes())
+    with pytest.raises(ValueError, match='safe regular file'):
+        regional.import_archive(archive, tmp_path / 'imported.ffmap')
+    assert not (tmp_path / 'imported.ffmap').exists()
+    assert not list(tmp_path.glob('.fieldforge-index-*'))
+
+
+def test_import_archive_requires_one_index_and_never_replaces(tmp_path):
+    index = build(tmp_path)
+    archive = tmp_path / 'duplicate.zip'
+    with zipfile.ZipFile(archive, 'w') as package:
+        package.write(index.path, 'a/map.ffmap')
+        package.write(index.path, 'b/map.ffmap')
+    target = tmp_path / 'new.ffmap'
+    with pytest.raises(ValueError, match='exactly one'):
+        regional.import_archive(archive, target)
+    target.write_bytes(b'keep')
+    with pytest.raises(FileExistsError):
+        regional.import_archive(archive, target)
+    assert target.read_bytes() == b'keep'
+
+
+def test_cancel_archive_import_cleans_partial_file(tmp_path):
+    index = build(tmp_path)
+    archive = tmp_path / 'regional-pack.zip'
+    with zipfile.ZipFile(archive, 'w') as package:
+        package.write(index.path, 'map.ffmap')
+    event = Event()
+    with pytest.raises(MapCancelled):
+        regional.import_archive(archive, tmp_path / 'cancelled.ffmap', cancel=event,
+                                progress=lambda current, _total: event.set() if current else None)
+    assert not (tmp_path / 'cancelled.ffmap').exists()
     assert not list(tmp_path.glob('.fieldforge-index-*'))
 
 

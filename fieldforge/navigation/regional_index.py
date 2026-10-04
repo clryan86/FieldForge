@@ -12,10 +12,12 @@ import math
 import os
 import re
 import sqlite3
+import stat
 import struct
 import tempfile
 import time
 import unicodedata
+import zipfile
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -24,13 +26,15 @@ from pathlib import Path
 from fieldforge.navigation import osm_source as osm
 from fieldforge.navigation.map_view import MAX_LATITUDE, Viewport, unproject
 from fieldforge.navigation.mbtiles import MapCancelled
-from fieldforge.navigation.pbf_stream import IndexLimits, PBFStream, signature
+from fieldforge.navigation.pbf_stream import IndexLimits, PBFStream, checked_open, signature
 
 APP_ID = 0x46464D31
 VERSION = 1
 MAX_QUERY_POINTS = 50000
 MAX_QUERY_FEATURES = 1000
 META_LIMIT = 32768
+MAX_ARCHIVE_BYTES = 2 * 1024**3
+MAX_ARCHIVE_INDEX_BYTES = 4 * 1024**3
 NOTICE = ('Prepared source geometry, NOT driving directions. Relations and turn restrictions '
           'are counted, not applied or drawn. No GPS, address interpolation, closures, or safety '
           'checks. Blank space and a truncated view do not establish missing real-world roads.')
@@ -411,6 +415,80 @@ def inspect_index(path, *, cancel=None, progress=None):
     if progress:
         progress(100, 100)
     return PreparedIndex(path, before, metadata)
+
+
+def import_archive(archive, target, *, cancel=None, progress=None):
+    """Validate and publish only the single map.ffmap member from a package ZIP."""
+    archive, target = Path(archive), Path(target)
+    if target.suffix.casefold() != '.ffmap':
+        raise ValueError('Choose a new output filename ending in .ffmap.')
+    if target.exists() or target.is_symlink():
+        raise FileExistsError('An output already exists; choose a new .ffmap filename.')
+    if not target.parent.is_dir():
+        raise ValueError('Choose an existing output folder.')
+    source, before = checked_open(archive)
+    if not 1 <= before[2] <= MAX_ARCHIVE_BYTES:
+        source.close()
+        raise ValueError('Regional ZIP is empty or exceeds the 2 GiB archive limit.')
+    temporary = None
+    try:
+        with source, zipfile.ZipFile(source) as package:
+            members = package.infolist()
+            if len(members) > 1000:
+                raise ValueError('Regional ZIP contains more than 1,000 entries.')
+            matches = [item for item in members
+                       if item.filename.rstrip('/\\').rsplit('/', 1)[-1].casefold() == 'map.ffmap']
+            if len(matches) != 1:
+                raise ValueError('Package must contain exactly one map.ffmap index.')
+            member = matches[0]
+            parts = member.filename.replace('\\', '/').split('/')
+            mode = (member.external_attr >> 16) & 0xFFFF
+            file_type = stat.S_IFMT(mode)
+            if (member.is_dir() or any(part in ('', '.', '..') for part in parts)
+                    or member.filename.startswith(('/', '\\'))
+                    or file_type not in (0, stat.S_IFREG)):
+                raise ValueError('The map.ffmap ZIP entry is not a safe regular file.')
+            if member.flag_bits & 1:
+                raise ValueError('Encrypted regional ZIP entries are not supported.')
+            if member.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED):
+                raise ValueError('Regional ZIP uses an unsupported compression method.')
+            if not 1 <= member.file_size <= MAX_ARCHIVE_INDEX_BYTES:
+                raise ValueError('Packaged index is empty or exceeds the 4 GiB index limit.')
+            if member.file_size > max(1, member.compress_size) * 1000:
+                raise ValueError('Packaged index compression ratio exceeds the safety limit.')
+            osm._check(cancel)
+            temporary = _temp(target.parent, '.archive.ffmap')
+            written = 0
+            with package.open(member, 'r') as packed, temporary.open('wb') as output:
+                while True:
+                    osm._check(cancel)
+                    chunk = packed.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    written += len(chunk)
+                    if written > member.file_size or written > MAX_ARCHIVE_INDEX_BYTES:
+                        raise ValueError('Packaged index expanded beyond its declared size.')
+                    output.write(chunk)
+                    if progress:
+                        progress(written, member.file_size)
+                output.flush()
+                os.fsync(output.fileno())
+            if written != member.file_size:
+                raise ValueError('Packaged index size does not match the ZIP directory.')
+        if signature(archive) != before:
+            raise ValueError('Regional ZIP changed during import; no index was published.')
+        validated = inspect_index(temporary, cancel=cancel, progress=progress)
+        osm._check(cancel)
+        os.link(temporary, target)
+        temporary.unlink()
+        temporary = None
+        fingerprint = signature(target)
+        return PreparedIndex(target.absolute(), fingerprint, validated.metadata)
+    except (zipfile.BadZipFile, EOFError, RuntimeError) as exc:
+        raise ValueError('Regional ZIP or contained map index is damaged.') from exc
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def _feature(row):

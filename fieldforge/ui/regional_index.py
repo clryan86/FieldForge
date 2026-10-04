@@ -3,12 +3,14 @@ from __future__ import annotations
 
 from dataclasses import replace
 from datetime import datetime, timezone
+from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 from fieldforge.navigation.map_view import Viewport
 from fieldforge.navigation.osm_source import StreetSource
 from fieldforge.navigation.regional_index import (
     NOTICE,
+    import_archive,
     inspect_index,
     prepare_index,
     search_index,
@@ -38,6 +40,9 @@ class RegionalIndexWindow(StreetSourceWindow):
         self.example_button.destroy()
         self._controls = [entry for entry in self._controls if entry[0] is not self.example_button]
         actions = self.open_button.master
+        self.import_button = ttk.Button(actions, text='Import package ZIP…', command=self.choose_import)
+        self.import_button.pack(side='left', padx=5)
+        self._controls.append((self.import_button, 'normal'))
         self.prepare_button = ttk.Button(actions, text='Prepare PBF…', command=self.choose_prepare)
         self.prepare_button.pack(side='left', padx=5)
         self._controls.append((self.prepare_button, 'normal'))
@@ -87,6 +92,36 @@ class RegionalIndexWindow(StreetSourceWindow):
                 'be replaced. Preparation does not make the map route-ready.\n\nContinue?', parent=self):
             return
         self.prepare(source, target)
+
+    def choose_import(self):
+        if self.busy:
+            return
+        archive = filedialog.askopenfilename(parent=self, title='Choose a regional map ZIP package',
+                                            filetypes=[('Regional map package', '*.zip')])
+        if not archive:
+            return
+        suggested = Path(archive).stem + '.ffmap'
+        target = filedialog.asksaveasfilename(parent=self, title='Save the extracted regional index as a new file',
+                                              initialfile=suggested, defaultextension='.ffmap',
+                                              filetypes=[('FieldForge regional index', '*.ffmap')])
+        if not target:
+            return
+        if not messagebox.askyesno('Import local map package?',
+                'FieldForge will read only the single map.ffmap from this ZIP, validate it, '
+                'and create a new .ffmap copy. The ZIP and its source PBF remain unchanged. '
+                'The archive limit is 2 GiB, the index limit is 4 GiB, and extra free space '
+                'is needed while copying and validating. Existing files cannot be replaced. '
+                'This index is not a routing graph. Continue?', parent=self):
+            return
+        self.import_package(archive, target)
+
+    def import_package(self, archive, target):
+        if self.busy:
+            return False
+        self._pending_refresh = False
+        self._task_kind = 'import'
+        self.status.set('Validating the ZIP and copying only its map.ffmap index. The archive remains unchanged.')
+        return self.start_task(import_archive, archive, target, done=self.loaded_index, progress=True)
 
     def prepare(self, source, target, *, expected_sha256=None):
         if self.busy:
@@ -252,6 +287,8 @@ class RegionalIndexWindow(StreetSourceWindow):
         if self._task_kind == 'prepare':
             stage = 'Decoding source to disk' if current <= 70 else 'Assembling spatial/search index'
             return f'{stage}: {current}% of preparation stages. No route graph is built.'
+        if self._task_kind == 'import':
+            return f'Validating package: copied {current:,} of {total:,} index bytes. No route graph is built.'
         return 'Checking prepared index structure and counts…'
 
     def cancelled_message(self):

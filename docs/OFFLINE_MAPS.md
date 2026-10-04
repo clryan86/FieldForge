@@ -142,18 +142,20 @@ Existing guards still protect unrelated unsaved editors and active write jobs.
 ### Prepared regional `.ffmap` indexes
 
 The Maps tab also has a separate **Prepared regional map…** viewer for FieldForge
-`.ffmap` SQLite indexes. These are not MBTiles. For a regional ZIP package,
-extract the archive first and open its `map.ffmap` file, or choose **Prepare
-PBF…** to build a new index from a local OSM PBF snapshot. Preparation writes a
-new index and does not replace the source. The viewer searches indexed names and
-features locally and limits how many features it loads for a viewport; zoom in
-when it reports that the view is limited. The available Wave 5 indexes cover
-Kansas, Nebraska, North Dakota, and South Dakota only, not all U.S. states.
+`.ffmap` SQLite indexes. These are not MBTiles. Choose **Import package ZIP…**
+to validate a regional ZIP and copy only its single `map.ffmap` index; the
+archive and bundled source PBF remain unchanged. You may also extract the archive
+yourself and open `map.ffmap` directly. **Prepare PBF…** builds a new index from
+a local OSM PBF snapshot without replacing the source. The viewer searches
+indexed names and features locally and limits how many features it loads for a
+viewport; zoom in when it reports that the view is limited. The available Wave
+5 indexes cover Kansas, Nebraska, North Dakota, and South Dakota only, not all
+U.S. states. ZIPs over 2 GiB and indexes over 4 GiB are rejected.
 
 These indexes are for display and local feature search. They do not contain a
 prepared routing graph, support turn-by-turn navigation, or verify road access,
 freshness, safety, or completeness. The current portal does not distribute
-`.ffmap` indexes or extract ZIP packages. See the [regional data
+`.ffmap` indexes. See the [regional data
 plan](GLOBAL_MAP_DATA_PLAN.md) for provenance and acquisition gaps.
 
 Tests cover independent projection examples and round trips, TMS row reversal,
