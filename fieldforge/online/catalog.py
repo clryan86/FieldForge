@@ -44,6 +44,7 @@ from fieldforge.online.models import (
     text,
     validate_asset,
 )
+from fieldforge.online.storage import _publish_new_path
 
 MAX_MAP_BYTES = 64 * 1024**3
 MAX_CATALOG_BYTES = 8 * 1024**2
@@ -474,9 +475,14 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
                 if existing_digest.hexdigest() != digest:
                     raise CatalogError("Existing content-addressed object has changed.")
             else:
-                # Atomic no-replacement install. Files are read-only after publication.
-                temporary.chmod(0o444)
-                os.link(temporary, destination)
+                # Use the same atomic no-overwrite install as local downloads.
+                # Remove the writable temporary name before making the installed
+                # object read-only: Windows shares that attribute across hard
+                # links and refuses to unlink a read-only temporary name.
+                _publish_new_path(temporary, destination)
+                temporary.unlink(missing_ok=True)
+                temporary = None
+                destination.chmod(0o444)
             entries.append({**prospective, "storage_path": storage_path})
             raw = json.dumps({"schema_version": 1, "maps": entries}, indent=2, ensure_ascii=False,
                              allow_nan=False).encode("utf-8")

@@ -11,6 +11,7 @@ import io
 import json
 import os
 import sqlite3
+import stat
 import struct
 import subprocess
 import sys
@@ -21,7 +22,9 @@ import urllib.parse
 import zlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from unittest import mock
 
+from fieldforge.online import catalog as catalog_module
 from fieldforge.online.catalog import Catalog, publish_map
 from fieldforge.online.models import validate_asset, validate_route, validate_search_result
 from fieldforge.online.server import PortalApplication, PortalConfig, PortalError, make_server
@@ -53,6 +56,25 @@ def _png_bytes(width=1, height=1):
         + chunk(b"IDAT", compressed)
         + chunk(b"IEND", b"")
     )
+
+
+@contextlib.contextmanager
+def _windows_readonly_unlink_rules():
+    """Exercise Windows' read-only deletion restriction on every test platform."""
+    original_unlink = Path.unlink
+
+    def guarded_unlink(path, missing_ok=False):
+        try:
+            info = path.stat()
+        except FileNotFoundError:
+            pass
+        else:
+            if stat.S_ISREG(info.st_mode) and not info.st_mode & stat.S_IWUSR:
+                raise PermissionError("Windows cannot unlink an existing read-only file.")
+        return original_unlink(path, missing_ok=missing_ok)
+
+    with mock.patch.object(Path, "unlink", guarded_unlink):
+        yield
 
 
 def _provider_route(*, distance=1234.0, duration=180.0, via=(-75.005, 40.01)):
@@ -451,6 +473,45 @@ class CatalogIntegrityTests(unittest.TestCase):
         self.assertEqual(len(Catalog(self.root).assets()), 2)
         self.assertEqual(len(list((self.root / "objects").iterdir())), 1)
 
+    def test_publishing_finishes_before_readonly_files_block_windows_cleanup(self):
+        original = self.source.read_bytes()
+        with _windows_readonly_unlink_rules():
+            first = self.publish()
+            second = self.publish(map_id="fixture-grid-v2", version="2")
+        objects = self.root / "objects"
+        destination = objects / (hashlib.sha256(original).hexdigest() + ".png")
+        self.assertEqual(destination.read_bytes(), original)
+        self.assertEqual(destination.stat().st_mode & 0o222, 0)
+        self.assertEqual(set(objects.iterdir()), {destination})
+        self.assertEqual({path.name for path in self.root.iterdir()}, {"catalog.json", "objects"})
+        self.assertEqual(Catalog(self.root).assets(), [first, second])
+        for asset in (first, second):
+            published, stream = Catalog(self.root).open_asset(asset["id"])
+            with stream:
+                self.assertEqual(stream.read(), original)
+            self.assertEqual(published["sha256"], hashlib.sha256(original).hexdigest())
+
+    def test_failed_atomic_install_preserves_concurrent_object_and_cleans_temporary_files(self):
+        competing_bytes = b"A different publisher owns this object path."
+        destination = self.root / "objects" / (hashlib.sha256(self.source.read_bytes()).hexdigest() + ".png")
+
+        def concurrent_install(temporary, target):
+            self.assertEqual(temporary.read_bytes(), self.source.read_bytes())
+            self.assertEqual(target, destination)
+            target.write_bytes(competing_bytes)
+            raise FileExistsError("A concurrent destination appeared before atomic installation.")
+
+        with _windows_readonly_unlink_rules(), mock.patch.object(
+            catalog_module, "_publish_new_path", concurrent_install,
+        ):
+            with self.assertRaises(FileExistsError):
+                self.publish()
+        self.assertEqual(destination.read_bytes(), competing_bytes)
+        self.assertEqual(Catalog(self.root).assets(), [])
+        self.assertFalse((self.root / "catalog.json").exists())
+        self.assertEqual(set((self.root / "objects").iterdir()), {destination})
+        self.assertEqual({path.name for path in self.root.iterdir()}, {"objects"})
+
     def test_publish_rejects_unlicensed_and_traversal_metadata(self):
         cases = ({"license": ""}, {"attribution": ""}, {"map_id": "../escape"},
                  {"map_id": "a/b"}, {"map_id": "a\\b"}, {"map_id": "%2e%2e"},
@@ -473,6 +534,7 @@ class CatalogIntegrityTests(unittest.TestCase):
     def test_object_symlink_is_rejected_even_when_file_size_matches(self):
         asset = self.publish()
         object_path = next((self.root / "objects").iterdir())
+        object_path.chmod(0o644)  # Deliberate fixture replacement must also work on Windows.
         object_path.unlink()
         try:
             object_path.symlink_to(self.source)

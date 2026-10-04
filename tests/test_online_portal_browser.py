@@ -31,6 +31,26 @@ def _connect(page):
     expect(page.locator("#connectionBadge")).to_have_text("Portal connected")
 
 
+def _assert_no_horizontal_overflow(page):
+    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), page.evaluate("""() => {
+        const viewport = window.innerWidth;
+        const overflowing = Array.from(document.querySelectorAll("body *")).map(node => {
+            const rect = node.getBoundingClientRect(), style = getComputedStyle(node);
+            return {
+                tag: node.tagName, id: node.id, className: node.getAttribute("class"),
+                left: rect.left, right: rect.right, width: rect.width,
+                scrollWidth: node.scrollWidth, clientWidth: node.clientWidth,
+                minWidth: style.minWidth, display: style.display,
+                gridColumns: style.gridTemplateColumns, overflowWrap: style.overflowWrap,
+                whiteSpace: style.whiteSpace,
+            };
+        }).filter(node => node.width > 0 && (node.right > viewport
+            || node.scrollWidth > node.clientWidth))
+            .sort((a, b) => b.right - a.right).slice(0, 20);
+        return {viewport, scrollWidth: document.documentElement.scrollWidth, overflowing};
+    }""")
+
+
 def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp_path):
     from playwright.sync_api import expect, sync_playwright
 
@@ -156,7 +176,7 @@ def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp
             assert len(provider.requests) == provider_requests
 
             page.set_viewport_size({"width": 390, "height": 844})
-            assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+            _assert_no_horizontal_overflow(page)
             expect(page.locator("#downloadRoute")).to_be_enabled()
             page.screenshot(path=str(tmp_path / "portal-mobile-offline.png"), full_page=True)
             assert all(not origin["localStorage"] for origin in context.storage_state()["origins"])
@@ -460,7 +480,7 @@ def test_selected_csv_tiny_coordinates_and_full_source_survive_offline(portal_pa
     assert b'lat="0.0000001"' in gpx_path.read_bytes()
     assert b'lon="-0.0000002"' in gpx_path.read_bytes()
     page.set_viewport_size({"width": 390, "height": 844})
-    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+    _assert_no_horizontal_overflow(page)
 
 
 def test_unconfigured_provider_status_keeps_online_actions_unavailable(portal_page, operated_portal):

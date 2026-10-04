@@ -9,13 +9,14 @@ See [Online map portal](ONLINE_MAP_PORTAL.md) for operation and supported format
 
 ## Local results
 
-The final local source was checked with Python 3.12.14. Graphical checks used a
+The implementation was checked with Python 3.12.14. Graphical checks used a
 real Tk 9.0 display under Xvfb; the browser script also ran under Node.
 
 | Check | Result |
 | --- | --- |
-| Complete headless pytest suite | **2,115 passed**, 516 skipped, 78 subtests passed; 2 existing PDF-fixture deprecation warnings |
+| Complete headless pytest suite after the platform corrections | **2,117 passed**, 516 skipped, 78 subtests passed; 2 existing PDF-fixture deprecation warnings |
 | Targeted desktop, map, place, GPS, and portal integration group with a required display | **149 passed**, no skips; includes the 54 HTTP/compatibility cases also covered headlessly |
+| Focused publisher and actual portal/client/desktop integration after the Windows correction | **48 passed**, 78 subtests passed, no skips |
 | Ruff and patch whitespace | Passed |
 | Wheel build | Passed; includes the portal HTML and shared image validation module |
 | Installed wheel outside the source checkout, with site packages disabled | Native HTTP and the WSGI compatibility factory served the exact bundled HTML, CSP, status API, and empty configured map catalog; both client APIs connected/disconnected explicitly |
@@ -79,7 +80,19 @@ complete envelope one UTF-8 byte over that limit was blocked without losing
 the selected route. A separate storage regression exercises the exact
 normalized-route byte boundary and same-file reimport.
 
-## Verification limits and hosted checks
+## Hosted platform corrections and verification limits
+
+The first hosted runs found three additional issues. Playwright needed a normal
+Python event callback instead of a built-in list method in one download test.
+Windows refused to delete a read-only temporary map name after publication;
+the publisher now installs without replacement, removes the temporary name
+while writable, and then marks the final object read-only. A portable regression
+also verifies exact bytes, deduplication, cleanup, and a competing destination.
+WebKit exposed narrow-layout overflow with long provider text; the portal now
+allows the relevant grid tracks and controls to shrink and wraps endpoint hints
+and directions. Both strict mobile-width assertions remain in place, with
+element-size diagnostics on failure. The PR links the final hosted run so these
+corrections can be checked on the actual platforms.
 
 A complete all-tests run with this environment's Tk 9.0 runtime aborted in
 native code during garbage collection in an existing starter-library worker.
