@@ -1,0 +1,21 @@
+{
+  "source": "Installed pyogrio naturalearth_lowres test fixture, dissolved into physical land outlines",
+  "pyogrio_version": "0.12.1",
+  "shapely_version": "2.1.2",
+  "pyshp_version": "2.3.1",
+  "source_data_vintage": "Not established; not a current or navigational dataset",
+  "downloaded_for_this_update": false,
+  "source_reference": "https://github.com/geopandas/pyogrio/tree/main/pyogrio/tests/fixtures/naturalearth_lowres",
+  "natural_earth_terms": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "license": "Natural Earth map data: public domain; this does not license FieldForge code",
+  "source_files": {
+    "naturalearth_lowres.shp": "08e341606e8391e458c3f08deb312de664b56bfae376064c5aa0aee6681a5f55",
+    "naturalearth_lowres.shx": "8b0be2ad97dd484aee5c2ebc98697d5372e832b8ae58a35a661aeef6b985668d",
+    "naturalearth_lowres.prj": "98aaf3d1c0ecadf1a424a4536de261c3daf4e373697cb86c40c43b989daf52eb"
+  },
+  "source_features": 177,
+  "display_rings": 128,
+  "display_vertices": 5165,
+  "generated_json_sha256": "6828fc5d0dcf72838e2ad20f2a1a477444e30f4ded9a2de1937e2d72a86d620b",
+  "conversion": "Shapely unary_union dissolves administrative divisions. All resulting exterior and interior rings retained, rounded to 6 decimals. Rendered as unfilled outlines; gaps in the source are not repaired. Low-resolution geographic orientation only."
+}

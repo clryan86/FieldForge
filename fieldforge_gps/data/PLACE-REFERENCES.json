@@ -1,0 +1,42 @@
+{
+  "checked_date": "2026-10-02",
+  "real_dataset_download_status": "Full new datasets were not obtained. No new real geography or place index bundled.",
+  "references": [
+    {
+      "url": "https://www.naturalearthdata.com/about/terms-of-use/",
+      "role": "Natural Earth public-domain data terms; not a FieldForge software license"
+    },
+    {
+      "url": "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/10m-populated-places/",
+      "role": "Populated-place scope, selected cities/towns, not a complete address directory"
+    },
+    {
+      "url": "https://www.naturalearthdata.com/downloads/50m-physical-vectors/50m-land/",
+      "role": "Candidate physical map layer, not downloaded"
+    },
+    {
+      "url": "https://www.naturalearthdata.com/downloads/50m-physical-vectors/50m-lakes-reservoirs/",
+      "role": "Candidate physical map layer, not downloaded"
+    },
+    {
+      "url": "https://www.naturalearthdata.com/downloads/50m-physical-vectors/50m-rivers-lake-centerlines/",
+      "role": "Candidate physical map layer, not downloaded"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc7946",
+      "role": "GeoJSON Point coordinate order and WGS84 semantics; implemented subset, not full conformance"
+    },
+    {
+      "url": "https://docs.python.org/3/library/csv.html",
+      "role": "Standard-library CSV reader"
+    },
+    {
+      "url": "https://docs.python.org/3/library/json.html",
+      "role": "Standard-library JSON parser"
+    },
+    {
+      "url": "https://github.com/nvkelso/natural-earth-vector/blob/v5.1.2/geojson/ne_110m_populated_places_simple.geojson",
+      "role": "Partial connector text used to check field names/legacy CRS84 form; no full file obtained or bundled"
+    }
+  ]
+}

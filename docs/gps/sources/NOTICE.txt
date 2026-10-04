@@ -1,0 +1,7 @@
+Map data attribution
+The overview is derived from Natural Earth data in the installed pyogrio test
+fixture. Natural Earth map data is public domain. Original source vintage is
+unknown; this is not a newly downloaded or current navigational map.
+Primary terms: https://www.naturalearthdata.com/about/terms-of-use/
+See OVERVIEW-PROVENANCE.json for source hashes and conversion details.
+This notice does not choose or grant a license for the FieldForge project code.

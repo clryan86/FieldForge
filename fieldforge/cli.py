@@ -10,7 +10,20 @@ from pathlib import Path
 
 from fieldforge.app import FieldForgeApp
 from fieldforge.core.backup import export_backup, restore_backup
+from fieldforge.core.database_archive import (
+    export_snapshot as export_database_archive,
+)
+from fieldforge.core.database_archive import (
+    inspect_snapshot,
+)
+from fieldforge.core.database_archive import (
+    restore_snapshot as restore_database_archive,
+)
 from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
+from fieldforge.core.snapshot import export_snapshot, restore_snapshot
+from fieldforge.knowledge import KnowledgeArticle
+from fieldforge.knowledge.local_model import OllamaClient, draft_answer
+from fieldforge.knowledge.retrieval import retrieve_evidence
 from fieldforge.navigation.geo import Waypoint
 from fieldforge.planners.evacuation import DestinationPlan, VehiclePlan
 from fieldforge.planners.resources import (
@@ -86,6 +99,38 @@ def _parser() -> argparse.ArgumentParser:
     sub.add_parser("food", help="Calculate current household food/calorie runway")
     sub.add_parser("alerts", help="List low-stock and expiring inventory alerts")
 
+    knowledge_add = sub.add_parser("knowledge-add", help="Add or update an offline knowledge article")
+    knowledge_add.add_argument("slug")
+    knowledge_add.add_argument("title")
+    knowledge_add.add_argument("body")
+    knowledge_add.add_argument("category")
+    knowledge_add.add_argument("--tags", default="")
+    knowledge_add.add_argument("--source-title", default="")
+    knowledge_add.add_argument("--source-url", default="")
+    knowledge_add.add_argument("--source-publisher", default="")
+    knowledge_add.add_argument("--reviewed-on", default="")
+    knowledge_add.add_argument(
+        "--safety-level", choices=["reference", "caution", "high_stakes"], default="reference"
+    )
+
+    knowledge_search = sub.add_parser("knowledge-search", help="Search the offline knowledge library")
+    knowledge_search.add_argument("query")
+    knowledge_search.add_argument("--limit", type=int, default=20)
+
+    knowledge_show = sub.add_parser("knowledge-show", help="Show one offline knowledge article")
+    knowledge_show.add_argument("slug")
+
+    knowledge_context = sub.add_parser("knowledge-context", help="Find cited offline passages")
+    knowledge_context.add_argument("question")
+    knowledge_context.add_argument("--limit", type=int, default=5)
+    models = sub.add_parser("local-models", help="List local Ollama models (cloud must be disabled)")
+    models.add_argument("--port", type=int, default=11434)
+    ask = sub.add_parser("ask", help="Draft an answer using a local model and installed evidence")
+    ask.add_argument("question")
+    ask.add_argument("--model", required=True)
+    ask.add_argument("--port", type=int, default=11434)
+    ask.add_argument("--timeout", type=float, default=120)
+
     scenario = sub.add_parser("scenario", help="Generate prioritized actions for a scenario")
     scenario.add_argument("name")
 
@@ -143,6 +188,26 @@ def _parser() -> argparse.ArgumentParser:
     restore = sub.add_parser("restore", help="Restore a portable JSON backup into this database")
     restore.add_argument("source", type=Path)
 
+    snapshot = sub.add_parser(
+        "snapshot", help="Back up the complete FieldForge database, including knowledge and private notes"
+    )
+    snapshot.add_argument("destination", type=Path)
+
+    snapshot_restore = sub.add_parser(
+        "snapshot-restore", help="Restore a complete FieldForge snapshot"
+    )
+    snapshot_restore.add_argument("source", type=Path)
+    snapshot_restore.add_argument(
+        "--overwrite", action="store_true", help="Replace the target database after validation"
+    )
+    full_backup = sub.add_parser("backup-full", help="Snapshot the complete local database")
+    full_backup.add_argument("destination", type=Path)
+    full_restore = sub.add_parser("restore-full", help="Restore a complete database backup")
+    full_restore.add_argument("source", type=Path)
+    full_restore.add_argument("--replace", action="store_true", help="Replace existing database")
+    inspect = sub.add_parser("backup-inspect", help="Verify a full backup and show record counts")
+    inspect.add_argument("source", type=Path)
+
     return parser
 
 
@@ -154,6 +219,23 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     try:
+        if args.command == "snapshot-restore":
+            _emit(restore_snapshot(args.source, args.database, overwrite=args.overwrite))
+            return 0
+
+        if args.command == "local-models":
+            _emit({"models": OllamaClient(port=args.port).list_models()})
+            return 0
+        if args.command == "backup-full":
+            _emit({"backup": str(export_database_archive(args.database, args.destination))})
+            return 0
+        if args.command == "backup-inspect":
+            _emit(inspect_snapshot(args.source))
+            return 0
+        if args.command == "restore-full":
+            _emit({"database": str(restore_database_archive(args.database, args.source,
+                                                     replace=args.replace))})
+            return 0
         app = FieldForgeApp(args.database)
 
         if args.command == "init":
@@ -201,6 +283,29 @@ def main(argv: list[str] | None = None) -> int:
             _emit(app.food_status().as_dict())
         elif args.command == "alerts":
             _emit(app.alerts())
+        elif args.command == "knowledge-add":
+            article = KnowledgeArticle(
+                slug=args.slug, title=args.title, body=args.body, category=args.category,
+                tags=tuple(tag.strip() for tag in args.tags.split(",") if tag.strip()),
+                source_title=args.source_title, source_url=args.source_url,
+                source_publisher=args.source_publisher, reviewed_on=args.reviewed_on,
+                safety_level=args.safety_level,
+            )
+            app.add_knowledge_article(article)
+            _emit({"slug": article.slug, "checksum": article.checksum, "status": "stored"})
+        elif args.command == "knowledge-search":
+            _emit(app.search_knowledge(args.query, args.limit))
+        elif args.command == "knowledge-show":
+            article = app.knowledge_article(args.slug)
+            if article is None:
+                raise KeyError(f"knowledge article {args.slug!r} not found")
+            _emit(article.__dict__)
+        elif args.command == "knowledge-context":
+            _emit({"question": args.question, "evidence": [item.as_dict() for item in
+                   retrieve_evidence(app.knowledge, args.question, limit=args.limit)]})
+        elif args.command == "ask":
+            _emit(draft_answer(app.knowledge, args.question, args.model,
+                              OllamaClient(port=args.port, timeout=args.timeout)).as_dict())
         elif args.command == "scenario":
             _emit(app.scenario(args.name))
         elif args.command == "readiness":
@@ -279,6 +384,8 @@ def main(argv: list[str] | None = None) -> int:
             _emit({"backup": str(export_backup(app.db, args.destination))})
         elif args.command == "restore":
             _emit(restore_backup(app.db, args.source))
+        elif args.command == "snapshot":
+            _emit({"snapshot": str(export_snapshot(args.database, args.destination))})
         else:  # pragma: no cover
             parser.error("unknown command")
     except (KeyError, OSError, ValueError) as exc:

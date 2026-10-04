@@ -12,3 +12,6 @@ dist/
 *.sqlite3
 *.tmp
 .DS_Store
+portal-maps/
+online-maps/
+portal.local.json

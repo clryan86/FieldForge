@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import os
+import sqlite3
 from pathlib import Path
 
 from fieldforge.app import FieldForgeApp
-from fieldforge.core.models import HouseholdMember, InventoryCategory, InventoryItem
+from fieldforge.core.emergency_actions import ActionStore
+from fieldforge.core.household import HouseholdService
+from fieldforge.core.supplies import SuppliesService
 from fieldforge.planners.resources import battery_runtime_hours, solar_daily_energy_wh
 
 
@@ -26,11 +29,35 @@ def run() -> None:
     import tkinter as tk
     from tkinter import messagebox, ttk
 
+    from fieldforge.ui.assistant import add_ask_library_tab
+    from fieldforge.ui.blueprint_home import BlueprintHome
+    from fieldforge.ui.build_info import install_help_menu
+    from fieldforge.ui.emergency_actions import ActionWorkspace
+    from fieldforge.ui.gps import install_gps_menu
+    from fieldforge.ui.household import HouseholdTab
+    from fieldforge.ui.knowledge import KnowledgeTab
+    from fieldforge.ui.maps import MapsTab
+    from fieldforge.ui.pathways import add_pathways_tab
+    from fieldforge.ui.places import PlacesTab
+    from fieldforge.ui.portal_integration import install_online_maps
+    from fieldforge.ui.recovery import add_recovery_tab
+    from fieldforge.ui.recreation import add_recreation_tab
+    from fieldforge.ui.supplies import SuppliesTab
+
     app = FieldForgeApp(_database_path())
+    # Populate a fresh library before exposing UI actions that require it to be
+    # idle. Starting a pack worker after the window opens races navigation,
+    # backups and normal close, especially on a first launch.
+    if app.knowledge.count() == 0:
+        from fieldforge.content import install_reference_library
+        install_reference_library(app.knowledge)
+    supplies = SuppliesService(app.db.path)
     root = tk.Tk()
     root.title("FieldForge — Offline Emergency Operations")
-    root.geometry("1100x720")
-    root.minsize(900, 620)
+    root.geometry("1240x800")
+    root.minsize(1000, 700)
+    menu_bar = install_help_menu(root, app.db.path)
+    gps_workspace = install_gps_menu(root, menu_bar)
 
     style = ttk.Style(root)
     if "clam" in style.theme_names():
@@ -47,9 +74,81 @@ def run() -> None:
     planners_tab = ttk.Frame(notebook, padding=16)
     emergency_tab = ttk.Frame(notebook, padding=16)
     notebook.add(dashboard_tab, text="Dashboard")
+    blueprints_tab = BlueprintHome(notebook, app.knowledge)
+    notebook.add(blueprints_tab, text="Blueprints")
     notebook.add(inventory_tab, text="Inventory")
     notebook.add(planners_tab, text="Power Planner")
     notebook.add(emergency_tab, text="Emergency Mode")
+    knowledge_tab = KnowledgeTab(notebook, app.knowledge)
+    knowledge_tab.blueprint_home = blueprints_tab
+    notebook.add(knowledge_tab, text="Knowledge Library")
+    pathways_tab = add_pathways_tab(notebook, knowledge_tab)
+    add_ask_library_tab(notebook, app.knowledge)
+    recovery_tab = add_recovery_tab(notebook, app.db.path, knowledge_tab, pathways_tab)
+    add_recreation_tab(notebook, app.db.path)
+    places_panel = PlacesTab(notebook, app.db.path)
+    notebook.add(places_panel, text="Places")
+    maps_panel = MapsTab(notebook, app.db.path)
+    notebook.add(maps_panel, text="Maps")
+    online_maps_panel = install_online_maps(
+        notebook, app.db.path, places_panel, maps_panel, gps_workspace, menu_bar
+    )
+
+    # A compact-window selector keeps every section reachable when notebook
+    # tabs extend past the right edge. It uses the same tab-change save guards.
+    section_bar = ttk.Frame(root, name="section_navigation", padding=(10, 4))
+    ttk.Label(section_bar, text="Go to section").pack(side="left", padx=(0, 8))
+    section_choice = tk.StringVar(value="Dashboard")
+    section_picker = ttk.Combobox(section_bar, name="choice", textvariable=section_choice,
+                                  values=[notebook.tab(tab, "text") for tab in notebook.tabs()],
+                                  state="readonly", width=28)
+    section_picker.pack(side="left", fill="x", expand=True)
+    section_visible = False
+
+    def select_section(_event):
+        for tab in notebook.tabs():
+            if notebook.tab(tab, "text") == section_choice.get():
+                notebook.select(tab)
+                break
+
+    def sync_section(_event):
+        if notebook.select():
+            section_choice.set(notebook.tab(notebook.select(), "text"))
+
+    def compact_navigation(event):
+        nonlocal section_visible
+        if event.widget is root:
+            wanted = event.width < 1280
+            if wanted != section_visible:
+                section_visible = wanted
+                if wanted:
+                    section_bar.pack(fill="x", before=notebook)
+                else:
+                    section_bar.pack_forget()
+
+    section_picker.bind("<<ComboboxSelected>>", select_section)
+    notebook.bind("<<NotebookTabChanged>>", sync_section, add=True)
+    root.bind("<Configure>", compact_navigation, add=True)
+
+    def close_application() -> None:
+        if (not supplies_panel.can_close() or not household_panel.can_close()
+                or not emergency_panel.can_close() or not places_panel.can_close()
+                or not recovery_tab.can_close() or not online_maps_panel.can_close()
+                or not blueprints_tab.can_close()):
+            return
+        if knowledge_tab.busy:
+            messagebox.showinfo(
+                "Pack operation in progress",
+                "Finish the local knowledge-pack operation before closing.",
+                parent=root,
+            )
+        elif (knowledge_tab.save_current() and pathways_tab.save_current()
+                and gps_workspace.can_close()):
+            gps_workspace.close()
+            online_maps_panel.close()
+            root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", close_application)
 
     # Dashboard -------------------------------------------------------------
     ttk.Label(dashboard_tab, text="FieldForge Readiness Dashboard", style="Header.TLabel").pack(
@@ -57,7 +156,7 @@ def run() -> None:
     )
     ttk.Label(
         dashboard_tab,
-        text="All values are calculated locally from your stored household and inventory data.",
+        text="Local planning estimates: recorded stock, 10% reserve, and saved household daily allowances.",
     ).pack(anchor="w", pady=(2, 16))
 
     metrics = ttk.Frame(dashboard_tab)
@@ -70,17 +169,17 @@ def run() -> None:
     water_value = tk.StringVar(value="—")
     food_value = tk.StringVar(value="—")
     metric_specs = (
-        ("Household", member_value),
+        ("Household profiles", member_value),
         ("Inventory", item_value),
-        ("Water runway", water_value),
-        ("Food runway", food_value),
+        ("Water estimate", water_value),
+        ("Food estimate", food_value),
     )
     for column, (label, variable) in enumerate(metric_specs):
         box = ttk.LabelFrame(metrics, text=label, padding=14)
         box.grid(row=0, column=column, sticky="nsew", padx=4)
         ttk.Label(box, textvariable=variable, style="Metric.TLabel").pack()
 
-    alert_box = ttk.LabelFrame(dashboard_tab, text="Readiness alerts", padding=10)
+    alert_box = ttk.LabelFrame(dashboard_tab, text="Planning inputs and stock alerts", padding=10)
     alert_box.pack(fill="both", expand=True, pady=(16, 8))
     alert_text = tk.Text(alert_box, height=16, wrap="word", state="disabled")
     alert_text.pack(fill="both", expand=True)
@@ -92,114 +191,54 @@ def run() -> None:
         widget.configure(state="disabled")
 
     def refresh_dashboard() -> None:
-        snapshot = app.dashboard_snapshot()
+        try:
+            snapshot = supplies.dashboard()
+        except (ValueError, OSError, sqlite3.Error) as exc:
+            for variable in (member_value, item_value, water_value, food_value):
+                variable.set("Check data")
+            _set_text(alert_text, "Could not calculate from current records. No stale estimate is shown.\n\n" + str(exc))
+            return
         member_value.set(str(snapshot["household_members"]))
         item_value.set(str(snapshot["inventory_items"]))
-        water = snapshot["water"]["days_remaining"]
-        food = snapshot["food"]["days_remaining"]
-        water_value.set("—" if water is None else f"{water:.1f} days")
-        food_value.set("—" if food is None else f"{food:.1f} days")
-        lines: list[str] = []
-        low_stock = snapshot["alerts"]["low_stock"]
-        expiring = snapshot["alerts"]["expiring"]
+        water_value.set(snapshot["water"]["label"])
+        food_value.set(snapshot["food"]["label"])
+        lines = ["PLANNING ASSUMPTIONS", "The estimates are arithmetic, not a safety or nutrition assessment.",
+                 "Stock is multiplied by its amount per unit, with a 10% reserve held back."]
+        for resource in ("water", "food"):
+            value = snapshot[resource]
+            lines.append(f"{resource.title()}: saved daily allowance = {value['daily_need']:g} {value['unit']}/day.")
+            if value["warnings"]:
+                lines.extend(["", resource.upper() + " INPUTS NEED REVIEW", *value["warnings"]])
+        if not snapshot["household_members"]:
+            lines.extend(["", "Add or edit household planning allowances in Inventory → Household."])
+        low_stock, dated = snapshot["low_stock"], snapshot["dated"]
         if low_stock:
-            lines.append("LOW STOCK")
-            lines.extend(f"  • {item['name']}: {item['quantity']} {item['unit']}" for item in low_stock)
-        if expiring:
-            if lines:
-                lines.append("")
-            lines.append("EXPIRING WITHIN 30 DAYS")
-            lines.extend(f"  • {item['name']}: {item['expires_on']}" for item in expiring)
-        if not lines:
-            lines.append("No current low-stock or 30-day expiration alerts.")
+            lines.extend(["", "LOW STOCK"])
+            lines.extend(f"• {item.name}: {item.quantity:g} {item.unit} (threshold {item.minimum_quantity:g})" for item in low_stock)
+        if dated:
+            lines.extend(["", "RECORDED DATES PASSED OR WITHIN 30 DAYS"])
+            lines.extend(f"• {item.name}: {item.expires_on}" for item in dated)
+        lines.extend(["", "Review inputs hides the headline estimate when amounts are missing or a recorded date has passed.",
+                      "A missing or future date does not establish stock safety. Keep unusable stock out of recorded usable quantities.",
+                      "No alerts is not proof of complete preparedness. Refresh to pick up changes from other windows."])
         _set_text(alert_text, "\n".join(lines))
 
     ttk.Button(dashboard_tab, text="Refresh", command=refresh_dashboard).pack(anchor="e")
 
     # Inventory -------------------------------------------------------------
-    top_inventory = ttk.Frame(inventory_tab)
-    top_inventory.pack(fill="x")
-    ttk.Label(top_inventory, text="Inventory", style="Header.TLabel").pack(side="left")
+    inventory_pages = ttk.Notebook(inventory_tab)
+    inventory_pages.pack(fill="both", expand=True)
+    supplies_panel = SuppliesTab(inventory_pages, supplies, on_change=refresh_dashboard)
+    household_panel = HouseholdTab(inventory_pages, HouseholdService(app.db.path), on_change=refresh_dashboard)
+    inventory_pages.add(supplies_panel, text="Supplies")
+    inventory_pages.add(household_panel, text="Household")
+    original_backup_guard = recovery_tab.before_backup
 
-    columns = ("id", "name", "category", "quantity", "unit", "location")
-    tree = ttk.Treeview(inventory_tab, columns=columns, show="headings", height=16)
-    for col, width in (("id", 55), ("name", 260), ("category", 120), ("quantity", 90), ("unit", 90), ("location", 180)):
-        tree.heading(col, text=col.replace("_", " ").title())
-        tree.column(col, width=width, anchor="w")
-    tree.pack(fill="both", expand=True, pady=(12, 8))
+    def save_before_backup() -> bool:
+        return (supplies_panel.can_close() and household_panel.can_close()
+                and emergency_panel.can_close() and places_panel.can_close() and original_backup_guard())
 
-    form = ttk.LabelFrame(inventory_tab, text="Add supply", padding=10)
-    form.pack(fill="x")
-    name_var = tk.StringVar()
-    category_var = tk.StringVar(value=InventoryCategory.OTHER.value)
-    quantity_var = tk.StringVar(value="1")
-    unit_var = tk.StringVar(value="each")
-    location_var = tk.StringVar()
-
-    ttk.Label(form, text="Name").grid(row=0, column=0, sticky="w")
-    ttk.Entry(form, textvariable=name_var, width=28).grid(row=1, column=0, padx=(0, 8), sticky="ew")
-    ttk.Label(form, text="Category").grid(row=0, column=1, sticky="w")
-    ttk.Combobox(
-        form,
-        textvariable=category_var,
-        values=[category.value for category in InventoryCategory],
-        state="readonly",
-        width=16,
-    ).grid(row=1, column=1, padx=(0, 8), sticky="ew")
-    ttk.Label(form, text="Quantity").grid(row=0, column=2, sticky="w")
-    ttk.Entry(form, textvariable=quantity_var, width=10).grid(row=1, column=2, padx=(0, 8))
-    ttk.Label(form, text="Unit").grid(row=0, column=3, sticky="w")
-    ttk.Entry(form, textvariable=unit_var, width=12).grid(row=1, column=3, padx=(0, 8))
-    ttk.Label(form, text="Location").grid(row=0, column=4, sticky="w")
-    ttk.Entry(form, textvariable=location_var, width=18).grid(row=1, column=4, padx=(0, 8))
-    form.columnconfigure(0, weight=1)
-
-    def refresh_inventory() -> None:
-        for node in tree.get_children():
-            tree.delete(node)
-        for item in app.inventory():
-            tree.insert(
-                "",
-                "end",
-                values=(item.id, item.name, item.category.value, item.quantity, item.unit, item.location),
-            )
-        refresh_dashboard()
-
-    def add_inventory() -> None:
-        try:
-            item = InventoryItem(
-                name=name_var.get(),
-                category=InventoryCategory(category_var.get()),
-                quantity=float(quantity_var.get()),
-                unit=unit_var.get(),
-                location=location_var.get(),
-            )
-            app.add_item(item)
-        except ValueError as exc:
-            messagebox.showerror("Invalid supply", str(exc))
-            return
-        name_var.set("")
-        quantity_var.set("1")
-        location_var.set("")
-        refresh_inventory()
-
-    ttk.Button(form, text="Add Supply", command=add_inventory).grid(row=1, column=5, sticky="e")
-
-    household = ttk.LabelFrame(inventory_tab, text="Quick household setup", padding=10)
-    household.pack(fill="x", pady=(8, 0))
-    member_name_var = tk.StringVar()
-    ttk.Entry(household, textvariable=member_name_var, width=30).pack(side="left", padx=(0, 8))
-
-    def add_member() -> None:
-        try:
-            app.add_member(HouseholdMember(member_name_var.get()))
-        except ValueError as exc:
-            messagebox.showerror("Invalid household member", str(exc))
-            return
-        member_name_var.set("")
-        refresh_dashboard()
-
-    ttk.Button(household, text="Add Household Member", command=add_member).pack(side="left")
+    recovery_tab.before_backup = save_before_backup
 
     # Power planner ---------------------------------------------------------
     ttk.Label(planners_tab, text="Emergency Power Planner", style="Header.TLabel").pack(anchor="w")
@@ -241,45 +280,10 @@ def run() -> None:
     ttk.Label(planner_grid, textvariable=solar_var, style="Metric.TLabel").grid(row=6, column=0, columnspan=3, sticky="w", pady=6)
 
     # Emergency mode --------------------------------------------------------
-    ttk.Label(emergency_tab, text="Emergency Mode", style="Header.TLabel").pack(anchor="w")
-    ttk.Label(
-        emergency_tab,
-        text="Use this as a local checklist. Official warnings, evacuation orders, and emergency services take precedence.",
-        wraplength=900,
-    ).pack(anchor="w", pady=(2, 12))
+    emergency_panel = ActionWorkspace(emergency_tab, ActionStore(app.db.path))
+    emergency_panel.pack(fill="both", expand=True)
 
-    scenario_row = ttk.Frame(emergency_tab)
-    scenario_row.pack(fill="x")
-    scenario_var = tk.StringVar(value=app.scenario_names()[0])
-    scenario_picker = ttk.Combobox(
-        scenario_row,
-        textvariable=scenario_var,
-        values=list(app.scenario_names()),
-        state="readonly",
-        width=28,
-    )
-    scenario_picker.pack(side="left", padx=(0, 8))
-    emergency_text = tk.Text(emergency_tab, height=24, wrap="word", state="disabled")
-    emergency_text.pack(fill="both", expand=True, pady=(10, 0))
-
-    def load_scenario() -> None:
-        payload = app.scenario(scenario_var.get())
-        lines = [payload["notice"], ""]
-        for index, action in enumerate(payload["actions"], start=1):
-            lines.append(f"{index}. [{action['priority'].upper()}] {action['title']}")
-            lines.append(f"   {action['reason']}")
-            lines.append("")
-        _set_text(emergency_text, "\n".join(lines))
-
-    ttk.Button(
-        scenario_row,
-        text="LOAD EMERGENCY CHECKLIST",
-        style="Emergency.TButton",
-        command=load_scenario,
-    ).pack(side="left")
-
-    refresh_inventory()
-    load_scenario()
+    refresh_dashboard()
     root.mainloop()
 
 

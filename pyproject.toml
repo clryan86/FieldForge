@@ -12,6 +12,9 @@ authors = [{name = "Christopher Ryan"}]
 dependencies = []
 
 [project.optional-dependencies]
+pdf = ["pypdf>=6.19.0,<7"]
+gps = ["pyserial>=3.5,<4"]
+maps = ["Pillow>=12.3,<13"]
 dev = [
   "build>=1.2,<2",
   "pytest>=8,<10",
@@ -21,9 +24,19 @@ dev = [
 [project.scripts]
 fieldforge = "fieldforge.cli:main"
 fieldforge-gui = "fieldforge.ui.desktop:run"
+fieldforge-blueprints = "fieldforge.blueprints.__main__:main"
+fieldforge-gps = "fieldforge_gps.__main__:main"
+fieldforge-workspace = "fieldforge_gps.live_map_ui:main"
+fieldforge-map-portal = "fieldforge.online.server:main"
+fieldforge-map-catalog = "fieldforge.online.catalog:main"
 
 [tool.setuptools.packages.find]
 include = ["fieldforge*"]
+
+[tool.setuptools.package-data]
+"fieldforge.content" = ["packs/*.json", "education/*.json", "LICENSE_CONTENT.txt"]
+fieldforge_gps = ["data/*"]
+"fieldforge.online" = ["portal.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

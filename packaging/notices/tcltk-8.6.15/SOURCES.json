@@ -1,0 +1,23 @@
+{
+  "runtime_version": "8.6.15",
+  "reason": "CPython Windows installer may omit individual license.terms files; exact version and SHA-256 are checked before using these copies.",
+  "cpython_version_reference": "https://github.com/python/cpython/blob/v3.13.16/PCbuild/tcltk.props",
+  "sources": [
+    {
+      "component": "Tcl",
+      "ref": "tcl-core-8.6.15.0",
+      "commit": "275286594fd3e162af29e8c0ba4e365d3d1f7775",
+      "url": "https://github.com/python/cpython-source-deps/blob/275286594fd3e162af29e8c0ba4e365d3d1f7775/license.terms",
+      "file": "Tcl-license.terms",
+      "sha256": "c0a69a2bfd757361ec7e6143973b103c90409316b49e9c88db26ad6388e79f16"
+    },
+    {
+      "component": "Tk",
+      "ref": "tk-8.6.15.0",
+      "commit": "a526badcf885e4986e13e68695398a0bb64d5ea1",
+      "url": "https://github.com/python/cpython-source-deps/blob/a526badcf885e4986e13e68695398a0bb64d5ea1/license.terms",
+      "file": "Tk-license.terms",
+      "sha256": "2cde822b93ca16ae535c954b7dfe658b4ad10df2a193628d1b358f1765e8b198"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "asset_folder": "./licensed-maps",
+  "maps": [
+    {
+      "id": "region-2026-10",
+      "title": "Replace with your regional map title",
+      "filename": "region.mbtiles",
+      "coverage": "Replace with the region and zoom coverage",
+      "version": "2026-10",
+      "source": "Replace with the actual source or provider",
+      "attribution": "Replace with the required attribution",
+      "license": "Replace with the actual redistribution license"
+    },
+    {
+      "id": "site-image-2026-10",
+      "title": "Replace with your map image title",
+      "filename": "site-map.png",
+      "coverage": "Replace with the map image area",
+      "version": "2026-10",
+      "source": "Replace with the actual source or provider",
+      "attribution": "Replace with the required attribution",
+      "license": "Replace with the actual redistribution license"
+    }
+  ]
+}

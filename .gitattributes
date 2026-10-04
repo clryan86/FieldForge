@@ -1,0 +1,3 @@
+# Runtime fixtures and pinned notices are verified by their exact byte hashes.
+/fieldforge_gps/data/* -text
+/packaging/notices/** -text
