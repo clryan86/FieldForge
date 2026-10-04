@@ -363,6 +363,19 @@ def test_new_file_write_preserves_existing_destination(tmp_path):
 def test_portal_assets_are_local_with_restrictive_csp(portal):
     status, headers, body = invoke(portal[1], "/")
     assert status.startswith("200") and b"Address" in body
+    assert b"Worldwide map sources and purchase holds" in body
+    assert b"MapTiler On-prem Standard" in body and b"excludes B2C/B2B" in body
+    assert b"FieldForge currently opens raster MBTiles only" in body
+    assert b"four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota" in body
+    assert b"not hosted in this portal or yet supported by the current GitHub build" in body
+    external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)
+    allowed_hosts = (b"download.geofabrik.de", b"operations.osmfoundation.org",
+                     b"www.maptiler.com", b"distribution.charts.noaa.gov")
+    assert len(external_links) == 7
+    for link in external_links:
+        assert any(host in link for host in allowed_hosts)
+        element = re.search(rb'<a href="' + re.escape(link) + rb'"[^>]*>', body).group(0)
+        assert b'target="_blank"' in element and b'rel="noopener noreferrer"' in element
     policy = headers["Content-Security-Policy"]
     assert "default-src 'none'" in policy and "connect-src 'self'" in policy
     assert "'unsafe-inline'" not in policy and "'unsafe-eval'" not in policy
@@ -373,7 +386,7 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
             assert f"'sha256-{digest}'" in policy
     else:
         assert "script-src 'self'" in policy
-    assert b"https://" not in body and b"cdn" not in body
+    assert b"cdn" not in body
     assert invoke(portal[1], "/api/v1/maps/../../file")[0].startswith("404")
 
 
