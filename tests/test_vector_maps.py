@@ -80,6 +80,14 @@ def named_place_tile(name="FieldForge Junction", *additional_names):
     return _bytes(3, layer)
 
 
+def named_geometry_tile(layer_name, geom_type, commands, label):
+    feature = (_packed(2, [0, 0]) + _uint(3, geom_type)
+               + _packed(4, commands))
+    layer = (_text(1, layer_name) + _bytes(2, feature) + _text(3, "name")
+             + _bytes(4, _text(1, label)) + _uint(5, 4096) + _uint(15, 2))
+    return _bytes(3, layer)
+
+
 def _image(data):
     with Image.open(io.BytesIO(data)) as image:
         return image.convert("RGBA")
@@ -100,6 +108,20 @@ def test_vector_tile_draws_bounded_source_name_labels():
     with _image(labeled) as label_image, _image(unlabeled) as plain_image:
         changed = sum(a != b for a, b in zip(label_image.tobytes(), plain_image.tobytes()))
         assert changed > 20  # Marker pixels are identical; the name added the extra ink.
+
+
+def test_named_roads_and_areas_get_centered_labels_without_publisher_glyphs():
+    line = [9, _zigzag(512), _zigzag(2048), 10, _zigzag(3072), 0]
+    polygon = [9, 0, 0, 26, _zigzag(4096), 0, 0, _zigzag(4096),
+               _zigzag(-4096), 0, 15]
+    for layer, kind, commands, label in (
+            ("transportation", 2, line, "Main Street"),
+            ("water_name", 3, polygon, "Lake FieldForge")):
+        plain = render_vector_tile(named_geometry_tile(layer, kind, commands, ""))
+        named = render_vector_tile(named_geometry_tile(layer, kind, commands, label))
+        with _image(plain) as plain_image, _image(named) as named_image:
+            changed = sum(a != b for a, b in zip(plain_image.tobytes(), named_image.tobytes()))
+        assert changed > 40
 
 
 def test_overlapping_vector_labels_are_suppressed(monkeypatch):
