@@ -302,7 +302,7 @@ def test_oversized_utf8_route_envelope_shows_error_without_download(offline_rout
     assert sizes["envelopeBytes"] == MAX_JSON_BYTES + 1
     assert sizes["longestInstruction"] <= 1000
     downloads = []
-    page.on("download", downloads.append)
+    page.on("download", lambda download: downloads.append(download))
     with pytest.raises(PlaywrightTimeoutError):
         with page.expect_download(timeout=1000):
             page.locator("#downloadRoute").click()
