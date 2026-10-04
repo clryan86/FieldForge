@@ -184,6 +184,8 @@ def test_gui_data_chart_numeric_choice_report_and_reopen(root, tmp_path, monkeyp
     tab.check_button.invoke()
     assert tab.work.result == "correct"
     tab.open_lesson("evidence-report")
+    tab.pages.select(tab.practice_page)
+    root.update()
     tab.move_question(4)
     tab.response.insert("1.0", "B had 90% among returned placements; four sheets are missing.")
     assert str(tab.check_button["state"]) == "disabled"
