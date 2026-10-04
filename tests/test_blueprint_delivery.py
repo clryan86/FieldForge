@@ -145,7 +145,7 @@ def test_normal_desktop_has_blueprints_beside_dashboard_and_keeps_existing_secti
         assert labels[:2] == ["Dashboard", "Blueprints"]
         assert labels[2] == "Education"
         education = root.nametowidget(book.tabs()[2])
-        assert len(education.catalog) == 182
+        assert len(education.catalog) == 186
         book.select(education)
         root.update()
         assert education.title.winfo_ismapped()

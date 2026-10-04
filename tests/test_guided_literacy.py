@@ -17,7 +17,7 @@ def literacy():
 
 def test_all_preexisting_questions_keep_their_shipped_fingerprints():
     original = [(lesson.id, q.id, q.fingerprint) for lesson in lessons()
-                if lesson.track != "Guided: Read & write" for q in lesson.questions]
+                if lesson.id.startswith(("guide-", "library-")) for q in lesson.questions]
     assert len(original) == 541
     digest = hashlib.sha256(json.dumps(original, separators=(",", ":")).encode()).hexdigest()
     assert digest == "24c8ea7602882bc80fd054483ce05f87e5ff3ecc36e859e6cee2a21f3ca8ba1c"

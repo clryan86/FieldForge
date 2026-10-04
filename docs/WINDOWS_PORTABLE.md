@@ -37,6 +37,10 @@ summaries, clear instructions and practical requests. These include 15 choice
 questions, 10 writing tasks, original source passages and worked revisions.
 Question & options shows each choice in full; Passage / model keeps the source
 available while you answer. Choice feedback cites the text; prose is self-reviewed.
+Choose Guided: Investigate & reason for four lessons on measurement records,
+fair comparisons, proportions and samples, and writing an evidence report.
+They include fictional datasets, zero-based labeled charts, eight numeric checks,
+eight choice checks and eight writing tasks. Charts are included in worksheets.
 No library import, internet or AI model is needed for this section.
 
 Responses and explanations save on this device automatically, when changing

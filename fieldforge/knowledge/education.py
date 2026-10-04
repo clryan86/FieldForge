@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import math
 import sqlite3
 from contextlib import closing
 from dataclasses import asdict, dataclass, replace
@@ -68,7 +69,7 @@ def lessons() -> tuple[StudyLesson, ...]:
     root = files("fieldforge.content").joinpath("education")
     source = json.loads(root.joinpath("lessons.json").read_text(encoding="utf-8"))
     result = []
-    for filename in ("guided.json", "guided-literacy.json"):
+    for filename in ("guided.json", "guided-literacy.json", "guided-evidence.json"):
         guided = json.loads(root.joinpath(filename).read_text(encoding="utf-8"))
         for item in guided["lessons"]:
             questions = tuple(Question(**{**q, "hints": tuple(q["hints"]),
@@ -94,6 +95,8 @@ def lessons() -> tuple[StudyLesson, ...]:
     if len(ids) != len(result):
         raise ValueError("Duplicate study lesson IDs")
     for lesson in result:
+        if lesson.diagram and lesson.diagram.get("kind") == "bars":
+            bar_chart(lesson.diagram)
         if not lesson.questions or any(key not in ids for key in lesson.prerequisites):
             raise ValueError("Missing study questions or prerequisites")
         if len({q.id for q in lesson.questions}) != len(lesson.questions):
@@ -272,6 +275,46 @@ class StudyStore:
         return f"{checked} checked · {reviewed} self-reviewed · {saved}/{len(records)} saved"
 
 
+def bar_chart(diagram: dict, width: float = 640) -> list[tuple[str, float, float, float, float, str]]:
+    """Shared zero-based geometry for the desktop and printable chart.
+
+    Labels give exact values; visual bar lengths are only a representation.
+    The bundled chart is limited to three short, nonnegative series.
+    """
+    maximum, bars = diagram["maximum"], diagram["bars"]
+    if (type(maximum) not in (int, float) or not math.isfinite(maximum) or maximum <= 0
+            or not 1 <= len(bars) <= 3 or width < 300):
+        raise ValueError("Invalid bar chart scale")
+    result = []
+    for index, (label, value) in enumerate(bars):
+        if (not isinstance(label, str) or not label.strip() or len(label) > 16
+                or type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= maximum):
+            raise ValueError("Invalid bar chart value or label")
+        left, top = 102, 30 + 23 * index
+        right = left + (width - left - 70) * value / maximum
+        result.append((label, left, top, right, top + 14, f"{value:g}"))
+    return result
+
+
+def chart_svg(diagram: dict) -> str:
+    """An accessible inline chart, with no scripts or external dependencies."""
+    escape = html.escape
+    bars = bar_chart(diagram)
+    elements = ["<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 132' width='640' height='132' "
+                "style='max-width:100%;height:auto' role='img'>",
+                f"<title>{escape(diagram['title'])}</title><desc>{escape(diagram['description'])}</desc>",
+                "<g font-family='sans-serif' font-size='12' fill='#18394a'>",
+                f"<text x='320' y='17' text-anchor='middle'>{escape(diagram['title'])}</text>"]
+    for label, left, top, right, bottom, value in bars:
+        elements.extend((f"<text x='{left - 8}' y='{top + 11}' text-anchor='end'>{escape(label)}</text>",
+                         f"<rect x='{left}' y='{top}' width='{right - left}' height='{bottom - top}' fill='#2c7f99'/>",
+                         f"<text x='{right + 6}' y='{top + 11}'>{escape(value)}</text>"))
+    elements.append("<path d='M102 25 V103 H570' fill='none' stroke='#18394a'/>")
+    for x, value in ((102, 0), (336, diagram["maximum"] / 2), (570, diagram["maximum"])):
+        elements.append(f"<text x='{x}' y='121' text-anchor='middle'>{value:g}</text>")
+    return "".join(elements) + "</g></svg>"
+
+
 def worksheet(lesson: StudyLesson, records: tuple[Work, ...]) -> str:
     """Portable printable HTML; escaped user text, no scripts or remote assets."""
     escape = html.escape
@@ -282,6 +325,8 @@ def worksheet(lesson: StudyLesson, records: tuple[Work, ...]) -> str:
     sections.extend(f"<p class='block'>{escape(p)}</p>" for p in lesson.paragraphs
                     if p.partition("\n")[2] not in passages)
     if lesson.diagram:
+        if lesson.diagram["kind"] == "bars":
+            sections.append(chart_svg(lesson.diagram))
         sections.append(f"<p>{escape(lesson.diagram['description'])}</p>")
     sections.append("<h2>Practice and saved work</h2>")
     for passage, index in passages.items():

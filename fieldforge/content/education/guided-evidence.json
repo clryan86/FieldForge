@@ -1,0 +1,767 @@
+{
+  "edition": "guided-evidence-2026-10-04",
+  "license": "CC BY-SA 4.0",
+  "authorship": "Original AI-assisted FieldForge teaching drafts, not independently educator-reviewed. All datasets are fictional.",
+  "references": [
+    "Background on investigation, interpreting data and evidence-based arguments: NGSS, Appendix F, Science and Engineering Practices (2013). These original activities are not a validated NGSS curriculum or an endorsed assessment. Accessed 2026-10-04.\nhttps://www.nextgenscience.org/sites/default/files/resource/files/Appendix%20F%20%20Science%20and%20Engineering%20Practices%20in%20the%20NGSS%20-%20FINAL%20060513.pdf",
+    "Measurement terminology background: NIST Technical Note 1297, Appendix D1. These introductory examples use observed means and ranges, not a complete measurement-uncertainty analysis. Accessed 2026-10-04.\nhttps://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-appendix-d1-terminology"
+  ],
+  "lessons": [
+    {
+      "id": "evidence-measure",
+      "title": "1 · Measurements: a number needs a method",
+      "track": "Guided: Investigate & reason",
+      "goal": "Calculate a mean and a range, distinguish consistency from accuracy, and investigate an unexpected reading without hiding it.",
+      "prerequisites": [
+        "guide-length"
+      ],
+      "materials": "Paper, pencil and optional calculator. All records below are invented for reasoning practice; they are not findings about real people or products. Work from the supplied records; no experiment or internet connection is required.",
+      "paragraphs": [
+        "BEFORE YOU CALCULATE\nTwo people write 10 on their cards. Did they measure the same thing? You cannot tell without the object, unit and method. Try naming three pieces of information you would need to repeat a length measurement.",
+        "BUILD THE IDEA\nAn observation records what was read or seen. An interpretation explains what it may mean. 'The ruler reading was 10.2 cm' is an observation. 'The card stretched' is a proposed explanation that needs more evidence. Write the object, unit, start/end rule and any unusual conditions with the reading.",
+        "WORKED EXAMPLE · MEAN AND RANGE\nThree invented readings of another card are 8.0, 8.2 and 8.1 cm. The mean shares the total equally: (8.0 + 8.2 + 8.1) ÷ 3 = 24.3 ÷ 3 = 8.1 cm. The range describes the span: greatest − least = 8.2 − 8.0 = 0.2 cm. The mean has the original unit. It is not the total, and the range is not the number of readings.",
+        "WHAT REPEATING CAN AND CANNOT TELL YOU\nClose repeated readings show consistency under those conditions. They do not establish closeness to a trusted reference: the same ruler or start error can affect every reading. Averaging can summarize a set; it does not automatically remove a shared error. A range of 0.2 cm describes these readings, not a guarantee that the true length lies within a particular interval.",
+        "WORKED REVISION · KEEP THE SURPRISE\nWeak note: 'One reading was different, so I deleted it.' Better note: 'I kept all readings, marked the unusual one, checked the original record and the ruler alignment, and repeated the measurement with the same stated method.' If an actual transcription error is established, preserve the original and record the correction and reason. Do not remove a value merely because it is inconvenient.",
+        "READ THE CHART\nEach bar below begins at zero and has its reading printed beside it. Similar bar lengths represent similar numbers. Use the labels for the exact values; do not estimate small differences from pixels. The chart summarizes the three original readings in M2, before the later reading in M4.",
+        "PRACTICE, THEN TRANSFER\nUse M1–M4 for the new card. Enter a number without units; the unit is shown by the question. Explain your calculation. Then write a repeatable method and a response to the unexpected reading. Tomorrow, explain why three identical readings could still all share an error, using a different object.",
+        "PRACTICE RECORD\nCARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "Using only the three original readings in M2, what is their mean?",
+          "answer": "10.1",
+          "unit": "cm",
+          "explanation": "Add 10.0 + 10.2 + 10.1 = 30.3 cm, then divide by the three readings: 30.3 ÷ 3 = 10.1 cm. It is between the smallest and largest readings. M4 is excluded here because the question explicitly defines the set as M2, not because a surprising value may be discarded.",
+          "hints": [
+            "Find the total for M2 only, then count its readings.",
+            "Share 30.3 equally among three readings."
+          ],
+          "mistakes": [
+            [
+              "30.3",
+              "That is the total. A mean shares the total among the readings."
+            ],
+            [
+              "7.575",
+              "M2 contains three readings, not four. Match the count to the values included."
+            ]
+          ],
+          "id": "q1",
+          "passage": "CARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the range of the three original readings in M2?",
+          "answer": "0.2",
+          "unit": "cm",
+          "explanation": "The largest is 10.2 cm and the smallest is 10.0 cm. The range is 10.2 − 10.0 = 0.2 cm. This is a description of the observed spread, not a bound on every possible error.",
+          "hints": [
+            "Range uses the extreme readings, not their total.",
+            "Subtract 10.0 from 10.2."
+          ],
+          "mistakes": [
+            [
+              "10.1",
+              "That is the mean. The range asks how far apart the largest and smallest readings are."
+            ],
+            [
+              "3",
+              "Three is the count of readings. Range has the same unit as the measurements."
+            ]
+          ],
+          "id": "q2",
+          "passage": "CARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which conclusion about M2 is supported by M3?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "The card's true length has been proved to be exactly 10.1 cm."
+            ],
+            [
+              "B",
+              "The readings are close together, but closeness to a trusted reference is not established."
+            ],
+            [
+              "C",
+              "The 10.2 cm reading must be wrong because it is the largest."
+            ]
+          ],
+          "explanation": "M2 spans only 0.2 cm, so the readings are close together in this session. M3 supplies neither a checked ruler nor a reference length. The mean does not prove an exact true value, and being the largest reading does not establish an error.",
+          "hints": [
+            "Separate agreement among readings from agreement with a reference.",
+            "What comparison does M3 say has not been made?"
+          ],
+          "mistakes": [
+            [
+              "A",
+              "M3 provides no independent reference. A mean is a summary, not proof of an exact true length."
+            ],
+            [
+              "C",
+              "Every nonconstant set has a largest value. Being largest is not evidence of a mistake."
+            ]
+          ],
+          "id": "q3",
+          "passage": "CARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+        },
+        {
+          "kind": "choice",
+          "prompt": "What is the most defensible next step for the unusual reading in M4?",
+          "answer": "C",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Erase 10.9 so the log looks consistent."
+            ],
+            [
+              "B",
+              "Declare that the card grew, because the new number is larger."
+            ],
+            [
+              "C",
+              "Preserve 10.9, check the record and method, and repeat with the method documented."
+            ]
+          ],
+          "explanation": "The missing method in M4 leaves several explanations open. Preserve the evidence, investigate alignment or recording differences, and document new readings. A repeat may help distinguish possibilities; it cannot retroactively establish an undocumented method.",
+          "hints": [
+            "Which action keeps the evidence available for inspection?",
+            "A larger reading alone does not identify its cause."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Erasing a surprising value hides evidence. Investigate and annotate it instead."
+            ],
+            [
+              "B",
+              "The number is an observation; growth is only one possible interpretation. The method is missing."
+            ]
+          ],
+          "id": "q4",
+          "passage": "CARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Write a short method another person could follow to repeat the card measurements. Include what to record if a reading is unexpected.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for: (1) the same card and unit, (2) a stated start/end alignment and reading rule, (3) repeated readings recorded separately, (4) unusual conditions preserved. Example: 'Use the same card flat on the table. Align one edge with the ruler's zero mark and read the other edge to the nearest 0.1 cm, viewing the scale directly. Lift and realign for three readings. Record each value and any alignment problem; keep unusual readings with notes.' Other clear, repeatable methods can be valid. Recording a method does not certify the ruler.",
+          "hints": [
+            "Could another person identify exactly where the measurement starts and ends?",
+            "State the unit, the repeat rule and how you will preserve unusual readings."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "CARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Revise this claim using at least two details from M1–M4: 'The mean proves the exact length, and 10.9 must be a typo.'",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for: the 10.1 cm mean of M2, the lack of a reference in M3, and the unknown method in M4. Example: 'The three original readings average 10.1 cm and span 0.2 cm. No trusted reference is supplied, so they do not prove an exact length. I would retain 10.9 cm and investigate its undocumented method before explaining the difference.' Do not invent evidence that a typo occurred. A different wording is acceptable if it preserves those limits.",
+          "hints": [
+            "Which parts of the claim assert more than the log records?",
+            "Pair a numerical summary with one missing fact and one reasonable next check."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "CARD LENGTH LOG — FICTIONAL PRACTICE DATA\n[M1] Object: one rectangular paper card. The same person used the same ruler in one session. Each reading was recorded to the nearest 0.1 cm, with the start edge aligned to the zero mark.\n[M2] Original readings: trial 1 = 10.0 cm; trial 2 = 10.2 cm; trial 3 = 10.1 cm.\n[M3] The ruler has not been compared with a trusted reference. There is no independent reference length for the card in this record.\n[M4] A later fourth reading is 10.9 cm. Its method was not written down. Keep it separate from the three original readings when answering questions that explicitly ask about M2."
+        }
+      ],
+      "diagram": {
+        "kind": "bars",
+        "title": "Original readings (cm)",
+        "maximum": 12,
+        "unit": "cm",
+        "bars": [
+          [
+            "Trial 1",
+            10.0
+          ],
+          [
+            "Trial 2",
+            10.2
+          ],
+          [
+            "Trial 3",
+            10.1
+          ]
+        ],
+        "description": "Horizontal bars start at zero on a 0–12 cm axis. Trials 1, 2 and 3 read 10.0, 10.2 and 10.1 cm. Labels, not pixel estimates, give exact values. The later 10.9 cm reading is not part of this chart."
+      }
+    },
+    {
+      "id": "evidence-compare",
+      "title": "2 · Fair comparisons: what actually changed?",
+      "track": "Guided: Investigate & reason",
+      "goal": "Separate an observed difference from its cause, calculate mean times, and design a comparison that addresses a competing explanation.",
+      "prerequisites": [
+        "evidence-measure"
+      ],
+      "materials": "Paper, pencil and optional calculator. All records below are invented for reasoning practice; they are not findings about real people or products. Work from the supplied records; no experiment or internet connection is required.",
+      "paragraphs": [
+        "START WITH A RIVAL EXPLANATION\nSomeone sorts cards faster after receiving new labels. Before crediting the labels, list another thing that might have changed: practice, the card set, distractions, timing rules or help. An observed difference is the starting point for inquiry, not the end.",
+        "NAME THE VARIABLES\nA variable is something that can differ. Here the proposed change is the label design. The measured outcome is elapsed sorting time in seconds. Conditions such as card set, instructions and prior practice can also affect time. If labels and practice change together, the recorded difference alone cannot separate their effects; that is a confounded comparison.",
+        "WORKED EXAMPLE · COMPARE SUMMARIES\nIn a separate invented test, times for design P are 18, 20 and 22 seconds; for Q they are 14, 16 and 18. The means are 60 ÷ 3 = 20 and 48 ÷ 3 = 16 seconds. Q's mean is 4 seconds lower in those records. The means summarize the data; they do not show that Q wins every trial or that labels alone caused the difference.",
+        "IMPROVE THE COMPARISON\nUse the same card set, instructions, room conditions and timing rule. Give the same practice rule for each design. Use both starting orders: some sessions X then Y, others Y then X, with a planned order rule rather than choosing the order after seeing results. Record all trials and deviations. This addresses order effects better than always trying Y second, but small tests still have limits.",
+        "READ THE CHART\nThe bars summarize the new records in C2. Lower means mean less time, not automatically better work. Accuracy was not recorded. A faster sort with more errors could be less useful, so a follow-up should define and record an accuracy measure too.",
+        "WORKED REVISION\nWeak: 'Y is best because it was faster.' Better: 'Y had a lower mean time in these sessions, but Y followed extra practice. We need a comparison that balances order and measures errors before deciding whether the label design helped.' Notice how the revision preserves the observed difference and changes the explanation.",
+        "TRANSFER\nIn Practice, calculate the actual means and identify what the design cannot separate. Then plan a repeat with enough detail for someone to audit the method. Try applying the same questions to two sets of written instructions: what changed, what was measured, and what else could explain it?",
+        "PRACTICE RECORD\nCARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "What is the mean X-label time in C2?",
+          "answer": "14",
+          "unit": "seconds",
+          "explanation": "X totals 12 + 14 + 16 = 42 seconds across three trials. 42 ÷ 3 = 14 seconds. This is a mean time for X in this pilot, not for all six trials or all future users.",
+          "hints": [
+            "Use only the X times.",
+            "Divide their total, 42 seconds, by three."
+          ],
+          "mistakes": [
+            [
+              "42",
+              "That is X's total time. Divide by the number of X trials to find the mean."
+            ],
+            [
+              "12",
+              "Twelve is the mean across all six trials, but this question asks only about X."
+            ]
+          ],
+          "id": "q1",
+          "passage": "CARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many seconds lower is Y's mean than X's mean in C2? Enter the positive difference.",
+          "answer": "4",
+          "unit": "seconds",
+          "explanation": "Y's mean is (8 + 10 + 12) ÷ 3 = 10 seconds. X's mean is 14 seconds. Subtract in the requested direction: 14 − 10 = 4 seconds lower. This describes the means; it does not isolate a label effect.",
+          "hints": [
+            "Calculate the mean of Y's three times first.",
+            "Compare 14 seconds with 10 seconds, not the two totals."
+          ],
+          "mistakes": [
+            [
+              "12",
+              "Twelve is the difference between totals. Each total contains three trials; compare the means."
+            ],
+            [
+              "-4",
+              "The question asks how many seconds lower, as a positive difference. Put X's larger mean first."
+            ]
+          ],
+          "id": "q2",
+          "passage": "CARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Why does C1 prevent us from attributing the whole time difference to label design?",
+          "answer": "A",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "The label design and extra practice changed together; every Y trial came later."
+            ],
+            [
+              "B",
+              "Three readings always prove a result, so there is no problem."
+            ],
+            [
+              "C",
+              "A smaller mean is impossible when one Y time equals an X time."
+            ]
+          ],
+          "explanation": "C1 changes both label design and experience/order. Either could contribute to the lower Y mean. Repeating each condition three times does not remove a change shared by all Y trials. Individual times can overlap while means differ.",
+          "hints": [
+            "What happened between the X and Y trials besides changing labels?",
+            "Repeats cannot separate two conditions that always move together."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "The number of repeats does not undo the shared change in practice and order."
+            ],
+            [
+              "C",
+              "Both sets include 12 seconds, but their other values differ. Overlap does not require equal means."
+            ]
+          ],
+          "id": "q3",
+          "passage": "CARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which follow-up best addresses the specific order problem while comparing labels?",
+          "answer": "C",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Keep trying Y second, but use a different card set only for Y."
+            ],
+            [
+              "B",
+              "Report only each design's fastest trial."
+            ],
+            [
+              "C",
+              "Keep cards and timing rules fixed, equalize practice, and use planned X-first and Y-first sessions."
+            ]
+          ],
+          "explanation": "The third plan keeps key conditions comparable and balances which design comes first. It should also record accuracy, all trials and deviations. It improves this comparison without guaranteeing that all possible causes are controlled.",
+          "hints": [
+            "Look for the plan that changes the labels without also changing the card task.",
+            "If practice matters, do not always give the same design the later position."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "A new card set adds another difference, and Y still always benefits from being second."
+            ],
+            [
+              "B",
+              "Selecting only fastest trials hides the rest of the evidence and does not address order."
+            ]
+          ],
+          "id": "q4",
+          "passage": "CARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Write a two-sentence conclusion from C1–C3. Include the numerical difference, a competing explanation and the missing outcome.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for: X mean 14 s, Y mean 10 s (4 s lower); practice/order as a rival explanation; missing error counts. Example: 'Y's mean was 4 seconds lower than X's in this one-person pilot. Because Y followed extra practice and no errors were recorded, we cannot assign the difference to labels alone or decide which design produced better overall work.' Avoid 'proved', 'everyone' and invented accuracy data.",
+          "hints": [
+            "What is observed in C2, and what is missing in C3?",
+            "Keep the time result while limiting its causal interpretation."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "CARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Design a follow-up record sheet and order rule. State the measured outcomes, at least three conditions to hold comparable, and one remaining limit.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for: fields for participant/session, label/order, time, correct placements and deviations; the same cards, practice and timing/instructions; both starting orders; all trials retained; a limit such as few participants. Example: 'Use columns for session, starting design, trial, seconds, correct cards out of 20, and notes. Keep the card set, room, instructions, practice and timing rules fixed. Assign alternating starting designs before testing; retain all trials. A few volunteers would still limit generalization.' Many plans are defensible; explain how yours addresses order rather than merely adding trials.",
+          "hints": [
+            "What fields would reveal a changed condition or an omitted trial?",
+            "Write the order rule before knowing which result you prefer."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "CARD SORTING PILOT — FICTIONAL PRACTICE DATA\n[C1] One person sorted the same 20 cards. All three X-label trials happened first. Then the person received extra practice and completed all three Y-label trials. Timing started at the first card pickup and ended when all cards were placed.\n[C2] X times: 12, 14, 16 seconds. Y times: 8, 10, 12 seconds. All six recorded trials are shown.\n[C3] No count of sorting errors was recorded. There were no other participants or sessions.\n[C4] Proposed follow-up: compare the label designs while recording both elapsed time and the number of cards placed correctly."
+        }
+      ],
+      "diagram": {
+        "kind": "bars",
+        "title": "Mean sorting time (seconds)",
+        "maximum": 20,
+        "unit": "s",
+        "bars": [
+          [
+            "X labels",
+            14
+          ],
+          [
+            "Y labels",
+            10
+          ]
+        ],
+        "description": "Zero-based horizontal bars on a 0–20 second axis: X mean 14 seconds, Y mean 10 seconds. Y is 4 seconds lower. The chart does not separate labels from extra practice and does not report sorting accuracy."
+      }
+    },
+    {
+      "id": "evidence-sample",
+      "title": "3 · Samples: compare rates, then ask who is missing",
+      "track": "Guided: Investigate & reason",
+      "goal": "Compare proportions with unequal denominators, distinguish percentage points from counts, and identify limits of a self-selected sample.",
+      "prerequisites": [
+        "guide-fractions",
+        "evidence-compare"
+      ],
+      "materials": "Paper, pencil and optional calculator. All records below are invented for reasoning practice; they are not findings about real people or products. Work from the supplied records; no experiment or internet connection is required.",
+      "paragraphs": [
+        "PREDICT BEFORE DIVIDING\nGroup A has 8 successful attempts and group B has 18. Is B more successful? You need the total attempts in each group. Counts answer 'how many'; a proportion compares the count with its own total. Never quietly switch those totals.",
+        "BUILD THE IDEA · COUNT, FRACTION, PERCENT\nA proportion is selected count ÷ total count. For 6 out of 8, this is 6/8 = 3/4 = 0.75. A percent expresses that amount per hundred: 75%. For 9 out of 12, 9/12 is also 3/4. Nine is a larger count, but these two proportions are equal.",
+        "WORKED EXAMPLE · PERCENTAGE POINTS\nCompare 75% with 50%. Their difference is 25 percentage points: 75 − 50 = 25. A relative percent increase asks a different question and needs a baseline: 25 ÷ 50 × 100 = 50% relative increase. In this lesson, questions that say 'percentage points' ask for simple subtraction of the percentages, not a relative change.",
+        "ASK WHO THE SAMPLE REPRESENTS\nA sample is a subset of the people or cases of interest. Volunteers can differ from nonvolunteers. If people choose which instruction version to try, the groups may differ in experience or other ways before the task begins. Dividing by each group size gives a fair numerical rate comparison, but it does not remove selection bias or establish cause.",
+        "READ THE CHART\nThe two bars show the percentages from S2 on a common 0–100% axis. Labels name both groups. The chart must be read with the denominators: 10 people tried one version and 30 tried the other. It summarizes these volunteers, not all potential users.",
+        "WORKED REVISION\nWeak: 'The larger success count proves the better instructions.' Better: 'Compare success proportions using each group's own total, then describe who chose each version and who was absent. A higher observed proportion can justify a better-planned follow-up; it does not by itself identify what caused the difference.'",
+        "TRANSFER\nAnswer the rate questions, identify a more useful sampling plan, then rewrite an overclaim. For the final task, use different numbers to show why a larger success count can still correspond to the same proportion. Explain the denominator, not just the division.",
+        "PRACTICE RECORD\nINSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "What fraction of large-print attempts succeeded in S2? Enter an exact fraction or decimal, not a percent.",
+          "answer": "4/5",
+          "unit": "of large-print attempts",
+          "explanation": "Use the large-print denominator: 8 ÷ 10 = 8/10 = 4/5 = 0.8. Eight is the success count; 40 is the total across both groups and is not the denominator for the large-print success rate.",
+          "hints": [
+            "Match the numerator and denominator to the same version.",
+            "Eight successes out of ten attempts can be simplified by dividing both counts by two."
+          ],
+          "mistakes": [
+            [
+              "8/40",
+              "Forty combines both groups. The question asks for the fraction within the ten large-print attempts."
+            ],
+            [
+              "80",
+              "Eighty is the percentage number. Here enter the fraction 8/10 or an equivalent exact decimal."
+            ]
+          ],
+          "id": "q1",
+          "passage": "INSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+        },
+        {
+          "kind": "number",
+          "prompt": "By how many percentage points is the large-print success rate higher than the standard-print rate?",
+          "answer": "20",
+          "unit": "percentage points",
+          "explanation": "Large print: 8/10 × 100 = 80%. Standard print: 18/30 × 100 = 60%. The difference is 80 − 60 = 20 percentage points. This is not a 20% relative increase and does not establish a causal effect.",
+          "hints": [
+            "Turn each group's fraction into a percent using its own denominator.",
+            "Subtract 60 from 80; percentage points compare the two percentage numbers."
+          ],
+          "mistakes": [
+            [
+              "10",
+              "Ten is the difference between success counts, 18 and 8. The denominators differ; compare percentages."
+            ],
+            [
+              "1/5",
+              "One fifth is the difference in proportions. Express it per hundred for the requested percentage-point number."
+            ]
+          ],
+          "id": "q2",
+          "passage": "INSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which description of S2 correctly compares both counts and rates?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Standard print has more successes, so it necessarily has the higher success rate."
+            ],
+            [
+              "B",
+              "Standard print has more successes, but large print has the higher success proportion in these attempts."
+            ],
+            [
+              "C",
+              "Large print succeeded for 80% of every possible future user."
+            ]
+          ],
+          "explanation": "Standard print has 18 successes versus 8. Its rate is 18/30 = 60%, below large print's 8/10 = 80%. These are descriptions of the attempts recorded in S2; no future-user rate is established.",
+          "hints": [
+            "A larger numerator can accompany an even larger denominator.",
+            "Compare both 18 with 8 and 18/30 with 8/10."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "The counts use different totals. A success count alone is not a success rate."
+            ],
+            [
+              "C",
+              "S2 describes this sample. S1 and S3 give reasons not to treat it as every future user."
+            ]
+          ],
+          "id": "q3",
+          "passage": "INSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which follow-up most directly addresses the selection limitations in S1, S3 and S4?",
+          "answer": "A",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Invite across the intended time groups, record who takes part, and assign versions by chance with a common task rule."
+            ],
+            [
+              "B",
+              "Ask only more afternoon volunteers and let each keep choosing a version."
+            ],
+            [
+              "C",
+              "Remove unsuccessful attempts to equalize the two success counts."
+            ]
+          ],
+          "explanation": "Broader invitations address the omitted time groups; chance assignment addresses preference-based grouping. Record participation and nonresponse because invitations do not guarantee a representative sample. Keep the task and success rule common. These steps improve the design, without guaranteeing a particular outcome.",
+          "hints": [
+            "There are two issues: who could attend, and how versions were chosen.",
+            "Look for a plan addressing both, while retaining unsuccessful attempts."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "More people from the same narrow group do not automatically address missing users or self-selection."
+            ],
+            [
+              "C",
+              "Deleting failures changes the evidence rather than improving the sampling or assignment method."
+            ]
+          ],
+          "id": "q4",
+          "passage": "INSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Rewrite this announcement using S1–S4: 'Large print makes everyone 20% better and faster.' Include the observed rates and two limits.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for: 80% versus 60% (20 percentage points); self-selection or missing time groups; no time measurement. Example: 'In this afternoon volunteer trial, 8/10 large-print and 18/30 standard-print attempts succeeded: 80% versus 60%. People chose their versions and other intended time groups were absent, so the trial does not establish an effect for everyone. It recorded success, not speed.' Do not convert an unmeasured outcome into a claim.",
+          "hints": [
+            "Which part is a percentage-point difference, and which outcome was not measured?",
+            "Name at least one group-selection limit and the absent timing data."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "INSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Transfer task: a new small trial has 6 successes out of 8 attempts; a larger trial has 9 out of 12. Explain why three more successes does not mean a higher success proportion.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for: identifying each denominator, simplifying both fractions, and distinguishing count from rate. Example: '6/8 = 3/4 and 9/12 = 3/4, so each has a 75% success proportion. The second trial has three more successes because its total attempts are also larger. The rates are equal in these records.' This arithmetic does not establish that the groups or methods are otherwise comparable.",
+          "hints": [
+            "Reduce each fraction by a factor shared by its numerator and denominator.",
+            "Both fractions become 3/4. Explain what the different total counts mean."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "INSTRUCTION CARD TRIAL — FICTIONAL PRACTICE DATA\n[S1] Forty volunteers at a single afternoon club chose which instruction card to try. Ten chose large print; thirty chose standard print. Each person attempted the same paper sorting task once. Success meant placing every card correctly; no completion time was recorded.\n[S2] Large print: 8 successes out of 10 attempts. Standard print: 18 successes out of 30 attempts. All attempts are included.\n[S3] Previous experience and reasons for choosing a version were not recorded. People who could not attend that afternoon were not included.\n[S4] The intended users include morning and evening groups as well as this afternoon club. A follow-up could invite people across those groups and assign versions by chance instead of by preference."
+        }
+      ],
+      "diagram": {
+        "kind": "bars",
+        "title": "Successful attempts (%)",
+        "maximum": 100,
+        "unit": "%",
+        "bars": [
+          [
+            "Large print",
+            80
+          ],
+          [
+            "Standard",
+            60
+          ]
+        ],
+        "description": "Horizontal bars on a 0–100% axis: large print 80% (8 of 10 attempts); standard print 60% (18 of 30 attempts). The difference is 20 percentage points. These self-selected groups have unequal sizes."
+      }
+    },
+    {
+      "id": "evidence-report",
+      "title": "4 · Evidence report: make a claim you can defend",
+      "track": "Guided: Investigate & reason",
+      "goal": "Combine calculations, design details and missing records into a qualified claim and a concrete next investigation.",
+      "prerequisites": [
+        "evidence-measure",
+        "evidence-compare",
+        "evidence-sample",
+        "read-summary"
+      ],
+      "materials": "Paper, pencil and optional calculator. All records below are invented for reasoning practice; they are not findings about real people or products. Work from the supplied records; no experiment or internet connection is required.",
+      "paragraphs": [
+        "THE CHALLENGE\nA club wants to decide whether to develop picture-supported instructions. Your job is to write a useful report from the supplied pilot. A useful report includes both the evidence in favor and the reasons for uncertainty. It neither promises a result the records cannot show nor discards the observations because the test is imperfect.",
+        "READ THE METHOD BEFORE THE TOTALS\nIdentify the intended change, who took part, the assignment method, the scoring rule and missing records. Assignment by chance is a way to reduce systematic group differences; it cannot make small groups identical or recover missing outcomes. A score is meaningful only with its denominator and rule.",
+        "WORKED EXAMPLE · KEEP THE DENOMINATOR VISIBLE\nIn a separate invented exercise, four returned sheets score 6, 7, 8 and 7 correct out of 10 each. The total is 28 correct out of 40 recorded items, or 70%. That is an item-level percentage. It is not the percentage of people who achieved a perfect score, and it is not a score for sheets that were never returned.",
+        "SEPARATE THE LAYERS\nObservation: a recorded score or total. Summary: a mean, proportion or difference computed from those records. Interpretation: what the comparison suggests under the method used. Decision: what to do next, given the purpose and uncertainty. Labeling these layers helps you catch a jump from one small pilot to a universal claim.",
+        "WORKED REVISION · A USEFUL LIMIT\nWeak: 'Missing data means we learned nothing.' Better: 'The returned sheets favor one version under this scoring rule, but we do not know whether the missing sheets would change the comparison. Follow up on missing outcomes and repeat with a larger, more varied group before generalizing.' Do not code an unreturned sheet as all wrong or all right unless a scoring rule established in advance explicitly calls for it.",
+        "READ THE CHART\nThe bars show the percentage of correctly placed cards among the returned sheets in R3, using 50 recorded card placements per version. They do not show every invited participant's score. Check the numbers against the log and keep the missing records in your explanation.",
+        "WRITE, AUDIT, REVISE\nAfter the short checks, write a 4–6 sentence report: question and method, computed result, what it suggests, two limits, and a next step. Underline every factual claim and point to its supporting record. Circle claims that would need new evidence. Then compare with the worked report and revise in your own words.",
+        "PRACTICE RECORD\nPICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many correct card placements are recorded on the five returned B sheets in R3?",
+          "answer": "45",
+          "unit": "correct placements",
+          "explanation": "Add 9 + 9 + 10 + 9 + 8 = 45 correct placements. This is a total, not the mean score of 9 per returned sheet. The two missing sheets have unknown outcomes and are not added as zeroes.",
+          "hints": [
+            "Use every B value exactly once.",
+            "Add the five returned scores; do not supply invented scores for the missing sheets."
+          ],
+          "mistakes": [
+            [
+              "9",
+              "Nine is the mean per returned B sheet. This question asks for the total across the five sheets."
+            ],
+            [
+              "50",
+              "Fifty is the maximum possible on the five returned sheets, not the number actually correct."
+            ]
+          ],
+          "id": "q1",
+          "passage": "PICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+        },
+        {
+          "kind": "number",
+          "prompt": "What percentage of the 50 card placements on returned B sheets were correct? Enter the percentage number.",
+          "answer": "90",
+          "unit": "%",
+          "explanation": "There are 5 returned sheets × 10 placements = 50 recorded placements. 45/50 = 0.9 = 90%. This is the percentage of recorded placements correct, not the percentage of participants with all ten correct, and not a rate for all seven invited B participants.",
+          "hints": [
+            "Divide correct placements by recorded placements, then multiply by 100.",
+            "45 out of 50 is 9 out of 10, or how many out of 100?"
+          ],
+          "mistakes": [
+            [
+              "0.9",
+              "That is the proportion. The answer field asks for the percentage number, per hundred."
+            ],
+            [
+              "20",
+              "Twenty percent is the fraction of returned B sheets with a perfect score. The question asks about all recorded card placements."
+            ]
+          ],
+          "id": "q2",
+          "passage": "PICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which conclusion best matches R1–R5?",
+          "answer": "C",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Pictures are proven to improve every user's score and speed."
+            ],
+            [
+              "B",
+              "The missing sheets prove the pictures did not help."
+            ],
+            [
+              "C",
+              "Returned B sheets had 90% correct placements versus A's 80%; that supports further study, with limits from missing records and the small sample."
+            ]
+          ],
+          "explanation": "A totals 40/50 = 80%, and B totals 45/50 = 90% among returned sheets. The pilot favors B on this immediate scoring measure. Missing scores and a small, narrow volunteer group limit interpretation. No speed or retention effect was measured; the missing sheets do not prove either success or failure.",
+          "hints": [
+            "Compute A's total and check which outcomes R4 says were not collected.",
+            "A defensible claim can report the difference and still state its limits."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "R4 has no timing data, and this small volunteer sample cannot establish results for every user."
+            ],
+            [
+              "B",
+              "Unknown scores are unknown. They do not establish that one design helped or failed."
+            ]
+          ],
+          "id": "q3",
+          "passage": "PICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which statement about the missing sheets is justified by R2?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "The same number is missing in each group, so missing data cannot change the comparison."
+            ],
+            [
+              "B",
+              "Their outcomes are unknown; record the missingness and seek the scores or reasons without inventing them."
+            ],
+            [
+              "C",
+              "Count all missing sheets as perfect because they were probably easy."
+            ]
+          ],
+          "explanation": "Equal counts of missing sheets do not imply equal missing scores or reasons. Preserve what is known and unknown, try to recover the records appropriately, and explain the limit if recovery is impossible. Neither perfect nor zero scores are established by R2.",
+          "hints": [
+            "Does equal missing count tell you the missing scores?",
+            "Separate absence of a record from evidence about performance."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Two unknown scores per group could differ. Equal missing counts do not guarantee equal effects on the comparison."
+            ],
+            [
+              "C",
+              "No reason for nonreturn is supplied. Assuming perfect scores invents evidence."
+            ]
+          ],
+          "id": "q4",
+          "passage": "PICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Write a 4–6 sentence report for the club. Include method, both rates, a qualified interpretation, at least two limitations and a useful next step.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Audit for: (1) assignment by lots and a common task, (2) returned-sheet A = 40/50 = 80%, B = 45/50 = 90%, (3) a ten-percentage-point descriptive difference, (4) missing sheets plus narrow sample or unmeasured outcomes, (5) a next action tied to a limit. Example: 'Fourteen volunteers were assigned by lots to text-only or picture-supported instructions for the same sorting task. Among five returned sheets per group, A had 40/50 correct placements (80%) and B 45/50 (90%). This favors developing and testing B further on this immediate task. Two sheets per group are missing, and the afternoon sample says little about other users or later retention. Record reasons for nonreturn where available and repeat with a broader group and a planned way to collect every outcome.' Wording can differ. A numerical match does not automatically validate the report.",
+          "hints": [
+            "Write one sentence for the method and one for the returned-sheet result before interpreting it.",
+            "For every limitation, ask what information or procedure would address it."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "PICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Plan the next investigation. Name a specific question, an outcome with a denominator, how versions are assigned, a missing-record procedure, and what evidence would make you revise your current view.",
+          "answer": "Compare your evidence and reasoning",
+          "unit": "",
+          "explanation": "Compare for a testable question and an auditable plan. Example: 'Do pictures increase correct placements for morning and evening volunteers on the same ten-card task? Invite both groups, assign versions by chance within each time group, and use common instructions and scoring. Record correct placements out of ten for each participant and whether a sheet is missing, without replacing unknown scores. Arrange collection at the end and note nonreturn reasons when available. I would reconsider the apparent advantage if a larger, well-recorded comparison showed similar or lower B scores, or if the effect depended on time group.' Other plans can be sound. State the revision evidence before seeing new results; do not move the goalposts to protect a preferred claim.",
+          "hints": [
+            "Make each measurement reproducible: what counts, and out of how many?",
+            "Include a result that could challenge your current interpretation, not only one that supports it."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "PICTURE INSTRUCTIONS PILOT — FICTIONAL PRACTICE DATA\n[R1] Fourteen afternoon-club volunteers were assigned by drawing lots: seven to text-only instructions (A), seven to the same text plus pictures (B). Each was given the same ten-card sorting task, the same time allowance and the same definition of a correct placement.\n[R2] Five sheets were returned in each group. Two from A and two from B were not returned; their scores and reasons for nonreturn are unknown. Score only the returned sheets in the calculations below.\n[R3] Correct placements, each out of 10: A = 7, 8, 8, 9, 8; B = 9, 9, 10, 9, 8.\n[R4] No task-completion times, later retention scores or morning/evening-user results were collected.\n[R5] Proposed decision: whether the pilot justifies further development and a better documented follow-up, not whether pictures are proven best for every user."
+        }
+      ],
+      "diagram": {
+        "kind": "bars",
+        "title": "Correct recorded placements (%)",
+        "maximum": 100,
+        "unit": "%",
+        "bars": [
+          [
+            "A: text",
+            80
+          ],
+          [
+            "B: pictures",
+            90
+          ]
+        ],
+        "description": "Zero-based bars on a 0–100% axis: A, text-only, 80% (40/50 recorded placements); B, text plus pictures, 90% (45/50). Each group has five returned and two missing sheets. The difference is ten percentage points among returned sheets."
+      }
+    }
+  ]
+}
