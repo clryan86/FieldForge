@@ -7,6 +7,33 @@ files, and offline route overlay. The earlier clean baseline used for the Tk
 control described below was `68e5011d7b6cec4552e82b8985b449dac78b182f`.
 See [Online map portal](ONLINE_MAP_PORTAL.md) for operation and supported formats.
 
+## Resumable partial map transfers
+
+The native list window now keeps partial downloads for explicit retry, with a
+visible checkbox and confirmed offline discard action. Native HTTP and WSGI
+serve bounded single byte ranges with strong SHA-256 ETags. Checkpoints bind
+the exact portal, asset and destination filename, verify the stored prefix, and
+use OS locks so parallel transfers cannot write one checkpoint. No automatic
+reconnection or background transfer was added.
+
+The 48 new transfer regressions cover both real portal hosts, exact remaining
+network byte counts after a fresh-client retry, short responses, invalid range
+metadata, fallback to full responses, corrupt or mismatched local checkpoints,
+durable checkpoint intervals, uncommitted crash tails, process-exit lock release,
+hard-link protection, full-file verification and cancellation during publication.
+The latter restores the complete checkpoint on Windows for retry without
+transferring map bytes again.
+Desktop checks cover opting out, confirmed offline discard while preserving
+completed maps, minimum-window controls and owned Tk-variable cleanup.
+
+Local Python 3.12.14 headless validation: **2,212 passed**, 532 GUI/browser skips,
+78 subtests passed and two existing PDF-fixture deprecation warnings. Ruff and
+whitespace checks pass. The built wheel installs away from the source tree and
+includes checkpoint storage, range serving and the updated desktop window.
+The PR records the required Linux desktop, both Windows versions,
+Chromium/WebKit, frozen Windows delivery and source-bundle checks. No local
+graphical run is inferred from headless skips.
+
 ## Map download lists and verified batch transfers
 
 The next extension adds portable map selections to the browser and native
@@ -14,7 +41,8 @@ desktop. Selections show total file bytes and survive filtering/disconnection;
 JSON export/import is local. The desktop explicitly connects to the list's
 portal, checks the current catalog and downloads sequentially. Completed maps
 are retained on interruption and verified locally before reuse on a retry.
-Partial-file byte-range resumption remains future work.
+At this earlier checkpoint, partial-file byte-range resumption remained future
+work; the extension above now supplies it for native download lists.
 
 Python 3.12.14 local headless result: **2,164 passed**, 529 GUI/browser skips,
 78 subtests passed and two existing PDF-fixture deprecation warnings. Ruff and

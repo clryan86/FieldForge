@@ -97,14 +97,14 @@ from a generic license or this engineering note.
 4. Use a hosted payment service; verify signed webhooks and idempotent orders.
    Entitlements and byte accounting must be enforced by the server, never by
    hiding links in the browser. Never store payment-card details in FieldForge.
-5. Extend the verified map lists and progress/cancel controls with byte-range
-   resumption of interrupted individual files. Completed files are already
+5. Map lists now offer byte-range resumption with verified partial checkpoints,
+   explicit retry and offline discard controls. Completed files are also
    verified and reused on a list retry. Specify charging for retries before
    enabling metering; selection totals are not a billing ledger.
 6. Test interrupted and duplicate requests, refund/revocation flows and privacy
    retention. Already downloaded files must remain usable without online checks.
 7. Only then replace the draft tier text with actual terms and purchase controls.
 
-Next engineering priority: regional map publication and byte-range transfer
-resumption. Leave the knowledge placeholders until real bundles
+Next engineering priority: regional map publication and usable content-pack
+import contracts. Leave the knowledge placeholders until real bundles
 and their import contracts are ready; do not populate a catalog with fake files.

@@ -23,7 +23,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 from . import models
-from .storage import check_directory, ensure_directory, publish_map
+from .storage import _signature, check_directory, ensure_directory, publish_map
 
 USER_AGENT = "FieldForge/0.1 (offline map and route client)"
 CHUNK_BYTES = 64 * 1024
@@ -160,13 +160,15 @@ class PortalClient:
         self._invalidate(token)
         raise PortalOffline(message + " Saved offline maps and routes are still available.") from cause
 
-    def _request(self, path, payload, token, cancel, *, binary=False):
+    def _request(self, path, payload, token, cancel, *, binary=False, offset=0, etag=None):
         self._active(token, cancel)
         data = None if payload is None else _validated(models.encode_json, payload)
         headers = {"User-Agent": USER_AGENT, "Accept-Encoding": "identity",
                    "Accept": "application/octet-stream" if binary else "application/json"}
         if data is not None:
             headers["Content-Type"] = "application/json; charset=utf-8"
+        if binary and offset:
+            headers.update(Range=f"bytes={offset}-", **{"If-Range": etag})
         request = Request(self.base_url + path, data=data, headers=headers,
                           method="GET" if payload is None else "POST")
         open_request = getattr(self._opener, "open", self._opener)
@@ -177,7 +179,7 @@ class PortalClient:
             status = getattr(response, "status", None)
             if status is None and callable(getattr(response, "getcode", None)):
                 status = response.getcode()
-            if status != 200:
+            if status not in ((200, 206) if binary and offset else (200,)):
                 raise PortalError(f"Portal request failed (HTTP {status}).")
             if callable(getattr(response, "geturl", None)) and response.geturl() != request.full_url:
                 raise PortalError("Portal redirects are not allowed.")
@@ -352,8 +354,10 @@ class PortalClient:
             "routes", models.validate_route, models.MAX_ROUTES, "routing", cancel,
         )
 
-    def download(self, asset: dict, directory: Path, cancel=None, progress=None) -> Path:
-        return self._download(asset, directory, cancel, progress)
+    def download(self, asset: dict, directory: Path, cancel=None, progress=None, *, resume=False) -> Path:
+        if type(resume) is not bool:
+            raise PortalError("Choose whether to keep partial downloads using a boolean.")
+        return self._download(asset, directory, cancel, progress, resume=resume)
 
     def _download_to(self, asset: dict, destination: Path, cancel=None, *, legacy_note=None) -> Path:
         destination = Path(destination).expanduser().absolute()
@@ -362,7 +366,7 @@ class PortalClient:
                               decode_image=True)
 
     def _download(self, asset, directory, cancel, progress, *, destination_name=None,
-                  legacy_note=None, decode_image=False):
+                  legacy_note=None, decode_image=False, resume=False):
         token = self._begin("catalog", cancel)
         asset = _validated(models.validate_asset, asset)
         if progress is not None and not callable(progress):
@@ -382,6 +386,8 @@ class PortalClient:
             raise FileExistsError("This map filename already exists; existing files were preserved.")
         self._active(token, cancel)
         path = f"/api/v1/maps/{asset['id']}/file" if self.legacy_protocol else asset["download_path"]
+        if resume:
+            return _resume_download(self, asset, target, path, token, cancel, progress)
         response = self._request(path, None, token, cancel, binary=True)
         temporary = None
         try:
@@ -437,6 +443,109 @@ class PortalClient:
             response.close()
             if temporary is not None:
                 temporary.unlink(missing_ok=True)
+
+
+def _resume_download(client, asset, target, path, token, cancel, progress):
+    from .partial_download import PartialDownload
+
+    def guard():
+        client._active(token, cancel)
+    response = None
+    try:
+        with PartialDownload(target, asset, client.base_url) as partial:
+            partial.prepare(guard)
+            if progress:
+                progress(partial.received, asset["bytes"])
+            try:
+                guard()
+                if partial.received < asset["bytes"]:
+                    offset = partial.received
+                    expected_tag = '"' + asset["sha256"] + '"'
+                    response = client._request(path, None, token, cancel, binary=True, offset=offset, etag=expected_tag)
+                    status = getattr(response, "status", None)
+                    if status is None:
+                        status = response.getcode()
+                    tag = response.headers.get("ETag")
+                    if tag is not None and tag != expected_tag:
+                        raise PortalError("The map version changed. Refresh the catalog before retrying; the partial file was preserved.")
+                    if status == 206:
+                        expected_range = f"bytes {offset}-{asset['bytes'] - 1}/{asset['bytes']}"
+                        if tag != expected_tag or response.headers.get("Content-Range") != expected_range:
+                            raise PortalError("The portal returned an inconsistent map range; the partial file was preserved.")
+                    elif response.headers.get("Content-Range") is not None:
+                        raise PortalError("A full map response contained an unexpected range; the partial file was preserved.")
+                    length = client._length(response)
+                    expected_length = asset["bytes"] - (offset if status == 206 else 0)
+                    if length is not None and length != expected_length:
+                        raise PortalError("Download length differs from the selected map; the partial file was preserved.")
+                    if status == 200 and offset:
+                        # Range support is optional. Never append a full response
+                        # to a prefix; explicitly restart our owned checkpoint.
+                        partial.restart()
+                        if progress:
+                            progress(0, asset["bytes"])
+                    while True:
+                        guard()
+                        chunk = _read_chunk(response, min(CHUNK_BYTES, asset["bytes"] + 1 - partial.received))
+                        guard()
+                        if not isinstance(chunk, bytes):
+                            raise PortalError("Portal returned an invalid download body.")
+                        if not chunk:
+                            break
+                        if partial.received + len(chunk) > asset["bytes"]:
+                            raise PortalError("Download exceeded the selected map size.")
+                        partial.append(chunk)
+                        if progress:
+                            progress(partial.received, asset["bytes"])
+                    guard()
+                    if partial.received != asset["bytes"]:
+                        raise http.client.IncompleteRead(b"", asset["bytes"] - partial.received)
+                partial.checkpoint()
+            except BaseException:
+                # Save bytes already written even after disconnect/cancel. This
+                # local checkpoint cannot make an incomplete map available.
+                partial.checkpoint()
+                raise
+            guard()
+            if partial.digest.hexdigest() != asset["sha256"]:
+                partial.discard()
+                raise PortalError("The complete map failed its SHA-256 check. Its partial file was discarded; retry from the beginning.")
+            identity = partial.path.lstat()
+            partial.close_data()
+            try:
+                _verify_map_file(partial.path, asset, _OperationSignal(client, token, cancel))
+            except PortalError as exc:
+                if not isinstance(exc, PortalCancelled):
+                    partial.discard()
+                raise
+            if _signature(partial.path.lstat()) != _signature(identity):
+                raise PortalError("The map changed during final verification; it was not published.")
+            with client._lock:
+                guard()
+                partial._unchanged()
+                result = publish_map(partial.path, target, asset, client.base_url, guard, preserve_temporary=True)
+                partial.published()
+                return result
+    except (OSError, http.client.HTTPException) as exc:
+        if isinstance(exc, FileExistsError):
+            raise
+        client._transport_failed(token, cancel, "The map transfer stopped. Kept partial bytes can be retried after reconnecting.", exc)
+    except PortalCancelled:
+        raise
+    except PortalOffline:
+        raise
+    except (models.ValidationError, PortalError) as exc:
+        # _request already invalidates a rejected response. Do not relabel its
+        # protocol/transport error as a cancelled old-generation operation.
+        if client.connected:
+            guard()
+        client._invalidate(token)
+        if isinstance(exc, PortalError):
+            raise
+        raise PortalError(str(exc)) from exc
+    finally:
+        if response is not None:
+            response.close()
 
 
 def _verify_map_file(path: Path, asset: dict, cancel, *, decode_image=False) -> None:

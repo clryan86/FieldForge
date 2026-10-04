@@ -15,7 +15,7 @@ import tkinter as tk
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from threading import Event
-from tkinter import filedialog, ttk
+from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
 from fieldforge.navigation.places import PlaceStore, coordinate, coordinate_text
@@ -28,6 +28,7 @@ from fieldforge.online.download_list import (
     save_download_list,
 )
 from fieldforge.online.models import validate_portal_url
+from fieldforge.online.partial_download import discard_partials
 from fieldforge.online.storage import PortalLibrary
 from fieldforge.ui.map_catalog_filters import CatalogFilters
 from fieldforge.ui.map_download_list import MapDownloadListWindow
@@ -37,7 +38,7 @@ from fieldforge_gps.tk_cleanup import TkCleanupMixin
 
 HEALTH_CHECK_MS = 30_000
 _NETWORK = {"connect", "health", "search", "catalog", "route", "download", "download_list"}
-_WRITES = {"save_route", "export_gpx", "import_route", "save_place_csv", "save_download_list", "import_download_list"}
+_WRITES = {"save_route", "export_gpx", "import_route", "save_place_csv", "save_download_list", "import_download_list", "discard_partials"}
 _ERRORS = (OSError, ValueError, sqlite3.Error, PortalError)
 
 
@@ -100,6 +101,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self._catalog_loaded = False
         self._download_list = None
         self._download_list_window = None
+        self.keep_partial_maps = tk.BooleanVar(value=True)
         self._confirming = False
         self._connection_url = ""
         self._routes = ()
@@ -598,7 +600,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             self._label_retained_route("Previous selection retained; new route request cancelled.")
         if downloading_list:
             self.refresh_local()
-            self.status.set("Download list stopped. Completed maps remain offline; retry the list to reuse verified files.")
+            self.status.set("Download list stopped. Completed maps remain offline. Kept partial files resume on an explicit retry.")
         self._buttons()
 
     def _poll(self, future, operation, generation):
@@ -700,6 +702,8 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             self.status.set("Download list imported locally. Review its portal and total size, then connect explicitly when ready.")
         elif operation == "save_download_list":
             self.status.set(f"Map list saved: {Path(result).name}. This file contains the selection and source details, not map bytes.")
+        elif operation == "discard_partials":
+            self.status.set(f"Discarded {_size(result)} of partial map data for this list. Completed maps were preserved.")
         elif operation == "save_route":
             self.refresh_local()
             self.status.set(f"Route saved for offline use: {Path(result).name}.")
@@ -982,6 +986,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             self.status.set("Connect explicitly to the portal named in the download list before starting it.")
             return
         client, document, directory = self.client, self._download_list, self.library.maps_directory
+        resume = self.keep_partial_maps.get()
         token, progress_queue = self._generation + 1, self._progress
 
         def progress(done, total, detail):
@@ -997,7 +1002,26 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self.progress.configure(value=0)
         self.transfer_info.set("Checking selection…")
         self.status.set(f"Preparing {len(document['maps'])} selected maps · {_size(document['total_bytes'])} total file size.")
-        self._start("download_list", lambda cancel: download_maps(client, document, directory, cancel=cancel, progress=progress))
+        self._start("download_list", lambda cancel: download_maps(client, document, directory, cancel=cancel, progress=progress, resume=resume))
+
+    def discard_list_partials(self):
+        if (self._disposed or self.busy or self._choosing_file or self.library is None
+                or not self._download_list or not self._download_list["maps"]):
+            return
+        document, directory = self._download_list, self.library.maps_directory
+        self._choosing_file = True
+        self._buttons()
+        try:
+            confirmed = messagebox.askyesno("Discard partial map files?",
+                                           "Remove incomplete downloads for the maps in this list?\n\n"
+                                           "Completed offline maps and the list itself will be kept. "
+                                           "The removed bytes must be downloaded again.",
+                                           parent=self._download_list_window or self, default="no")
+        finally:
+            self._choosing_file = False
+            self._buttons()
+        if confirmed and not self._disposed:
+            self._start("discard_partials", lambda _cancel: discard_partials(document, directory))
 
     def refresh_local(self):
         if self._disposed or self.busy:

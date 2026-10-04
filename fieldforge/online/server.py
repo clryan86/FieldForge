@@ -423,6 +423,46 @@ class PortalResponse:
             self.stream = None
 
 
+def _map_response(asset, stream, ranges=(), if_ranges=()):
+    """Serve one byte range; unsupported range units/lists receive the full map.
+
+    RFC 9110 sections 13.1.5 and 14: only an exact strong If-Range match
+    authorizes a partial response. Dates/weak or changed tags fall back to 200.
+    """
+    size = asset["bytes"]
+    response = PortalResponse(200, content_type=MIME_TYPES[asset["format"]], stream=stream,
+                              length=size, attachment=asset["filename"], etag=asset["sha256"],
+                              extra_headers=(("Accept-Ranges", "bytes"),))
+    try:
+        if len(ranges) > 1 or len(if_ranges) > 1 or any(len(value) > 200 for value in (*ranges, *if_ranges)):
+            raise PortalError(400, "invalid_range", "Supply at most one bounded Range and If-Range header.")
+        if not ranges or (if_ranges and if_ranges[0] != '"' + asset["sha256"] + '"'):
+            return response
+        value = ranges[0].strip()
+        if "=" in value and (value.split("=", 1)[0].lower() != "bytes" or "," in value):
+            return response
+        match = re.fullmatch(r"bytes=([0-9]{0,20})-([0-9]{0,20})", value, re.IGNORECASE)
+        if match and any(match.groups()):
+            first, last = match.groups()
+            if first:
+                start, end = int(first), min(int(last), size - 1) if last else size - 1
+            else:
+                start, end = max(0, size - int(last)), size - 1
+            if 0 <= start <= end < size:
+                stream.seek(start)
+                response.status, response.length = 206, end - start + 1
+                response.extra_headers += (("Content-Range", f"bytes {start}-{end}/{size}"),)
+                return response
+        response.close()
+        response = PortalResponse.error(PortalError(416, "invalid_range", "The requested map byte range is not satisfiable."))
+        response.etag = asset["sha256"]
+        response.extra_headers = (("Accept-Ranges", "bytes"), ("Content-Range", f"bytes */{size}"))
+        return response
+    except BaseException:
+        response.close()
+        raise
+
+
 def _check_request(config, port, path, hosts, origins=(), *, fetch_site=None, transfer_encoding=False):
     if len(hosts) != 1:
         raise PortalError(400, "invalid_host", "A single valid Host header is required.")
@@ -634,7 +674,7 @@ class PortalApplication:
         validate_asset(result)
         return result
 
-    def dispatch(self, method, path, payload=None):
+    def dispatch(self, method, path, payload=None, *, range_headers=(), if_range_headers=()):
         """Shared endpoint behavior for native HTTP and WSGI hosting."""
         if method == "POST":
             if path == "/api/v1/search":
@@ -677,8 +717,7 @@ class PortalApplication:
                 asset, stream = self.catalog.open_asset(match[1])
             except KeyError:
                 raise PortalError(404, "not_found", "Map not found in this portal catalog.") from None
-            return PortalResponse(200, content_type=MIME_TYPES[asset["format"]], stream=stream,
-                                  length=asset["bytes"], attachment=asset["filename"], etag=asset["sha256"])
+            return _map_response(asset, stream, range_headers, if_range_headers)
         raise PortalError(404, "not_found", "Portal endpoint not found.")
 
     def _read_provider_json(self, response, deadline, *, maximum=None):
@@ -942,7 +981,9 @@ class PortalHandler(BaseHTTPRequestHandler):
                                     self.headers.get_all("Content-Type", []))
         elif self.command == "GET" and self.headers.get_all("Content-Length", []) not in ([], ["0"]):
             raise PortalError(400, "invalid_request", "GET request bodies are unsupported.")
-        self._send(app.dispatch(self.command, self.path, payload))
+        self._send(app.dispatch(self.command, self.path, payload,
+                                range_headers=self.headers.get_all("Range", []),
+                                if_range_headers=self.headers.get_all("If-Range", [])))
 
     def _handle(self):
         self._response_started = False
@@ -1004,7 +1045,9 @@ class WSGIApplication:
                                         [environ["CONTENT_TYPE"]] if "CONTENT_TYPE" in environ else [])
             elif method == "GET" and environ.get("CONTENT_LENGTH", "") not in ("", "0"):
                 raise PortalError(400, "invalid_request", "GET request bodies are unsupported.")
-            response = self.app.dispatch(method, path, payload)
+            response = self.app.dispatch(method, path, payload,
+                                         range_headers=[environ["HTTP_RANGE"]] if "HTTP_RANGE" in environ else [],
+                                         if_range_headers=[environ["HTTP_IF_RANGE"]] if "HTTP_IF_RANGE" in environ else [])
         except PortalError as exc:
             response = PortalResponse.error(exc)
         except CatalogError:

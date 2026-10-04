@@ -12,8 +12,8 @@ class MapDownloadListWindow(TkCleanupMixin, tk.Toplevel):
         self.owner = owner
         self.format_size = format_size
         self.title("FieldForge · Map download list")
-        self.geometry("820x540")
-        self.minsize(720, 460)
+        self.geometry("820x580")
+        self.minsize(720, 500)
         self.columnconfigure(0, weight=1)
         self.rowconfigure(2, weight=1)
         self.info = tk.StringVar()
@@ -42,17 +42,23 @@ class MapDownloadListWindow(TkCleanupMixin, tk.Toplevel):
         self.copy_portal_button = ttk.Button(actions, text="Copy required portal", command=owner.copy_download_list_portal)
         for button in (self.remove_button, self.clear_button, self.import_button, self.save_button, self.copy_portal_button):
             button.pack(side="left", padx=(0, 8))
+        options = ttk.Frame(self, padding=(16, 0, 16, 8))
+        options.grid(row=4, column=0, sticky="ew")
+        self.resume_button = ttk.Checkbutton(options, text="Keep partial downloads for retry", variable=owner.keep_partial_maps)
+        self.resume_button.pack(side="left")
+        self.discard_button = ttk.Button(options, text="Discard partial files…", command=owner.discard_list_partials)
+        self.discard_button.pack(side="left", padx=16)
         transfer = ttk.Frame(self, padding=(16, 0, 16, 6))
-        transfer.grid(row=4, column=0, sticky="ew")
+        transfer.grid(row=5, column=0, sticky="ew")
         self.download_button = ttk.Button(transfer, text="Download list", command=owner.download_list)
         self.download_button.pack(side="left")
         self.stop_button = ttk.Button(transfer, text="Stop downloads", command=owner.cancel_task)
         self.stop_button.pack(side="left", padx=8)
         ttk.Label(transfer, textvariable=owner.transfer_info).pack(side="left", padx=8)
-        ttk.Label(self, textvariable=owner.status, wraplength=680, padding=(16, 6)).grid(row=5, column=0, sticky="ew")
+        ttk.Label(self, textvariable=owner.status, wraplength=680, padding=(16, 6)).grid(row=6, column=0, sticky="ew")
         ttk.Label(self, text="Save this list to reuse it after closing FieldForge. Saving a list does not download its maps.\n"
-                  "Completed files stay offline. Stop interrupts the current transfer; a retry checks completed files locally.",
-                  wraplength=680, padding=(16, 6, 16, 12)).grid(row=6, column=0, sticky="ew")
+                  "Retry checks completed maps and kept partial bytes. Servers without range support restart the current file.",
+                  wraplength=680, padding=(16, 6, 16, 12)).grid(row=7, column=0, sticky="ew")
         self.protocol("WM_DELETE_WINDOW", self.close)
         self.render()
 
@@ -77,6 +83,8 @@ class MapDownloadListWindow(TkCleanupMixin, tk.Toplevel):
         for button in (self.clear_button, self.save_button):
             button.configure(state="normal" if idle and ready else "disabled")
         self.import_button.configure(state="normal" if idle else "disabled")
+        self.resume_button.configure(state="normal" if idle else "disabled")
+        self.discard_button.configure(state="normal" if idle and ready and owner.library is not None else "disabled")
         self.copy_portal_button.configure(state="normal" if owner._download_list else "disabled")
         self.download_button.configure(state="normal" if idle and ready and owner.library is not None
                                        and owner._available("catalog")
@@ -90,8 +98,8 @@ class MapDownloadListWindow(TkCleanupMixin, tk.Toplevel):
         self.owner.remove_from_download_list(selected)
 
     def close(self):
-        if self.owner._choosing_file or (self.owner.busy and self.owner._operation in {"save_download_list", "import_download_list"}):
-            self.owner.status.set("Finish the list import or save before closing this window.")
+        if self.owner._choosing_file or (self.owner.busy and self.owner._operation in {"save_download_list", "import_download_list", "discard_partials"}):
+            self.owner.status.set("Finish the current list file operation before closing this window.")
             return
         self.destroy()
 

@@ -104,11 +104,13 @@ def _publish_new_path(temporary: Path, target: Path) -> None:
         os.link(temporary, target)
 
 
-def publish_map(temporary: Path, target: Path, asset: dict, portal: str, guard, *, legacy_note=None) -> Path:
+def publish_map(temporary: Path, target: Path, asset: dict, portal: str, guard, *, legacy_note=None,
+                preserve_temporary=False) -> Path:
     """Publish checked map bytes plus provenance; caller holds its connection lock.
 
     The manifest is the availability marker. Any cancellation or failure before
     this function completes removes only files this operation actually created.
+    Resumable callers may preserve the temporary source during rollback.
     """
     asset = validate_asset(asset)
     portal = validate_portal_url(portal)
@@ -150,7 +152,16 @@ def publish_map(temporary: Path, target: Path, asset: dict, portal: str, guard, 
                 try:
                     current = path.lstat()
                     if (current.st_dev, current.st_ino) == (identity.st_dev, identity.st_ino):
-                        path.unlink()
+                        if (path == target and preserve_temporary
+                                and not temporary.exists() and not temporary.is_symlink()):
+                            # Windows publication moved the checkpoint's bytes.
+                            # Restore our source name on rollback, without ever
+                            # replacing a competing file at that name.
+                            try:
+                                _publish_new_path(path, temporary)
+                            except FileExistsError:
+                                pass
+                        path.unlink(missing_ok=True)
                 except FileNotFoundError:
                     pass
         raise

@@ -85,7 +85,8 @@ class FakePortal:
         self._finish("routes")
         return tuple(dict(route) for route in self.factory.routes)
 
-    def download(self, asset, directory, *, cancel=None, progress=None):
+    def download(self, asset, directory, *, cancel=None, progress=None, resume=False):
+        self.last_resume = resume
         from fieldforge.online.storage import publish_map
 
         self._begin("download", (dict(asset), Path(directory)), cancel=cancel)
@@ -1229,6 +1230,7 @@ def test_download_list_batch_reuses_files_without_opening_every_map(screen):
     assert not screen.opened
     assert "ready offline" in panel.status.get()
     assert len([call for call in client.calls if call[0] == "download"]) == 2
+    assert client.last_resume is True
     window.download_button.invoke()
     wait(screen.root, panel)
     assert len([call for call in client.calls if call[0] == "download"]) == 2
@@ -1294,8 +1296,74 @@ def test_download_list_window_releases_its_tk_variables_on_parent_destruction(sc
     panel.review_download_list()
     window = panel._download_list_window
     variable = weakref.ref(window.info)
+    keep_partial = weakref.ref(panel.keep_partial_maps)
     panel.destroy()
     screen.root.update()
     assert panel._download_list_window is None
     assert variable() is None
+    assert keep_partial() is None
     assert window.owner is None
+
+
+def test_download_list_resume_option_can_be_disabled(screen):
+    client = connect(screen)
+    panel = screen.panel
+    _two_list_maps(screen, client)
+    panel.maps_tree.selection_set("0")
+    panel.add_to_download_list()
+    panel.review_download_list()
+    panel._download_list_window.resume_button.invoke()
+    assert panel.keep_partial_maps.get() is False
+    panel.download_list()
+    wait(screen.root, panel)
+    assert client.last_resume is False and len(panel._local_maps) == 1
+
+
+def test_partial_discard_is_offline_confirmed_and_preserves_completed_maps(screen, monkeypatch):
+    from fieldforge.online.partial_download import PartialDownload
+
+    client = connect(screen)
+    panel = screen.panel
+    _two_list_maps(screen, client)
+    panel.maps_tree.selection_set("0")
+    panel.add_to_download_list()
+    panel.download_list()
+    wait(screen.root, panel)
+    document = panel._download_list
+    target = panel._local_maps[0]
+    original = target.read_bytes()
+    with PartialDownload(target, document["maps"][0], document["portal"]) as partial:
+        partial.prepare(lambda: None)
+        partial.append(original[:20])
+        partial.checkpoint()
+    panel.disconnect()
+    wait(screen.root, panel)
+    panel.review_download_list()
+    window = panel._download_list_window
+    calls = list(client.calls)
+    assert enabled(window.discard_button) and not enabled(window.download_button)
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: False)
+    window.discard_button.invoke()
+    assert partial.path.exists() and partial.note.exists()
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: True)
+    window.discard_button.invoke()
+    wait(screen.root, panel)
+    assert not partial.path.exists() and not partial.note.exists()
+    assert target.read_bytes() == original and panel._download_list is document
+    assert client.calls == calls and not panel.connected
+    assert "Discarded" in panel.status.get()
+
+
+def test_download_list_transfer_controls_fit_minimum_window(screen):
+    panel = screen.panel
+    panel.review_download_list()
+    window = panel._download_list_window
+    window.geometry("720x500")
+    panel.transfer_info.set("999.9 MiB / 999.9 MiB")
+    screen.root.update()
+    for control in (window.resume_button, window.discard_button, window.download_button, window.stop_button,
+                    window.import_button, window.copy_portal_button):
+        assert control.winfo_ismapped()
+        assert control.winfo_rootx() >= window.winfo_rootx()
+        assert control.winfo_rootx() + control.winfo_width() <= window.winfo_rootx() + window.winfo_width()
+        assert control.winfo_rooty() + control.winfo_height() <= window.winfo_rooty() + window.winfo_height()

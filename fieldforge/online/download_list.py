@@ -121,14 +121,16 @@ def verified_local_map(directory, asset, portal, cancel=None):
     return target
 
 
-def download_maps(client, document, directory, *, cancel=None, progress=None):
+def download_maps(client, document, directory, *, cancel=None, progress=None, resume=False):
     """Refresh catalog once, then download the exact selected maps sequentially.
 
     A retry verifies/reuses completed local files without downloading them again.
-    Partial transfers are cleaned up by the existing PortalClient. A failure
+    Partial transfers are retained only when explicitly enabled. A failure
     stops the list rather than silently continuing to other transfers.
     """
     document = validate_download_list(document)
+    if type(resume) is not bool:
+        raise ValidationError("Choose whether to keep partial downloads using a boolean.")
     if validate_portal_url(client.base_url) != document["portal"]:
         raise ValidationError("Connect to the portal named in this download list; it will not be changed automatically.")
     if not client.connected:
@@ -153,7 +155,8 @@ def download_maps(client, document, directory, *, cancel=None, progress=None):
             def transferred(amount, _size):
                 if progress:
                     progress(done + amount, total, "Downloading · " + label)
-            path = client.download(asset, directory, cancel=cancel, progress=transferred)
+            options = {"resume": True} if resume else {}
+            path = client.download(asset, directory, cancel=cancel, progress=transferred, **options)
         ready.append(path)
         done += asset["bytes"]
         if progress:

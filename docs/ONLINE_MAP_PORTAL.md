@@ -99,9 +99,34 @@ Completed maps remain available offline, and the selected list is retained.
 Retrying the list rechecks its current catalog records and fully verifies
 matching local maps by size, SHA-256 and provenance, reusing them without another
 file download. A changed, incomplete or conflicting existing local file is
-preserved and reported; it is never overwritten. If the catalog changed, remove
-obsolete selections and build a current list. Byte-range resumption of an
-unfinished individual file is not implemented; that file starts again on retry.
+preserved and reported; it is never overwritten. If the catalog changed, discard
+unneeded partial files before removing obsolete selections and building a current list.
+
+**Keep partial downloads for retry** is enabled in the list window. On Stop,
+Disconnect or a dropped connection, downloaded bytes are checkpointed locally.
+Retry the same list explicitly after connecting to its portal. FieldForge checks
+the saved prefix, requests the remaining bytes, then verifies the complete size,
+SHA-256 and map format before making the map available offline. This also works
+after restarting the app and importing the saved list. For one resumable map,
+add that map to a one-item list. The single-map download button and legacy
+destination picker retain their temporary-file behavior.
+
+If a server ignores byte ranges, the current file starts from zero; its full
+response is never appended to an existing prefix. Inconsistent ranges or changed
+server fingerprints are rejected. Completed files are still reused separately.
+Unchecking **Keep partial downloads for retry** starts new temporary transfers;
+it does not delete earlier partial files.
+
+**Discard partial files…** works offline and asks for confirmation before
+removing incomplete files for the maps in the current list. Completed maps and
+the saved list are preserved. Clearing/removing list items does not free partial
+storage; discard unneeded partials first, or retain a saved list for later cleanup.
+Partial files and checksummed JSON checkpoints use reserved `.fieldforge-partial-`
+names inside the maps folder. They are not offline maps. Empty lock files remain
+to coordinate retries; OS locks release when the process exits. Checkpoints are
+flushed every 8 MiB and on handled interruption. After an abrupt process exit,
+the saved prefix is checked and any tail beyond that checkpoint is trimmed before retry.
+A damaged/orphaned checkpoint is preserved and requires explicit discard.
 
 Lists hold up to **100 maps**, reject duplicate IDs and portable-filename
 collisions, and use the bounded 8 MiB local JSON import. They retain one portal
@@ -143,7 +168,7 @@ editor; the lookup does not press **Save place**. The GPS portal action can fill
 the GPS manual-coordinate form, where **Show coordinate** remains a separate
 choice. These actions do not create a receiver fix or start recording.
 
-Downloads stream to a temporary file. Wrong lengths, failed checksums, invalid
+Downloads stream to a temporary or explicitly retained partial file. Wrong lengths, failed checksums, invalid
 formats, cancellation, and transport failures do not install a completed map.
 Existing files are not silently replaced. A saved route is written as a validated,
 versioned local document. GPX export creates a **planned track**, clearly labeled
@@ -338,6 +363,16 @@ Set `public_origin` to the exact external HTTPS origin, such as
 host and any nondefault port in the forwarded `Host` header. Host the portal at that
 origin's root; a URL subpath is unsupported. A rewritten upstream host can cause
 the portal's Host/Origin checks to reject browser requests.
+
+Both hosts serve single byte ranges on map `/download` and legacy `/file`
+endpoints. Forward `Range` and `If-Range` through the proxy and preserve
+`Accept-Ranges`, `ETag`, `Content-Range` and `Content-Length` on responses.
+Serve map bytes without compression or transformation. The strong ETag is the
+catalog SHA-256. Valid ranges return 206; unsatisfiable ranges return 416 with
+the full map length. A changed/weak If-Range tag returns the full 200 response;
+unknown units or multipart range lists are ignored and receive the full file.
+The desktop checks these headers before appending to its own partial file.
+See [HTTP conditional range semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1.5).
 
 For an existing WSGI deployment, the compatible entry point is:
 
