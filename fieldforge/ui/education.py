@@ -153,7 +153,9 @@ class EducationTab(ttk.Frame):
         self.explained_button = ttk.Button(reflection, text="I can explain it", command=lambda: self.reflect("explained it"))
         self.explained_button.pack(side="left")
         self.status_label = ttk.Label(self, textvariable=self.status, wraplength=1050)
-        self.status_label.pack(fill="x", pady=(8, 0))
+        # Reserve the footer before the expanding pane requests its space.
+        # Otherwise a compact window can hide save errors below the viewport.
+        self.status_label.pack(side="bottom", fill="x", pady=(8, 0), before=panes)
         for entry in (self.response, self.reasoning):
             entry.bind("<<Modified>>", self._edited)
         self.bind("<Configure>", self._resize, add=True)
