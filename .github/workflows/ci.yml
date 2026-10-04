@@ -14,6 +14,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  cancel-obsolete-branch-checks:
+    # Also retires runs created before this branch acquired concurrency groups.
+    # Main/release runs and other development branches are never cancelled here.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/codex/desktop-blueprint-delivery'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Cancel checks of superseded integration commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?branch=codex%2Fdesktop-blueprint-delivery&per_page=100" --jq ".workflow_runs[] | select(.head_sha != \"$GITHUB_SHA\" and (.status == \"in_progress\" or .status == \"queued\")) | .id" > older-runs.txt
+          while read -r run; do
+            gh api --method POST "repos/$GITHUB_REPOSITORY/actions/runs/$run/cancel" || true
+          done < older-runs.txt
+
   test:
     runs-on: ubuntu-latest
     strategy:
