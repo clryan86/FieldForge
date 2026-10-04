@@ -2670,6 +2670,2876 @@
       "contributors": "https://en.wikibooks.org/w/index.php?title=Learning+Theories%2FOrganizational+Learning%3A+Practice&action=history",
       "words": 2361,
       "body_sha256": "6f861b8fa635eab89f3169296a41dcc4742d07ad9433ffff442ac703651f7502"
+    },
+    {
+      "slug": "fieldforge-education-01",
+      "title": "Education 01: Start a learning group with limited materials",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 579,
+      "body_sha256": "78c3f4bd1279abbdf1fcce3ee69a0d2660b69e26513ff97c9bc8bbed802e58b2",
+      "prerequisites": [],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/18"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-02",
+      "title": "Education 02: Plan a lesson with a worked example",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 561,
+      "body_sha256": "43d69374c77c0e0b1b4852c7d2f78b19a2d0689dafb02f13eb8c8bed4e752a19",
+      "prerequisites": [
+        "fieldforge-education-01"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-03",
+      "title": "Education 03: Remember learning through spaced practice",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 544,
+      "body_sha256": "3743a38a08e474e73bb4979215499b6686dab02b7840ceafc8418f1a728a9a14",
+      "prerequisites": [
+        "fieldforge-education-02"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-04",
+      "title": "Education 04: Check understanding and give useful feedback",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 539,
+      "body_sha256": "1cf88f2cceaf5643386e4905c07fbc15e9e0c1d8cb92300c64da581a0d659c6c",
+      "prerequisites": [
+        "fieldforge-education-02"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/18"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-05",
+      "title": "Education 05: English speech sounds and letters",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 546,
+      "body_sha256": "77615281898222cedd3306aecc3355037faf0330d9f289e58b6e0e53d7871a69",
+      "prerequisites": [],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-06",
+      "title": "Education 06: Blend sounds to read and spell short words",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 556,
+      "body_sha256": "9430bd578a84dfcbd209cbaaf76000256c61c31bc9be47dd368841835d4964ed",
+      "prerequisites": [
+        "fieldforge-education-05"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-07",
+      "title": "Education 07: Read short sentences and check meaning",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 530,
+      "body_sha256": "11837847576e1633c3aa3cc6bfa4158b9aaab8d12391117eb37b36ccae375b16",
+      "prerequisites": [
+        "fieldforge-education-06"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-08",
+      "title": "Education 08: Vocabulary, retelling and reading comprehension",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 534,
+      "body_sha256": "d609f82f2f49e230c7e38dbda2ac2f8c7a4cc80775509d12d5bc9126906a4ed6",
+      "prerequisites": [
+        "fieldforge-education-07"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-09",
+      "title": "Education 09: Write clear sentences and revise them",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 532,
+      "body_sha256": "fb43c9fc6b391b414bdf9d481cb8fc9b77fb4791ed85ddd8ac254242b449097f",
+      "prerequisites": [
+        "fieldforge-education-08"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-10",
+      "title": "Education 10: Read notices and write practical instructions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 571,
+      "body_sha256": "ea298a209b09079c060fe29e79c23032c7b9e674c6681592a77e7a824eff1d0a",
+      "prerequisites": [
+        "fieldforge-education-09"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-11",
+      "title": "Education 11: Count, compare and order whole numbers",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 568,
+      "body_sha256": "e5c41fb5c2b817db92d2c0273a3ea6f3ae6b57c66137367d00e26d62a935244d",
+      "prerequisites": [],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-1-introduction-to-whole-numbers",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/18"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-12",
+      "title": "Education 12: Place value and grouping by tens",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 514,
+      "body_sha256": "5822d14b83eae07d1ed36a63606de44c9d9de1efaa7135da694b1cb7daa87ee2",
+      "prerequisites": [
+        "fieldforge-education-11"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-1-introduction-to-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-13",
+      "title": "Education 13: Addition, subtraction and checking the result",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 550,
+      "body_sha256": "5ff61a01754ed0f81a556b0904e8e816e1d9527cb956c731f28a052b3a245db8",
+      "prerequisites": [
+        "fieldforge-education-12"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-2-add-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-14",
+      "title": "Education 14: Multiplication, division and remainders",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 528,
+      "body_sha256": "dbdf455477ba344ffd2f3e9712891e19832ea8303b035447069a627132271762",
+      "prerequisites": [
+        "fieldforge-education-13"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-15",
+      "title": "Education 15: Fractions as equal parts of a whole",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 501,
+      "body_sha256": "ef56d31be1c331819936ccadfb9a9e3c590dde36af92baabec1030160d30794a",
+      "prerequisites": [
+        "fieldforge-education-14"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/4-1-visualize-fractions"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-16",
+      "title": "Education 16: Decimals and percentages",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 502,
+      "body_sha256": "64d4f237ed3a89678839372f11eb98080867f7366fb9bd447490e6c166e6583b",
+      "prerequisites": [
+        "fieldforge-education-15"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-1-decimals",
+        "https://openstax.org/books/prealgebra-2e/pages/6-1-understand-percent"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-17",
+      "title": "Education 17: Measure length and convert metric units",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 520,
+      "body_sha256": "554f1266e3e9e0e434f35976a61a1cc85ac2b205ccc4cf06a9510b2006b45bfd",
+      "prerequisites": [
+        "fieldforge-education-16"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-18",
+      "title": "Education 18: Perimeter, area and rectangular grids",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 530,
+      "body_sha256": "643cb92490bbe71c63db870de45d6c8f775f80b96cad4a77daff185b220a047d",
+      "prerequisites": [
+        "fieldforge-education-17"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-19",
+      "title": "Education 19: Read clocks and calculate elapsed time",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 486,
+      "body_sha256": "4947ca2761825f8e5f3eabf772663adb6adf9a90536896cfbff7a742ee9fe680",
+      "prerequisites": [
+        "fieldforge-education-13"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-20",
+      "title": "Education 20: Make tables and read simple graphs",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 500,
+      "body_sha256": "acea2365f80e9c4582e9919e038379be1688e9dab609333f54bfd8062edca38e",
+      "prerequisites": [
+        "fieldforge-education-14"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/18"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-21",
+      "title": "Education 21: Ratios, rates and scaling a pattern",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 536,
+      "body_sha256": "e09460277ebe6f2e13b00f6290480791c646a549db58d391f8779b6c93b88fe6",
+      "prerequisites": [
+        "fieldforge-education-16"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/4-1-visualize-fractions",
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-22",
+      "title": "Education 22: Observation, questions and a fair comparison",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 571,
+      "body_sha256": "dc8be1c6a7bb81ce972a42bb42c503925d894726e50d20f0f0f89ad279a93aed",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-20"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-23",
+      "title": "Education 23: Check a claim and preserve its source",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 572,
+      "body_sha256": "06ed4cc47b80756ff0d66be560288a2cc42c978247b74dcd5bf4b2d801636e3b",
+      "prerequisites": [
+        "fieldforge-education-08",
+        "fieldforge-education-20"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-24",
+      "title": "Education 24: Teach a practical skill and keep a learning record",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-02",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 572,
+      "body_sha256": "af43389f6303085f227be974fa7a39e5067b0807978d5bedf359f44e8135975a",
+      "prerequisites": [
+        "fieldforge-education-03",
+        "fieldforge-education-04",
+        "fieldforge-education-10"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-25",
+      "title": "Education 25: Extend letter sounds and short-vowel words",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 674,
+      "body_sha256": "0ab7f01945d51530f9bf2e52a38c4791c0e608751bbda034c2aa0a1bbda87c04",
+      "prerequisites": [
+        "fieldforge-education-05",
+        "fieldforge-education-06"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-26",
+      "title": "Education 26: Read consonant blends without losing sounds",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 612,
+      "body_sha256": "d42235614132d856135ecfe4c51152e9893498f6ea6fa5c7a5abfd89a20cd051",
+      "prerequisites": [
+        "fieldforge-education-25"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-27",
+      "title": "Education 27: Two-letter spellings: sh, ch, th, ng and ck",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 630,
+      "body_sha256": "44241ee0d84154443e10b26255e5f213ac48f1a0a008f7c956fb65a63485d0e3",
+      "prerequisites": [
+        "fieldforge-education-26"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-28",
+      "title": "Education 28: Silent-e patterns and long vowels",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 618,
+      "body_sha256": "6f2e276ab3f5fbccd613be4e1a7313e086874e32ae34ec93192a0ea7277b670c",
+      "prerequisites": [
+        "fieldforge-education-27"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-29",
+      "title": "Education 29: Word endings: plurals and past tense",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 595,
+      "body_sha256": "15ae8d1d9600855f4cb981f14d81c762b94154dada3da416439e9f3d2abc7104",
+      "prerequisites": [
+        "fieldforge-education-28"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-30",
+      "title": "Education 30: Connected reading with an explicit word preview",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 641,
+      "body_sha256": "d22a30a82862cb322ce79f8939eaef34d18b87b00c2fe97ba0b44c88588625c2",
+      "prerequisites": [
+        "fieldforge-education-29"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-31",
+      "title": "Education 31: Build a paragraph around one main idea",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 562,
+      "body_sha256": "13685b83c8a9aa9ea646defe94dce1ff8ff023c2d45d99657c268a38e9fbf561",
+      "prerequisites": [
+        "fieldforge-education-09",
+        "fieldforge-education-10"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-32",
+      "title": "Education 32: Write a short narrative with a clear sequence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 572,
+      "body_sha256": "915b34288003e9113f0f17b345a4db02fabe33c7363618eeb344b9cc45c5a357",
+      "prerequisites": [
+        "fieldforge-education-31"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-33",
+      "title": "Education 33: Write an explanation with evidence and limits",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 609,
+      "body_sha256": "00d598920b50c084714428dc2672066dac85db284ac591392f9e44b07750f1ce",
+      "prerequisites": [
+        "fieldforge-education-23",
+        "fieldforge-education-31"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-34",
+      "title": "Education 34: Add and subtract fractions with different denominators",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 514,
+      "body_sha256": "677c1fc1fb54b61b35ae14a7048745d6b26f4e7918790a07847173cd75175623",
+      "prerequisites": [
+        "fieldforge-education-15"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/4-5-add-and-subtract-fractions-with-different-denominators"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-35",
+      "title": "Education 35: Multiply and divide fractions with meaning",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 541,
+      "body_sha256": "32ac4aa6a79169633c74f9b693a469fee45fc7c71709d42a190f631efd5c59d2",
+      "prerequisites": [
+        "fieldforge-education-34"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/4-2-multiply-and-divide-fractions"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-36",
+      "title": "Education 36: Negative numbers, order and change",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 525,
+      "body_sha256": "140bc13640528f57121d0828aae27dfe27d7f4a0c7456e8b1efa961d4d59ff94",
+      "prerequisites": [
+        "fieldforge-education-13"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/3-2-add-integers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-37",
+      "title": "Education 37: Find an unknown with a simple equation",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 572,
+      "body_sha256": "3d7aed6d56d68cca9cea30d245621c39cd826be3912b10af5cfd272c7e885d74",
+      "prerequisites": [
+        "fieldforge-education-14",
+        "fieldforge-education-36"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/8-2-solve-equations-using-the-division-and-multiplication-properties-of-equality"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-38",
+      "title": "Education 38: Observe solids, liquids and gases",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 622,
+      "body_sha256": "e897d3c897121591b5de135036cc3aa8afd415159d6d08cde6c5fd57572fcab1",
+      "prerequisites": [
+        "fieldforge-education-22"
+      ],
+      "references": [
+        "https://www.grc.nasa.gov/www/k-12/BGP/state.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-39",
+      "title": "Education 39: Seeds, germination and an observation record",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 618,
+      "body_sha256": "2eaecfd993e9873588e9083ee3082dd6e72b4ceb5a22c25e5b9577015db90e2e",
+      "prerequisites": [
+        "fieldforge-education-16",
+        "fieldforge-education-20",
+        "fieldforge-education-22"
+      ],
+      "references": [
+        "https://extension.umn.edu/garden-and-home/yard-and-garden/gardening-in-minnesota/starting-seeds-indoors"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-40",
+      "title": "Education 40: Read a map legend, grid and scale",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 591,
+      "body_sha256": "27a5f1972c6eceb06bb5bf6446db149e47d12ea6022038bd68cf4a21734026ab",
+      "prerequisites": [
+        "fieldforge-education-21"
+      ],
+      "references": [
+        "https://www.usgs.gov/educational-resources/topographic-map-symbols"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-41",
+      "title": "Education 41: Vowel teams for long-a and long-e words",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "34d8fa2049c0870871ee58fb48a5bbe1adb6737f88e6f26336343f6f0cdabf0f",
+      "prerequisites": [
+        "fieldforge-education-28",
+        "fieldforge-education-30"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-42",
+      "title": "Education 42: Read ar, or, er, ir and ur spellings",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 675,
+      "body_sha256": "6ebf2122576550d31e92d583feeb828c0ebe79276b0aec4e0ffa08d26d8f8acf",
+      "prerequisites": [
+        "fieldforge-education-41"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-43",
+      "title": "Education 43: Read longer words using syllables and meaningful parts",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 682,
+      "body_sha256": "eaef64a774a1b589cbbad039ce0c12b0b8c9753ace684a768d5ba4913527190f",
+      "prerequisites": [
+        "fieldforge-education-29",
+        "fieldforge-education-42"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-44",
+      "title": "Education 44: Complete a simple form and check required fields",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 661,
+      "body_sha256": "f2fc34a566c5dccf3b82dabb146b28f0084e454c1fa79382fcc12ea33094e627",
+      "prerequisites": [
+        "fieldforge-education-10",
+        "fieldforge-education-31"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-45",
+      "title": "Education 45: Read a schedule and plan a feasible sequence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 598,
+      "body_sha256": "fef8aec5de7a7de3ddf046afbd2d635f8fb9e6c75120a2c4246d79ed7d341b5f",
+      "prerequisites": [
+        "fieldforge-education-10",
+        "fieldforge-education-19"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-46",
+      "title": "Education 46: Follow instructions and resolve conflicting versions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 663,
+      "body_sha256": "7b1c1610aa1bcecaffdb42f5331fb57cdb04c606382886bf6ffd3b5d3ae5f8f4",
+      "prerequisites": [
+        "fieldforge-education-10",
+        "fieldforge-education-23",
+        "fieldforge-education-33"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-47",
+      "title": "Education 47: Round numbers and use estimates to check answers",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 621,
+      "body_sha256": "b12a00e4005e7b5aaa90dd41d8b2279067110024d62cc905f0ab3afb4d43eb2f",
+      "prerequisites": [
+        "fieldforge-education-12",
+        "fieldforge-education-13",
+        "fieldforge-education-16"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-1-introduction-to-whole-numbers",
+        "https://openstax.org/books/prealgebra-2e/pages/5-1-decimals"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-48",
+      "title": "Education 48: Multiply larger whole numbers with partial products",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 619,
+      "body_sha256": "5bc5b5a99655fe2866679b91b745d0f91d3264e2dc58e1c54830411c8c40cb87",
+      "prerequisites": [
+        "fieldforge-education-12",
+        "fieldforge-education-14",
+        "fieldforge-education-47"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-49",
+      "title": "Education 49: Divide larger numbers and interpret the remainder",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 596,
+      "body_sha256": "cbe60efff40ba5e4fb8e462de866498d3727ecb71266b3849de6764693bbf6ce",
+      "prerequisites": [
+        "fieldforge-education-14",
+        "fieldforge-education-48"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-5-divide-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-50",
+      "title": "Education 50: Compare proportional relationships in tables",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 643,
+      "body_sha256": "2d8108cd80db38549d796a2a00e0ab28280fcf1ba67bf36acbae157a31cc926f",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-37"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers",
+        "https://openstax.org/books/prealgebra-2e/pages/8-2-solve-equations-using-the-division-and-multiplication-properties-of-equality"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-51",
+      "title": "Education 51: Describe a data set with mean, median and range",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 616,
+      "body_sha256": "427e3654eca74854ab88765fffc64038533d6600e08dae4387f1258fa60aa4a3",
+      "prerequisites": [
+        "fieldforge-education-16",
+        "fieldforge-education-20",
+        "fieldforge-education-49"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-5-averages-and-probability"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-52",
+      "title": "Education 52: Model chance and compare it with observations",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 657,
+      "body_sha256": "19b6c13a7b07a535017350c6940bd1115f20f9242942a81d53d7b3e430253259",
+      "prerequisites": [
+        "fieldforge-education-15",
+        "fieldforge-education-16",
+        "fieldforge-education-20"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-5-averages-and-probability"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-53",
+      "title": "Education 53: Observe pushes, friction and changes in motion",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 635,
+      "body_sha256": "434441ee1b043daccb3596735d66c07ed44dec9115c2e3abc31fd119bfa793df",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-22"
+      ],
+      "references": [
+        "https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/newtons-laws-of-motion/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-54",
+      "title": "Education 54: Trace water storage and movement through a cycle",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 601,
+      "body_sha256": "03f65d10de5928245ccc86a1f105709b5cec2e782858c660e2b46a82efb9f8ac",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-38"
+      ],
+      "references": [
+        "https://www.usgs.gov/water-science-school/water-cycle"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-55",
+      "title": "Education 55: Compare historical sources and build a supported timeline",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 657,
+      "body_sha256": "316d7126dd15b3cfbb3b7d79c5b567212b92943126c9c55653da64c2b9a7d0fc",
+      "prerequisites": [
+        "fieldforge-education-23",
+        "fieldforge-education-33"
+      ],
+      "references": [
+        "https://www.loc.gov/programs/teachers/getting-started-with-primary-sources/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-56",
+      "title": "Education 56: Discuss a shared decision and record the reasons",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 731,
+      "body_sha256": "fd7de16becd7dde2f66f5f20782c048ee34f43dfa45109d2fc848501f7ccae0a",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-31",
+        "fieldforge-education-33"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-57",
+      "title": "Education 57: Read oa, ow and two common oo patterns",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 681,
+      "body_sha256": "cfbee019c2db88ccf9b1adabf254a5b4d45feb088b96a00ff8b464b09ebd15b5",
+      "prerequisites": [
+        "fieldforge-education-41",
+        "fieldforge-education-42"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-58",
+      "title": "Education 58: Read oi, oy, ou and ow vowel patterns",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 655,
+      "body_sha256": "0e2abcd21e90aaffb403cccc6dba116697adc08ee10f1bc9b41d4b4b5fe401a6",
+      "prerequisites": [
+        "fieldforge-education-57"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ufli.education.ufl.edu/foundations/toolbox/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-59",
+      "title": "Education 59: Read a short story for accuracy, phrasing and meaning",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 712,
+      "body_sha256": "1d9254cfd107541fef246c1fbe2c5f0c2849bbb223c3c65a024017c61d4f1034",
+      "prerequisites": [
+        "fieldforge-education-30",
+        "fieldforge-education-43",
+        "fieldforge-education-58"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-60",
+      "title": "Education 60: Summarize an informational passage without adding claims",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 691,
+      "body_sha256": "295e5356c5c6bca98ae5d6505e3c6f4c3cd46dd207a7ee7d7113bd2adc46206f",
+      "prerequisites": [
+        "fieldforge-education-08",
+        "fieldforge-education-31",
+        "fieldforge-education-33"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-61",
+      "title": "Education 61: Add and subtract decimals using place value",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 563,
+      "body_sha256": "80dce0cbff3d352926110bd53b378e01d353f9b04eb2810129b4724aa71774e2",
+      "prerequisites": [
+        "fieldforge-education-13",
+        "fieldforge-education-16",
+        "fieldforge-education-47"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-2-decimal-operations"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-62",
+      "title": "Education 62: Multiply decimals and explain the product's size",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 588,
+      "body_sha256": "f7a501c6950906bbd6404d7920f560e83e73ed8aab61f4fa3e8abb785a8194bb",
+      "prerequisites": [
+        "fieldforge-education-35",
+        "fieldforge-education-48",
+        "fieldforge-education-61"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-2-decimal-operations",
+        "https://openstax.org/books/prealgebra-2e/pages/4-2-multiply-and-divide-fractions"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-63",
+      "title": "Education 63: Divide decimals by making an equivalent quotient",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 600,
+      "body_sha256": "6354e2230414a7d9b1740844418b82ade8400b376623d3947e567811a41c1d0f",
+      "prerequisites": [
+        "fieldforge-education-49",
+        "fieldforge-education-62"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-2-decimal-operations",
+        "https://openstax.org/books/prealgebra-2e/pages/1-5-divide-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-64",
+      "title": "Education 64: Find a percent, a part or a whole",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 580,
+      "body_sha256": "9b97a280d1b611ced11b9436968f778fbfaa700a046e6437d33f528d7f54ae54",
+      "prerequisites": [
+        "fieldforge-education-16",
+        "fieldforge-education-50",
+        "fieldforge-education-63"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/6-2-solve-general-applications-of-percent"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-65",
+      "title": "Education 65: Describe angles, perpendicular lines and parallel lines",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 631,
+      "body_sha256": "1d08c1d5086baeba1aa25f0500573fc38b23000c95431eb9f0be4be680a72b96",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-18"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-3-use-properties-of-angles-triangles-and-the-pythagorean-theorem"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-66",
+      "title": "Education 66: Find triangle angles and area using a perpendicular height",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 686,
+      "body_sha256": "63769fbef333765f3ec016cb8d3f4db850d8192a0161534df2a97531ddabe4e7",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-35",
+        "fieldforge-education-65"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-3-use-properties-of-angles-triangles-and-the-pythagorean-theorem",
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-67",
+      "title": "Education 67: Distinguish a circle's radius, circumference and area",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 608,
+      "body_sha256": "cf146841864e9c47412044fef123d138eab375da67de3b0b596d44bcc48b9fa0",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-62",
+        "fieldforge-education-65"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-5-solve-geometry-applications-circles-and-irregular-figures"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-68",
+      "title": "Education 68: Count cubic units and find rectangular-prism volume",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 666,
+      "body_sha256": "980567ff81b6f0fb5811c117accc5d6830272fa5224504f754fe68777b25e06a",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-18",
+        "fieldforge-education-62"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-6-solve-geometry-applications-volume-and-surface-area",
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-69",
+      "title": "Education 69: Use a simple light-ray model to explain shadows",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 655,
+      "body_sha256": "f7be440d8389756e9d1a818434e00c4f3136aeab319fe3b6b4aca1072018c67c",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-65"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/16-1-reflection"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-70",
+      "title": "Education 70: Distinguish vibration, pitch and loudness",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 654,
+      "body_sha256": "a74e53a82f1727aed6717c5181af994bb217737c31ac58978c81af0a9211e627",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-22",
+        "fieldforge-education-53"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/13-2-wave-properties-speed-amplitude-frequency-and-period"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-71",
+      "title": "Education 71: Read food-chain arrows and build a small food web",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 666,
+      "body_sha256": "edc9034e22ad2fef661e4292003849d6f757560b6ebb74d08c2f0f50d74e72c8",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-39"
+      ],
+      "references": [
+        "https://www.noaa.gov/education/resource-collections/marine-life/aquatic-food-webs"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-72",
+      "title": "Education 72: Separate weather observations from climate conclusions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 671,
+      "body_sha256": "9807d67f311a16c25c5b587fec69ef2935f8a44643be811722ff0cb441c5a7b3",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-22",
+        "fieldforge-education-51",
+        "fieldforge-education-54"
+      ],
+      "references": [
+        "https://oceanservice.noaa.gov/facts/weather_climate.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-73",
+      "title": "Education 73: Spell selected suffixes by checking the base word",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 694,
+      "body_sha256": "bfd07a99a6f7f33ac2264aaeddeb8d390f715c163c7d4823fa7e2f58e11c98bb",
+      "prerequisites": [
+        "fieldforge-education-29",
+        "fieldforge-education-43"
+      ],
+      "references": [
+        "https://ufli.education.ufl.edu/foundations/toolbox/107-110/",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-74",
+      "title": "Education 74: Use apostrophes for possession and contractions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 601,
+      "body_sha256": "db94137941e6e0b7b742d6cceb4ff99ee51e29d73e66b8c7dadb4c4a6b72f706",
+      "prerequisites": [
+        "fieldforge-education-29",
+        "fieldforge-education-31",
+        "fieldforge-education-73"
+      ],
+      "references": [
+        "https://owl.purdue.edu/owl/general_writing/punctuation/apostrophe_introduction.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-75",
+      "title": "Education 75: Make subjects, verbs and pronouns clear",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 640,
+      "body_sha256": "94cb1503bba0b6c06a335582ef51becc2377722cf3e684ce4524bfbd36fddfed",
+      "prerequisites": [
+        "fieldforge-education-31",
+        "fieldforge-education-74"
+      ],
+      "references": [
+        "https://owl.purdue.edu/owl/general_writing/grammar/subject_verb_agreement.html",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-76",
+      "title": "Education 76: Join complete ideas and explain their relationship",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 672,
+      "body_sha256": "1d45b1affdf3edaebc2db251d211097a147fb781ef65f3ae3467f96953251c28",
+      "prerequisites": [
+        "fieldforge-education-31",
+        "fieldforge-education-33",
+        "fieldforge-education-75"
+      ],
+      "references": [
+        "https://owl.purdue.edu/owl/general_writing/punctuation/independent_and_dependent_clauses/index.html",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-77",
+      "title": "Education 77: Write a clear request and a useful reply",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 698,
+      "body_sha256": "abb58fe5ae814fac2e874496b89fde263ad523b720f3b27f90711eff4d257c3f",
+      "prerequisites": [
+        "fieldforge-education-44",
+        "fieldforge-education-45",
+        "fieldforge-education-76"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-78",
+      "title": "Education 78: Keep an inventory record and explain a discrepancy",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 660,
+      "body_sha256": "4240f455f04ddc05a4584bdd0da33bd7099c3dea5420c396653a54b4645fbdaf",
+      "prerequisites": [
+        "fieldforge-education-13",
+        "fieldforge-education-20",
+        "fieldforge-education-31"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://openstax.org/books/prealgebra-2e/pages/1-2-add-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-79",
+      "title": "Education 79: Read a longer account and support an inference",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 786,
+      "body_sha256": "66e6c930440eeeb293eca235160d613c7644baf1c9a249b126a3152192016dfb",
+      "prerequisites": [
+        "fieldforge-education-59",
+        "fieldforge-education-60",
+        "fieldforge-education-76"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-80",
+      "title": "Education 80: Write a comparison using consistent criteria",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 672,
+      "body_sha256": "5e328db9609281482569c9be3bfbe1e583bfa4f49130a953eb0038918007b716",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-31",
+        "fieldforge-education-60",
+        "fieldforge-education-76"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-81",
+      "title": "Education 81: Use grouping and the order of operations",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 630,
+      "body_sha256": "e919c8cca8c05e6bc7cd7be0b0f1e159e0618bac89ad27441b6fcd4f7a3bd138",
+      "prerequisites": [
+        "fieldforge-education-13",
+        "fieldforge-education-14",
+        "fieldforge-education-37",
+        "fieldforge-education-48"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/2-1-use-the-language-of-algebra"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-82",
+      "title": "Education 82: Solve a multi-step word problem with units and checks",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 701,
+      "body_sha256": "0d00efc55be4d7704a4bec7d9cf6638983f01b1e3fa7d69d440c7ea16de1a2c8",
+      "prerequisites": [
+        "fieldforge-education-47",
+        "fieldforge-education-49",
+        "fieldforge-education-81"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/2-1-use-the-language-of-algebra",
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers",
+        "https://openstax.org/books/prealgebra-2e/pages/1-5-divide-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-83",
+      "title": "Education 83: Locate points on a coordinate plane",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 627,
+      "body_sha256": "dc13b790b939e391e8e2db92da2784d53e3e7cfff6610ef5dba5f2181e0a7262",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-40",
+        "fieldforge-education-65"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/11-1-use-the-rectangular-coordinate-system"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-84",
+      "title": "Education 84: Connect a rule, a table and a straight-line graph",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 716,
+      "body_sha256": "266ac9a0256d77a79430a28664e718dda229fc26e77894f0f4f2c84c968ac616",
+      "prerequisites": [
+        "fieldforge-education-37",
+        "fieldforge-education-50",
+        "fieldforge-education-81",
+        "fieldforge-education-83"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/11-1-use-the-rectangular-coordinate-system",
+        "https://openstax.org/books/prealgebra-2e/pages/8-2-solve-equations-using-the-division-and-multiplication-properties-of-equality"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-85",
+      "title": "Education 85: Translate and reflect shapes on a grid",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 642,
+      "body_sha256": "74038243628d1d9ccf51cacaad51348cdef49d425aba48ad43bcd5f6ecefa309",
+      "prerequisites": [
+        "fieldforge-education-65",
+        "fieldforge-education-66",
+        "fieldforge-education-83"
+      ],
+      "references": [
+        "https://stemtc.scimathmn.org/frameworks/732b-translations-reflections-coordinate-grid"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-86",
+      "title": "Education 86: Use factors, multiples and prime factorization",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 637,
+      "body_sha256": "7cf326e2fb8b1121c08dd14853094ccd743b1ba17481e69719bffdcbc49c522a",
+      "prerequisites": [
+        "fieldforge-education-14",
+        "fieldforge-education-34",
+        "fieldforge-education-49",
+        "fieldforge-education-81"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/2-5-prime-factorization-and-the-least-common-multiple"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-87",
+      "title": "Education 87: Ask a neutral survey question and describe the sample",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 682,
+      "body_sha256": "3efcc4bd480d7477bcdc8901745bfa32b6dd4571a476a6ca542d374aa1d49cbf",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-23",
+        "fieldforge-education-51",
+        "fieldforge-education-64"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-88",
+      "title": "Education 88: Check chart scales before accepting a visual claim",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 721,
+      "body_sha256": "4cf177530da761e3280553df8ecc6861fb22a9600d0001fa3c9cf8d45c7d4dd7",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-64",
+        "fieldforge-education-72",
+        "fieldforge-education-87"
+      ],
+      "references": [
+        "https://analysisfunction.civilservice.gov.uk/policy-store/data-visualisation-charts/",
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-89",
+      "title": "Education 89: Choose a word's meaning using context and a reference",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 721,
+      "body_sha256": "641a7ad68e146098f0902e9d48053624b5d57d05e38eba257592fa3328f2fc36",
+      "prerequisites": [
+        "fieldforge-education-08",
+        "fieldforge-education-43",
+        "fieldforge-education-60"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-90",
+      "title": "Education 90: Revise a paragraph using a reader's questions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 670,
+      "body_sha256": "14cb5d569c939a626294b8a751a63322410d0e7e23d9b0d98ed0da9023460749",
+      "prerequisites": [
+        "fieldforge-education-31",
+        "fieldforge-education-33",
+        "fieldforge-education-75",
+        "fieldforge-education-76"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-91",
+      "title": "Education 91: Read a supported account and track a changed plan",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 827,
+      "body_sha256": "ce5942d17591fbc2ea3db4517486b84ced8cc3871c35f32d0a6c28bec09a3ea5",
+      "prerequisites": [
+        "fieldforge-education-59",
+        "fieldforge-education-79",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/21",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-92",
+      "title": "Education 92: Keep quotations, paraphrases and source notes distinct",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 752,
+      "body_sha256": "32feb8f905ac65ed2b5584aee03f5b2d4c9091e77d79d15fb5f0db7755f20afa",
+      "prerequisites": [
+        "fieldforge-education-23",
+        "fieldforge-education-33",
+        "fieldforge-education-55",
+        "fieldforge-education-60"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://www.loc.gov/programs/teachers/getting-started-with-primary-sources/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-93",
+      "title": "Education 93: Solve two-step equations and check the original statement",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 703,
+      "body_sha256": "4c01e1d59139de3446985e4f99230d9ec31c1fc431e03c29c403b53b355e865e",
+      "prerequisites": [
+        "fieldforge-education-37",
+        "fieldforge-education-81",
+        "fieldforge-education-84"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/8-3-solve-equations-with-variables-and-constants-on-both-sides"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-94",
+      "title": "Education 94: Represent an inequality and test its boundary",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 702,
+      "body_sha256": "6815c10818a5325fb1dd9b901a800c56e4c41ac59f69d1fff5691e3eb46719f3",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-37",
+        "fieldforge-education-93"
+      ],
+      "references": [
+        "https://openstax.org/books/intermediate-algebra-2e/pages/2-5-solve-linear-inequalities"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-95",
+      "title": "Education 95: Connect squares, square roots and measured area",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 660,
+      "body_sha256": "2e9477c18f39d981c6da525b9d2c7b5a45730f430e8996165cb86431857b4498",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-66",
+        "fieldforge-education-81",
+        "fieldforge-education-86"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-7-simplify-and-use-square-roots"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-96",
+      "title": "Education 96: Convert area and volume units by counting dimensions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 701,
+      "body_sha256": "cbb0c04b329614a78a209d46ed9e34e92d11989ae94153d7fa6244355b77bf6d",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-18",
+        "fieldforge-education-61",
+        "fieldforge-education-62",
+        "fieldforge-education-68"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement",
+        "https://openstax.org/books/prealgebra-2e/pages/9-6-solve-geometry-applications-volume-and-surface-area"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-97",
+      "title": "Education 97: Organize practice files and recognize their formats",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 701,
+      "body_sha256": "10714bce275678c321a4f3b1092c29a4a0c161721db6ee8944c4b38ad1564320",
+      "prerequisites": [
+        "fieldforge-education-10",
+        "fieldforge-education-44",
+        "fieldforge-education-90"
+      ],
+      "references": [
+        "https://support.microsoft.com/en-US/Windows/Experience/Storage-FileManagement/common-file-name-extensions-in-windows"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-98",
+      "title": "Education 98: Plan a separate backup and rehearse a restore",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 714,
+      "body_sha256": "74dfe57df159b08ba136eb6084d5eefb496f7a2e6ea7b20bd8227e7c053b529e",
+      "prerequisites": [
+        "fieldforge-education-24",
+        "fieldforge-education-97"
+      ],
+      "references": [
+        "https://www.cisa.gov/resources-tools/training/how-protect-data-stored-your-devices"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-99",
+      "title": "Education 99: Trace an algorithm with decisions and repetition",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 719,
+      "body_sha256": "5fdc03f4f42cd9590efd756b418972ba02d317e085ab3c57600b7e36e35face2",
+      "prerequisites": [
+        "fieldforge-education-11",
+        "fieldforge-education-46",
+        "fieldforge-education-81"
+      ],
+      "references": [
+        "https://www.csunplugged.org/en/computational-thinking/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-100",
+      "title": "Education 100: Complete a small learning project and show the evidence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 807,
+      "body_sha256": "1c7936c0717128152a6a17f9d3379ae5f1b87e51ed1a7f3d44aced3dd29151ce",
+      "prerequisites": [
+        "fieldforge-education-04",
+        "fieldforge-education-24",
+        "fieldforge-education-78",
+        "fieldforge-education-90",
+        "fieldforge-education-92"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-101",
+      "title": "Education 101: Report repeated measurements without overstating precision",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "f7e509abe85d259df50445b77b15efdddb8e097455ab07cd74a5ee0b5e8137f2",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-47",
+        "fieldforge-education-51",
+        "fieldforge-education-61"
+      ],
+      "references": [
+        "https://openstax.org/books/university-physics-volume-1/pages/1-6-significant-figures"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-102",
+      "title": "Education 102: Distinguish temperature from energy transferred as heat",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 740,
+      "body_sha256": "a7aba6dc82edbd142ed0a3df0ddd615aa22e34e05a1a05219418596607bacf45",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-61",
+        "fieldforge-education-71"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/11-1-temperature-and-thermal-energy",
+        "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-103",
+      "title": "Education 103: Compare density using both mass and volume",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 643,
+      "body_sha256": "5cf17984fb729fe8cd69ffb760e3322a206b1b453c6964499e9f09854f13567e",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-63",
+        "fieldforge-education-68",
+        "fieldforge-education-96"
+      ],
+      "references": [
+        "https://openstax.org/books/chemistry-2e/pages/1-4-measurements"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-104",
+      "title": "Education 104: Reason about mixtures and what a separation can remove",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 672,
+      "body_sha256": "2baaf4a44681f367ce7e8d8fe5e3713e64e4d11fe520c61dda47894e0f3ab222",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-38",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://openstax.org/books/chemistry-2e/pages/1-2-phases-and-classification-of-matter"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-105",
+      "title": "Education 105: Account for energy transfers in a simple model",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 675,
+      "body_sha256": "e4b6313e884efa18bd5b84f269bbb8ec6bb4162ca7e826b13456b1c678c1fa45",
+      "prerequisites": [
+        "fieldforge-education-53",
+        "fieldforge-education-64",
+        "fieldforge-education-70",
+        "fieldforge-education-102"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/9-2-mechanical-energy-and-conservation-of-energy"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-106",
+      "title": "Education 106: Use several kinds of evidence to recognize living systems",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 712,
+      "body_sha256": "6c6151fc224a27f510f5de0b63efa88afc315a59f944c5783230573ae9aed1ae",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-39",
+        "fieldforge-education-71",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/1-2-themes-and-concepts-of-biology"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-107",
+      "title": "Education 107: Read a scale drawing and check the stated dimensions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 729,
+      "body_sha256": "2cc7d6dcb1e4a01d3cbb0bbbac899d68aaf2aeb621898fc4bfbc8e2ea6cb2ab4",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-21",
+        "fieldforge-education-40",
+        "fieldforge-education-50",
+        "fieldforge-education-96"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement",
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-108",
+      "title": "Education 108: Make a material list and compare paper layouts",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 744,
+      "body_sha256": "eabd984ca8c1c75d1c56cff3b3efd6c23c2e80bef1d01c1d03f5fbf95cdcc473",
+      "prerequisites": [
+        "fieldforge-education-14",
+        "fieldforge-education-18",
+        "fieldforge-education-78",
+        "fieldforge-education-82",
+        "fieldforge-education-107"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids",
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-109",
+      "title": "Education 109: Schedule tasks using dependencies and available helpers",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 725,
+      "body_sha256": "94edc56f85ed875547468399dc3603a1dc4c6975c46686120125fb5ba9f32455",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-45",
+        "fieldforge-education-81",
+        "fieldforge-education-99"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/2-1-use-the-language-of-algebra",
+        "https://www.csunplugged.org/en/computational-thinking/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-110",
+      "title": "Education 110: Define a checkable result and evaluate a paper prototype",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 739,
+      "body_sha256": "d10daf2e917eb6947197c09ff0d55937c228cc302e61cf551686b3992115ffeb",
+      "prerequisites": [
+        "fieldforge-education-04",
+        "fieldforge-education-22",
+        "fieldforge-education-80",
+        "fieldforge-education-100",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://www.jpl.nasa.gov/edu/resources/image/engineering-design-process-flow-chart/",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-111",
+      "title": "Education 111: Troubleshoot a paper procedure with a controlled check",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 672,
+      "body_sha256": "94aba2fb40f36295ad0315d0b3375f11ef039e4bde5ff5489cf51e9b46314de5",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-46",
+        "fieldforge-education-97",
+        "fieldforge-education-99",
+        "fieldforge-education-110"
+      ],
+      "references": [
+        "https://www.csunplugged.org/en/computational-thinking/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-112",
+      "title": "Education 112: Write a handover that makes the next action clear",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 757,
+      "body_sha256": "b86968919cebf4918ca755c7427bfc60a7f84407fcf86bba04b96adafece3022",
+      "prerequisites": [
+        "fieldforge-education-56",
+        "fieldforge-education-77",
+        "fieldforge-education-90",
+        "fieldforge-education-97",
+        "fieldforge-education-109",
+        "fieldforge-education-110",
+        "fieldforge-education-111"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-113",
+      "title": "Education 113: Distinguish weathering, erosion and deposition",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 643,
+      "body_sha256": "0de0e1448712433a0608737d51c3e8a3b5964c366f97c91d97ec15368b1fcc26",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-38",
+        "fieldforge-education-54",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://www.nps.gov/subjects/erosion/about.htm"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-114",
+      "title": "Education 114: Trace more than one path through the rock cycle",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 650,
+      "body_sha256": "1980c268b9ac7ac6f323d9934f26e6f06143a166453aa6f0cbf00afed126ffff",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-102",
+        "fieldforge-education-113"
+      ],
+      "references": [
+        "https://www.nps.gov/subjects/geology/how-rocks-are-classified.htm",
+        "https://www.nps.gov/subjects/erosion/about.htm"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-115",
+      "title": "Education 115: Trace a catchment to an outlet and balance a water model",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 695,
+      "body_sha256": "e19c7564e5a45af42349401ff45afd6efebf2166b50ba47d1923ed4f18dbbd18",
+      "prerequisites": [
+        "fieldforge-education-40",
+        "fieldforge-education-54",
+        "fieldforge-education-78",
+        "fieldforge-education-105"
+      ],
+      "references": [
+        "https://www.usgs.gov/water-science-school/science/watersheds-and-drainage-basins"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-116",
+      "title": "Education 116: Explain seasons using tilt and compare daylight records",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 718,
+      "body_sha256": "4f0e7bd4771a233ad22e33428139546a8e4bd9a5c6ec2ddd3039d1d12ec9bdb5",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-69",
+        "fieldforge-education-72",
+        "fieldforge-education-102"
+      ],
+      "references": [
+        "https://spaceplace.nasa.gov/seasons/en/",
+        "https://oceanservice.noaa.gov/facts/weather_climate.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-117",
+      "title": "Education 117: Read contour intervals and compare slopes on a map",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 669,
+      "body_sha256": "7c7ab81678c0bf4f17c05934bf510267cc1049a6c2eabc8a5bf9410a30b751a6",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-21",
+        "fieldforge-education-40",
+        "fieldforge-education-107"
+      ],
+      "references": [
+        "https://www.usgs.gov/faqs/what-a-topographic-map",
+        "https://www.usgs.gov/educational-resources/topographic-map-symbols"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-118",
+      "title": "Education 118: Read latitude and longitude with explicit coordinate order",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 676,
+      "body_sha256": "e3cdc923937de39a8529f5eb6e36b8a290f098480dd9fdceb55baed541af40cf",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-40",
+        "fieldforge-education-83",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://oceanservice.noaa.gov/facts/latitude.html",
+        "https://oceanservice.noaa.gov/facts/longitude.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-119",
+      "title": "Education 119: Plan a sample before counting a paper population",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 679,
+      "body_sha256": "385276b182172345983c7f3b7b7479fbf8dc518c20d9f81504cde8da5075e89e",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-51",
+        "fieldforge-education-52",
+        "fieldforge-education-87"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-120",
+      "title": "Education 120: Use a dot display to compare whole distributions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 627,
+      "body_sha256": "304a54b888432e062e4088321903c9c1239f9afb3872a8cb949c1af260c1472b",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-51",
+        "fieldforge-education-88"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/2-introduction"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-121",
+      "title": "Education 121: Plot paired observations and limit claims about association",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 648,
+      "body_sha256": "fde8f4dab044a0ff5679b26db2754140bf17139bfd8c3c532b04bfb0fe796f88",
+      "prerequisites": [
+        "fieldforge-education-83",
+        "fieldforge-education-84",
+        "fieldforge-education-87",
+        "fieldforge-education-120"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/12-2-scatter-plots"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-122",
+      "title": "Education 122: Compare an observational record with an assigned-condition trial",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 679,
+      "body_sha256": "884d893409d214e2b240d02c14ddf116e9d8564d90d9e7032eebdd6cd6e199b2",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-87",
+        "fieldforge-education-110",
+        "fieldforge-education-121"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-4-experimental-design-and-ethics"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-123",
+      "title": "Education 123: Clean a small record set while preserving the raw evidence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 706,
+      "body_sha256": "10a0b49964c9804e8d7c5703faca58992ec3d6089b6448680b10665b527ddac3",
+      "prerequisites": [
+        "fieldforge-education-44",
+        "fieldforge-education-61",
+        "fieldforge-education-78",
+        "fieldforge-education-97",
+        "fieldforge-education-111"
+      ],
+      "references": [
+        "https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-124",
+      "title": "Education 124: Write an investigation report with evidence and limits",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 833,
+      "body_sha256": "6d9ad778bf597efed5613047d4e5f7a8bd508e85badec5ccbb6f81cd499c4789",
+      "prerequisites": [
+        "fieldforge-education-33",
+        "fieldforge-education-92",
+        "fieldforge-education-100",
+        "fieldforge-education-119",
+        "fieldforge-education-120",
+        "fieldforge-education-122",
+        "fieldforge-education-123"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-125",
+      "title": "Education 125: Combine force arrows and distinguish balance from rest",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 648,
+      "body_sha256": "0597e71492064a61c61a5384635169d87da5ca9ddde14cc4b47718b1ada0cd96",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-53"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/4-2-newtons-first-law-of-motion-inertia"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-126",
+      "title": "Education 126: Compare ideal levers using force and distance",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 685,
+      "body_sha256": "baa7ffb631178497800c4112c42ffc5e56f9ecf082259c055ae5c581825f5b73",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-50",
+        "fieldforge-education-105",
+        "fieldforge-education-125"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/9-3-simple-machines"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-127",
+      "title": "Education 127: Calculate average pressure from force and area",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 621,
+      "body_sha256": "91559d905930b417620cafb926d70b68c8cafcbbc432450e317aaf87ebaeb18d",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-66",
+        "fieldforge-education-96",
+        "fieldforge-education-125"
+      ],
+      "references": [
+        "https://openstax.org/books/college-physics/pages/11-3-pressure"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-128",
+      "title": "Education 128: Identify conduction, convection and radiation in a model",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 633,
+      "body_sha256": "c30fda7546ca3372cee0956da2b3da7e1afea46f8b1585f324bf62d110ddd473",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-102",
+        "fieldforge-education-105"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-129",
+      "title": "Education 129: Trace current and voltage in a paper series circuit",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 693,
+      "body_sha256": "21253845d9e1df79be1b2a093bc8a188aeb0cd2102d6e7aea027278d6e735b4f",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-37",
+        "fieldforge-education-105"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/19-1-ohms-law",
+        "https://openstax.org/books/physics/pages/19-2-series-circuits"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-130",
+      "title": "Education 130: Use magnetic pole evidence without assuming every metal is a magnet",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 661,
+      "body_sha256": "d788ffce6972a4d81a990529b9c53fed67597583b080d61a43ccb36f98519aa5",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-53",
+        "fieldforge-education-125"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/20-1-magnetic-fields-field-lines-and-force"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-131",
+      "title": "Education 131: Trace water, minerals and sugars through a plant",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 719,
+      "body_sha256": "e12125e7e6f0e67618b59e45d5dc4759f48d14223ea03ec33a78ebcd7abe0406",
+      "prerequisites": [
+        "fieldforge-education-39",
+        "fieldforge-education-106"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/30-1-the-plant-body",
+        "https://openstax.org/books/biology-2e/pages/30-3-roots",
+        "https://openstax.org/books/biology-2e/pages/8-1-overview-of-photosynthesis"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-132",
+      "title": "Education 132: Distinguish photosynthesis from cellular respiration",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "db29b23b81fe1b8067661166bff5cb511adc4e891ced51131f320498fdd3bb02",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-105",
+        "fieldforge-education-106",
+        "fieldforge-education-131"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/8-1-overview-of-photosynthesis",
+        "https://openstax.org/books/biology-2e/pages/7-1-energy-in-living-systems"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-133",
+      "title": "Education 133: Compare habitat conditions and resource limits",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 684,
+      "body_sha256": "3a86301fdaa3051fb220444b4531ede6d838cf71e6a7d3360c9de8d7c8706186",
+      "prerequisites": [
+        "fieldforge-education-71",
+        "fieldforge-education-87",
+        "fieldforge-education-119",
+        "fieldforge-education-122"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/44-1-the-scope-of-ecology",
+        "https://openstax.org/books/biology-2e/pages/45-4-population-dynamics-and-regulation"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-134",
+      "title": "Education 134: Separate pollination, fertilization and seed dispersal",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 656,
+      "body_sha256": "45c0be8fb44816e9afeb0f742fb9416845a4b57723077b92361928b72cc28a1f",
+      "prerequisites": [
+        "fieldforge-education-39",
+        "fieldforge-education-106",
+        "fieldforge-education-131"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/32-2-pollination-and-fertilization"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-135",
+      "title": "Education 135: Balance a population account within a stated boundary",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "555e371d81f467da8f014eba7daa3b4c5059c9f382c9020c40f3b2979cec025a",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-78",
+        "fieldforge-education-119",
+        "fieldforge-education-123",
+        "fieldforge-education-133"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/45-1-population-demography"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-136",
+      "title": "Education 136: Track nutrient cycling separately from ecosystem energy",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 752,
+      "body_sha256": "a7469b8f030c8591d977850395bd284b45a50c7b827b66ba877d2bda1193fc13",
+      "prerequisites": [
+        "fieldforge-education-71",
+        "fieldforge-education-105",
+        "fieldforge-education-132",
+        "fieldforge-education-133",
+        "fieldforge-education-135"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/46-2-energy-flow-through-ecosystems",
+        "https://openstax.org/books/biology-2e/pages/46-3-biogeochemical-cycles"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [
