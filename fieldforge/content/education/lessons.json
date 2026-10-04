@@ -500,6 +500,125 @@
       "publisher": "UK Government, Government Data Quality Hub",
       "scope": "Background on completeness, uniqueness, validity and documenting data limitations. The record IDs, unit conversions and cleaning log here are original teaching examples, not government data or a compliance assessment.",
       "accessed_on": "2026-10-03"
+    },
+    "net-forces": {
+      "title": "Physics: Newton's First Law of Motion: Inertia",
+      "url": "https://openstax.org/books/physics/pages/4-2-newtons-first-law-of-motion-inertia",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on net force and constant velocity. FieldForge's force cards, numerical diagrams and questions are original paper models, not reproduced textbook exercises."
+    },
+    "ideal-machines": {
+      "title": "Physics: Simple Machines",
+      "url": "https://openstax.org/books/physics/pages/9-3-simple-machines",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on ideal mechanical advantage and force-distance tradeoffs. FieldForge's lever dimensions and work accounts are fictional teaching examples, not equipment specifications or lifting instructions."
+    },
+    "force-area": {
+      "title": "College Physics: Pressure",
+      "url": "https://openstax.org/books/college-physics/pages/11-3-pressure",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on pressure as normal force per area. The contact patches, numbers and comparisons here are original simplified models, not material ratings or engineering guidance."
+    },
+    "heat-modes": {
+      "title": "Physics: Heat, Specific Heat, and Heat Transfer",
+      "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on conduction, convection and radiation. FieldForge's event descriptions and energy ledger are original paper activities; no source experiment or diagram is reproduced."
+    },
+    "circuit-current": {
+      "title": "Physics: Ohm's Law",
+      "url": "https://openstax.org/books/physics/pages/19-1-ohms-law",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on current, potential difference and the ideal resistor relation. FieldForge's numerical circuit model is original and intended for calculation on paper, not as a powered circuit construction plan."
+    },
+    "single-loop": {
+      "title": "Physics: Series Circuits",
+      "url": "https://openstax.org/books/physics/pages/19-2-series-circuits",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on ideal series resistance, current and voltage drops. The component values, broken-path questions and answer checks are original teaching examples."
+    },
+    "magnetic-poles": {
+      "title": "Physics: Magnetic Fields, Field Lines, and Force",
+      "url": "https://openstax.org/books/physics/pages/20-1-magnetic-fields-field-lines-and-force",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on magnetic poles, fields and interactions with materials. FieldForge's orientation cards and evidence table are original paper models; no source figure is reproduced."
+    },
+    "plant-transport": {
+      "title": "Biology 2e: The Plant Body",
+      "url": "https://openstax.org/books/biology-2e/pages/30-1-the-plant-body",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on organs and transport tissues of vascular plants. FieldForge's plant diagram instructions and material-routing cards are original, not a reproduction of a textbook diagram."
+    },
+    "plant-roots": {
+      "title": "Biology 2e: Roots",
+      "url": "https://openstax.org/books/biology-2e/pages/30-3-roots",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on root functions including absorption, anchorage and storage. The fictional observations and classification questions are original teaching activities."
+    },
+    "plant-photosynthesis": {
+      "title": "Biology 2e: Overview of Photosynthesis",
+      "url": "https://openstax.org/books/biology-2e/pages/8-1-overview-of-photosynthesis",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on photosynthesis, matter inputs and energy transfer. FieldForge's cards and hypothetical gas-exchange account are original simplified models, not measured plant data."
+    },
+    "cell-energy": {
+      "title": "Biology 2e: Energy in Living Systems",
+      "url": "https://openstax.org/books/biology-2e/pages/7-1-energy-in-living-systems",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on cellular energy use and respiration. FieldForge's comparisons and accounting questions are original and distinguish material transfers from energy transfers."
+    },
+    "habitat-factors": {
+      "title": "Biology 2e: The Scope of Ecology",
+      "url": "https://openstax.org/books/biology-2e/pages/44-1-the-scope-of-ecology",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on organisms, environments and biotic/abiotic factors. FieldForge's imaginary habitat records and proposed comparisons are original paper investigations."
+    },
+    "flower-seed": {
+      "title": "Biology 2e: Pollination and Fertilization",
+      "url": "https://openstax.org/books/biology-2e/pages/32-2-pollination-and-fertilization",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on flowering-plant reproduction and fruit/seed dispersal. FieldForge's event sequence, model counts and diagnostic questions are original; no source activity or illustration is reproduced."
+    },
+    "population-account": {
+      "title": "Biology 2e: Population Demography",
+      "url": "https://openstax.org/books/biology-2e/pages/45-1-population-demography",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on defining and counting populations and their demographic changes. FieldForge's boundary, interval and event ledger are original fictional data, not a wildlife survey."
+    },
+    "population-limits": {
+      "title": "Biology 2e: Population Dynamics and Regulation",
+      "url": "https://openstax.org/books/biology-2e/pages/45-4-population-dynamics-and-regulation",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on resource limits and changing population conditions. The habitat-capacity cards and critiques here are original simplified models, not predictions for a real population."
+    },
+    "ecosystem-energy": {
+      "title": "Biology 2e: Energy Flow through Ecosystems",
+      "url": "https://openstax.org/books/biology-2e/pages/46-2-energy-flow-through-ecosystems",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on ecosystem energy transfers and trophic pathways. FieldForge's energy tokens and account are original illustrations; their numerical allocations are not universal ecological transfer efficiencies."
+    },
+    "nutrient-cycles": {
+      "title": "Biology 2e: Biogeochemical Cycles",
+      "url": "https://openstax.org/books/biology-2e/pages/46-3-biogeochemical-cycles",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03",
+      "scope": "Background on matter moving among living systems and environmental stores. FieldForge's nutrient-token ledger and pathway questions are original paper activities, not a source diagram or measured nutrient budget."
     }
   },
   "lessons": [
@@ -5495,6 +5614,498 @@
         "sample-mean-difference",
         "evidence-limits",
         "reproducible-calculation"
+      ]
+    },
+    {
+      "id": "125",
+      "edition": "2026-10-03",
+      "title": "Combine force arrows and distinguish balance from rest",
+      "track": "physical-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "36",
+        "53"
+      ],
+      "goal": "Find the net force in a one-dimensional model and explain why zero net force does not necessarily mean an object is stationary.",
+      "materials": "Paper, a pencil and cards for an object, force arrows and the stated motion; no moving equipment is required.",
+      "lesson": [
+        "A force diagram must name the object being considered. Draw only forces acting on that object, with arrowheads showing direction and labels giving force in newtons (N). In a one-dimensional model, choose right as positive and left as negative. Two forces of 9 N right and 5 N left then give a net force of +4 N, or 4 N right. The arrows represent forces, not distances traveled.",
+        "For a constant-mass object in an inertial reference frame, a nonzero net force changes velocity. Velocity includes both speed and direction. An object already moving right can slow down when the net force points left; it need not immediately start moving left. In our simplified straight-line cards, an 8 N right force and an 8 N left force balance. Their net force is zero, regardless of which direction the object was moving before that instant.",
+        "Zero net force means no acceleration in this model: an object at rest stays at rest, while an object already moving continues at constant velocity. It does not mean 'no forces exist.' A book resting on a level table has a downward gravitational force and an upward support force. Those can balance on the book. By contrast, the book's push on the table belongs on the table's diagram, not the book's diagram.",
+        "Check what the available evidence actually establishes. A single position or speed reading cannot show whether speed is changing; compare motion over time. These cards supply all relevant forces and treat the reference frame as inertial. A real force account may omit friction or another interaction. If observed motion disagrees with the model, inspect that account before concluding that the force rule has failed."
+      ],
+      "practice": [
+        "An object has forces of 14 N right and 6 N left. Find the net force, with direction.",
+        "A cart moves left at constant velocity while two horizontal forces of 7 N oppose each other. Are balanced forces consistent with its motion?",
+        "A ball is moving right and has a net force left. Must it instantly move left? Explain."
+      ],
+      "answers": [
+        "14 - 6 = 8 N right.",
+        "Yes. The horizontal net force is zero, so constant horizontal velocity is consistent with the model. Balanced forces do not require rest.",
+        "No. A leftward net force changes its velocity toward the left. It can initially keep moving right while slowing; later motion depends on how long that force acts and on any other forces."
+      ],
+      "adaptation": "Use large arrows or spoken 'right' and 'left' labels. Have learners first name the object and then explain each arrow before doing signed arithmetic.",
+      "references": [
+        "net-forces"
+      ],
+      "tags": [
+        "net-force",
+        "balanced-forces",
+        "velocity",
+        "force-diagram"
+      ]
+    },
+    {
+      "id": "126",
+      "edition": "2026-10-03",
+      "title": "Compare ideal levers using force and distance",
+      "track": "physical-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21",
+        "50",
+        "105",
+        "125"
+      ],
+      "goal": "Use a simplified lever model to relate force advantage to a distance tradeoff, without treating an ideal model as a real equipment rating.",
+      "materials": "Paper for lever sketches and the supplied force-distance records; all examples are calculations only.",
+      "lesson": [
+        "A lever turns about a pivot. For this paper model, draw a weightless rigid bar with a load on one side and an effort on the other. Both forces act perpendicular to the bar, and the lever is balanced. The effort force multiplied by its distance from the pivot equals the load force multiplied by its distance from the pivot. Friction and the bar's own weight are omitted deliberately.",
+        "Place a 24 N load 10 cm from the pivot and apply the effort 40 cm from the pivot on the opposite side. Balance requires effort x 40 = 24 x 10, giving an effort of 6 N. The ideal mechanical advantage is load force divided by effort force: 24/6 = 4. State the distances and assumptions alongside the answer. This number is a force ratio, not extra energy created by the lever.",
+        "In an ideal movement model with force perpendicular to motion, work transferred is force times distance along the force. Suppose the effort point moves 0.20 m while the load point moves 0.05 m. Then 6 N x 0.20 m = 1.2 joules and 24 N x 0.05 m = 1.2 joules. The smaller effort acts through a greater distance. This simplified account expresses the tradeoff; it is not a claim that fixed vertical forces remain perpendicular throughout a large lever rotation.",
+        "Real machines have additional energy transfers, deformation and limits. An ideal calculation does not establish a bar's strength, pivot security or permissible load. Keep the exercise on paper and distinguish three questions: what force ratio the chosen geometry predicts, what movement ratio accompanies it, and which effects the model leaves out. A longer effort arm changes the ideal ratio but does not remove those omitted effects."
+      ],
+      "practice": [
+        "A paper lever has a 30 N load 12 cm from the pivot and an effort arm of 36 cm. Find the balancing effort and ideal mechanical advantage.",
+        "In an ideal work account, a 10 N effort moves 0.18 m while a 30 N load moves 0.06 m along the respective forces. Compare the two work amounts.",
+        "Does a mechanical advantage of three mean the machine creates three times the input energy? Explain."
+      ],
+      "answers": [
+        "Effort = (30 x 12)/36 = 10 N. Ideal mechanical advantage = 30/10 = 3.",
+        "Input work = 10 x 0.18 = 1.8 J; output work = 30 x 0.06 = 1.8 J. They match in this ideal model.",
+        "No. The greater output force accompanies a smaller output distance. Ideal work is conserved; real machines also transfer energy through effects such as friction."
+      ],
+      "adaptation": "Draw the arm lengths as counted grid squares. Learners can compare the ratios verbally before calculating work; do not turn the drawing into a lifting activity.",
+      "references": [
+        "ideal-machines"
+      ],
+      "tags": [
+        "mechanical-advantage",
+        "lever",
+        "pivot",
+        "force-distance"
+      ]
+    },
+    {
+      "id": "127",
+      "edition": "2026-10-03",
+      "title": "Calculate average pressure from force and area",
+      "track": "physical-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21",
+        "66",
+        "96",
+        "125"
+      ],
+      "goal": "Calculate average pressure for a stated contact area and distinguish a change in pressure from a change in total force.",
+      "materials": "Paper rectangles with labeled areas and force arrows perpendicular to their surfaces.",
+      "lesson": [
+        "Pressure describes normal force per unit area. Normal means perpendicular to the surface. For this model, average pressure P = F/A, where F is the total normal force and A is the contact area over which it acts. One pascal (Pa) is one newton per square metre. A sideways force is not simply substituted for F in this normal-pressure calculation.",
+        "Compare two fictional pads, each carrying a normal force of 60 N. Pad A contacts an area of 0.03 square metres, so its average pressure is 60/0.03 = 2,000 Pa. Pad B contacts 0.06 square metres, giving 1,000 Pa. Doubling the area halves the average pressure when the force stays fixed. Both pads still transmit the same total normal force in the stated model.",
+        "Draw the contact outline before choosing an area. A hollow frame or several separate feet may touch only part of the object's overall footprint. Dividing by the whole outline would answer a different question. Also distinguish an average from local pressure: the force may be unevenly distributed. Knowing the average alone does not tell us the largest pressure at an edge or beneath one contact point.",
+        "Keep area conversions squared. An area of 300 square centimetres is 0.03 square metres because 1 square metre contains 10,000 square centimetres. Label every intermediate value so that an area is not mistaken for a length. These invented pad calculations compare quantities; they do not specify whether a material will bend, break or support an actual object. Those questions need additional evidence about the materials and load distribution."
+      ],
+      "practice": [
+        "Find the average pressure when 90 N acts normally over 0.03 square metres.",
+        "The same 90 N is spread over 0.09 square metres. What is the new average pressure, and what happened to the total force?",
+        "A stand's outside footprint is 0.20 square metres, but its feet actually contact 0.02 square metres. Which area belongs in the average contact-pressure calculation?"
+      ],
+      "answers": [
+        "90/0.03 = 3,000 Pa.",
+        "90/0.09 = 1,000 Pa, one third of the previous average pressure. The total normal force remains 90 N.",
+        "Use the actual 0.02 square metres of contact. Even that average may conceal unequal force distribution between or within the feet."
+      ],
+      "adaptation": "Represent equal force with the same number of marks distributed among different counts of equal-area squares. Learners can compare pressure ratios before converting to square metres.",
+      "references": [
+        "force-area"
+      ],
+      "tags": [
+        "average-pressure",
+        "normal-force",
+        "contact-area",
+        "pascal"
+      ]
+    },
+    {
+      "id": "128",
+      "edition": "2026-10-03",
+      "title": "Identify conduction, convection and radiation in a model",
+      "track": "physical-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "38",
+        "102",
+        "105"
+      ],
+      "goal": "Explain three heat-transfer mechanisms and recognize that more than one can contribute in the same situation.",
+      "materials": "Paper event cards and energy counters; no hot materials, flames or heating devices are needed.",
+      "lesson": [
+        "Heat is energy transferred because of a temperature difference. Conduction transfers energy through interactions within or between materials without requiring bulk movement of the material from the warmer place to the cooler place. Convection involves energy carried by the bulk movement of a fluid, such as air or water. Thermal radiation transfers energy by electromagnetic waves and can cross a vacuum. Name the mechanism as well as the direction of net transfer.",
+        "Sort three original description cards. On A, energy spreads from one end of a stationary solid strip toward its cooler end: conduction. On B, circulating water carries energy between regions of a container: convection. On C, radiation travels across an evacuated gap between facing surfaces: radiation. These descriptions identify a pathway; a complete real situation may involve several pathways at once.",
+        "Natural convection can occur when density differences in a gravitational field produce fluid motion; a fan or pump can also force circulation. Avoid the rule 'heat always rises.' Warm fluid can rise under suitable conditions, while energy can conduct sideways or downward and radiation travels in many directions. Objects also both emit and absorb radiation. The direction of net radiative transfer depends on the exchange, not merely on whether either object is emitting.",
+        "Use an original energy ledger for a model container over one stated interval. It begins with 70 energy counters, receives 12 and transfers out 5, leaving 77. Now label the incoming and outgoing arrows with possible mechanisms. The ledger checks the total, but the numbers alone do not identify those mechanisms. To distinguish pathways, we would need information about contact, fluid motion, surfaces and surroundings."
+      ],
+      "practice": [
+        "Name the mechanism described by energy moving through a stationary solid, by moving air carrying energy, and by energy crossing an evacuated gap as electromagnetic waves.",
+        "A model begins with 85 energy counters, receives 9 and transfers out 14. Find its closing count and net change.",
+        "Why is 'heat always rises' an unreliable explanation for all heat transfer?"
+      ],
+      "answers": [
+        "Conduction; convection; radiation, respectively.",
+        "85 + 9 - 14 = 80 counters. Net change is -5, a loss of five.",
+        "It confuses one possible fluid-motion pattern with every mechanism. Conduction and radiation can transfer energy in other directions; even fluid motion may be forced by a fan or pump."
+      ],
+      "adaptation": "Use arrows with different line patterns as well as labels so color is not required. Ask learners to justify a classification from the description rather than from an object name alone.",
+      "references": [
+        "heat-modes"
+      ],
+      "tags": [
+        "heat-transfer-modes",
+        "conduction",
+        "convection",
+        "thermal-radiation"
+      ]
+    },
+    {
+      "id": "129",
+      "edition": "2026-10-03",
+      "title": "Trace current and voltage in a paper series circuit",
+      "track": "physical-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21",
+        "37",
+        "105"
+      ],
+      "goal": "Recognize a complete circuit path and calculate current and voltage drops in a stated ideal series-resistor model.",
+      "materials": "Paper and a pencil for a source, two resistors, connecting lines and an open-switch gap; this is a calculation exercise without electrical components.",
+      "lesson": [
+        "Draw one loop containing an ideal direct-current source and two resistors, with no branches. A continuous conducting path permits a steady current in this model; an open switch breaks that path. Current is charge passing a point per unit time, measured in amperes (A). Potential difference, or voltage, is energy transferred per unit charge, measured in volts (V). They are different quantities and should have different labels.",
+        "For ideal resistors, V = I x R, with resistance R measured in ohms. Series resistances add. An original example uses a 6 V ideal source with 10 ohm and 20 ohm resistors and negligible wire resistance. Total resistance is 30 ohms, so current is 6/30 = 0.20 A everywhere in the single loop. The voltage drops are 0.20 x 10 = 2 V and 0.20 x 20 = 4 V, totaling the source's 6 V.",
+        "The second resistor does not receive 'leftover current' after the first uses some up. The steady current is the same through both, while energy is transferred from the electrical system into the resistors and their surroundings. Charge does not disappear in the first resistor. Conventional current direction in the external circuit is drawn from the source's positive terminal toward its negative terminal; it is a convention, not an assertion that electrons in a metal move that way.",
+        "Add an open-switch gap to the drawing. In this ideal steady-state model, the current becomes zero throughout the loop. That does not require every pair of points to have zero potential difference: the source still has its stated voltage across its terminals. The source and resistors here are idealized assumptions. The paper calculation supplies no construction, power-rating or mains-wiring instructions."
+      ],
+      "practice": [
+        "A 9 V ideal source supplies series resistors of 15 ohms and 30 ohms. Find the total resistance and steady current.",
+        "For that circuit, find the voltage drop across each resistor and check their sum.",
+        "An open switch breaks the loop. What happens to steady current? Does this prove the source voltage is zero?"
+      ],
+      "answers": [
+        "Total resistance = 15 + 30 = 45 ohms. Current = 9/45 = 0.20 A.",
+        "The drops are 0.20 x 15 = 3 V and 0.20 x 30 = 6 V. Their sum is 9 V, matching the ideal source.",
+        "The steady current is zero in the ideal open circuit. No: the source can still maintain its stated terminal voltage even though current does not flow."
+      ],
+      "adaptation": "First trace the complete path with a finger on paper. Learners can distinguish current from voltage orally before using the equation; keep all component values explicitly hypothetical.",
+      "references": [
+        "circuit-current",
+        "single-loop"
+      ],
+      "tags": [
+        "series-current",
+        "closed-circuit",
+        "voltage-drop",
+        "ohms-law"
+      ]
+    },
+    {
+      "id": "130",
+      "edition": "2026-10-03",
+      "title": "Use magnetic pole evidence without assuming every metal is a magnet",
+      "track": "physical-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "53",
+        "125"
+      ],
+      "goal": "Predict interactions between named magnetic poles and separate evidence for a magnet from evidence for a material attracted by one.",
+      "materials": "Paper bar-magnet cards labeled N and S, plus the fictional observation records below; physical magnets are not required.",
+      "lesson": [
+        "In a simple bar-magnet model, opposite magnetic poles attract and like poles repel. N and S are names for magnetic poles; they are not positive and negative electric charges. Draw two cards end to end and label only the facing ends first. If N faces S, the model predicts attraction. If N faces N, it predicts repulsion. Then add the far-end labels to check the orientation of both cards.",
+        "A magnetic field describes magnetic influence around a magnet. Field-line drawings are representations, not visible strings attached to objects. Outside a bar magnet the conventional arrow direction is from N toward S; lines continue through the magnet as closed paths. Dividing a bar magnet does not isolate a lone north end from a lone south end: the ordinary pieces form magnets with both poles.",
+        "Attraction alone does not prove an object is a permanent magnet. An ordinary unmagnetized iron piece can be attracted toward either pole because of its response to the field. Not all metals have that same strong response. In our fictional record, sample A is attracted by either pole, while sample B repels a known N pole in one orientation and attracts it when reversed. B's repulsion supports identifying its facing end as a north magnetic pole in this model; A's attraction alone does not identify a pole.",
+        "Record orientation, separation and the observed interaction before drawing a conclusion. A weak or absent observed movement can reflect the setup, so do not turn one observation into a universal statement about a material. The paper cases supply clear ideal observations. Their purpose is to compare what different evidence permits us to infer, not to identify unknown materials from one attraction test."
+      ],
+      "practice": [
+        "Two bar-magnet cards face N toward S. Predict the interaction. What changes if the second card is reversed so N faces N?",
+        "An unknown piece is attracted to a known magnet. Is that enough to prove it is a permanent magnet?",
+        "In the ideal card model, an unknown magnet's facing end repels a known S pole. Name the facing end and the expected far end."
+      ],
+      "answers": [
+        "N facing S predicts attraction. After reversal, N facing N predicts repulsion.",
+        "No. Some materials, such as unmagnetized iron, can also be attracted. Attraction alone does not establish permanent magnetism or identify a pole.",
+        "The facing end is S, since like poles repel. The other end of the bar-magnet model is N."
+      ],
+      "adaptation": "Use letter labels, raised markers or spoken orientations rather than relying on red/blue colors. Ask learners to distinguish an observation from the inference written beside it.",
+      "references": [
+        "magnetic-poles"
+      ],
+      "tags": [
+        "magnetic-poles",
+        "attraction-repulsion",
+        "magnetic-field",
+        "evidence-limits"
+      ]
+    },
+    {
+      "id": "131",
+      "edition": "2026-10-03",
+      "title": "Trace water, minerals and sugars through a plant",
+      "track": "life-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "39",
+        "106"
+      ],
+      "goal": "Connect the organs of a typical vascular plant with transport roles, and distinguish mineral uptake from sugar production.",
+      "materials": "Paper for a simple rooted flowering-plant sketch and cards labeled water, mineral nutrients and sugars.",
+      "lesson": [
+        "Use a typical vascular flowering plant as the model, with roots, a stem and leaves. Roots anchor the plant and commonly absorb water and mineral nutrients; some also store reserves. Stems support above-ground organs and contain transport tissues. Many leaves provide surfaces for light capture and gas exchange. These are common roles, not a claim that every plant has the same shape or that each organ has only one function.",
+        "Label two transport routes. Xylem carries water and dissolved minerals, commonly from roots toward the shoots. Phloem carries sugars and other substances from sources, where they are supplied, toward sinks, where they are used or stored. A mature leaf can be a sugar source, while a growing root or developing fruit can be a sink. During a different stage, a storage organ may supply reserves to new growth; phloem transport is not simply 'always downward.'",
+        "Make an original route-card exercise. Put a water card beside a root, a dissolved-mineral card with it, and a newly produced sugar card beside a mature illuminated leaf. Route the first two toward the leaf through xylem and the sugar toward a growing root through phloem. These arrows describe the stated case. They do not mean every water molecule follows one path or that a leaf can produce sugars without the necessary materials and conditions.",
+        "Keep materials distinct. Mineral nutrients absorbed from soil are not the same thing as sugars made through photosynthesis; soil is not the plant's supply of ready-made sugar food. Water, minerals and carbon dioxide have different roles. If a fictional plant wilts, that observation alone does not identify one unique cause or prove that adding one substance will solve it. A route model helps organize questions, but diagnosis requires additional observations."
+      ],
+      "practice": [
+        "Which tissue routes water and dissolved minerals from roots toward leaves in this model? Which routes sugar from a mature source leaf to a growing root?",
+        "A stored reserve supplies sugars from a below-ground organ to a developing shoot. Why does this challenge the rule 'phloem always moves downward'?",
+        "Are absorbed mineral nutrients the same as the sugars produced by photosynthesis? Explain."
+      ],
+      "answers": [
+        "Xylem for the stated water/mineral route; phloem for the sugar route.",
+        "The source is below the sink in this case, so the source-to-sink route is upward. Source and sink roles depend on what tissues are supplying and using or storing.",
+        "No. They are different materials. Mineral nutrients support plant processes, while photosynthesis uses carbon dioxide and water with light energy to produce carbohydrates."
+      ],
+      "adaptation": "Use textured or labeled cards so routes are accessible without color. Learners may describe the routes orally; no specimen collection or plant treatment is required.",
+      "references": [
+        "plant-transport",
+        "plant-roots",
+        "plant-photosynthesis"
+      ],
+      "tags": [
+        "xylem",
+        "phloem",
+        "source-sink",
+        "plant-organs"
+      ]
+    },
+    {
+      "id": "132",
+      "edition": "2026-10-03",
+      "title": "Distinguish photosynthesis from cellular respiration",
+      "track": "life-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "38",
+        "105",
+        "106",
+        "131"
+      ],
+      "goal": "Compare matter and energy transfers in photosynthesis and aerobic respiration, including why plants respire during both day and night.",
+      "materials": "Paper cards for carbon dioxide, water, oxygen, sugars, light and energy transfers; use only the hypothetical records below.",
+      "lesson": [
+        "Photosynthesis in green plants uses light energy to build carbohydrates from carbon dioxide and water, with oxygen released. Light supplies energy; it is not a material ingredient that becomes a carbon atom. This simplified account groups many chemical steps. Plant growth also needs other materials and suitable conditions, so the account is not a complete recipe for growth.",
+        "In aerobic cellular respiration, cells use organic fuel such as glucose and oxygen, producing carbon dioxide and water while transferring energy into forms the cell can use and to the surroundings. Plants as well as animals respire. Living plant cells need energy in daylight and darkness, so respiration is not reserved for night. Photosynthesis and respiration can occur at the same time in an illuminated leaf, though not necessarily at the same rate.",
+        "Make an original gas-account model for one leaf and one fixed interval. Suppose photosynthesis consumes 11 units of carbon dioxide while respiration releases 4 units. The net exchange is 7 units entering the leaf. This is an invented amount account, not an actual rate measurement. At night, if photosynthesis is zero and respiration releases 3 units in a comparable interval, net exchange is 3 units outward. Do not infer that daylight respiration stopped merely because the net flow was inward.",
+        "Draw separate arrows for matter and energy. Carbon can move between carbon dioxide, sugars and other substances; energy transfers do not create those atoms. Avoid describing respiration as simply the same photosynthesis steps run backward: their summary inputs and outputs are related, but their cellular pathways differ. When interpreting a real gas reading, state the organism, boundary, interval and conditions before making claims about either process."
+      ],
+      "practice": [
+        "Does a plant perform cellular respiration only at night? Explain using its energy needs.",
+        "In a hypothetical interval, photosynthesis consumes 16 units of carbon dioxide and respiration releases 6. Find the net exchange and its direction.",
+        "A learner says sunlight supplies the carbon atoms in plant sugar. Correct the statement."
+      ],
+      "answers": [
+        "No. Living plant cells respire in daylight as well as darkness. Photosynthesis can occur alongside respiration when conditions allow it.",
+        "16 - 6 = 10 units net entering the leaf. The net inward flow does not mean respiration was absent.",
+        "Carbon dioxide supplies the carbon in the simplified photosynthesis account. Light supplies energy, not carbon atoms."
+      ],
+      "adaptation": "Use two labeled arrow types for matter and energy. Keep the gas amounts as paper counters; learners need not measure gases, enclose plants or memorize chemical equations.",
+      "references": [
+        "plant-photosynthesis",
+        "cell-energy"
+      ],
+      "tags": [
+        "plant-respiration",
+        "photosynthesis",
+        "net-gas-exchange",
+        "matter-and-energy"
+      ]
+    },
+    {
+      "id": "133",
+      "edition": "2026-10-03",
+      "title": "Compare habitat conditions and resource limits",
+      "track": "ecology",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "71",
+        "87",
+        "119",
+        "122"
+      ],
+      "goal": "Distinguish living and nonliving environmental factors and evaluate a habitat claim without assuming one observed difference proves its cause.",
+      "materials": "Paper habitat cards for two imaginary patches and counters for the fictional resource model.",
+      "lesson": [
+        "A habitat is the place and set of conditions in which an organism lives. Biotic factors involve living organisms and their interactions; abiotic factors are nonliving physical or chemical conditions. A predator's presence is a biotic factor. Temperature, light and water availability are abiotic factors. Suitability depends on the organism being considered: a condition favorable for one species need not be favorable for another.",
+        "Compare two invented patch records collected with the same stated counting method. Patch A has deeper shade, damp ground and 12 counted individuals of a fictional species. Patch B has brighter light, drier ground and 4 counted individuals. The records show a difference associated with several changing conditions. They do not establish whether shade, moisture, another factor or differences in detection caused the count difference.",
+        "Resource limits interact. In an intentionally simplified card model, one organism needs one food token and one shelter token for the interval. A patch with 8 food tokens and 5 shelter tokens can supply at most 5 organisms under that rule. Adding two food tokens alone leaves the limit at 5. This is a model of a bottleneck, not a universal biological formula. Real organisms differ in needs, and resources change over time.",
+        "Revise claims to match the evidence. Replace 'shade makes this species abundant everywhere' with 'our two fictional patch counts differ, and several conditions differ too.' A stronger investigation would define the species, interval and counting method; record multiple patches; and consider alternative explanations. Carrying capacity describes a population level an environment can sustain under particular conditions, not a fixed number independent of resources, interactions and change."
+      ],
+      "practice": [
+        "Classify the presence of a competing organism, water availability and temperature as biotic or abiotic factors.",
+        "Under the one-food-plus-one-shelter rule, a patch has 11 food tokens and 7 shelter tokens. Find its model limit. Does adding three food tokens change that limit?",
+        "The shaded patch has more counted individuals than the bright patch. Why is this insufficient to prove that shade caused the difference?"
+      ],
+      "answers": [
+        "A competing organism is a biotic factor. Water availability and temperature are abiotic factors.",
+        "The limit is 7 organisms because only seven shelter tokens are available. Adding food leaves that limit at 7 under the stated rule.",
+        "Other conditions also differ, and the count method may miss individuals differently. Two associated records do not isolate shade as the cause."
+      ],
+      "adaptation": "Let learners move paired food/shelter counters and describe the unused counters. Use fictional organisms so the arithmetic is not mistaken for a species management recommendation.",
+      "references": [
+        "habitat-factors",
+        "population-limits"
+      ],
+      "tags": [
+        "habitat-factors",
+        "biotic-abiotic",
+        "limiting-resource",
+        "carrying-capacity"
+      ]
+    },
+    {
+      "id": "134",
+      "edition": "2026-10-03",
+      "title": "Separate pollination, fertilization and seed dispersal",
+      "track": "life-science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "39",
+        "106",
+        "131"
+      ],
+      "goal": "Order key events in a flowering-plant reproduction model and explain why evidence for one event does not prove later events occurred.",
+      "materials": "Paper event cards for pollen transfer, fertilization, seed development, dispersal and germination.",
+      "lesson": [
+        "For flowering plants, pollination means pollen reaches a receptive stigma after transfer from an anther. Transfer can involve animals, wind or other routes depending on the plant. Pollen is not a seed. Fertilization is a later event involving fusion of reproductive cells; pollen arrival alone does not guarantee that fertilization succeeds. Keep the two event labels separate when describing what has actually been observed.",
+        "Use a simplified successful sequence for the paper model: pollen transfer, fertilization, seed development, seed dispersal, then germination when suitable conditions occur. A seed contains an embryo and protective structures with access to stored reserves. An ovule can develop into a seed after fertilization, and the ovary commonly develops into fruit. This is an introductory sequence for the stated case, not a claim that every plant reproduces only this way.",
+        "Dispersal moves seeds, or fruits containing seeds, away from where they developed. Wind, water, animals and self-dispersal mechanisms can contribute. Pollination instead moves pollen toward a receptive flower structure. The same broad agent, such as wind, can participate in both processes while moving different material at different stages. A dispersed seed is not automatically a germinated seed or an established adult plant.",
+        "Inspect an original tracking record: a paper plant model produces 15 marked seeds, 9 are moved to new locations, and 4 of those 9 later germinate in the model. Four is the count of observed germinations among the dispersed group, not the count of pollen transfers or all future surviving plants. The six seeds that were not moved might have other outcomes; those are unrecorded here. Keep the denominator and the stage visible instead of combining different events into one success rate."
+      ],
+      "practice": [
+        "A visitor transfers pollen to a stigma. Which event has been observed, and which later event is not yet established by that observation?",
+        "Wind moves a seed-bearing structure away from a plant. Is this pollination or dispersal? What material would move in pollination?",
+        "A model records 12 dispersed seeds and 3 later germinations among them. What fraction and percentage of that group germinated, and does the result establish adult survival?"
+      ],
+      "answers": [
+        "Pollination has been observed. Successful fertilization, seed development and later stages are not established merely by pollen arrival.",
+        "It is dispersal. Pollination involves transfer of pollen to a receptive stigma in a flowering plant.",
+        "3/12 = 1/4 = 25% of the dispersed group germinated in the recorded interval. No: germination does not establish later survival to adulthood."
+      ],
+      "adaptation": "Use differently shaped cards for pollen and seeds, and allow learners to order events orally. No pollinator handling, plant manipulation or seed collection is needed.",
+      "references": [
+        "flower-seed"
+      ],
+      "tags": [
+        "pollination-stages",
+        "fertilization",
+        "seed-dispersal",
+        "germination-record"
+      ]
+    },
+    {
+      "id": "135",
+      "edition": "2026-10-03",
+      "title": "Balance a population account within a stated boundary",
+      "track": "ecology",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "36",
+        "78",
+        "119",
+        "123",
+        "133"
+      ],
+      "goal": "Account for births, deaths, immigration and emigration while keeping the population boundary, interval and counting limitations explicit.",
+      "materials": "Counters and a drawn boundary for an imaginary population; use the supplied fictional ledger.",
+      "lesson": [
+        "Define a population before counting: individuals of which species, inside which area, at what time? For a consistent boundary and interval, a simple account is closing population = opening population + births + immigration - deaths - emigration. Immigration means entering the defined population from outside; emigration means leaving it. A movement inside the boundary changes location but not the total membership.",
+        "In an original complete-event model, a bounded patch starts with 36 individuals. During one interval there are 8 births, 5 deaths, 4 arrivals and 7 departures. The closing population is 36 + 8 + 4 - 5 - 7 = 36. An unchanged total does not mean nothing happened. The account records 13 birth/death events and 11 boundary-crossing events; those event counts need not represent that many distinct individuals.",
+        "Use a ledger with event IDs, times and directions to avoid duplicate entries. If one individual leaves and later returns within the interval, record one emigration and one immigration; the net membership change from those crossings is zero. If the boundary itself is enlarged, the newly included individuals are not automatically births or immigrants under the old definition. State the changed boundary and make the before-and-after accounts comparable before using the formula.",
+        "A real survey usually observes or estimates a population with incomplete detection. A lower observed count can reflect fewer individuals, lower detectability or a changed method. The exact model answer is justified here because its opening count and events are supplied as complete. If a field count differs from an event ledger, preserve both records and investigate timing, missed events, duplicate entries and counting uncertainty rather than silently altering data to force agreement."
+      ],
+      "practice": [
+        "A complete model starts with 52 individuals and records 11 births, 6 deaths, 3 arrivals and 8 departures. Find the closing population and net change.",
+        "One individual moves from the north side to the south side while staying within the defined patch. Is this immigration or emigration for the patch as a whole?",
+        "Two real surveys count the same number a month apart. Does this prove there were no births, deaths or boundary crossings?"
+      ],
+      "answers": [
+        "52 + 11 - 6 + 3 - 8 = 52. The net change is zero even though multiple events occurred.",
+        "Neither. It is movement within the boundary, so it does not change population membership for the patch.",
+        "No. Gains and losses may balance, and detection can vary. Equal observed totals do not identify the events between surveys."
+      ],
+      "adaptation": "Move counters through a visible boundary and keep an event ledger. Learners can work with smaller opening counts while preserving the distinction between event totals and net change.",
+      "references": [
+        "population-account"
+      ],
+      "tags": [
+        "population-balance",
+        "immigration-emigration",
+        "population-boundary",
+        "detectability"
+      ]
+    },
+    {
+      "id": "136",
+      "edition": "2026-10-03",
+      "title": "Track nutrient cycling separately from ecosystem energy",
+      "track": "ecology",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "71",
+        "105",
+        "132",
+        "133",
+        "135"
+      ],
+      "goal": "Use separate accounts for matter and energy and explain how decomposers connect dead material with other parts of an ecosystem.",
+      "materials": "Two sets of labeled paper tokens, one for a chosen nutrient's atoms and one for energy; no cultures or decomposing specimens are required.",
+      "lesson": [
+        "Decomposers, including many fungi and bacteria, obtain resources by breaking down organic material. Detritivores ingest dead material and can fragment it; their activity also contributes to decomposition pathways. Nutrient atoms can move from organisms into dead material, decomposer biomass and environmental stores, then become available to other organisms through further transformations. Decomposition is a set of processes, not an instantaneous disappearance of matter.",
+        "Build an original nutrient-token model with a fixed boundary. Begin with 18 tokens representing atoms of one chosen nutrient in dead material. After one modeled interval, 10 remain there, 5 are in decomposer biomass and 3 are in a mineral store. The total is still 18. If a plant then takes 2 from the mineral store, record 2 in the plant and 1 remaining in that store. Do not also leave the transferred tokens in the previous compartment.",
+        "Now use a separate set of energy tokens. For a deliberately simplified account, 40 energy units arrive as sunlight: 30 leave without being stored in the modeled biomass and 10 enter that biomass account. During the interval, 6 of those 10 are transferred onward to the surroundings as heat, leaving 4 stored. The account balances: 30 + 6 + 4 = 40. These invented allocations are not a universal efficiency rule or measured ecosystem data.",
+        "Matter can cycle among compartments, while ecosystem energy transfers require a continuing source to sustain ongoing activity. Energy is conserved overall, but heat dispersed to the surroundings is not automatically returned as the light energy used in photosynthesis. Decomposers use energy and release heat too; they do not recycle all energy back to producers. A real nutrient budget can also have imports and exports across its boundary, so a local total need not remain fixed like our closed token model."
+      ],
+      "practice": [
+        "A closed nutrient model begins with 25 tokens. After transfers, 13 are in dead material and 8 in decomposer biomass. How many must be in the only other compartment, a mineral store?",
+        "A plant takes 3 tokens from that mineral store. Give the new mineral-store and plant counts, and check the total across all four compartments.",
+        "Why is it inaccurate to say decomposers recycle all the ecosystem's energy back into plants?"
+      ],
+      "answers": [
+        "25 - 13 - 8 = 4 tokens in the mineral store.",
+        "The store has 1 and the plant has 3. The total is 13 + 8 + 1 + 3 = 25, unchanged in this closed model.",
+        "Decomposers transfer energy through their metabolism, including heat to the surroundings. Nutrient atoms can cycle into plants, but dispersed heat does not automatically become the incoming light that powers photosynthesis."
+      ],
+      "adaptation": "Keep nutrient and energy tokens physically distinct and label every compartment. Let learners audit another group's paper ledger for double counting or an unstated boundary crossing.",
+      "references": [
+        "ecosystem-energy",
+        "nutrient-cycles"
+      ],
+      "tags": [
+        "nutrient-cycling",
+        "decomposer-pathways",
+        "energy-flow",
+        "ecosystem-budget"
       ]
     }
   ]

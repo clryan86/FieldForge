@@ -1,10 +1,10 @@
 # Education Foundations: offline teaching and practice
 
-This collection supplies **124 complete lesson drafts** in the `education` category,
-bringing that category to 136 articles and the full library to 391. Each lesson
+This collection supplies **136 complete lesson drafts** in the `education` category,
+bringing that category to 148 articles and the full library to 403. Each lesson
 includes an audience, prerequisites, learning goal, materials, explanation and
 worked examples, three practice prompts, answers or assessment guidance, and
-adaptations: **372 practice prompts with corresponding answers or assessment
+adaptations: **408 practice prompts with corresponding answers or assessment
 guidance**. The text works without network access or a local AI model.
 
 These are original AI-assisted FieldForge drafts, **not an independently reviewed
@@ -16,7 +16,7 @@ research automatically generalizes to adults.
 ## Learning paths
 
 Browse the **education** category and look for titles beginning `Education 01:`
-through `Education 124:`. Prerequisites identify skills to check; they do not require
+through `Education 136:`. Prerequisites identify skills to check; they do not require
 every learner to repeat a lesson they already understand.
 
 | Path | Lessons | Content |
@@ -49,6 +49,8 @@ every learner to repeat a lesson they already understand.
 | Practical project skills | 107–112 | Scale drawings; material lists and layouts; task dependencies and schedules; prototype criteria; controlled troubleshooting; handovers and revision status |
 | Earth science and maps | 113–118 | Weathering, erosion and deposition; rock-cycle paths; catchments and water budgets; seasons and daylight; contours and slopes; latitude and longitude |
 | Data investigations | 119–124 | Sample selection and estimation; dot displays and distributions; paired data and scatter plots; study design; data cleaning; investigation reports with evidence and limits |
+| Physical science | 125–130 | Net forces and constant velocity; ideal levers and work; average pressure; heat-transfer mechanisms; paper series circuits; magnetic poles and evidence |
+| Plant processes and ecology | 131–136 | Plant organs and transport; photosynthesis and respiration; habitat factors and resource limits; pollination and seed dispersal; population accounts; nutrient cycles and energy flow |
 
 For a first session, a facilitator can read lesson 01, then choose a literacy or
 numeracy entry point with the learner. Lessons 05–07 introduce only a small initial
@@ -69,7 +71,7 @@ python -m fieldforge.knowledge --database fieldforge.db list --category educatio
 ```
 
 The CLI lists the first 100 articles by default. Use `--offset 100` to browse the
-remaining 36, or `--limit 500` to list the whole education category. The desktop
+remaining 48, or `--limit 500` to list the whole education category. The desktop
 library provides **Previous** and **Next** buttons for its own page size.
 
 For an existing FieldForge installation, import just the new content using its
@@ -84,15 +86,16 @@ No personal annotations are included. Repeated imports of identical content are
 idempotent. A conflicting local article aborts the entire import; it is not silently
 replaced. Do not use `--replace` unless you intend to overwrite your local version.
 
-All 267 archived article records and the first 112 education lesson records are
-preserved exactly. Importing the full 124-lesson pack adds 12 lessons to a
-112-lesson installation, 24 to a 100-lesson installation, 36 to an 88-lesson installation,
-52 to a 72-lesson installation, 68 to a 56-lesson installation, 84 to a 40-lesson
-installation, or 100 to the original 24-lesson edition, without `--replace`.
+All 267 archived article records and the first 124 education lesson records are
+preserved exactly. Importing the full 136-lesson pack adds 12 lessons to a
+124-lesson installation, 24 to a 112-lesson installation, 36 to a 100-lesson
+installation, 48 to an 88-lesson installation, 64 to a 72-lesson installation,
+80 to a 56-lesson installation, 96 to a 40-lesson installation, or 112 to the
+original 24-lesson edition, without `--replace`.
 Earlier records are unchanged, and existing notes and bookmarks remain attached
 to their slugs.
 The lessons use the reserved `fieldforge-education-01` through
-`fieldforge-education-124` slugs, so they
+`fieldforge-education-136` slugs, so they
 do not duplicate or rename the existing archived education references.
 
 ## Sources and rights
@@ -136,6 +139,13 @@ UK Government Data Quality Framework. Their maps, coordinates, counts,
 daylight records and data-cleaning examples are original fictional teaching
 materials. They distinguish sampled estimates from complete counts, association
 from causation, and missing records from observed zeros.
+Lessons 125–136 add physical science, plant processes and ecology, with scoped
+OpenStax background references. Force diagrams, lever and circuit calculations,
+plant-route cards, habitat records and population/nutrient ledgers are original
+paper exercises. Ideal equipment models are explicitly limited; the activities
+require no powered circuits, lifting equipment, heat sources or biological cultures.
+They distinguish net change from separate transfers, and nutrient cycling from
+ecosystem energy flow.
 
 Activities, fictional passages, examples and answer keys are original drafts.
 No third-party textbook text or images are reproduced. External references provide
@@ -161,7 +171,7 @@ combined reference pack and its catalog, and leaves other article records intact
 The combined pack still installs in one database transaction. A Wikibooks refresh
 must be followed by this compiler to restore the education addition.
 
-The source's default edition remains `2026-10-02` for lessons 01–24. Lessons 25–124
+The source's default edition remains `2026-10-02` for lessons 01–24. Lessons 25–136
 carry an explicit `2026-10-03` edition. The compiler honors a per-lesson edition so
 adding a later batch does not rewrite the provenance or body hashes of earlier
 lessons. Changing an already-imported lesson's text still creates a deliberate
@@ -170,16 +180,16 @@ silently replace a user's content.
 
 Automated checks cover exact source/pack correspondence, original-record
 preservation, prerequisite order, answer coverage, hashes, deterministic rebuilds,
-offline installation/search, upgrades from the archived corpus and all seven earlier
-education editions (24, 40, 56, 72, 88, 100 and 112 lessons), private-note preservation,
-conflict rollback and browsing all 136 education articles across pages of 100.
+offline installation/search, upgrades from the archived corpus and all eight earlier
+education editions (24, 40, 56, 72, 88, 100, 112 and 124 lessons), private-note preservation,
+conflict rollback and browsing all 148 education articles across pages of 100.
 They cannot establish pedagogical effectiveness. Before treating this as reviewed
 material, educators should check factual explanations and answer keys, try the
 activities with appropriate learners, assess accessibility and language needs,
 and record the review's scope. Current `reviewed_on` values remain empty.
 
 Follow-on content priorities: add more reading passages at explicitly supported
-decoding levels, extend physical-science and ecology investigations, and
-build additional practice that connects literacy, mathematics and practical projects.
+decoding levels, develop further mathematical modeling and evidence exercises,
+and build guided practice connecting literacy, science and practical projects.
 Multilingual editions require suitable local expertise. Independent educator
 review remains a gate before any claim of reviewed instructional quality.

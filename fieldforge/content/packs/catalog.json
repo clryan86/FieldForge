@@ -5276,6 +5276,270 @@
         "https://www.gov.uk/government/publications/the-government-data-quality-framework/the-government-data-quality-framework"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-125",
+      "title": "Education 125: Combine force arrows and distinguish balance from rest",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 648,
+      "body_sha256": "0597e71492064a61c61a5384635169d87da5ca9ddde14cc4b47718b1ada0cd96",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-53"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/4-2-newtons-first-law-of-motion-inertia"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-126",
+      "title": "Education 126: Compare ideal levers using force and distance",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 685,
+      "body_sha256": "baa7ffb631178497800c4112c42ffc5e56f9ecf082259c055ae5c581825f5b73",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-50",
+        "fieldforge-education-105",
+        "fieldforge-education-125"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/9-3-simple-machines"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-127",
+      "title": "Education 127: Calculate average pressure from force and area",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 621,
+      "body_sha256": "91559d905930b417620cafb926d70b68c8cafcbbc432450e317aaf87ebaeb18d",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-66",
+        "fieldforge-education-96",
+        "fieldforge-education-125"
+      ],
+      "references": [
+        "https://openstax.org/books/college-physics/pages/11-3-pressure"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-128",
+      "title": "Education 128: Identify conduction, convection and radiation in a model",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 633,
+      "body_sha256": "c30fda7546ca3372cee0956da2b3da7e1afea46f8b1585f324bf62d110ddd473",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-102",
+        "fieldforge-education-105"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-129",
+      "title": "Education 129: Trace current and voltage in a paper series circuit",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 693,
+      "body_sha256": "21253845d9e1df79be1b2a093bc8a188aeb0cd2102d6e7aea027278d6e735b4f",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-37",
+        "fieldforge-education-105"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/19-1-ohms-law",
+        "https://openstax.org/books/physics/pages/19-2-series-circuits"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-130",
+      "title": "Education 130: Use magnetic pole evidence without assuming every metal is a magnet",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 661,
+      "body_sha256": "d788ffce6972a4d81a990529b9c53fed67597583b080d61a43ccb36f98519aa5",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-53",
+        "fieldforge-education-125"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/20-1-magnetic-fields-field-lines-and-force"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-131",
+      "title": "Education 131: Trace water, minerals and sugars through a plant",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 719,
+      "body_sha256": "e12125e7e6f0e67618b59e45d5dc4759f48d14223ea03ec33a78ebcd7abe0406",
+      "prerequisites": [
+        "fieldforge-education-39",
+        "fieldforge-education-106"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/30-1-the-plant-body",
+        "https://openstax.org/books/biology-2e/pages/30-3-roots",
+        "https://openstax.org/books/biology-2e/pages/8-1-overview-of-photosynthesis"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-132",
+      "title": "Education 132: Distinguish photosynthesis from cellular respiration",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "db29b23b81fe1b8067661166bff5cb511adc4e891ced51131f320498fdd3bb02",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-105",
+        "fieldforge-education-106",
+        "fieldforge-education-131"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/8-1-overview-of-photosynthesis",
+        "https://openstax.org/books/biology-2e/pages/7-1-energy-in-living-systems"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-133",
+      "title": "Education 133: Compare habitat conditions and resource limits",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 684,
+      "body_sha256": "3a86301fdaa3051fb220444b4531ede6d838cf71e6a7d3360c9de8d7c8706186",
+      "prerequisites": [
+        "fieldforge-education-71",
+        "fieldforge-education-87",
+        "fieldforge-education-119",
+        "fieldforge-education-122"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/44-1-the-scope-of-ecology",
+        "https://openstax.org/books/biology-2e/pages/45-4-population-dynamics-and-regulation"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-134",
+      "title": "Education 134: Separate pollination, fertilization and seed dispersal",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 656,
+      "body_sha256": "45c0be8fb44816e9afeb0f742fb9416845a4b57723077b92361928b72cc28a1f",
+      "prerequisites": [
+        "fieldforge-education-39",
+        "fieldforge-education-106",
+        "fieldforge-education-131"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/32-2-pollination-and-fertilization"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-135",
+      "title": "Education 135: Balance a population account within a stated boundary",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "555e371d81f467da8f014eba7daa3b4c5059c9f382c9020c40f3b2979cec025a",
+      "prerequisites": [
+        "fieldforge-education-36",
+        "fieldforge-education-78",
+        "fieldforge-education-119",
+        "fieldforge-education-123",
+        "fieldforge-education-133"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/45-1-population-demography"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-136",
+      "title": "Education 136: Track nutrient cycling separately from ecosystem energy",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 752,
+      "body_sha256": "a7469b8f030c8591d977850395bd284b45a50c7b827b66ba877d2bda1193fc13",
+      "prerequisites": [
+        "fieldforge-education-71",
+        "fieldforge-education-105",
+        "fieldforge-education-132",
+        "fieldforge-education-133",
+        "fieldforge-education-135"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/46-2-energy-flow-through-ecosystems",
+        "https://openstax.org/books/biology-2e/pages/46-3-biogeochemical-cycles"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [
