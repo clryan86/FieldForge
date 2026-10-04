@@ -360,6 +360,62 @@
       "scope": "Background on sequence, decisions, repetition and precise algorithms. FieldForge's card-sorting procedure, trace and exercises are original; no CS Unplugged activity or image is reproduced.",
       "publisher": "CS Unplugged, University of Canterbury",
       "accessed_on": "2026-10-03"
+    },
+    "measurement-quality": {
+      "title": "University Physics Volume 1: Significant Figures",
+      "url": "https://openstax.org/books/university-physics-volume-1/pages/1-6-significant-figures",
+      "scope": "Background on measurement precision, accuracy and reporting limits. FieldForge's ruler scenario, measurements and questions are original; the lesson does not reproduce textbook examples or teach a complete uncertainty analysis.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "temperature-energy": {
+      "title": "Physics: Temperature and Thermal Energy",
+      "url": "https://openstax.org/books/physics/pages/11-1-temperature-and-thermal-energy",
+      "scope": "Background on distinguishing temperature from thermal energy. The comparisons and classroom discussion here are original; no laboratory heating procedure or textbook exercise is reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "heat-transfer": {
+      "title": "Physics: Heat, Specific Heat, and Heat Transfer",
+      "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+      "scope": "Background on energy transfer due to a temperature difference and on mass and material dependence. The paper predictions and answer key here are original, not source experiments.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "density": {
+      "title": "Chemistry 2e: Measurements",
+      "url": "https://openstax.org/books/chemistry-2e/pages/1-4-measurements",
+      "scope": "Background on mass, volume, density and their units. All masses, volumes, calculations and comparisons in FieldForge's lesson are invented teaching examples; no source table or exercise is reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "mixtures": {
+      "title": "Chemistry 2e: Phases and Classification of Matter",
+      "url": "https://openstax.org/books/chemistry-2e/pages/1-2-phases-and-classification-of-matter",
+      "scope": "Background on pure substances, mixtures and physical separation. FieldForge's paper sorting models and questions are original and are not instructions for treating drinking water or handling unknown chemicals.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "energy-conservation": {
+      "title": "Physics: Mechanical Energy and Conservation of Energy",
+      "url": "https://openstax.org/books/physics/pages/9-2-mechanical-energy-and-conservation-of-energy",
+      "scope": "Background on energy accounting and transfers, including the limits of conserving mechanical energy alone. The simplified energy ledgers and numbers here are original fictional examples, not measurements or equipment specifications.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "living-systems": {
+      "title": "Biology 2e: Themes and Concepts of Biology",
+      "url": "https://openstax.org/books/biology-2e/pages/1-2-themes-and-concepts-of-biology",
+      "scope": "Background on cells and the combined properties of living systems. The evidence cards and classification discussion here are original; the lesson is not a species-identification or organism-culturing guide.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "design-cycle": {
+      "title": "Engineering Design Process Flow Chart",
+      "url": "https://www.jpl.nasa.gov/edu/resources/image/engineering-design-process-flow-chart/",
+      "scope": "Background on defining a problem, designing, testing and improving a model. FieldForge's paper-display criteria, trial results and exercises are original; no NASA diagram or activity is reproduced and this is not an engineering qualification.",
+      "publisher": "NASA/JPL-Caltech Education",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -4348,6 +4404,509 @@
         "rubric",
         "transfer",
         "support-record"
+      ]
+    },
+    {
+      "id": "101",
+      "edition": "2026-10-03",
+      "title": "Report repeated measurements without overstating precision",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "17",
+        "47",
+        "51",
+        "61"
+      ],
+      "goal": "Record units and instrument spacing, summarize repeated readings, and distinguish close agreement from closeness to a reference value.",
+      "materials": "Paper and the fictional readings below; optionally a ruler and an ordinary paper rectangle.",
+      "lesson": [
+        "A measurement needs a number, a unit and enough information to understand how it was obtained. Record what was measured, the instrument and its smallest marked interval. If a ruler has millimetre marks, those marks alone do not justify reporting a paper edge as 18.23746 cm. A reader should be able to distinguish an observed reading from digits produced by a calculator. The resolution of the scale is one limit; alignment, worn edges and reading technique may also matter.",
+        "For an original paper exercise, three readings of the same card width are 12.1 cm, 12.2 cm and 12.0 cm. Their mean is 36.3/3 = 12.1 cm, and their range is 12.2 - 12.0 = 0.2 cm. Keep the individual readings alongside the summary. Here the range describes the observed spread; it is not automatically a complete uncertainty interval, and it does not prove the true width lies within those readings.",
+        "Precision describes agreement among repeated measurements under stated conditions. Accuracy concerns agreement with a suitable accepted reference. A ruler with a misplaced zero can produce very similar readings that are all shifted. In a fictional check against a reference strip marked 10.0 cm, the readings 10.4, 10.4 and 10.5 cm are close to one another but disagree with that reference. Repeating a biased procedure does not remove its bias.",
+        "Write a modest report: 'Three width readings were 12.1, 12.2 and 12.0 cm; mean 12.1 cm and observed range 0.2 cm.' Add instrument and alignment information if known. If they were not recorded, identify that gap rather than inventing it. A next check could compare the ruler's zero and scale with a trusted reference or ask another reader to repeat the same defined procedure. Keep a suspected problem separate from a confirmed cause."
+      ],
+      "practice": [
+        "Find the mean and range of 8.2, 8.4 and 8.3 cm.",
+        "A scale repeatedly reports 52 g for a suitable 50 g reference. What does repetition show, and what concern remains?",
+        "Rewrite 'The width is exactly 12.100000 cm' using the three lesson readings and appropriate limits."
+      ],
+      "answers": [
+        "Mean 8.3 cm; range 0.2 cm. Preserve the three readings as well as the summary.",
+        "The repeated readings agree, indicating repeatability in this check. Their 2 g disagreement with the reference remains; repetition alone does not establish accuracy or identify the cause.",
+        "For example: 'Readings were 12.1, 12.2 and 12.0 cm, with mean 12.1 cm and observed range 0.2 cm.' Remove exactly and unsupported extra digits; note any missing instrument information."
+      ],
+      "adaptation": "Use the supplied numbers if a suitable ruler is unavailable. Learners may dictate a report. This introduces reporting habits, not calibration certification or a complete statistical treatment of uncertainty.",
+      "references": [
+        "measurement-quality"
+      ],
+      "tags": [
+        "repeatability",
+        "measurement-precision",
+        "accuracy",
+        "observed-range"
+      ]
+    },
+    {
+      "id": "102",
+      "edition": "2026-10-03",
+      "title": "Distinguish temperature from energy transferred as heat",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "38",
+        "61",
+        "71"
+      ],
+      "goal": "Use temperature differences to predict the direction of spontaneous heat transfer and explain why equal temperatures do not imply equal stored energy.",
+      "materials": "Paper diagrams of two samples and the supplied temperatures; no heating apparatus or hot-liquid experiment is needed.",
+      "lesson": [
+        "Temperature describes a thermal condition and helps predict the direction of spontaneous energy transfer when objects interact thermally. Heat is energy transferred because of a temperature difference. Temperature can be stated in degrees Celsius; transferred energy can be stated in joules. Saying that a sample 'contains 30 degrees of heat' mixes these ideas. In a simple thermal comparison, energy transfers from the warmer sample toward the cooler one, with no external work driving the reverse process.",
+        "Consider fictional paper cards for two water samples, both at 24 degrees Celsius. One card describes 100 g of water and the other 300 g. The equal temperatures do not mean the samples have equal total internal energy. For the same substance and state, the larger amount has more thermal energy associated with that amount of material. Under an idealized comparison with no phase change or heat loss, warming 300 g through the same temperature rise requires three times the energy required for 100 g.",
+        "Now draw a sample at 34 degrees Celsius beside one at 19 degrees Celsius. If they can exchange energy thermally, draw the net heat-transfer arrow from the warmer to the cooler sample. Do not announce an exact final temperature from those two readings alone: the amounts, materials, surroundings and other conditions matter. Nor does energy transfer always produce a temperature rise; a change of state can absorb energy while the temperature remains approximately constant under suitable conditions.",
+        "Separate the observation from the model. A recorded temperature is an observation; an arrow showing expected energy transfer is a model prediction. Compare a later reading with that prediction and check the setup if it differs. These examples are paper reasoning tasks, so no one needs to touch or taste a sample to judge its temperature. The goal is a clear account of quantities and assumptions, rather than treating temperature as a direct measure of every object's total energy."
+      ],
+      "practice": [
+        "A model has one object at 28 degrees Celsius and another at 16 degrees Celsius. Which way is spontaneous net heat transfer expected when they interact thermally?",
+        "In the stated ideal comparison, how does the energy needed to warm 400 g of water by 3 Celsius degrees compare with 100 g warmed by 3 degrees?",
+        "Explain why 'Both samples are at 20 degrees Celsius, so they contain the same total energy' is unsupported."
+      ],
+      "answers": [
+        "From the 28-degree object toward the 16-degree object, assuming no external process drives the opposite transfer.",
+        "Four times as much, assuming the same material and state, the same temperature rise, and negligible losses or phase change.",
+        "Temperature alone omits the amount and material, among other information. Equal temperature does not establish equal total internal energy."
+      ],
+      "adaptation": "Use arrows and labeled cards, and read units aloud. Keep this as conceptual practice; it does not establish safe-touch temperatures or instructions for heating equipment.",
+      "references": [
+        "temperature-energy",
+        "heat-transfer"
+      ],
+      "tags": [
+        "temperature",
+        "thermal-energy",
+        "heat-transfer",
+        "joules"
+      ]
+    },
+    {
+      "id": "103",
+      "edition": "2026-10-03",
+      "title": "Compare density using both mass and volume",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21",
+        "63",
+        "68",
+        "96"
+      ],
+      "goal": "Calculate mass per unit volume, compare samples fairly, and avoid identifying a material from a single density value.",
+      "materials": "Paper, the invented sample measurements below, and optionally a calculator after setting up the ratios.",
+      "lesson": [
+        "Density relates the mass of a sample to the volume it occupies: density = mass divided by volume. In this lesson, use grams and cubic centimetres, giving units of g/cm^3. Sample A has mass 48 g and volume 16 cm^3, so its density is 3 g/cm^3. State what volume is being used. The outside volume of a hollow object and the volume of its solid material are different quantities and can produce different average densities.",
+        "Sample B has mass 30 g and volume 5 cm^3, so its density is 6 g/cm^3. It has less total mass than A but more mass per cubic centimetre. Calling B 'lighter' does not settle which sample is denser. Compare both ratios using the same units. These are invented measurements for arithmetic practice; the letters do not name real substances and the values are not a material-identification table.",
+        "Two uniform pieces of the same material, in the same state and conditions, can have different sizes but the same density. A fictional uniform material represented by 20 g in 8 cm^3 has density 2.5 g/cm^3. A 40 g piece occupying 16 cm^3 has the same ratio. This proportional reasoning depends on the stated uniformity and conditions; a mixed, porous or hollow sample may require a more careful definition of its measured volume.",
+        "Use density as one piece of evidence. Similar density does not prove that two unknown samples are the same material. Measurement limits, temperature, composition and internal spaces may affect a comparison. Keep the calculation and the interpretation separate: first show mass, volume and ratio, then state what the result supports and what it leaves unresolved. All work here can use supplied numbers, so no unknown substance needs to be handled or put into a liquid."
+      ],
+      "practice": [
+        "Find the density of a fictional sample with mass 54 g and volume 18 cm^3.",
+        "Sample C has 24 g in 4 cm^3; D has 45 g in 15 cm^3. Which has greater mass, and which is denser?",
+        "A uniform sample doubles in both mass and volume under the same conditions. Does its density double? Explain."
+      ],
+      "answers": [
+        "54/18 = 3 g/cm^3.",
+        "D has greater mass, 45 g versus 24 g. C is denser: 6 g/cm^3 versus D's 3 g/cm^3.",
+        "No. Doubling numerator and denominator leaves the ratio unchanged; for example 10/5 and 20/10 both equal 2."
+      ],
+      "adaptation": "Draw equal-volume boxes containing different numbers of mass tokens before calculating. Keep grams, cubic centimetres and grams per cubic centimetre visibly distinct.",
+      "references": [
+        "density"
+      ],
+      "tags": [
+        "density",
+        "mass-per-volume",
+        "uniform-material",
+        "sample-comparison"
+      ]
+    },
+    {
+      "id": "104",
+      "edition": "2026-10-03",
+      "title": "Reason about mixtures and what a separation can remove",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "38",
+        "89"
+      ],
+      "goal": "Distinguish a mixture from a single pure substance and use component properties to explain the limits of a proposed separation.",
+      "materials": "Drawn cards representing large pieces, small pieces and dissolved particles; all activities can be completed on paper.",
+      "lesson": [
+        "A mixture contains more than one substance physically combined. Its composition can vary. A heterogeneous mixture has regions that differ visibly or at the scale being examined; a homogeneous mixture is uniform at that scale. A solution is a homogeneous mixture. A substance disappearing from sight as it dissolves does not mean its matter has ceased to exist. A clear appearance alone cannot establish that a liquid is pure.",
+        "Use an original paper model with large square cards and small circular cards mixed together. A drawn screen with openings wider than the circles but narrower than the squares represents a size-based separation: circles pass and squares remain. State the assumptions about shape and opening size. The screen sorts by that property, not by whether a piece is wanted. Another mixture whose components have similar sizes would need a different useful difference.",
+        "For a conceptual example, ordinary filter paper can retain sufficiently large insoluble particles while water and dissolved salt pass through. It therefore cannot be assumed to remove a dissolved substance simply because the resulting liquid looks clearer. Evaporating water from a simple salt solution can leave salt behind, but an open evaporation step does not collect the water. These are explanations of process limits, not directions to heat liquids or to prepare drinking water.",
+        "Describe a separation with four questions: What components are present? Which property differs? Where should each component go? What could remain in the collected portion? If the mixture's contents are unknown, the answer may be uncertain. Keep observations such as 'fewer visible pieces' separate from conclusions such as 'only water remains'. A paper diagram can reveal an unsupported conclusion without performing an experiment with unknown materials."
+      ],
+      "practice": [
+        "Does a clear solution necessarily contain only one substance? Explain.",
+        "In the paper screen model, circles are smaller than the openings and squares are larger. Where should each shape go, assuming the pieces do not bend?",
+        "A diagram shows muddy salt water passing through ordinary filter paper that retains the visible mud. Can the diagram support the claim that all dissolved salt was removed?"
+      ],
+      "answers": [
+        "No. A solution can contain a dissolved substance distributed throughout the liquid even when it appears clear.",
+        "The circles pass through; the squares remain above the screen. This depends on the stated size and rigidity assumptions.",
+        "No. Dissolved salt can pass with the water; retaining visible mud does not establish removal of dissolved material or make the result verified drinking water."
+      ],
+      "adaptation": "Use large contrasting shapes rather than powders or liquids. Ask learners to trace every component to a destination. Do not substitute unknown household or laboratory chemicals for the paper model.",
+      "references": [
+        "mixtures"
+      ],
+      "tags": [
+        "mixtures",
+        "solutions",
+        "physical-separation",
+        "dissolved-substance"
+      ]
+    },
+    {
+      "id": "105",
+      "edition": "2026-10-03",
+      "title": "Account for energy transfers in a simple model",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "53",
+        "64",
+        "70",
+        "102"
+      ],
+      "goal": "Draw a system boundary, balance a simplified energy account, and explain why energy outside the intended output has not disappeared.",
+      "materials": "Paper arrows and the invented energy amounts below; no powered device, battery or falling-weight experiment is needed.",
+      "lesson": [
+        "Choose a system before tracking its energy. A boundary shows what the account includes and what lies outside it. Energy can enter, leave or change how it is stored within that boundary. Conservation means a complete account balances; it does not mean that every useful form remains unchanged. Mechanical energy alone need not remain constant when friction changes energy associated with motion into thermal energy in the interacting materials.",
+        "For an original idealized ledger, a model device receives 80 joules during a stated interval. In the simplified account, 50 joules leave as the intended output, 20 joules transfer to the surroundings, and stored energy rises by 10 joules. The ledger balances: 80 = 50 + 20 + 10. These invented numbers teach accounting and are not a performance claim for a real device. A drawing should label the interval and all three destinations.",
+        "If the model's purpose is the 50-joule output, its useful-output fraction for that interval is 50/80 = 0.625, or 62.5 percent. Define useful in relation to the task: energy that warms a room may be desired for a heater but an unwanted side effect elsewhere. Do not say that the remaining 30 joules were destroyed. In this ledger, 20 left the boundary and 10 remained as increased stored energy.",
+        "An apparent imbalance is a prompt to examine the record. If a learner writes input 60 joules, outputs 40 and 15 joules, and no change in stored energy, 5 joules are unaccounted for. That mismatch could reflect an omitted transfer, a storage change or a measurement problem; it does not identify the cause by itself. Label the gap and investigate instead of silently changing one number to force agreement. Real systems require a more complete model than these paper ledgers."
+      ],
+      "practice": [
+        "A fictional ledger records input 90 J, intended output 54 J and other outward transfer 24 J. What increase in stored energy balances it?",
+        "For that ledger, what percentage of input is the intended output?",
+        "A rolling model slows because of friction. Why is 'its energy vanished' an inadequate explanation?"
+      ],
+      "answers": [
+        "12 J, because 90 - 54 - 24 = 12. This assumes those categories cover every transfer in the stated interval.",
+        "54/90 times 100 percent = 60 percent.",
+        "Its kinetic energy decreases, but energy is transferred or transformed, including increased thermal energy in interacting materials. The account must include the relevant surroundings and transfers."
+      ],
+      "adaptation": "Use tokens for joules to make each destination visible. Allow arithmetic aids once the learner can explain the boundary and categories. The ledger does not establish any real machine's efficiency or safe operating conditions.",
+      "references": [
+        "energy-conservation"
+      ],
+      "tags": [
+        "energy-accounting",
+        "system-boundary",
+        "conservation",
+        "useful-output"
+      ]
+    },
+    {
+      "id": "106",
+      "edition": "2026-10-03",
+      "title": "Use several kinds of evidence to recognize living systems",
+      "track": "science",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "39",
+        "71",
+        "89"
+      ],
+      "goal": "Explain why movement alone is insufficient evidence of life and distinguish missing observations from evidence that an organism is dead.",
+      "materials": "The original evidence cards described below and paper with columns for observation, interpretation and unresolved question.",
+      "lesson": [
+        "Living organisms are organized into one or more cells and carry out linked processes that use energy, respond to conditions and maintain their organization. Growth, development and reproduction are also features of living systems across their life cycles and populations. No single quick observation captures the whole picture. An individual that does not reproduce is not therefore nonliving, and an organism may be alive without visibly moving during a short observation.",
+        "Compare two invented evidence cards. Card A describes a small wind-up toy: it moves when released, but its parts are manufactured mechanisms rather than a cellular organism. Card B describes a rooted seedling: over several days it grows new leaves and its living tissues contain cells, although it stays in one place. The toy's motion alone is not evidence that it is alive; the seedling's lack of travel does not make it nonliving. Ask what process produces the observed change.",
+        "A third card describes an intact seed that has not germinated during a brief observation. That observation alone cannot establish whether the seed is viable. A living seed may be dormant or lack suitable conditions, while some seeds are no longer viable. Record 'no germination observed in this interval' rather than turning it into an unsupported certainty about every seed. The distinction is between what was seen and what additional evidence would be needed.",
+        "Use multiple lines of evidence and keep the classification question clear. A wooden ruler came from a living tree but is not itself a living organism. A rock can change size as it breaks without undergoing biological growth. Some boundary cases in biology require advanced discussion; this introductory lesson does not resolve every definition of life. It develops the habit of linking a claim to relevant observations rather than relying on movement, size change or appearance alone."
+      ],
+      "practice": [
+        "A toy rolls across a table while a rooted seedling stays in place. Is movement a sufficient rule for deciding which is alive?",
+        "A seed has not germinated after a short observation. Write a supported statement and name one unresolved question.",
+        "Explain the difference between saying a wooden ruler came from something living and saying the ruler is a living organism."
+      ],
+      "answers": [
+        "No. The toy's motion comes from its mechanism; the seedling can be a living cellular organism without changing location. Other biological evidence matters.",
+        "For example: 'No germination was observed during this interval.' Whether the seed is viable, dormant or in suitable conditions remains unresolved.",
+        "The material originated in a tree, but the finished ruler is not an organism carrying out the linked processes of life. Origin and current biological status are different claims."
+      ],
+      "adaptation": "Read the cards aloud or illustrate them. Use supplied descriptions rather than collecting unknown organisms or growing microbes. Invite learners to identify what each card does and does not establish.",
+      "references": [
+        "living-systems"
+      ],
+      "tags": [
+        "living-systems",
+        "cells",
+        "dormancy",
+        "biological-evidence"
+      ]
+    },
+    {
+      "id": "107",
+      "edition": "2026-10-03",
+      "title": "Read a scale drawing and check the stated dimensions",
+      "track": "practical-projects",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "18",
+        "21",
+        "40",
+        "50",
+        "96"
+      ],
+      "goal": "Convert between a drawing and a real-size description, retain units, and identify when a copied drawing can no longer be measured reliably to its printed scale.",
+      "materials": "Paper or squared paper, a ruler if available, and a fictional rectangular display-board plan.",
+      "lesson": [
+        "A scale drawing represents lengths in a fixed ratio. At scale 1:5, one unit on the drawing represents five of the same units on the object. A fictional display board 60 cm wide and 40 cm high is drawn 12 cm wide and 8 cm high. Write the scale, units, view and revision on the page. A top view and a front view can show different dimensions, so identify the view before using a measurement.",
+        "Convert a length by multiplying or dividing by the scale factor. A 3 cm line on this 1:5 drawing represents 15 cm. A real-size margin of 8 cm is represented by 1.6 cm. Label dimensions explicitly so the intended size can still be read without measuring the sketch. An unscaled sketch can communicate layout, but its line lengths must not be treated as measurements merely because it looks carefully drawn.",
+        "Scaling length by 5 scales corresponding area by 25, not 5. The drawn rectangle's area is 12 times 8 = 96 square centimetres. The represented board's area is 60 times 40 = 2,400 square centimetres, which is 25 times as much. Keep the drawing's area distinct from the object's area. This calculation does not tell how much material remains after holes, margins or other changes; those require additional details.",
+        "A printer or screen can resize a drawing. If a copy is enlarged to twice its original linear size, its measured lengths no longer follow the unchanged 1:5 label. A labeled scale bar copied with the drawing can help reveal resizing, while written dimensions state the intended size. If a dimension and a measured line conflict, confirm the correct revision rather than choosing whichever fits a preferred result. This paper display exercise does not establish construction tolerances or structural suitability."
+      ],
+      "practice": [
+        "At scale 1:4, what real length does a 7 cm drawn line represent? How long should a 36 cm real length be drawn?",
+        "For the 60 cm by 40 cm board drawn at 1:5, compare the drawing area and represented area.",
+        "A drawing labeled 1:5 has been enlarged, but the printed scale text stayed the same. Is measuring its lines and multiplying by 5 reliable? Explain."
+      ],
+      "answers": [
+        "28 cm real length; the 36 cm real length is drawn as 9 cm.",
+        "The drawing is 12 cm by 8 cm, or 96 cm^2; the represented board is 2,400 cm^2. The area factor is 25.",
+        "No. Resizing changes the relationship between measured page lengths and the object. Check explicit dimensions, a copied scale bar and the correct revision before relying on measured lines."
+      ],
+      "adaptation": "Use a grid or describe the dimensions orally when ruler use is inaccessible. Let learners work in a single unit first, then introduce conversions. Mark sketches clearly as scaled or not to scale.",
+      "references": [
+        "measurement",
+        "geometry"
+      ],
+      "tags": [
+        "scale-drawing",
+        "dimension-labels",
+        "scale-factor",
+        "resized-plan"
+      ]
+    },
+    {
+      "id": "108",
+      "edition": "2026-10-03",
+      "title": "Make a material list and compare paper layouts",
+      "track": "practical-projects",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14",
+        "18",
+        "78",
+        "82",
+        "107"
+      ],
+      "goal": "Translate a simple requirement into quantities, compare two rectangular layouts, and state assumptions about spacing and unusable material.",
+      "materials": "Paper diagrams of a 60 cm by 40 cm sheet and 18 cm by 12 cm labels; no cutting tool is required.",
+      "lesson": [
+        "Start with the required result: ten rectangular paper labels, each 18 cm by 12 cm. A material list states the item, finished dimensions, count and any agreed allowance. The available ideal sheet is 60 cm by 40 cm, with no damaged region. These are fictional planning dimensions. Before claiming a layout works, say whether rotation is permitted and whether gaps or edge margins are required.",
+        "First try the 18 cm side across the sheet's 60 cm width. Three labels fit across, and three 12 cm rows fit in its 40 cm height, giving 9 labels. This regular grid misses the ten-label target. Rotate the labels: five 12 cm widths fit across 60 cm, and two 18 cm rows fit in 40 cm, giving 10 labels. Draw and label the successful arrangement. This establishes one feasible ideal layout, not a proof that no other arrangement could fit more.",
+        "Each label has area 216 cm^2; ten labels use 2,160 cm^2 of the 2,400 cm^2 sheet. The unused area is 240 cm^2 in this ideal arrangement, a strip 60 cm by 4 cm. An area total alone does not prove that pieces fit: lengths, orientation and gaps also constrain a layout. If a real process needs spacing, trimming or allows for imperfect edges, revise the plan rather than assuming the ideal zero-gap arrangement remains feasible.",
+        "Check stock against the material list before starting a task. Suppose another paper plan requires three 15 cm strips placed end to end, with two 1 cm gaps between them. The total span is 15 + 1 + 15 + 1 + 15 = 47 cm, not 45 cm. Record such allowances separately from finished part lengths so another person can understand the calculation. The plan describes required material; it is not evidence that the items were actually made or counted."
+      ],
+      "practice": [
+        "How many 18 cm by 12 cm labels fit in each of the two regular grids described for the 60 cm by 40 cm sheet?",
+        "Calculate the unused area after the ten-label ideal layout. What assumption would need revisiting if gaps were required?",
+        "A plan has four 10 cm pieces in a row and three 2 cm gaps. What total span is required?"
+      ],
+      "answers": [
+        "The unrotated 3-by-3 grid gives 9; the rotated 5-by-2 grid gives 10. The second meets the target under the stated zero-gap assumptions.",
+        "240 cm^2. The exact 60 cm width is fully used by five labels, so adding gaps invalidates that width calculation and requires a revised layout or different stock.",
+        "4 times 10 + 3 times 2 = 46 cm. State that the gaps lie between the pieces and that no additional end margins were specified."
+      ],
+      "adaptation": "Use drawn rectangles or reusable paper cards; the arithmetic does not require actual cutting. Keep damaged stock, required margins and permitted rotation explicit when adapting the scenario.",
+      "references": [
+        "geometry",
+        "multiplication"
+      ],
+      "tags": [
+        "material-list",
+        "layout-planning",
+        "offcuts",
+        "spacing-allowance"
+      ]
+    },
+    {
+      "id": "109",
+      "edition": "2026-10-03",
+      "title": "Schedule tasks using dependencies and available helpers",
+      "track": "practical-projects",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "19",
+        "45",
+        "81",
+        "99"
+      ],
+      "goal": "Distinguish task duration from completion time, identify what must happen first, and test whether a proposed parallel schedule has enough people.",
+      "materials": "Four paper task cards and a simple minute-by-minute timeline.",
+      "lesson": [
+        "A schedule needs more than a list of durations. It must show dependencies: which tasks require another task's result. In this fictional display project, task A checks the plan for 6 minutes. Task B writes labels for 12 minutes and starts only after A. Task C counts cards for 8 minutes and can begin independently. Task D assembles the display for 5 minutes and starts only when both B and C are finished. Assume each task needs one helper continuously and cannot be split.",
+        "With one helper, the work requires 6 + 12 + 8 + 5 = 31 minutes with no breaks or delays. A valid order is A, B, C, D; A, C, B, D also respects the dependencies. With two suitable helpers, A and C can start at minute 0. A finishes at 6, so its helper performs B from 6 to 18. C finishes at 8. D then runs from 18 to 23. The total elapsed time is 23 minutes, while the combined work remains 31 helper-minutes.",
+        "Trace the dependency chains. A followed by B followed by D takes 23 minutes; C followed by D takes 13. Under the stated two-helper assumptions, the longer chain limits the earliest finish. Reducing C from 8 minutes to 6 would not shorten that finish, because D still waits for B until minute 18. Adding helpers cannot eliminate a genuine dependency or automatically reduce every task's duration.",
+        "A plan is not a guarantee. Record assumptions about skill, materials and interruptions. Compare actual start and finish times with the plan, explain a delay and update later tasks when needed. If C unexpectedly takes 20 minutes, D must wait until minute 20 and the finish becomes minute 25. Do not keep the old completion promise while silently violating the dependency. Give the next helper a revised schedule with the changed assumption visible."
+      ],
+      "practice": [
+        "Using the stated tasks and one helper, give a valid task order and total duration.",
+        "With two helpers and the original durations, when can B and D start, and when does the project finish?",
+        "If C takes 22 minutes with two helpers, while A and B take their original durations, when can D start and when is the finish?"
+      ],
+      "answers": [
+        "For example A, B, C, D; total 31 minutes. A, C, B, D or C, A, B, D also works under the stated conditions.",
+        "B starts at minute 6; D starts at 18 after both B and C; finish is minute 23.",
+        "D starts at minute 22 after C and B are both complete, and finishes at minute 27."
+      ],
+      "adaptation": "Move task cards along a drawn timeline and assign a different color to each helper. Use a spoken schedule when drawing is difficult. Revisit the assumptions before applying the arithmetic to a real project.",
+      "references": [
+        "operation-order",
+        "algorithms"
+      ],
+      "tags": [
+        "task-dependencies",
+        "parallel-schedule",
+        "elapsed-time",
+        "resource-limit"
+      ]
+    },
+    {
+      "id": "110",
+      "edition": "2026-10-03",
+      "title": "Define a checkable result and evaluate a paper prototype",
+      "track": "practical-projects",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "04",
+        "22",
+        "80",
+        "100",
+        "101"
+      ],
+      "goal": "Turn a vague request into explicit criteria, record a small prototype test, and limit conclusions to what was actually checked.",
+      "materials": "A paper label design, a ruler if available, and the original fictional trial record below.",
+      "lesson": [
+        "A vague request such as 'make a good label' leaves the result hard to assess. For this fictional learning display, agree on observable criteria: the label must contain the exact title 'Map Station', include the supplied direction arrow, and have a finished width between 9.5 cm and 10.5 cm inclusive. The material constraint is one supplied paper card. Readability from a defined position is another question that needs a separate trial, not just an opinion about appearance.",
+        "A prototype is an early version used to learn about the design. Before testing, record the version and procedure. In this paper scenario, version A has the correct title and arrow and measures 10.2 cm wide. Three volunteer readers try it one at a time from a marked position 1 metre away under the same stated lighting. Two read the title correctly without help and one cannot. These invented observations meet the content and size criteria but do not demonstrate successful reading for every participant.",
+        "State the decision rule before looking at the result. If the agreed trial target is correct unaided reading by all three participating readers, version A has not met it. The team might revise letter size or contrast and repeat the stated trial, documenting what changed. Success for three participants still does not prove universal accessibility or performance under different lighting and distances. Record the actual result and describe which users and conditions remain untested.",
+        "Keep a criterion-to-evidence record: title checked against supplied wording, arrow checked against the plan, width measured with the identified ruler, and reading result recorded for each participant. Mark an unperformed check as not tested rather than passed. A prototype can reveal useful changes even when it falls short of a target. Testing is a source of evidence for revision, not a reason to hide an inconvenient result or change the rule afterward."
+      ],
+      "practice": [
+        "Do widths of 9.5 cm, 10.5 cm and 10.6 cm meet the stated inclusive width criterion?",
+        "Does version A meet the three-reader trial target? What result should be recorded?",
+        "A second version has the correct title, but its width was never measured. How should its width status be recorded?"
+      ],
+      "answers": [
+        "9.5 and 10.5 cm meet the range; 10.6 cm does not. This applies to the recorded measurements and stated criterion, not an unstated tolerance.",
+        "No. Record two of three reading correctly without help at the specified position and lighting, with one not successful in that trial.",
+        "Not tested or not yet measured. Correct wording does not supply evidence about width."
+      ],
+      "adaptation": "Use the fictional trial record when participants or measuring tools are unavailable. In a real learning activity, ask participants about their access needs and avoid treating a failed design trial as a judgment of the reader.",
+      "references": [
+        "design-cycle",
+        "writing"
+      ],
+      "tags": [
+        "acceptance-criteria",
+        "prototype",
+        "test-evidence",
+        "not-tested"
+      ]
+    },
+    {
+      "id": "111",
+      "edition": "2026-10-03",
+      "title": "Troubleshoot a paper procedure with a controlled check",
+      "track": "practical-projects",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "46",
+        "97",
+        "99",
+        "110"
+      ],
+      "goal": "State an expected and observed result, change one relevant condition, and distinguish a successful test from proof that every cause is resolved.",
+      "materials": "Paper rows with separate ID and Title fields, a lookup instruction card, and a short test log.",
+      "lesson": [
+        "Begin with a precise symptom. The paper table has two rows: ID A12 with Title Maps, and ID B07 with Title Lists. A request asks for ID B07. The expected result is the row titled Lists, but the procedure reports no match. Record the exact input, table version, instruction and observed output before changing anything. 'It does not work' gives the next learner too little information to repeat the problem.",
+        "Inspect the instruction card: 'Compare the requested ID with each row's Title field. Return a row only if those texts match exactly.' This compares different kinds of information. Form a specific hypothesis: the lookup uses the wrong field. Change only Title to ID in that instruction and run the same B07 request on the same table. It now returns Lists. The controlled comparison supports this explanation for the observed failure without altering the data to fit the mistaken procedure.",
+        "Check nearby cases after the correction. A12 should return Maps. C99, which is absent, should report no match rather than choose a random row. If two rows have the same requested ID, a procedure that requires unique IDs should flag ambiguity or reject the data instead of silently choosing one. State that expected behavior explicitly. Passing B07 alone would not expose errors in missing-ID or duplicate-ID handling.",
+        "Keep a log with the initial symptom, hypothesis, single change, retest result and remaining questions. Changing the table, field name and matching rule together would make it harder to identify which change mattered. One-change comparisons are useful but do not prove that real systems have only one fault. This exercise stays on paper: it does not require editing live software, deleting files or bypassing safeguards to make a test pass."
+      ],
+      "practice": [
+        "Why does the original instruction fail to find requested ID B07 in the supplied table?",
+        "Give the single correction and the expected result for request A12 afterward.",
+        "A duplicate B07 row is added with another title. Should a unique-ID lookup silently return whichever row appears first? Explain a clearer outcome."
+      ],
+      "answers": [
+        "It compares B07 with the Title values Maps and Lists instead of comparing it with the ID values.",
+        "Compare the request with the ID field. A12 should return the row titled Maps.",
+        "No. Report ambiguous or duplicate ID data, or reject the table until corrected. The intended unique-ID contract does not justify choosing arbitrarily."
+      ],
+      "adaptation": "Use movable field labels and have one learner follow the instruction literally while another records results. Begin with the two original rows, then introduce missing and duplicate IDs as separate test cases.",
+      "references": [
+        "algorithms"
+      ],
+      "tags": [
+        "troubleshooting",
+        "controlled-check",
+        "wrong-field",
+        "duplicate-id"
+      ]
+    },
+    {
+      "id": "112",
+      "edition": "2026-10-03",
+      "title": "Write a handover that makes the next action clear",
+      "track": "practical-projects",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "56",
+        "77",
+        "90",
+        "97",
+        "109",
+        "110",
+        "111"
+      ],
+      "goal": "Record the current version, completed checks, open issues and next action, then verify that another person can interpret the handover.",
+      "materials": "Paper and the fictional display-project record below; a partner can act as the next helper.",
+      "lesson": [
+        "A handover helps another person continue work without guessing its state. State the item or task, current version, location, what is complete and what remains unresolved. Use this fictional record: display labels version B are in the blue practice folder; spelling and arrow direction have been checked; width has not yet been measured; the group wants the size check before placing labels on the display. Do not turn a partly checked item into 'all finished' merely because a draft exists.",
+        "A useful note is: 'Display labels, version B, are in the blue practice folder. Spelling and arrow direction passed the recorded checks. Width is not yet tested. Next helper: measure each label against the agreed 9.5–10.5 cm range and record the results before display placement.' The note identifies a specific remaining action and the evidence needed. If a real task requires a deadline or named owner, confirm those details instead of inventing them.",
+        "Check understanding with a read-back. Ask the receiving helper which version to use, what can be relied on and what to do next. Their ability to restate the task can reveal unclear wording, but it does not mean they have performed the remaining check. If version C is issued later, update the handover and distinguish the superseded B copy. Keep a record of the change so that an older folder label does not silently override the new instruction.",
+        "Close the loop with a result, not just an acknowledgment. In an original follow-up scenario, a helper measures four labels and finds three within the range and one at 10.8 cm. The updated record should name the out-of-range label, retain the measurements and state the next revision or recheck. 'Message received' establishes receipt only. 'Four widths checked; label 4 measured 10.8 cm and needs revision' communicates the work's actual state."
+      ],
+      "practice": [
+        "Using the supplied version-B facts, name three essential details a handover should include.",
+        "A helper accurately repeats the width-check instructions. Does this establish that all widths passed? Explain.",
+        "Write a short follow-up for four measured labels with widths 10.0, 9.8, 10.2 and 10.8 cm under the agreed range."
+      ],
+      "answers": [
+        "For example: version B in the blue practice folder; spelling and arrow checks complete; width untested and needing measurement before placement. Accept equivalent details that identify state and next action.",
+        "No. Read-back checks understanding; actual measurements and comparison with the criterion are still needed.",
+        "For example: 'Four label widths checked: 10.0, 9.8, 10.2 and 10.8 cm. Labels 1–3 meet the 9.5–10.5 cm range; label 4 is outside it. Revise and remeasure label 4 before placement.'"
+      ],
+      "adaptation": "Use a spoken or pictorial handover with a durable record when writing is a barrier. Keep completion, understanding and receipt as separate claims. Practice with fictional folders and people rather than private workplace records.",
+      "references": [
+        "writing",
+        "study"
+      ],
+      "tags": [
+        "handover",
+        "read-back",
+        "revision-status",
+        "next-action"
       ]
     }
   ]

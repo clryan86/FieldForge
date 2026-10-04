@@ -4729,6 +4729,281 @@
         "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-101",
+      "title": "Education 101: Report repeated measurements without overstating precision",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 677,
+      "body_sha256": "f7e509abe85d259df50445b77b15efdddb8e097455ab07cd74a5ee0b5e8137f2",
+      "prerequisites": [
+        "fieldforge-education-17",
+        "fieldforge-education-47",
+        "fieldforge-education-51",
+        "fieldforge-education-61"
+      ],
+      "references": [
+        "https://openstax.org/books/university-physics-volume-1/pages/1-6-significant-figures"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-102",
+      "title": "Education 102: Distinguish temperature from energy transferred as heat",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 740,
+      "body_sha256": "a7aba6dc82edbd142ed0a3df0ddd615aa22e34e05a1a05219418596607bacf45",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-61",
+        "fieldforge-education-71"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/11-1-temperature-and-thermal-energy",
+        "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-103",
+      "title": "Education 103: Compare density using both mass and volume",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 643,
+      "body_sha256": "5cf17984fb729fe8cd69ffb760e3322a206b1b453c6964499e9f09854f13567e",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-63",
+        "fieldforge-education-68",
+        "fieldforge-education-96"
+      ],
+      "references": [
+        "https://openstax.org/books/chemistry-2e/pages/1-4-measurements"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-104",
+      "title": "Education 104: Reason about mixtures and what a separation can remove",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 672,
+      "body_sha256": "2baaf4a44681f367ce7e8d8fe5e3713e64e4d11fe520c61dda47894e0f3ab222",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-38",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://openstax.org/books/chemistry-2e/pages/1-2-phases-and-classification-of-matter"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-105",
+      "title": "Education 105: Account for energy transfers in a simple model",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 675,
+      "body_sha256": "e4b6313e884efa18bd5b84f269bbb8ec6bb4162ca7e826b13456b1c678c1fa45",
+      "prerequisites": [
+        "fieldforge-education-53",
+        "fieldforge-education-64",
+        "fieldforge-education-70",
+        "fieldforge-education-102"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/9-2-mechanical-energy-and-conservation-of-energy"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-106",
+      "title": "Education 106: Use several kinds of evidence to recognize living systems",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 712,
+      "body_sha256": "6c6151fc224a27f510f5de0b63efa88afc315a59f944c5783230573ae9aed1ae",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-39",
+        "fieldforge-education-71",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://openstax.org/books/biology-2e/pages/1-2-themes-and-concepts-of-biology"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-107",
+      "title": "Education 107: Read a scale drawing and check the stated dimensions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 729,
+      "body_sha256": "2cc7d6dcb1e4a01d3cbb0bbbac899d68aaf2aeb621898fc4bfbc8e2ea6cb2ab4",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-21",
+        "fieldforge-education-40",
+        "fieldforge-education-50",
+        "fieldforge-education-96"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/7-5-systems-of-measurement",
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-108",
+      "title": "Education 108: Make a material list and compare paper layouts",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 744,
+      "body_sha256": "eabd984ca8c1c75d1c56cff3b3efd6c23c2e80bef1d01c1d03f5fbf95cdcc473",
+      "prerequisites": [
+        "fieldforge-education-14",
+        "fieldforge-education-18",
+        "fieldforge-education-78",
+        "fieldforge-education-82",
+        "fieldforge-education-107"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids",
+        "https://openstax.org/books/prealgebra-2e/pages/1-4-multiply-whole-numbers"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-109",
+      "title": "Education 109: Schedule tasks using dependencies and available helpers",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 725,
+      "body_sha256": "94edc56f85ed875547468399dc3603a1dc4c6975c46686120125fb5ba9f32455",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-45",
+        "fieldforge-education-81",
+        "fieldforge-education-99"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/2-1-use-the-language-of-algebra",
+        "https://www.csunplugged.org/en/computational-thinking/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-110",
+      "title": "Education 110: Define a checkable result and evaluate a paper prototype",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 739,
+      "body_sha256": "d10daf2e917eb6947197c09ff0d55937c228cc302e61cf551686b3992115ffeb",
+      "prerequisites": [
+        "fieldforge-education-04",
+        "fieldforge-education-22",
+        "fieldforge-education-80",
+        "fieldforge-education-100",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://www.jpl.nasa.gov/edu/resources/image/engineering-design-process-flow-chart/",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-111",
+      "title": "Education 111: Troubleshoot a paper procedure with a controlled check",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 672,
+      "body_sha256": "94aba2fb40f36295ad0315d0b3375f11ef039e4bde5ff5489cf51e9b46314de5",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-46",
+        "fieldforge-education-97",
+        "fieldforge-education-99",
+        "fieldforge-education-110"
+      ],
+      "references": [
+        "https://www.csunplugged.org/en/computational-thinking/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-112",
+      "title": "Education 112: Write a handover that makes the next action clear",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 757,
+      "body_sha256": "b86968919cebf4918ca755c7427bfc60a7f84407fcf86bba04b96adafece3022",
+      "prerequisites": [
+        "fieldforge-education-56",
+        "fieldforge-education-77",
+        "fieldforge-education-90",
+        "fieldforge-education-97",
+        "fieldforge-education-109",
+        "fieldforge-education-110",
+        "fieldforge-education-111"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [
