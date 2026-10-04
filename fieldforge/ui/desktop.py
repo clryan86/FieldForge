@@ -45,6 +45,12 @@ def run() -> None:
     from fieldforge.ui.supplies import SuppliesTab
 
     app = FieldForgeApp(_database_path())
+    # Populate a fresh library before exposing UI actions that require it to be
+    # idle. Starting a pack worker after the window opens races navigation,
+    # backups and normal close, especially on a first launch.
+    if app.knowledge.count() == 0:
+        from fieldforge.content import install_reference_library
+        install_reference_library(app.knowledge)
     supplies = SuppliesService(app.db.path)
     root = tk.Tk()
     root.title("FieldForge — Offline Emergency Operations")
@@ -73,7 +79,7 @@ def run() -> None:
     notebook.add(inventory_tab, text="Inventory")
     notebook.add(planners_tab, text="Power Planner")
     notebook.add(emergency_tab, text="Emergency Mode")
-    knowledge_tab = KnowledgeTab(notebook, app.knowledge, install_bundled=True)
+    knowledge_tab = KnowledgeTab(notebook, app.knowledge)
     knowledge_tab.blueprint_home = blueprints_tab
     notebook.add(knowledge_tab, text="Knowledge Library")
     pathways_tab = add_pathways_tab(notebook, knowledge_tab)

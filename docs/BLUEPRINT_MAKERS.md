@@ -34,8 +34,9 @@ fieldforge-blueprints --database fieldforge.db install-library
 fieldforge-blueprints --database fieldforge.db gui
 ```
 
-Opening an empty desktop library installs the packaged references locally in a
-background worker. An existing library has an **Install Reference Library** button.
+Opening the desktop with an empty library installs the packaged references
+locally before the main window opens. An existing library has an
+**Install Reference Library** button, which imports in a background worker.
 Installation uses the existing transactional knowledge-pack importer: identical
 articles are skipped, different articles with the same slug abort the entire
 installation, and private notes remain intact. Nothing is downloaded at startup.

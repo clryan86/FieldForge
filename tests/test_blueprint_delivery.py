@@ -14,7 +14,7 @@ from fieldforge.blueprints.render import (
     normalized_document,
     save_blueprint,
 )
-from fieldforge.knowledge import KnowledgeArticle, KnowledgeLibrary
+from fieldforge.knowledge import KnowledgeLibrary
 
 
 def parts():
@@ -135,7 +135,6 @@ def test_normal_desktop_has_blueprints_beside_dashboard_and_keeps_existing_secti
     from fieldforge.ui.blueprint_home import BlueprintHome
     database = tmp_path / "desktop.db"
     library = KnowledgeLibrary(database)
-    library.upsert(KnowledgeArticle("existing", "Existing note", "Keep this article", "test"))
     monkeypatch.setenv("FIELDFORGE_DB", str(database))
     monkeypatch.setattr(tk, "Tk", lambda: root)
 
@@ -152,6 +151,7 @@ def test_normal_desktop_has_blueprints_beside_dashboard_and_keeps_existing_secti
         assert home.new_button.winfo_ismapped()
         knowledge = next(root.nametowidget(tab) for tab in book.tabs()
                          if book.tab(tab, "text") == "Knowledge Library")
+        assert library.count() == 439 and not knowledge.busy
         knowledge._blueprints()
         assert home.studio is not None
         assert knowledge._blueprint_studio is None
