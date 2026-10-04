@@ -272,7 +272,7 @@ def inspect_pack(path, *, consent: bool = False, cancel: Event | None = None) ->
             from fieldforge.navigation.vector_tiles import render_vector_tile
 
             render_vector_tile(row[1])
-            notice += " Vector tiles use a basic preview style with limited point-name labels; publisher styling and label rules are not applied."
+            notice += " Vector tiles use a basic preview style with bounded point, line, and area labels; publisher styling, fonts, sprites, and advanced label rules are not applied."
         return MapPack(path, identity, tuple(metadata.items()), tuple(levels), start, notice)
 
 
