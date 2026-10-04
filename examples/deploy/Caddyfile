@@ -1,0 +1,8 @@
+# Replace with a domain you control. DNS must resolve to this host, with ports
+# 80 and 443 reachable, before Caddy can obtain and renew a public certificate.
+maps.example.org {
+	reverse_proxy 127.0.0.1:8765 {
+		# The portal checks Host and Origin against public_origin.
+		header_up Host {hostport}
+	}
+}
