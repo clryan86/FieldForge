@@ -696,6 +696,83 @@
       "publisher": "RFC Editor / IETF",
       "scope": "Background on the scoped use of requirement keywords. FieldForge's reading lesson emphasizes checking a document's stated conventions rather than assigning standards meanings to every ordinary sentence.",
       "accessed_on": "2026-10-03"
+    },
+    "supported-science-reading": {
+      "title": "Improving Reading Comprehension in Kindergarten Through 3rd Grade",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "scope": "Background on comprehension strategies, text structure and discussion. The guide concerns K-3 instruction; FieldForge's original scientific passages and adult adaptations are not validated by it or claimed to be independently decodable texts.",
+      "accessed_on": "2026-10-04"
+    },
+    "science-explanation-writing": {
+      "title": "Teaching Elementary School Students to Be Effective Writers",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "scope": "Background on writing processes and supported revision for elementary learners. FieldForge's original explanation drafts, feedback and rubrics are teaching examples, not a tested intervention or an assessment certification.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-work-power": {
+      "title": "Physics: Work, Power, and the Work-Energy Theorem",
+      "url": "https://openstax.org/books/physics/pages/9-1-work-power-and-the-work-energy-theorem",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on the technical meanings of work and power. FieldForge's vocabulary contrasts and numerical cards are original simplified examples, not copied source exercises or physical activities.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-water-paths": {
+      "title": "Water cycle",
+      "url": "https://www.usgs.gov/water-science-school/water-cycle",
+      "publisher": "U.S. Geological Survey, Water Science School",
+      "scope": "Background on water stores and multiple transfer paths. FieldForge's branched passage, schematic nodes and invented transfer counts are original paper models, not a reproduction of the USGS diagram.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-condensation": {
+      "title": "Condensation and the Water Cycle",
+      "url": "https://www.usgs.gov/water-science-school/science/condensation-and-water-cycle",
+      "publisher": "U.S. Geological Survey, Water Science School",
+      "scope": "Background on water vapor changing to liquid. FieldForge's tile passage and sentence-revision questions are original supported-reading examples, not a source activity or a diagnostic experiment.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-evaporation": {
+      "title": "Evaporation and the Water Cycle",
+      "url": "https://www.usgs.gov/water-science-school/science/evaporation-and-water-cycle",
+      "publisher": "U.S. Geological Survey, Water Science School",
+      "scope": "Background on evaporation as a water-cycle transfer. FieldForge's comparison passages and reading questions are original; no source photograph, text or experiment is reproduced.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-phase-change": {
+      "title": "Physics: Phase Change and Latent Heat",
+      "url": "https://openstax.org/books/physics/pages/11-3-phase-change-and-latent-heat",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on liquid-gas phase change and boiling conditions. FieldForge's process comparison is an original paper exercise, not a heating procedure or copied textbook passage.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-ray-model": {
+      "title": "Physics: Reflection",
+      "url": "https://openstax.org/books/physics/pages/16-1-reflection",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on geometric ray representations of light. FieldForge's shadow records, geometry and claim/evidence questions are original simplified models, not measured observations or a source diagram.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-model-predictions": {
+      "title": "College Algebra 2e: Fitting Linear Models to Data",
+      "url": "https://openstax.org/books/college-algebra-2e/pages/4-3-fitting-linear-models-to-data",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on distinguishing interpolation and extrapolation. FieldForge's fictional seedling records and assumed straight-line predictions are original examples; no regression accuracy or biological forecast is claimed.",
+      "accessed_on": "2026-10-04"
+    },
+    "figure-description": {
+      "title": "Complex Images",
+      "url": "https://www.w3.org/WAI/tutorials/images/complex/",
+      "publisher": "World Wide Web Consortium, Web Accessibility Initiative",
+      "scope": "Background on providing essential chart and diagram information in text. FieldForge's original count chart and description exercise are not a complete accessibility audit or a reproduction of a W3C example.",
+      "accessed_on": "2026-10-04"
+    },
+    "reading-thermal-model": {
+      "title": "Physics: Temperature and Thermal Energy",
+      "url": "https://openstax.org/books/physics/pages/11-1-temperature-and-thermal-energy",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on distinguishing temperature from thermal energy. FieldForge's comparisons, cooling records and explanation revisions are original fictional paper exercises, not equipment tests or insulation recommendations.",
+      "accessed_on": "2026-10-04"
     }
   },
   "lessons": [
@@ -6684,6 +6761,516 @@
         "constraint-check",
         "time-bound",
         "conditional-conclusion"
+      ]
+    },
+    {
+      "id": "149",
+      "edition": "2026-10-04",
+      "title": "Choose a scientific word's meaning from its context",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "89",
+        "105",
+        "125",
+        "126"
+      ],
+      "goal": "Distinguish everyday and technical uses of a familiar word, and keep the technical definition tied to its stated object and conditions.",
+      "materials": "Paper vocabulary cards for work, power, force, movement and time; a facilitator can preview or read all technical words aloud.",
+      "lesson": [
+        "A familiar word can have a narrower meaning in a scientific passage. Read this original pair: 'Preparing the display took a lot of work.' 'A constant 5 N force moved the model block 2 m along the force, doing 10 J of work on the block.' The first uses work for effort or a task. The second uses a defined physics quantity. Choosing a meaning requires the sentence's context, not merely the word's spelling.",
+        "For the stated straight-line case with constant force along displacement, work by that force is force times displacement: 5 N x 2 m = 10 joules. If the block stays motionless, that force does zero mechanical work on the block in this model. This does not say a person holding something still uses no bodily energy. Identify whose force and which object's movement the technical statement concerns.",
+        "Power also has several everyday uses. In this exercise its technical meaning is the rate of energy transfer or work. Transferring 24 J in 6 seconds gives an average power of 4 watts, because one watt is one joule per second. Transferring the same 24 J in 3 seconds gives 8 W. The amount transferred is equal in the two cases, but the rates differ.",
+        "Build a context note with four fields: word, meaning here, sentence clue and an original example. For power, units such as J, s and W are useful clues, although units alone do not guarantee an explanation is correct. If a text shifts from an everyday sense to a technical one, make the change explicit. These vocabulary and arithmetic cards are paper models, not instructions for lifting or powered equipment."
+      ],
+      "practice": [
+        "In 'The committee has the power to choose a date,' does power mean joules per second? Identify its sense here.",
+        "An ideal card states that a constant 7 N force moves an object 3 m along that force. Calculate work by the force, then state the result if the object has no displacement.",
+        "Two models each transfer 30 J, one in 5 seconds and the other in 10. Compare their average powers without claiming one transfers more total energy."
+      ],
+      "answers": [
+        "No. It means authority or ability to make the decision in that sentence.",
+        "7 x 3 = 21 J. With zero displacement, that force does zero mechanical work on the object in the stated model.",
+        "30/5 = 6 W and 30/10 = 3 W. The first has twice the average power, but each transfers the same 30 J."
+      ],
+      "adaptation": "Read the sentences aloud and allow oral context notes. Preview technical vocabulary before independent reading; the passage is not presented as a phonics-controlled text.",
+      "references": [
+        "supported-science-reading",
+        "reading-work-power"
+      ],
+      "tags": [
+        "technical-word-context",
+        "work-and-power",
+        "meaning-shift",
+        "scientific-vocabulary"
+      ]
+    },
+    {
+      "id": "150",
+      "edition": "2026-10-04",
+      "title": "Follow a process passage that branches into several paths",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "54",
+        "76",
+        "114"
+      ],
+      "goal": "Translate a branching process description into labeled paths without turning possibilities into a compulsory sequence.",
+      "materials": "Paper location cards and arrows; the entire original reading passage is supplied below.",
+      "lesson": [
+        "Preview the words infiltration, runoff and evaporation. Infiltration is water entering the ground, runoff is water flowing over the land surface, and evaporation changes liquid water to water vapor. Read this original passage: 'Rain reaches a hillside. Some water enters the ground, while some travels over the surface toward a stream. Water in the ground may later reach a stream too. Some surface water evaporates. Water can also remain stored before it moves again.'",
+        "Turn the passage into branches from a rain-at-surface card. One path enters the ground; another follows the surface toward the stream; another represents evaporation to the atmosphere. Add a possible later connection from groundwater to the stream. Label arrows with processes and use a separate note for storage. Drawing every statement in one line would incorrectly suggest that all water first infiltrates, then runs off, then evaporates in that order.",
+        "Read the linking words closely. Some divides the account into portions without specifying their amounts. While can signal simultaneous or contrasting paths. May identifies a possibility rather than a guarantee. Later gives an order along a stated path but no duration. A passage can describe a mechanism without providing enough information to calculate how much water takes each route or how long its journey lasts.",
+        "Check a diagram by retelling each path in words and matching it to a sentence. The water cycle includes many connected stores and transfers beyond this short passage; it has no single required starting point. Our cards deliberately omit many details. Mark unsupported arrows as questions instead of quietly adding them as if the passage had supplied them."
+      ],
+      "practice": [
+        "Name two different routes from the hillside surface to the stream that the passage allows.",
+        "Does 'some water enters the ground' mean exactly half of the rainfall infiltrates? Explain.",
+        "Rewrite 'All rainwater must flow over the surface before entering the ground' so it matches the passage's branching account."
+      ],
+      "answers": [
+        "Water can flow over the surface toward the stream, or enter the ground and later reach a stream through the possible underground route described.",
+        "No. Some does not specify a fraction or volume; the passage supplies no amount for that branch.",
+        "One acceptable version: 'Some rainwater enters the ground, while some flows over the surface toward a stream.' Other versions must preserve the alternative paths and avoid an unsupported universal sequence."
+      ],
+      "adaptation": "Use movable cards or dictate the paths. Discuss one branch at a time, and distinguish difficulty reading a technical word from difficulty understanding the process.",
+      "references": [
+        "supported-science-reading",
+        "reading-water-paths"
+      ],
+      "tags": [
+        "branching-process",
+        "process-connectives",
+        "possible-path",
+        "sequence-versus-network"
+      ]
+    },
+    {
+      "id": "151",
+      "edition": "2026-10-04",
+      "title": "Read a scientific diagram's legend before its arrows",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "40",
+        "71",
+        "105",
+        "150"
+      ],
+      "goal": "Use an explicit legend to separate stores from transfers and avoid reading scale or timing information into an unlabeled schematic.",
+      "materials": "Paper for three labeled boxes and arrows, or the complete verbal description below; no image is needed to answer the questions.",
+      "lesson": [
+        "A diagram's symbols obtain their meaning from its labels and legend. For this original water-account schematic, draw boxes P, Q and R. The legend says boxes are stores and arrows show total water transferred during one specified day. An arrow P to Q is labeled 8 L; an arrow Q to R is labeled 5 L. Neither arrow's drawn length nor width encodes a quantity. The numbers, units and direction carry that information.",
+        "Read the schematic as sentences: 'During the day, 8 litres move from P into Q, and 5 litres move from Q into R.' If Q begins with 10 L and these are its only transfers, Q ends with 10 + 8 - 5 = 13 L. Its stored amount is different from either arrow's transfer amount. The diagram gives daily totals, not the exact timing or order of individual transfers within the day.",
+        "Move the boxes farther apart on paper without changing the labels. The represented account stays the same because the diagram is schematic, not a scale map. Make one arrow thicker; the quantity still comes from its 8 L or 5 L label under this legend. Another diagram could define thickness quantitatively, but that meaning must be stated rather than assumed from appearance.",
+        "Before interpreting an unfamiliar scientific diagram, identify what each symbol represents, what an arrow means, which units apply, and whether size or distance has a stated scale. Food-web arrows, force arrows and process arrows need not have the same meaning. If a necessary legend is missing, explain the ambiguity instead of guessing. A good reading names what the diagram communicates and what it leaves unspecified."
+      ],
+      "practice": [
+        "Using the supplied schematic and Q's initial 10 L, calculate Q's final stored amount.",
+        "If the P-to-Q arrow is drawn twice as long, does that change its represented transfer from 8 L to 16 L under this legend?",
+        "Can the two daily arrow totals establish that all 8 L arrived before any of the 5 L left? Explain."
+      ],
+      "answers": [
+        "13 L, assuming the stated two transfers are the only ones affecting Q.",
+        "No. Arrow length has no quantitative meaning in this schematic. The label remains 8 L.",
+        "No. They specify total transfers over the day, not their timing or order within it."
+      ],
+      "adaptation": "Use the verbal description alone, or add tactile boxes and arrows. Ask learners to explain the legend before performing the storage calculation.",
+      "references": [
+        "reading-water-paths",
+        "figure-description"
+      ],
+      "tags": [
+        "diagram-legend",
+        "stores-and-transfers",
+        "schematic-scale",
+        "arrow-meaning"
+      ]
+    },
+    {
+      "id": "152",
+      "edition": "2026-10-04",
+      "title": "Resolve pronouns and cause words in a science paragraph",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "75",
+        "76",
+        "128"
+      ],
+      "goal": "Identify what a pronoun refers to and revise an ambiguous process explanation without adding an unsupported cause.",
+      "materials": "Paper copies of the original sentences below, with condensation previewed aloud as needed.",
+      "lesson": [
+        "Scientific reading often depends on small linking words. Read this original account: 'Moist air surrounded a cool tile. Near the tile, the air cooled enough for some water vapor to condense on the surface. This change produced liquid droplets. The tile had been dry before the droplets appeared.' Here condensation names a change from water vapor to liquid; the water need not have come from inside the tile.",
+        "Ask what this change refers to. In this paragraph it points to water vapor condensing, not to the tile becoming a different substance. Replace the phrase with its referent to check meaning: 'Condensation of water vapor produced liquid droplets.' A pronoun or reference phrase should connect clearly enough that the reader can recover the intended object or process without inventing a new one.",
+        "Now inspect a weaker sentence: 'The tile touched the damp cloth after it cooled.' It might refer to the tile or to the cloth, so the sentence does not clearly identify what cooled. Two possible revisions are 'After the tile cooled, it touched the damp cloth' and 'The tile touched the damp cloth after the cloth cooled.' Choose only the revision supported by the intended record; editing should not silently decide an unknown fact.",
+        "Order and cause also differ. After tells us that one event followed another, while because asserts an explanatory connection. Replacing 'droplets appeared after the fan started' with 'droplets appeared because the fan started' strengthens the claim and requires supporting evidence. The original condensation account is a supplied scientific explanation, but a bare observation of a wet tile would not by itself exclude a spill, a splash or another source of water."
+      ],
+      "practice": [
+        "In the original account, what does 'This change' refer to? Rewrite that sentence with the full process named.",
+        "The intended record says the cloth cooled first. Revise 'The tile touched the damp cloth after it cooled' to make that meaning clear.",
+        "Why is changing after to because more than a stylistic edit in a report of two events?"
+      ],
+      "answers": [
+        "It refers to water vapor condensing. One revision is 'Condensation of water vapor produced liquid droplets.'",
+        "'The tile touched the damp cloth after the cloth cooled.' Other clear versions preserving that order and referent are acceptable.",
+        "After states sequence; because claims a causal explanation. The stronger causal claim needs evidence beyond the order alone."
+      ],
+      "adaptation": "Use different labels or underlining for each possible referent, rather than color alone. The facilitator can read the paragraph aloud and ask the learner to explain or dictate revisions.",
+      "references": [
+        "supported-science-reading",
+        "reading-condensation"
+      ],
+      "tags": [
+        "scientific-referents",
+        "pronoun-ambiguity",
+        "cause-connectives",
+        "sentence-repair"
+      ]
+    },
+    {
+      "id": "153",
+      "edition": "2026-10-04",
+      "title": "Compare two process accounts using the same questions",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "38",
+        "60",
+        "80",
+        "102"
+      ],
+      "goal": "Compare evaporation and boiling by matched features, preserving both a shared change of state and the stated differences.",
+      "materials": "Paper for a comparison grid and the two original short accounts below; no liquid is heated in this activity.",
+      "lesson": [
+        "Read account A: 'Liquid water can become water vapor at its exposed surface without the whole liquid boiling. This surface process is evaporation. Its rate depends on conditions; a surface becoming dry does not imply that the water reached its boiling temperature.' Preview vapor as gaseous water. The account describes a process, not a complete experiment identifying every cause of a particular wet surface becoming dry.",
+        "Read account B: 'During boiling, vapor bubbles form within the liquid under suitable temperature and pressure conditions. The boiling temperature depends on pressure. Boiling and evaporation both involve liquid changing to gas, but the liquid-gas change can occur in different ways.' These sentences do not state that any visible bubble in water proves boiling; bubbles can have other origins, and the account specifically concerns vapor bubbles in boiling.",
+        "Compare the same features across both accounts: starting and ending states, where the described change occurs, and which conditions are mentioned. Both describe liquid becoming gas. A emphasizes the surface and the absence of a requirement that the whole liquid boil; B emphasizes vapor bubbles within the liquid and the role of pressure. A comparison that lists unrelated details in two separate columns may miss the actual relation between the processes.",
+        "Write a synthesis that keeps both shared and contrasting information: 'Both processes turn liquid into gas. Evaporation can occur at a surface below the boiling temperature, while boiling involves vapor bubbles forming within the liquid at conditions set in part by pressure.' Do not add a universal numerical boiling temperature without stating the substance and pressure. The goal is accurate comparative reading, not instructions for heating or testing containers."
+      ],
+      "practice": [
+        "State one shared feature of evaporation and boiling supported by the accounts.",
+        "A summary says, 'Water must boil before any of it can become vapor.' Explain why that summary conflicts with account A.",
+        "Write a two-sentence comparison using the matched feature 'where the described change occurs,' and retain the condition about pressure from account B."
+      ],
+      "answers": [
+        "Both involve liquid changing to gas; for water the gas is water vapor.",
+        "Account A says evaporation can occur at the exposed surface without the whole liquid boiling. The summary adds a requirement the account explicitly rejects.",
+        "Accept a comparison locating evaporation at the surface and vapor-bubble formation within boiling liquid, with a statement that boiling temperature depends on pressure. It should not give an unqualified temperature or claim that all bubbles mean boiling."
+      ],
+      "adaptation": "Read each account aloud, preview evaporation and boiling, and fill one comparison row at a time. Learners can dictate the synthesis rather than independently decode every technical term.",
+      "references": [
+        "supported-science-reading",
+        "reading-evaporation",
+        "reading-phase-change"
+      ],
+      "tags": [
+        "matched-comparison",
+        "evaporation-versus-boiling",
+        "process-synthesis",
+        "shared-and-different"
+      ]
+    },
+    {
+      "id": "154",
+      "edition": "2026-10-04",
+      "title": "Link a shadow claim to records and a ray explanation",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "69",
+        "121",
+        "122"
+      ],
+      "goal": "Separate a recorded pattern from a mechanism and write a claim whose scope matches a simplified shadow model.",
+      "materials": "Paper ray lines and the supplied fictional shadow records; no lamp, laser or sun observation is required.",
+      "lesson": [
+        "Use a supplied paper setup: a point-like light source is 60 cm from a screen. An opaque card 4 cm high is centered between them, parallel to the screen. Distance means source-to-card distance. Fictional records give 12 cm shadow height at 20 cm distance, 8 cm at 30 cm, and 6 cm at 40 cm. All other stated geometry stays the same. These numbers are invented illustrations of the ideal ray model, not actual measurements.",
+        "A narrow claim is 'In these three records, moving the card farther from the source and nearer the screen corresponds to a smaller shadow.' Support it with the distances and shadow heights, including units. The phrase 'the shadow gets smaller' alone leaves the reader unsure what moved, what stayed fixed and whether a size or a distance is being discussed.",
+        "Explain the pattern using straight ray paths from the point source past the card's upper and lower edges to the screen. When the card is nearer the source, those bounding rays spread farther apart by the time they reach the screen. The explanation connects geometry to the size pattern; it is different from merely repeating the three numbers. Real extended light sources and other arrangements can produce different edge details, so the point-source assumption matters.",
+        "Try a counter-question: if the screen distance also changed between records, could the same comparison isolate the effect of card position? No; that would introduce another change in the geometry. A useful explanation names the model and controlled features as well as the evidence. It does not claim that every shadow in every lighting arrangement obeys a slogan such as 'farther away always means smaller.'"
+      ],
+      "practice": [
+        "Which recorded card position gives the largest shadow, and what is that shadow's height? Specify what the position is measured from.",
+        "Write one evidence sentence comparing the 30 cm and 40 cm source-to-card records.",
+        "Why should an explanation mention that the light source and screen stay 60 cm apart?"
+      ],
+      "answers": [
+        "The card 20 cm from the source gives the largest listed shadow, 12 cm high.",
+        "One version: 'When source-to-card distance changes from 30 to 40 cm with the screen fixed, the listed shadow height decreases from 8 to 6 cm.' Equivalent wording must keep the quantities and units distinct.",
+        "Screen distance affects the projection geometry. Keeping it fixed supports this comparison; changing it would introduce another possible explanation for a size difference."
+      ],
+      "adaptation": "Let a learner trace described rays on paper or use the numerical records alone. Accept an oral mechanism explanation with a facilitator supplying unfamiliar words.",
+      "references": [
+        "reading-ray-model",
+        "science-explanation-writing"
+      ],
+      "tags": [
+        "claim-evidence-mechanism",
+        "shadow-records",
+        "controlled-geometry",
+        "explanation-scope"
+      ]
+    },
+    {
+      "id": "155",
+      "edition": "2026-10-04",
+      "title": "Cross-check a scientific paragraph against its data table",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "60",
+        "72",
+        "123"
+      ],
+      "goal": "Audit each numerical statement against the correct row, unit and interval, and preserve missing data rather than filling it by assumption.",
+      "materials": "Paper for the fictional temperature record and draft report supplied in the lesson; no temperature experiment is needed.",
+      "lesson": [
+        "An original paper record lists one container's temperature in degrees Celsius: minute 0, 35; minute 5, 33; minute 10, 30; minute 15, not recorded. It contains three numerical observations and one missing entry. Read the table's quantity and unit before comparing it with a paragraph. The missing entry is not a zero-temperature observation and is not automatically a repeat of the preceding value.",
+        "Now audit this draft: 'The container cooled by 2 degrees Celsius over ten minutes and reached 0 degrees at minute 15.' The first clause uses the change from minute 0 to minute 5 but names the ten-minute interval. Over the recorded first ten minutes, the decrease is 35 - 30 = 5 degrees Celsius. The second clause incorrectly converts missing data into a measured zero.",
+        "Write a corrected report: 'The recorded temperature fell from 35 to 30 degrees Celsius between minutes 0 and 10, a decrease of 5 degrees. No reading is available for minute 15.' This reports what the table supports without inventing a later trend. If the original observation itself is in doubt, retain its value and annotate the concern rather than silently editing it to fit the paragraph.",
+        "Use a four-part check for each numerical statement: quantity, value, unit and reference interval or group. A true number attached to the wrong interval is still a misleading statement. Keep a record of the correction so another reader can see that the summary changed while the original observations were preserved. This is a consistency check, not proof that the fictional measurements accurately represent a real object."
+      ],
+      "practice": [
+        "What decrease is recorded from minute 0 to minute 5, and from minute 0 to minute 10?",
+        "Rewrite 'The temperature remained at 30 degrees Celsius through minute 15' to match the available record.",
+        "If a summary and raw record disagree, why should the raw record not simply be changed to match the summary?"
+      ],
+      "answers": [
+        "A decrease of 2 degrees Celsius over the first five minutes, and 5 degrees Celsius over the first ten.",
+        "One version: 'The recorded temperature was 30 degrees Celsius at minute 10; minute 15 was not recorded.' The later temperature is unknown from this table.",
+        "That would hide the discrepancy and invent evidence. Preserve the raw entry, investigate the mismatch, and document any justified correction or revision separately."
+      ],
+      "adaptation": "Read the row labels aloud and use separate cards for values and missing entries. Learners can dictate a correction while pointing to the supporting rows.",
+      "references": [
+        "supported-science-reading",
+        "science-explanation-writing"
+      ],
+      "tags": [
+        "text-table-consistency",
+        "interval-mismatch",
+        "missing-reading",
+        "summary-audit"
+      ]
+    },
+    {
+      "id": "156",
+      "edition": "2026-10-04",
+      "title": "Distinguish plotted observations from estimates and forecasts",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "84",
+        "121",
+        "138"
+      ],
+      "goal": "Label observed values, interpolation and extrapolation, and explain why a connecting line does not supply additional measurements.",
+      "materials": "Paper axes or the verbal data description below; all plant-height records are fictional.",
+      "lesson": [
+        "A supplied seedling record gives height at day 0 as 4 cm, day 2 as 6 cm, day 4 as 8 cm and day 6 as 10 cm. Plot those four observations as distinct points. A learner draws straight segments through them and extends the line. The points represent listed records; the line represents an assumed relation between day and height. There is no listed measurement for every position on the line.",
+        "The assumed rule is height = 4 + day, in centimetres, or an increase of 1 cm per day. At day 3 it gives 7 cm. This estimate lies inside the observed time range and is interpolation. At day 8 it gives 12 cm, outside the observed time range, so it is extrapolation. Neither value becomes an observation merely because it can be read from the drawn line.",
+        "A later fictional observation reports 10.5 cm at day 8. Keep it as a new observed point and compare it with the previous 12 cm prediction; do not move the point to make the line look correct. The discrepancy is 1.5 cm. It may motivate examining the model, observations and growing conditions. Four earlier points following a simple pattern did not establish that the same rate must continue indefinitely.",
+        "Use a key distinguishing recorded points from assumed or extended lines, and label any estimate in the accompanying text. Interpolation still depends on a model; hidden changes can occur between measurements. Extrapolation adds the question of whether the model remains applicable beyond the observed range. A report should preserve that distinction even when the arithmetic is exact."
+      ],
+      "practice": [
+        "Using the original straight-line rule, estimate height at day 5. Is this interpolation, extrapolation or an observation in the supplied table?",
+        "Using that same original rule, estimate height at day 10 and identify the type of estimate.",
+        "How should a report handle the later day-8 observation of 10.5 cm when the previous model predicted 12 cm?"
+      ],
+      "answers": [
+        "9 cm. It is interpolation within days 0 through 6; day 5 was not a listed observation.",
+        "14 cm. It is extrapolation beyond the original observed time range.",
+        "Record the observation separately, retain the earlier prediction as a prediction, and report their 1.5 cm discrepancy. Review the model or data rather than changing the observation to fit the line."
+      ],
+      "adaptation": "Provide a table instead of requiring a visual plot, and mark entries as observed or estimated in words. Learners may explain the distinction orally before calculating.",
+      "references": [
+        "reading-model-predictions"
+      ],
+      "tags": [
+        "observation-versus-prediction",
+        "interpolation",
+        "extrapolation",
+        "model-discrepancy"
+      ]
+    },
+    {
+      "id": "157",
+      "edition": "2026-10-04",
+      "title": "Keep quantifiers and conditions when summarizing a claim",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "23",
+        "60",
+        "87",
+        "94"
+      ],
+      "goal": "Preserve the scope of words such as some, all and under these conditions, and identify a summary that becomes stronger than its evidence.",
+      "materials": "Paper claim cards and three fictional filter-model records, read aloud if needed.",
+      "lesson": [
+        "Small words can determine the strength of a scientific statement. Some states that at least part of a group has a property, without claiming every member does. All covers every member of the named group. In these trials restricts a statement to particular records. May signals a possibility in the intended context, not a guaranteed result. A summary can become inaccurate by dropping just one of these qualifiers.",
+        "Use an original paper light-token model with ten incoming tokens per filter card. The records show A transmits six, B transmits four and C transmits zero. 'Some of these three filter cards transmitted tokens' is supported. 'Every filter card transmitted tokens' is contradicted by C. 'All possible filter materials block some light in every setting' goes beyond the three supplied records and the model's scope.",
+        "Quantifiers must stay attached to their reference group. 'All three cards in this model transmitted fewer than ten tokens' fits the record, but replacing it with 'all filters everywhere transmit fewer than ten' removes the restriction. Likewise, zero transmitted tokens in C's record is an observation within this model; it does not by itself establish behavior at every wavelength, angle or condition of a real material.",
+        "Revise precisely rather than making every statement vague. If the record supports an exact count, use it: 'Two of the three modeled cards transmitted at least one token, with counts of six, four and zero across A, B and C.' State the evidence boundary and keep important conditions. A cautious-sounding word is not a substitute for checking whether the underlying claim is actually supported."
+      ],
+      "practice": [
+        "Is 'All three modeled cards transmitted fewer than ten tokens' supported? Check each count.",
+        "Revise 'All filters allow some light through' to match only the supplied model records.",
+        "Why does adding 'possibly' to a claim about every real filter not repair the absence of evidence about those materials and conditions?"
+      ],
+      "answers": [
+        "Yes. Six, four and zero are each less than ten, and the claim is restricted to the three modeled cards.",
+        "One acceptable revision is 'Two of the three modeled filter cards transmitted tokens: A transmitted six and B four; C transmitted zero.' Equivalent summaries must preserve the limited group and C's zero.",
+        "The word weakens the certainty but does not provide the missing evidence or define the scope. The summary should report the actual records and identify what remains unknown."
+      ],
+      "adaptation": "Underline the group name and circle the quantifier in each sentence. Learners can sort claim cards into supported, contradicted and not established, explaining their choices aloud.",
+      "references": [
+        "supported-science-reading",
+        "science-explanation-writing"
+      ],
+      "tags": [
+        "claim-qualifiers",
+        "quantifier-scope",
+        "bounded-summary",
+        "supported-contradicted-unknown"
+      ]
+    },
+    {
+      "id": "158",
+      "edition": "2026-10-04",
+      "title": "Describe a scientific figure so its information is available in text",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "60",
+        "88",
+        "151"
+      ],
+      "goal": "Write a useful figure introduction and fuller text description preserving labels, values and the stated context without inventing an explanation.",
+      "materials": "Paper for the original chart described here, or its values as a table; color is not needed.",
+      "lesson": [
+        "A chart can carry essential information that a reader needs in another form. For a complex figure, a brief identifying description can point to a fuller explanation containing the important labels, relationships and values. The right detail depends on the figure's purpose and surrounding text. A decorative description of colors alone may omit the information needed to understand the evidence.",
+        "Use this original fictional chart: three vertical bars show counted seedlings on day 7 in trays A, B and C. The vertical axis is number of counted seedlings, starting at zero with ticks at 3, 6 and 9. A has 6, B has 9 and C has 3. A short description could say, 'Bar chart of day-7 seedling counts in three fictional trays; values are given in the following text.' A fuller description then names the three counts and explains that B is highest and C lowest.",
+        "Keep observed information separate from an inferred explanation. The chart gives no initial seed counts, tray areas or treatment assignments. Therefore it does not show that B had the highest germination percentage or that a treatment caused its higher count. A clear description preserves those limits instead of adding a persuasive story. If exact values matter to the reader's task, include them in text or an accessible table rather than only saying that the bars differ.",
+        "Review the description without looking at the drawing. Can the reader identify the quantity, units or count type, time, groups and relevant comparisons? Avoid phrases such as 'the green one' when a group label is available. This paper exercise practices communicating essential figure content; producing a fully accessible digital document also depends on structure, implementation and user needs beyond this one description."
+      ],
+      "practice": [
+        "Write a fuller text description that includes the chart's quantity, day, tray labels and all three values.",
+        "How many more seedlings were counted in B than A? Can the chart alone establish that B had the higher germination percentage?",
+        "Why is 'Three colored bars, one tall and two shorter' insufficient for a reader who needs the scientific information?"
+      ],
+      "answers": [
+        "One version: 'The fictional chart records seedling counts on day 7: tray A has 6, B has 9 and C has 3. B has the largest count and C the smallest. The vertical count axis starts at zero.' Equivalent descriptions should retain all labels, values and context.",
+        "Three more were counted in B. No germination percentage can be established without a suitable initial seed denominator and a clear definition of what was counted.",
+        "It omits the measured quantity, group identities, values and day. Relative visual appearance alone cannot answer the same questions as the chart."
+      ],
+      "adaptation": "Use a partner who receives only the text and asks questions about missing information. Spoken descriptions and a labeled data list can be used without drawing or seeing the chart.",
+      "references": [
+        "figure-description"
+      ],
+      "tags": [
+        "figure-text-description",
+        "accessible-data-description",
+        "chart-caption",
+        "essential-information"
+      ]
+    },
+    {
+      "id": "159",
+      "edition": "2026-10-04",
+      "title": "Revise a scientific explanation after targeted feedback",
+      "track": "scientific-literacy",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "33",
+        "90",
+        "102",
+        "128",
+        "154",
+        "155",
+        "157"
+      ],
+      "goal": "Use feedback to repair a specific reasoning error while keeping the observations, mechanism and limitations distinct.",
+      "materials": "Paper copies of the original cooling record, draft and feedback; use only the supplied fictional data.",
+      "lesson": [
+        "Read this fictional record: equal amounts of the same liquid in matching containers start at 50 degrees Celsius in a 20-degree room. One container has a sleeve and one is bare. At minute 10 the sleeved record is 36 degrees and the bare record is 30. These are supplied paper values. The draft explanation says, 'The sleeve made heat because its container was hotter. It stopped all cooling.'",
+        "Give feedback tied to a specific sentence and record: 'Compare both final readings with their 50-degree starting value. Did either container get warmer during the recorded interval?' The sleeved reading fell by 14 degrees and the bare reading by 20. Being warmer than the other container at the end does not mean warming occurred over time. The draft confuses a comparison between containers with a change within one container.",
+        "A revision could say, 'Both recorded temperatures fell. The sleeved container had the smaller decrease over ten minutes. Under the stated matching conditions, that pattern is consistent with a sleeve reducing the rate of net energy transfer to cooler surroundings; these two readings alone do not establish every transfer pathway or performance in other settings.' The revision uses the record, proposes a bounded explanation and removes the unsupported claim that cooling stopped.",
+        "Check whether the revision answers the feedback without inventing evidence. Replacing made heat with kept all heat would still conflict with the decrease and overstate the account. More tests and a clearer measurement record could strengthen the explanation; simply adding 'scientifically proven' could not. Keep both the original draft and revision when reviewing learning so the changed reasoning is visible. No real heating activity or insulation selection is required."
+      ],
+      "practice": [
+        "Calculate each recorded temperature decrease over ten minutes.",
+        "Explain the difference between 'the sleeved container was warmer than the bare one at minute 10' and 'the sleeved container warmed up.'",
+        "Revise 'The sleeve stopped all cooling' in one or two sentences using the supplied evidence and an appropriate limit."
+      ],
+      "answers": [
+        "Sleeved: 50 - 36 = 14 degrees Celsius. Bare: 50 - 30 = 20 degrees Celsius.",
+        "The first compares two containers at the same time. The second asserts a temperature increase within one container over time, which these records contradict.",
+        "Accept a revision stating that the sleeved record still cooled but had a smaller decrease in this comparison. It should avoid a universal effectiveness claim and distinguish the supplied pattern from complete proof of a mechanism."
+      ],
+      "adaptation": "Read the draft and feedback aloud, then let the learner dictate a revision. Assess the change in reasoning separately from spelling or fluent independent reading.",
+      "references": [
+        "science-explanation-writing",
+        "reading-thermal-model",
+        "heat-modes"
+      ],
+      "tags": [
+        "explanation-revision",
+        "comparison-versus-change",
+        "targeted-feedback",
+        "bounded-mechanism"
+      ]
+    },
+    {
+      "id": "160",
+      "edition": "2026-10-04",
+      "title": "Build a scientific reading brief from records, a model and a caption",
+      "track": "integrated-project",
+      "audience": "Supported readers with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "51",
+        "92",
+        "101",
+        "122",
+        "143",
+        "154",
+        "155",
+        "158",
+        "159"
+      ],
+      "goal": "Combine an original passage and data record into a short explanation that labels evidence, calculations, model assumptions and remaining questions.",
+      "materials": "Paper for a one-page brief and the complete fictional study record below; no experiment, heating or equipment is required.",
+      "lesson": [
+        "Read this original study description: 'Three paper trials compare bare and sleeved matching containers. Each uses equal amounts of the same liquid, a recorded start of 50 degrees Celsius and a room at 20 degrees. At minute 10, bare-container readings are 30, 31 and 29 degrees; sleeved readings are 36, 35 and 37. No measurements after minute 10 are supplied. The description does not record how positions or condition order were assigned.' Treat this as a fictional reading dossier, not a report of an experiment performed by FieldForge.",
+        "Extract observations before writing a conclusion. The bare-group final mean is (30 + 31 + 29)/3 = 30 degrees, and the sleeved mean is (36 + 35 + 37)/3 = 36. All six readings are below the common 50-degree start. The group means therefore correspond to average decreases of 20 and 14 degrees over the stated interval. The six-degree difference is a difference between final means, not evidence that either group warmed up.",
+        "Use a thermal-transfer model to propose a limited explanation: a sleeve can alter transfers between the container and cooler surroundings. Under the matching assumptions, the supplied pattern is consistent with slower net energy loss in the sleeved condition. Check alternatives and evidence gaps, including measurement quality, position effects and the unrecorded assignment method. Three fictional trials do not establish performance for every material, duration or setup, and no later temperature should be invented from these records.",
+        "Prepare a brief with a descriptive title, a small labeled value table or text description, one calculation with units, a claim linked to the records, a possible mechanism with assumptions, and one specific next evidence need. Attribute the numbers to this lesson's fictional dossier. For a figure caption, identify the ten-minute endpoint and the groups, and provide all six values in accompanying text. Keep an observed pattern, a calculated summary and a model-based explanation distinguishable to the reader."
+      ],
+      "practice": [
+        "Calculate the two final group means and their difference. State why neither mean demonstrates warming from the start.",
+        "Write a three- or four-sentence explanation containing a numerical comparison, a possible mechanism and a limitation grounded in the dossier.",
+        "Name one specific additional record that would help assess the explanation, and give a suitable caption or text introduction for the six final readings."
+      ],
+      "answers": [
+        "Bare mean 30 degrees Celsius; sleeved mean 36; difference 6 degrees. Both are below the 50-degree start, so both groups cooled on average, and all individual listed readings also fell.",
+        "Accept an explanation reporting the smaller average decrease for the sleeved group, connecting it cautiously to altered energy transfer under the matching assumptions, and naming a real gap such as assignment, position effects, measurement quality or later-time behavior. Reject claims of proven universal performance or heat creation.",
+        "Possible records include measurement method and uncertainty, condition/position assignments, or readings at additional stated times. A caption could be 'Fictional ten-minute container temperatures in degrees Celsius: bare 30, 31, 29; sleeved 36, 35, 37; all started at 50.' Equivalent descriptions must identify groups, units, endpoint and values."
+      ],
+      "adaptation": "Allow a spoken brief with a partner recording it. Record which calculations, readings and explanations were independent, prompted or modeled; this exercise is a learning record rather than a certification.",
+      "references": [
+        "science-explanation-writing",
+        "reading-thermal-model",
+        "figure-description"
+      ],
+      "tags": [
+        "scientific-reading-brief",
+        "evidence-model-distinction",
+        "cooling-dossier",
+        "explanation-portfolio"
       ]
     }
   ]

@@ -5813,6 +5813,288 @@
         "https://www.nist.gov/itl/sed/topic-areas/measurement-uncertainty"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-149",
+      "title": "Education 149: Choose a scientific word's meaning from its context",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 736,
+      "body_sha256": "b94f77796534eb7805d79c2f74d5c0026818edd52320ca306621b20944d3b28c",
+      "prerequisites": [
+        "fieldforge-education-89",
+        "fieldforge-education-105",
+        "fieldforge-education-125",
+        "fieldforge-education-126"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://openstax.org/books/physics/pages/9-1-work-power-and-the-work-energy-theorem"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-150",
+      "title": "Education 150: Follow a process passage that branches into several paths",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 690,
+      "body_sha256": "058c838e62656223a2cf6b797f31d890db129c56f9d68fae38b3ae63c3216546",
+      "prerequisites": [
+        "fieldforge-education-54",
+        "fieldforge-education-76",
+        "fieldforge-education-114"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://www.usgs.gov/water-science-school/water-cycle"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-151",
+      "title": "Education 151: Read a scientific diagram's legend before its arrows",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 688,
+      "body_sha256": "6ee5c447b7adc59798fdd541d271801fe4039c9e6dbd09e251f1fd550fec0bb1",
+      "prerequisites": [
+        "fieldforge-education-40",
+        "fieldforge-education-71",
+        "fieldforge-education-105",
+        "fieldforge-education-150"
+      ],
+      "references": [
+        "https://www.usgs.gov/water-science-school/water-cycle",
+        "https://www.w3.org/WAI/tutorials/images/complex/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-152",
+      "title": "Education 152: Resolve pronouns and cause words in a science paragraph",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 695,
+      "body_sha256": "d15767b8ac5861cc8e2a81183b8dab9ea77cf5bdab8b226fbb3be261fa0356a6",
+      "prerequisites": [
+        "fieldforge-education-75",
+        "fieldforge-education-76",
+        "fieldforge-education-128"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://www.usgs.gov/water-science-school/science/condensation-and-water-cycle"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-153",
+      "title": "Education 153: Compare two process accounts using the same questions",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 753,
+      "body_sha256": "10d498978a37761c62d5987401315fd102fd0eb0284c52957f391a558bd47d4b",
+      "prerequisites": [
+        "fieldforge-education-38",
+        "fieldforge-education-60",
+        "fieldforge-education-80",
+        "fieldforge-education-102"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://www.usgs.gov/water-science-school/science/evaporation-and-water-cycle",
+        "https://openstax.org/books/physics/pages/11-3-phase-change-and-latent-heat"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-154",
+      "title": "Education 154: Link a shadow claim to records and a ray explanation",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 705,
+      "body_sha256": "a30fe2a77ceb8321b0a8c7e9c8606c220cde7fb58fd41666dab5bdcbb54b9018",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-69",
+        "fieldforge-education-121",
+        "fieldforge-education-122"
+      ],
+      "references": [
+        "https://openstax.org/books/physics/pages/16-1-reflection",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-155",
+      "title": "Education 155: Cross-check a scientific paragraph against its data table",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 708,
+      "body_sha256": "24f698cdc479fa25ba91e915509377bcdd822a8d062901bc1bdf91f01202f1e3",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-60",
+        "fieldforge-education-72",
+        "fieldforge-education-123"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-156",
+      "title": "Education 156: Distinguish plotted observations from estimates and forecasts",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 637,
+      "body_sha256": "832c7c60b7c73352948d2fb3e61ad27de15796842cc495aa78441d50fc3a2d17",
+      "prerequisites": [
+        "fieldforge-education-84",
+        "fieldforge-education-121",
+        "fieldforge-education-138"
+      ],
+      "references": [
+        "https://openstax.org/books/college-algebra-2e/pages/4-3-fitting-linear-models-to-data"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-157",
+      "title": "Education 157: Keep quantifiers and conditions when summarizing a claim",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 719,
+      "body_sha256": "2618d70cec5d86275a22b66fe295701beab4b4efb49d00ca23df0a4edb4f5c95",
+      "prerequisites": [
+        "fieldforge-education-23",
+        "fieldforge-education-60",
+        "fieldforge-education-87",
+        "fieldforge-education-94"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-158",
+      "title": "Education 158: Describe a scientific figure so its information is available in text",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 717,
+      "body_sha256": "3eec397ebb8c6a844d4ad837d2a7bd9a245527af121a68ee3b7b34b7343d0e9c",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-60",
+        "fieldforge-education-88",
+        "fieldforge-education-151"
+      ],
+      "references": [
+        "https://www.w3.org/WAI/tutorials/images/complex/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-159",
+      "title": "Education 159: Revise a scientific explanation after targeted feedback",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 772,
+      "body_sha256": "f3859824e44d17b0f25d50937316fea60a4ca813d1c5e472f82af12125467988",
+      "prerequisites": [
+        "fieldforge-education-33",
+        "fieldforge-education-90",
+        "fieldforge-education-102",
+        "fieldforge-education-128",
+        "fieldforge-education-154",
+        "fieldforge-education-155",
+        "fieldforge-education-157"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://openstax.org/books/physics/pages/11-1-temperature-and-thermal-energy",
+        "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-160",
+      "title": "Education 160: Build a scientific reading brief from records, a model and a caption",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 914,
+      "body_sha256": "8fd7666d279ec9ab4ffa1b9c3678d11c6e0edea6d4dd009185eb2ae2328d14eb",
+      "prerequisites": [
+        "fieldforge-education-51",
+        "fieldforge-education-92",
+        "fieldforge-education-101",
+        "fieldforge-education-122",
+        "fieldforge-education-143",
+        "fieldforge-education-154",
+        "fieldforge-education-155",
+        "fieldforge-education-158",
+        "fieldforge-education-159"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://openstax.org/books/physics/pages/11-1-temperature-and-thermal-energy",
+        "https://www.w3.org/WAI/tutorials/images/complex/"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [

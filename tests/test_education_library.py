@@ -35,7 +35,7 @@ def no_network(*args, **kwargs):
 def test_shipped_lessons_match_editable_source_and_have_complete_learning_paths():
     source = json.loads((ROOT / "fieldforge/content/education/lessons.json").read_text("utf-8"))
     articles, entries = compile_lessons(source)
-    assert len(articles) == 148
+    assert len(articles) == 160
     assert read_pack("education-foundations.json") == envelope(articles)
     combined = read_pack("reference-library.json")
     by_slug = {row["slug"]: row for row in combined["data"]["articles"]}
@@ -81,12 +81,16 @@ def test_shipped_lessons_match_editable_source_and_have_complete_learning_paths(
     assert envelope(articles[:136])["checksum"] == (
         "9d6d2d7081e90e53ed4db9517fd26c7c82cd7dab9a9c81bfa1c86df833c39f8a"
     )
+    assert envelope(articles[:148])["checksum"] == (
+        "b78249716f2a1a6e1695778c1b5892d910c38f15edb356e11924cacb493511b1"
+    )
     assert {row["edition"] for row in entries[:24]} == {"2026-10-02"}
-    assert {row["edition"] for row in entries[24:]} == {"2026-10-03"}
+    assert {row["edition"] for row in entries[24:148]} == {"2026-10-03"}
+    assert {row["edition"] for row in entries[148:]} == {"2026-10-04"}
 
 
 @pytest.mark.parametrize("use_fts", [True, False])
-@pytest.mark.parametrize("previous_lessons", [0, 24, 40, 56, 72, 88, 100, 112, 124, 136])
+@pytest.mark.parametrize("previous_lessons", [0, 24, 40, 56, 72, 88, 100, 112, 124, 136, 148])
 def test_upgrade_preserves_existing_articles_and_notes_and_is_searchable_offline(
     tmp_path, monkeypatch, use_fts, previous_lessons
 ):
@@ -105,9 +109,9 @@ def test_upgrade_preserves_existing_articles_and_notes_and_is_searchable_offline
         library.annotate(PREFIX + f"{previous_lessons:02d}", bookmarked=True,
                          note="My teaching adaptation")
     result = install_reference_library(library)
-    assert result == {"imported": 148 - previous_lessons, "unchanged": 267 + previous_lessons,
+    assert result == {"imported": 160 - previous_lessons, "unchanged": 267 + previous_lessons,
                       "annotations": 0, "packs": 1}
-    assert library.count() == 415
+    assert library.count() == 427
     assert library.get(slug) == original
     assert library.annotation(slug) == {
         "bookmarked": True, "note": "Personal note survives the education update"
@@ -118,7 +122,7 @@ def test_upgrade_preserves_existing_articles_and_notes_and_is_searchable_offline
         }
     first_page = library.browse(100, category="education")
     second_page = library.browse(100, offset=100, category="education")
-    assert len(first_page) == 100 and len(second_page) == 60
+    assert len(first_page) == 100 and len(second_page) == 72
     expected_slugs = {row["slug"] for row in all_rows if row["category"] == "education"}
     assert {row.slug for row in first_page + second_page} == expected_slugs
     assert library.browse(100, offset=200, category="education") == []
@@ -174,21 +178,27 @@ def test_upgrade_preserves_existing_articles_and_notes_and_is_searchable_offline
                             ("simultaneous-equations", "141"), ("rounding-interval", "142"),
                             ("weighted-mean", "143"), ("conditional-denominator", "144"),
                             ("successive-percentages", "145"), ("specification-reading", "146"),
-                            ("requirement-levels", "147"), ("model-based-plan", "148")):
+                            ("requirement-levels", "147"), ("model-based-plan", "148"),
+                            ("technical-word-context", "149"), ("branching-process", "150"),
+                            ("diagram-legend", "151"), ("scientific-referents", "152"),
+                            ("matched-comparison", "153"), ("claim-evidence-mechanism", "154"),
+                            ("text-table-consistency", "155"), ("interpolation", "156"),
+                            ("claim-qualifiers", "157"), ("figure-text-description", "158"),
+                            ("explanation-revision", "159"), ("scientific-reading-brief", "160")):
         hits = library.search(query, 500, category="education")
         assert PREFIX + expected in {hit.slug for hit in hits}
     repeat = install_reference_library(library)
-    assert repeat["imported"] == 0 and repeat["unchanged"] == 415
+    assert repeat["imported"] == 0 and repeat["unchanged"] == 427
 
 
 def test_standalone_education_pack_import_and_conflict_rollback(tmp_path, monkeypatch):
     monkeypatch.setattr(socket, "socket", no_network)
     library = KnowledgeLibrary(tmp_path / "separate.db")
     result = import_pack(library, PACKS / "education-foundations.json")
-    assert result == {"imported": 148, "unchanged": 0, "annotations": 0}
-    assert library.count() == 148
+    assert result == {"imported": 160, "unchanged": 0, "annotations": 0}
+    assert library.count() == 160
     other = KnowledgeLibrary(tmp_path / "conflict.db")
-    slug = PREFIX + "148"
+    slug = PREFIX + "160"
     other.upsert(KnowledgeArticle(slug, "Local lesson", "Keep my local version", "education"))
     other.annotate(slug, bookmarked=True, note="Private adaptation")
     with pytest.raises(ValueError, match="different content"):
