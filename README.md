@@ -13,6 +13,12 @@ rectangular part envelopes; structural analysis and fabrication CAD are not
 implemented. AI design quality and education learning outcomes have not been
 independently evaluated.
 
+For the ready-to-run Windows program, open [Releases](https://github.com/clryan86/FieldForge/releases)
+and choose **FieldForge-Windows-x64.zip** from a tested desktop build. Extract the
+whole ZIP, then open **FieldForge.exe**. GitHub's **Code → Download ZIP** supplies
+Python source and uses **Start FieldForge.cmd** with Python installed. Successful
+main-branch CI builds publish the verified executable ZIP as a development release.
+
 > FieldForge is a preparedness and reference tool. It does not replace emergency services, licensed medical care, official evacuation orders, or professional advice.
 
 ## Design principles

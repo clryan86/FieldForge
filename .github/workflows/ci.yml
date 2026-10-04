@@ -178,6 +178,7 @@ jobs:
 
   windows-blueprints:
     runs-on: windows-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -189,3 +190,45 @@ jobs:
         env:
           FIELDFORGE_REQUIRE_GUI: "1"
         run: python -m pytest -o addopts='' --capture=sys -q -ra tests/test_blueprint_delivery.py tests/test_knowledge_ui.py tests/test_blueprints.py tests/test_blueprint_acceptance.py tests/test_blueprint_clearance.py tests/test_blueprint_comparison.py tests/test_blueprint_diagnostics.py tests/test_blueprint_drawings.py tests/test_blueprint_evidence.py tests/test_blueprint_geometry.py tests/test_blueprint_parameters.py tests/test_blueprint_projects.py tests/test_blueprint_review_files.py tests/test_blueprint_revision.py tests/test_local_model.py tests/test_database_archive.py tests/test_reference_library.py tests/test_education_library.py
+
+  windows-download:
+    # Publish only the verified build of main, never a pull request's code/token.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [windows-portable, source-bundle]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: FieldForge-Windows-x64
+          path: delivery
+      - name: Check artifact identity and checksum
+        working-directory: delivery
+        run: |
+          sha256sum --check FieldForge-Windows-x64.sha256
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads(Path('FieldForge-Windows-Verification.json').read_text())
+          assert report['status'] == 'passed' and report['packaged']
+          assert report['build']['source_commit'] == os.environ['GITHUB_SHA']
+          assert report['relocated_away_from_source'] and report['inherited_user_data_untouched']
+          assert len(report['checks']) == 9
+          PY
+      - name: Publish downloadable development build
+        working-directory: delivery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          tag="desktop-${GITHUB_RUN_NUMBER}-${GITHUB_SHA:0:7}"
+          cat > RELEASE.txt <<'NOTES'
+          Download **FieldForge-Windows-x64.zip**, extract the entire folder, then open **FieldForge.exe**. Python is included.
+
+          **Blueprints** is beside Dashboard. Choose **Create layout from dimensions** to enter parts and generate drawings without an AI model. Save, edit and export from the engineering workspace. The optional AI makers require a separately installed local Ollama model.
+
+          This is an unsigned development build. Drawings show rectangular part envelopes; structural analysis, joints and fabrication-ready CAD are not implemented. AI design quality and education learning outcomes have not been independently evaluated. Preserve your existing database; the download contains no personal records. See the included READ-ME-FIRST.txt and VERIFICATION.json.
+          NOTES
+          gh release create "$tag" FieldForge-Windows-x64.zip FieldForge-Windows-x64.sha256 FieldForge-Windows-Verification.json --target "$GITHUB_SHA" --title "FieldForge Windows development build ${GITHUB_RUN_NUMBER}" --prerelease --draft --notes-file RELEASE.txt
+          gh release edit "$tag" --draft=false
