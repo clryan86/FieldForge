@@ -13,9 +13,11 @@ rectangular part envelopes; structural analysis and fabrication CAD are not
 implemented. AI design quality and education learning outcomes have not been
 independently evaluated.
 
-**Education is a main desktop tab.** Start with the five guided **Measure & plan**
-lessons: diagrams, worked examples, practice, hints, and feedback for common
-mistakes. All 172 original education lessons are searchable in the same workspace.
+**Education is a main desktop tab.** Choose **Guided: Measure & plan** for five
+lessons with diagrams and numeric practice, or **Guided: Read & write** for five
+lessons with original passages, choice feedback, worked revisions and writing
+tasks. Source text stays available beside the question tab while you answer.
+All 172 original education lessons are searchable in the same workspace.
 Responses and explanations save on this device and in full database backups;
 export an offline worksheet for printing. See [Education workspace](docs/EDUCATION_STUDIO.md).
 

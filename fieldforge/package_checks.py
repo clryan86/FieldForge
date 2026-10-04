@@ -242,7 +242,7 @@ def verify_education_workspace(root, directory: Path) -> None:
     app = FieldForgeApp(directory / "education.db")
     tab = EducationTab(root, app.db.path)
     try:
-        _require(len(tab.catalog) == 177, "Education catalogue missing from the bundle")
+        _require(len(tab.catalog) == 182, "Education catalogue missing from the bundle")
         tab.open_lesson("guide-length")
         tab.response.insert("1.0", "11")
         tab.check_button.invoke()
@@ -266,22 +266,53 @@ def verify_education_workspace(root, directory: Path) -> None:
                  "Written explanations were incorrectly treated as automatically checked")
         _require(tab.save_current(), "Education work could not be saved")
         lesson, question, expected = tab.lesson, tab.question, tab.work
+        tab.track.set("Guided: Read & write")
+        tab.refresh()
+        _require(tab.lesson.id == "read-notice" and "[N5]" in tab.source_text.get("1.0", "end"),
+                 "Literacy course and its practice source are unavailable")
+        tab.choice_response.set("A")
+        tab.check_button.invoke()
+        _require(tab.work.result == "retry" and "older poster" in tab.feedback.get("1.0", "end"),
+                 "Literacy choice feedback is unavailable")
+        tab.hint_button.invoke()
+        tab.choice_response.set("B")
+        tab.reasoning.insert("1.0", "N5 replaces the older location.")
+        tab.check_button.invoke()
+        _require(tab.work.result == "correct" and tab.work.hints == 1,
+                 "Literacy choice check lost its hint record")
+        literacy_lesson, literacy_question, literacy_work = tab.lesson, tab.question, tab.work
+        tab.move_question(3)
+        tab.response.insert("1.0", "Use Room 2 on Saturday from 2 to 3 p.m.; N5 replaces the old poster.")
+        tab.reveal_button.invoke()
+        tab.review_button.invoke()
+        _require(tab.work.result == "draft" and tab.work.reflection == "needs practice",
+                 "Writing must remain an explicit self-review")
+        writing_question, writing_work = tab.question, tab.work
     finally:
         tab.destroy()
     backup = create_verified_backup(app.db.path, directory / "education.ffbackup")
     recovered = restore_verified_copy(backup, directory / "education-restored.db", active_database=app.db.path)
     store = StudyStore(recovered)
     _require(store.read(lesson.id, question) == expected, "Education work did not survive a full backup")
+    _require(store.read(literacy_lesson.id, literacy_question) == literacy_work
+             and store.read(literacy_lesson.id, writing_question) == writing_work,
+             "Literacy choice or writing work did not survive a full backup")
     records = tuple(store.read(lesson.id, q) for q in lesson.questions)
     output = worksheet(lesson, records)
     _require(expected.response in output and "<details>" in output, "Offline worksheet export is incomplete")
     (directory / "education-worksheet.html").write_text(output, encoding="utf-8")
+    literacy_output = worksheet(literacy_lesson, tuple(store.read(literacy_lesson.id, q) for q in literacy_lesson.questions))
+    _require("[N5]" in literacy_output and writing_work.response in literacy_output,
+             "Literacy worksheet lost its source or saved writing")
+    (directory / "literacy-worksheet.html").write_text(literacy_output, encoding="utf-8")
     reopened = EducationTab(root, recovered)
     try:
         reopened.open_lesson(lesson.id)
         reopened.move_question(4)
         _require(reopened.response.get("1.0", "end-1c") == expected.response,
                  "Recovered education response is not visible in the UI")
+        reopened.open_lesson(literacy_lesson.id)
+        _require(reopened.choice_response.get() == "B", "Recovered choice is not visible")
     finally:
         reopened.destroy()
 
@@ -358,7 +389,7 @@ def verify_installation() -> dict[str, object]:
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
-        checks.append("Education: 177 lessons, misconception feedback, hints, numeric check, self-review, saved responses, backup/restore and offline worksheet")
+        checks.append("Education: 182 lessons; maths and literacy feedback, hints, number/choice checks, writing self-review, saved work, backup/restore and worksheets with source passages")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

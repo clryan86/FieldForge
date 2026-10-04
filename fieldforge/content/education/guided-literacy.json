@@ -1,0 +1,817 @@
+{
+  "edition": "guided-literacy-2026-10-04",
+  "license": "CC BY-SA 4.0",
+  "authorship": "Original AI-assisted FieldForge teaching drafts, not independently educator-reviewed. All passages, characters, numerical records and draft messages are fictional and original.",
+  "references": [
+    "Instructional-design background: IES / What Works Clearinghouse, Improving Reading Comprehension in Kindergarten Through 3rd Grade (2010). Strategy use, text organization and discussion inform this design. The guide concerns K–3 teaching; these original supported-reading exercises and adaptations have not been validated by it, including for adults. Accessed 2026-10-04.\nhttps://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+    "Instructional-design background: IES / What Works Clearinghouse, Teaching Elementary School Students to Be Effective Writers (2012, revised 2018). Writing processes and varied purposes inform this design. These original prompts and criteria are not the guide's tested intervention or a standardized writing assessment. Accessed 2026-10-04.\nhttps://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+  ],
+  "lessons": [
+    {
+      "id": "read-notice",
+      "title": "1 · Read a notice without adding assumptions",
+      "track": "Guided: Read & write",
+      "goal": "Find who, what, where and when; distinguish a general instruction from a conditional request; identify missing information.",
+      "materials": "Paper and pencil, or this app's response fields. Read the fictional source aloud with a partner if helpful. This is supported comprehension and writing practice, not a beginning phonics course or a reading-level assessment.",
+      "paragraphs": [
+        "BEFORE YOU READ\nThink of a notice that left you uncertain. Was a time, place, condition or contact missing? A notice helps a reader act, so a useful reading question is: 'What would I actually need to know before taking part?' This lesson uses a fictional reading-table notice, not a real event.",
+        "A REPEATABLE READING ROUTINE\nFirst read the whole notice to learn its purpose. Next, locate the detail that answers your question. Then read the sentence around that detail, because a word such as 'if', 'before' or 'only' can change who must act. Finally, separate what the text states from what you would still need to ask. Do not fill a missing detail with a convenient guess.",
+        "WORKED EXAMPLE · A CONDITION HAS A SCOPE\nMini-notice: 'The sketch group meets on Tuesday at 4 p.m. If you need a pencil, tell Lee by Monday.'\nQuestion: Does everyone have to contact Lee?\nThinking: The first sentence applies to the group meeting. The second begins with 'if' and names only people who need a pencil. So the text does not require every participant to contact Lee.\nUseful explanation: 'Only people requesting a pencil are told to contact Lee; the condition is needing a pencil.'",
+        "WORKED EXAMPLE · A NUMBER CAN ANSWER THE WRONG QUESTION\nMini-notice: 'The room has twenty seats.' This tells the room's stated seat count. It does not tell how many people will come. Saying 'twenty people will attend' turns a capacity detail into an unsupported prediction. Ask whether the number measures what your question asks about.",
+        "PRACTICE WITH EVIDENCE\nRead the source below. Line labels such as N1 are location aids, not rankings of importance. In Practice & explain, select a choice, then write which line supports it. The Passage / model tab keeps the notice available while you write. You can also write 'the sentence beginning…' rather than using a line label. Checking a choice does not grade the written explanation.",
+        "BUILD A USEFUL REPLY\nA reply should preserve the stated time and place, explain any condition relevant to the reader, and label unresolved questions. Avoid adding reassurance about services the notice does not mention. A question such as 'Is there a step-free route to Room 2?' keeps missing information visible instead of treating silence as confirmation.",
+        "REVISIT\nUse another ordinary, non-urgent notice later. Make two short lists: 'stated' and 'not stated'. Ask someone else to locate the supporting sentences. If they cannot find your detail in the notice, decide whether it is an inference, outside knowledge or a mistake. This practice does not establish independent reading ability.",
+        "PRACTICE SOURCE TEXT\nREADING TABLE — FICTIONAL PRACTICE NOTICE\n[N1] The reading table meets on Saturday from 2:00 to 3:00 p.m. in Room 2.\n[N2] Bring one book to discuss. You may borrow a book at the table; you do not need to own one.\n[N3] No ticket or payment is needed. Room 2 has twelve chairs.\n[N4] If you want a large-print reading sheet, tell Jo by Friday at noon. Jo needs time to prepare those sheets.\n[N5] An older poster listed the library hall and a 1:00 p.m. start. This notice replaces that poster: use Room 2 and the 2:00 p.m. start.\n[N6] The notice gives no information about transport or step-free access. Ask the organizer rather than assuming those arrangements exist.\nWord help: 'large-print' means text printed in larger letters; 'replaces' means to use this notice instead of the older one for the stated details."
+      ],
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "According to the replacement notice, where does the group meet?",
+          "choices": [
+            [
+              "A",
+              "The library hall"
+            ],
+            [
+              "B",
+              "Room 2"
+            ],
+            [
+              "C",
+              "At Jo's home"
+            ]
+          ],
+          "answer": "B",
+          "explanation": "N1 names Room 2. N5 explicitly replaces the older library-hall information. Use the location stated in the operative notice, not the superseded poster.",
+          "hints": [
+            "Find the location in N1, then check the change in N5.",
+            "Which place does N5 say to use?"
+          ],
+          "mistakes": [
+            [
+              "A",
+              "The library hall belongs to the older poster. N5 explicitly replaces that location."
+            ],
+            [
+              "C",
+              "Jo is named as a contact for sheets. No sentence says the meeting is at Jo's home."
+            ]
+          ],
+          "unit": "",
+          "id": "q1",
+          "passage": "READING TABLE — FICTIONAL PRACTICE NOTICE\n[N1] The reading table meets on Saturday from 2:00 to 3:00 p.m. in Room 2.\n[N2] Bring one book to discuss. You may borrow a book at the table; you do not need to own one.\n[N3] No ticket or payment is needed. Room 2 has twelve chairs.\n[N4] If you want a large-print reading sheet, tell Jo by Friday at noon. Jo needs time to prepare those sheets.\n[N5] An older poster listed the library hall and a 1:00 p.m. start. This notice replaces that poster: use Room 2 and the 2:00 p.m. start.\n[N6] The notice gives no information about transport or step-free access. Ask the organizer rather than assuming those arrangements exist.\nWord help: 'large-print' means text printed in larger letters; 'replaces' means to use this notice instead of the older one for the stated details."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Who is told to contact Jo by Friday at noon?",
+          "choices": [
+            [
+              "A",
+              "Everyone who plans to attend"
+            ],
+            [
+              "B",
+              "Only people who own books"
+            ],
+            [
+              "C",
+              "People requesting a large-print sheet"
+            ]
+          ],
+          "answer": "C",
+          "explanation": "N4 begins 'If you want a large-print reading sheet'. The deadline applies to that request. The text does not state a general registration deadline.",
+          "hints": [
+            "Read the condition at the start of N4.",
+            "The deadline belongs to preparing a particular kind of sheet."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "That widens a conditional request into a rule for everybody. Re-read the 'if' clause in N4."
+            ],
+            [
+              "B",
+              "Book ownership is discussed in N2, but it is not the condition attached to the deadline in N4."
+            ]
+          ],
+          "unit": "",
+          "id": "q2",
+          "passage": "READING TABLE — FICTIONAL PRACTICE NOTICE\n[N1] The reading table meets on Saturday from 2:00 to 3:00 p.m. in Room 2.\n[N2] Bring one book to discuss. You may borrow a book at the table; you do not need to own one.\n[N3] No ticket or payment is needed. Room 2 has twelve chairs.\n[N4] If you want a large-print reading sheet, tell Jo by Friday at noon. Jo needs time to prepare those sheets.\n[N5] An older poster listed the library hall and a 1:00 p.m. start. This notice replaces that poster: use Room 2 and the 2:00 p.m. start.\n[N6] The notice gives no information about transport or step-free access. Ask the organizer rather than assuming those arrangements exist.\nWord help: 'large-print' means text printed in larger letters; 'replaces' means to use this notice instead of the older one for the stated details."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which statement is supported by the notice?",
+          "choices": [
+            [
+              "A",
+              "A participant may borrow a book at the table."
+            ],
+            [
+              "B",
+              "Exactly twelve people will attend."
+            ],
+            [
+              "C",
+              "Transport is provided for every participant."
+            ]
+          ],
+          "answer": "A",
+          "explanation": "N2 explicitly permits borrowing a book. N3 gives a chair count, not an attendance forecast. N6 says transport information is absent.",
+          "hints": [
+            "Find a sentence that states the selected claim directly.",
+            "Separate permission to borrow from seat capacity and missing arrangements."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "Twelve is the stated chair count, not the number of people who will attend."
+            ],
+            [
+              "C",
+              "N6 says transport information is missing. Absence of a restriction does not establish that transport is provided."
+            ]
+          ],
+          "unit": "",
+          "id": "q3",
+          "passage": "READING TABLE — FICTIONAL PRACTICE NOTICE\n[N1] The reading table meets on Saturday from 2:00 to 3:00 p.m. in Room 2.\n[N2] Bring one book to discuss. You may borrow a book at the table; you do not need to own one.\n[N3] No ticket or payment is needed. Room 2 has twelve chairs.\n[N4] If you want a large-print reading sheet, tell Jo by Friday at noon. Jo needs time to prepare those sheets.\n[N5] An older poster listed the library hall and a 1:00 p.m. start. This notice replaces that poster: use Room 2 and the 2:00 p.m. start.\n[N6] The notice gives no information about transport or step-free access. Ask the organizer rather than assuming those arrangements exist.\nWord help: 'large-print' means text printed in larger letters; 'replaces' means to use this notice instead of the older one for the stated details."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A friend has the old poster. Write a two- or three-sentence message giving the current meeting place and time, and explain what the Friday deadline applies to.",
+          "answer": "Compare with the criteria",
+          "explanation": "Check four points: Room 2; Saturday 2:00–3:00 p.m.; this notice replaces the old poster; the Friday-noon contact is for large-print sheet requests. One possible message: 'Use Room 2 on Saturday from 2 to 3 p.m.; this notice replaces the old library-hall poster. If you want a large-print sheet, tell Jo by Friday at noon.' Other wording is valid if those meanings are preserved. Revise any sentence that makes the sheet-request deadline a rule for all attendees.",
+          "hints": [
+            "List the replacement place/time before drafting.",
+            "Use 'if' when explaining the sheet request."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q4",
+          "passage": "READING TABLE — FICTIONAL PRACTICE NOTICE\n[N1] The reading table meets on Saturday from 2:00 to 3:00 p.m. in Room 2.\n[N2] Bring one book to discuss. You may borrow a book at the table; you do not need to own one.\n[N3] No ticket or payment is needed. Room 2 has twelve chairs.\n[N4] If you want a large-print reading sheet, tell Jo by Friday at noon. Jo needs time to prepare those sheets.\n[N5] An older poster listed the library hall and a 1:00 p.m. start. This notice replaces that poster: use Room 2 and the 2:00 p.m. start.\n[N6] The notice gives no information about transport or step-free access. Ask the organizer rather than assuming those arrangements exist.\nWord help: 'large-print' means text printed in larger letters; 'replaces' means to use this notice instead of the older one for the stated details."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Name one practical question the notice does not answer. Explain why guessing the answer could mislead a reader, and write a question to the organizer.",
+          "answer": "Compare with the criteria",
+          "explanation": "Identify a genuine gap, such as transport or step-free access (N6). Distinguish it from information that is already stated. Example: 'The notice does not say whether there is a step-free route. Assuming there is one could leave someone unable to reach the room. Is there a step-free route to Room 2?' A useful answer names the gap, its consequence and a specific question. Do not invent the organizer's answer.",
+          "hints": [
+            "Look at N6 for explicitly missing arrangements.",
+            "Write 'The notice does not say…' before drafting your question."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q5",
+          "passage": "READING TABLE — FICTIONAL PRACTICE NOTICE\n[N1] The reading table meets on Saturday from 2:00 to 3:00 p.m. in Room 2.\n[N2] Bring one book to discuss. You may borrow a book at the table; you do not need to own one.\n[N3] No ticket or payment is needed. Room 2 has twelve chairs.\n[N4] If you want a large-print reading sheet, tell Jo by Friday at noon. Jo needs time to prepare those sheets.\n[N5] An older poster listed the library hall and a 1:00 p.m. start. This notice replaces that poster: use Room 2 and the 2:00 p.m. start.\n[N6] The notice gives no information about transport or step-free access. Ask the organizer rather than assuming those arrangements exist.\nWord help: 'large-print' means text printed in larger letters; 'replaces' means to use this notice instead of the older one for the stated details."
+        }
+      ],
+      "diagram": null,
+      "prerequisites": []
+    },
+    {
+      "id": "read-evidence",
+      "title": "2 · Trace events and support an inference",
+      "track": "Guided: Read & write",
+      "goal": "Reconstruct a sequence, connect a stated cause to an event, and qualify an inference using the text.",
+      "materials": "Paper and pencil, or this app's response fields. Read the fictional source aloud with a partner if helpful. This is supported comprehension and writing practice, not a beginning phonics course or a reading-level assessment.",
+      "paragraphs": [
+        "BEFORE YOU READ\nA story can state an action without stating every motive behind it. Keep three categories separate: a fact the narrator states, a conclusion that fits several details, and a possibility for which the text gives no evidence. All three can be discussed, but they should not be presented with the same certainty.",
+        "WORKED EXAMPLE · SEQUENCE IS NOT AUTOMATICALLY CAUSE\nMini-account: 'Sam rang a bell. A cloud covered the sun.' The order tells us which event is narrated first, but it does not show that the bell caused the cloud. For a cause claim, look for a stated mechanism or other evidence linking the events. 'After' and 'because' do different jobs.",
+        "WORKED EXAMPLE · AN INFERENCE WITH A LIMIT\nMini-account: 'Ana checked both the front and back of each page before filing it.' A supported inference is that Ana was trying to avoid missing information. The account does not directly report her thoughts, so say 'This suggests… because…'. Saying 'Ana has never lost a page' reaches beyond the described action.",
+        "A SEQUENCE MAP\nFor each event, jot a short verb phrase: place, scatter, collect, check, recover, move. Then connect the phrases in the order the passage establishes. If a question asks for the event immediately before another event, return to the surrounding sentences; do not choose merely the most memorable action.",
+        "BUILD AN EVIDENCE SENTENCE\nUse a claim, a specific detail, and a link explaining why the detail supports the claim. For example: 'The character seems concerned about completeness because she checks against a list rather than relying on memory.' The evidence is more useful than simply writing 'because the text says so'. Keep the strength of the claim proportional to the evidence.",
+        "PRACTICE\nThe card-box account describes one incident. Use its details to explain decisions within that incident. For the final writing task, distinguish a sensible intention from a guarantee about every future session. Ask a partner to underline your claim and circle your evidence; revise if they cannot identify both.",
+        "PRACTICE SOURCE TEXT\nTHE CARD BOX — FICTIONAL PRACTICE ACCOUNT\n[E1] Before the reading session, Mira arranged story cards in a shallow box beside an open window.\n[E2] A gust lifted the top cards onto the floor. Mira closed the window and gathered the cards.\n[E3] She could not remember their original order. She checked the numbered list taped inside the lid and put the cards back in that order.\n[E4] Theo suggested writing a new story immediately. Mira said, 'First I want to check that every numbered card is back.'\n[E5] After checking the list, Mira found one number missing. She looked under the table and found that card.\n[E6] She moved the closed box to a shelf away from the window. The account does not describe what happened at any later session.\nWord help: a 'gust' is a brief strong movement of air; 'original order' means the sequence before the cards scattered."
+      ],
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "What directly scattered the top cards in the account?",
+          "choices": [
+            [
+              "A",
+              "Theo wrote a new story."
+            ],
+            [
+              "B",
+              "Mira checked the list."
+            ],
+            [
+              "C",
+              "A gust lifted the cards."
+            ]
+          ],
+          "answer": "C",
+          "explanation": "E2 explicitly links the gust to the cards lifting onto the floor. The other actions do not explain that event in the account.",
+          "hints": [
+            "Look for the sentence in which the scattering actually happens.",
+            "E2 names what lifted the cards."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Theo only suggests a new story later, in E4. That suggestion did not scatter the cards."
+            ],
+            [
+              "B",
+              "The list is checked after the cards have scattered, to restore their order."
+            ]
+          ],
+          "unit": "",
+          "id": "q1",
+          "passage": "THE CARD BOX — FICTIONAL PRACTICE ACCOUNT\n[E1] Before the reading session, Mira arranged story cards in a shallow box beside an open window.\n[E2] A gust lifted the top cards onto the floor. Mira closed the window and gathered the cards.\n[E3] She could not remember their original order. She checked the numbered list taped inside the lid and put the cards back in that order.\n[E4] Theo suggested writing a new story immediately. Mira said, 'First I want to check that every numbered card is back.'\n[E5] After checking the list, Mira found one number missing. She looked under the table and found that card.\n[E6] She moved the closed box to a shelf away from the window. The account does not describe what happened at any later session.\nWord help: a 'gust' is a brief strong movement of air; 'original order' means the sequence before the cards scattered."
+        },
+        {
+          "kind": "choice",
+          "prompt": "What did Mira do immediately before looking under the table for the missing card?",
+          "choices": [
+            [
+              "A",
+              "Checked the list and found a missing number."
+            ],
+            [
+              "B",
+              "Moved the closed box to the shelf."
+            ],
+            [
+              "C",
+              "Placed the cards beside the window."
+            ]
+          ],
+          "answer": "A",
+          "explanation": "E5 says Mira found one number missing after checking the list, then looked under the table. E6 occurs afterward; E1 is much earlier.",
+          "hints": [
+            "Find 'looked under the table' in E5.",
+            "Read what happened just before that action."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "Moving the closed box occurs later, in E6. The question asks for the preceding event."
+            ],
+            [
+              "C",
+              "Placing the cards beside the window began the account; it did not happen immediately before the search."
+            ]
+          ],
+          "unit": "",
+          "id": "q2",
+          "passage": "THE CARD BOX — FICTIONAL PRACTICE ACCOUNT\n[E1] Before the reading session, Mira arranged story cards in a shallow box beside an open window.\n[E2] A gust lifted the top cards onto the floor. Mira closed the window and gathered the cards.\n[E3] She could not remember their original order. She checked the numbered list taped inside the lid and put the cards back in that order.\n[E4] Theo suggested writing a new story immediately. Mira said, 'First I want to check that every numbered card is back.'\n[E5] After checking the list, Mira found one number missing. She looked under the table and found that card.\n[E6] She moved the closed box to a shelf away from the window. The account does not describe what happened at any later session.\nWord help: a 'gust' is a brief strong movement of air; 'original order' means the sequence before the cards scattered."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which inference is best supported by Mira's words and actions?",
+          "choices": [
+            [
+              "A",
+              "Mira dislikes every new story."
+            ],
+            [
+              "B",
+              "Mira wanted to account for all the cards before starting something new."
+            ],
+            [
+              "C",
+              "Mira knew where the missing card was from the beginning."
+            ]
+          ],
+          "answer": "B",
+          "explanation": "In E4 Mira asks to check every numbered card first, and in E5 she searches after finding a gap. Together these details support a concern with completeness, not claims about all her preferences or prior knowledge.",
+          "hints": [
+            "Use both Mira's statement in E4 and her check in E5.",
+            "What immediate priority explains both details without inventing a permanent trait?"
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Postponing one proposed activity does not establish a dislike of every new story."
+            ],
+            [
+              "C",
+              "E5 presents the search after a missing number is found. The account does not say she knew the location all along."
+            ]
+          ],
+          "unit": "",
+          "id": "q3",
+          "passage": "THE CARD BOX — FICTIONAL PRACTICE ACCOUNT\n[E1] Before the reading session, Mira arranged story cards in a shallow box beside an open window.\n[E2] A gust lifted the top cards onto the floor. Mira closed the window and gathered the cards.\n[E3] She could not remember their original order. She checked the numbered list taped inside the lid and put the cards back in that order.\n[E4] Theo suggested writing a new story immediately. Mira said, 'First I want to check that every numbered card is back.'\n[E5] After checking the list, Mira found one number missing. She looked under the table and found that card.\n[E6] She moved the closed box to a shelf away from the window. The account does not describe what happened at any later session.\nWord help: a 'gust' is a brief strong movement of air; 'original order' means the sequence before the cards scattered."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "In two or three sentences, explain why the numbered list helped Mira. Include two distinct details from the account.",
+          "answer": "Compare with the criteria",
+          "explanation": "Connect the list to two functions: restoring order when memory was insufficient (E3) and detecting a missing number/card (E5). Example: 'The list let Mira rebuild the order she could not remember. Checking its numbers then exposed a missing card, which led her to search under the table.' Listing E3 and E5 without explaining those functions is incomplete; add the link between detail and claim.",
+          "hints": [
+            "What problem does the list solve in E3? What new problem does it reveal in E5?",
+            "Use 'first… then…' if it helps distinguish the functions."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q4",
+          "passage": "THE CARD BOX — FICTIONAL PRACTICE ACCOUNT\n[E1] Before the reading session, Mira arranged story cards in a shallow box beside an open window.\n[E2] A gust lifted the top cards onto the floor. Mira closed the window and gathered the cards.\n[E3] She could not remember their original order. She checked the numbered list taped inside the lid and put the cards back in that order.\n[E4] Theo suggested writing a new story immediately. Mira said, 'First I want to check that every numbered card is back.'\n[E5] After checking the list, Mira found one number missing. She looked under the table and found that card.\n[E6] She moved the closed box to a shelf away from the window. The account does not describe what happened at any later session.\nWord help: a 'gust' is a brief strong movement of air; 'original order' means the sequence before the cards scattered."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Review this claim: 'Moving the box proves that no cards will ever scatter again.' Write a more defensible claim and explain its limit.",
+          "answer": "Compare with the criteria",
+          "explanation": "Replace the universal guarantee with a limited inference. Example: 'Moving the closed box away from the window appears intended to reduce the chance of a similar gust scattering the cards. The account reports only this incident and gives no later results.' Refer to E6. Your revision should preserve the plausible purpose while removing 'proves', 'no' and 'ever' unless evidence actually establishes them.",
+          "hints": [
+            "E6 names an action but does not report future sessions.",
+            "Distinguish 'may reduce this risk' from 'guarantees it never happens'."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q5",
+          "passage": "THE CARD BOX — FICTIONAL PRACTICE ACCOUNT\n[E1] Before the reading session, Mira arranged story cards in a shallow box beside an open window.\n[E2] A gust lifted the top cards onto the floor. Mira closed the window and gathered the cards.\n[E3] She could not remember their original order. She checked the numbered list taped inside the lid and put the cards back in that order.\n[E4] Theo suggested writing a new story immediately. Mira said, 'First I want to check that every numbered card is back.'\n[E5] After checking the list, Mira found one number missing. She looked under the table and found that card.\n[E6] She moved the closed box to a shelf away from the window. The account does not describe what happened at any later session.\nWord help: a 'gust' is a brief strong movement of air; 'original order' means the sequence before the cards scattered."
+        }
+      ],
+      "diagram": null,
+      "prerequisites": [
+        "read-notice"
+      ]
+    },
+    {
+      "id": "read-summary",
+      "title": "3 · Summarize a report and keep its limits",
+      "track": "Guided: Read & write",
+      "goal": "Identify a report's main point, select relevant evidence, and write a summary without inventing findings.",
+      "materials": "Paper and pencil, or this app's response fields. Read the fictional source aloud with a partner if helpful. This is supported comprehension and writing practice, not a beginning phonics course or a reading-level assessment.",
+      "paragraphs": [
+        "BEFORE YOU READ\nA summary helps another reader understand the main point without reading every detail. Shortness alone is not enough: a short statement can still distort the source. Ask what the text is chiefly explaining, what evidence matters to that explanation, and what limitation would change the reader's interpretation if omitted.",
+        "WORKED EXAMPLE · DETAIL VERSUS MAIN POINT\nMini-report: 'A club moved its pencils from three drawers to one labeled tray. Members then found the pencils in that tray during two meetings. The club has not tracked whether this arrangement remains useful over a term.'\nToo narrow: 'The club had three drawers.'\nToo strong: 'The tray permanently solved every storage problem.'\nBetter: 'A labeled tray helped members locate pencils during two meetings, but longer-term usefulness has not been checked.'",
+        "BUILD A THREE-PART NOTE\nWrite one phrase each for purpose, observed result, and limit. Then combine the phrases into sentences. Keep verbs accurate: 'reported', 'observed', 'suggested' and 'proved' make different claims. Do not replace a limited observation with an assertion about every person or every situation.",
+        "WORKED REVISION · REMOVE AN INVENTED MEASUREMENT\nDraft: 'Everyone found pencils twice as fast.'\nCheck against the mini-report: no times were recorded, not every person is described, and 'twice' has no numerical support.\nRevision: 'Members found the pencils in the labeled tray during the two meetings described.'\nReason: the revised sentence reports what was observed without supplying a measurement the source never made.",
+        "CHOOSING WHAT TO KEEP\nA fact may be true but irrelevant to a particular summary. A box's decorative color would not normally explain how an instruction changed, unless the report connected color to the result. Conversely, a limitation about who took part may matter if the summary otherwise sounds like a controlled comparison. Relevance depends on the question you are answering.",
+        "PRACTICE\nRead the label trial as a report of a small fictional session. Its numerical counts are real within the exercise, but they do not turn it into evidence about all learners. Write a summary that allows a reader to distinguish the observed question pattern from the group's next decision and from things the group did not measure.",
+        "PRACTICE SOURCE TEXT\nTHE LABEL TRIAL — FICTIONAL PRACTICE REPORT\n[R1] A reading group compared two labels for its story-card boxes. The old label said 'Cards'. The trial label said 'Story cards: match the number on each card to the list in the lid'.\n[R2] Four volunteers each sorted one practice set. Two used the old label; two different volunteers used the trial label. The sets contained the same number of cards.\n[R3] Both old-label volunteers asked where the order was recorded. Neither trial-label volunteer asked that question during this session.\n[R4] The group did not record sorting times or test another session. It also did not check whether the two pairs had equal prior experience.\n[R5] The group kept the clearer wording for its next session and planned to observe whether further questions arose.\nWord help: 'trial' means a test use; 'prior experience' means what someone had done before this session. These are invented observations, not research findings."
+      ],
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which statement best captures the report's main point?",
+          "choices": [
+            [
+              "A",
+              "A clearer label was tried; this session showed a different question pattern, with important limits."
+            ],
+            [
+              "B",
+              "Story cards must always have four labels."
+            ],
+            [
+              "C",
+              "The report mainly explains how fast every volunteer sorted."
+            ]
+          ],
+          "answer": "A",
+          "explanation": "R1–R3 describe a label comparison and a question pattern; R4 states limits; R5 describes the next step. Option A includes that central relationship without inventing a universal rule or timing result.",
+          "hints": [
+            "Read the purpose in R1, result in R3 and limits in R4 together.",
+            "Choose a statement broad enough to cover the report but no broader than its evidence."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "Four counts the volunteers in R2. It is not a required number of labels."
+            ],
+            [
+              "C",
+              "R4 explicitly says sorting times were not recorded. A timing claim cannot be the report's supported main finding."
+            ]
+          ],
+          "unit": "",
+          "id": "q1",
+          "passage": "THE LABEL TRIAL — FICTIONAL PRACTICE REPORT\n[R1] A reading group compared two labels for its story-card boxes. The old label said 'Cards'. The trial label said 'Story cards: match the number on each card to the list in the lid'.\n[R2] Four volunteers each sorted one practice set. Two used the old label; two different volunteers used the trial label. The sets contained the same number of cards.\n[R3] Both old-label volunteers asked where the order was recorded. Neither trial-label volunteer asked that question during this session.\n[R4] The group did not record sorting times or test another session. It also did not check whether the two pairs had equal prior experience.\n[R5] The group kept the clearer wording for its next session and planned to observe whether further questions arose.\nWord help: 'trial' means a test use; 'prior experience' means what someone had done before this session. These are invented observations, not research findings."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which detail directly supports the reported difference in questions?",
+          "choices": [
+            [
+              "A",
+              "The boxes held story cards."
+            ],
+            [
+              "B",
+              "Both old-label volunteers asked about the order; neither trial-label volunteer did."
+            ],
+            [
+              "C",
+              "All volunteers finished in exactly one minute."
+            ]
+          ],
+          "answer": "B",
+          "explanation": "R3 gives the observed question pattern for the two pairs. It supports that limited comparison. It does not by itself establish why the pattern differed.",
+          "hints": [
+            "Look for the observed outcome, rather than the activity's general topic.",
+            "R3 records who asked a specific question."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "This identifies the materials but does not distinguish the two question patterns."
+            ],
+            [
+              "C",
+              "No sorting times were recorded (R4), so this detail is invented."
+            ]
+          ],
+          "unit": "",
+          "id": "q2",
+          "passage": "THE LABEL TRIAL — FICTIONAL PRACTICE REPORT\n[R1] A reading group compared two labels for its story-card boxes. The old label said 'Cards'. The trial label said 'Story cards: match the number on each card to the list in the lid'.\n[R2] Four volunteers each sorted one practice set. Two used the old label; two different volunteers used the trial label. The sets contained the same number of cards.\n[R3] Both old-label volunteers asked where the order was recorded. Neither trial-label volunteer asked that question during this session.\n[R4] The group did not record sorting times or test another session. It also did not check whether the two pairs had equal prior experience.\n[R5] The group kept the clearer wording for its next session and planned to observe whether further questions arose.\nWord help: 'trial' means a test use; 'prior experience' means what someone had done before this session. These are invented observations, not research findings."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Why should the summary avoid saying the new label alone caused the difference?",
+          "choices": [
+            [
+              "A",
+              "Because a report can never include observations."
+            ],
+            [
+              "B",
+              "Because the trial label had no words."
+            ],
+            [
+              "C",
+              "Because different people used each label and prior experience was not checked."
+            ]
+          ],
+          "answer": "C",
+          "explanation": "R2 uses different volunteers for the labels, and R4 says prior experience was not checked. The observed difference could have more than one explanation; the report does not isolate the label's effect.",
+          "hints": [
+            "Compare the volunteers described in R2 with the missing check in R4.",
+            "Was the label the only possible relevant difference between the pairs?"
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Observations can be reported accurately. The issue is moving from an observed difference to an isolated cause without enough support."
+            ],
+            [
+              "B",
+              "R1 quotes the trial label's wording. This option contradicts the source."
+            ]
+          ],
+          "unit": "",
+          "id": "q3",
+          "passage": "THE LABEL TRIAL — FICTIONAL PRACTICE REPORT\n[R1] A reading group compared two labels for its story-card boxes. The old label said 'Cards'. The trial label said 'Story cards: match the number on each card to the list in the lid'.\n[R2] Four volunteers each sorted one practice set. Two used the old label; two different volunteers used the trial label. The sets contained the same number of cards.\n[R3] Both old-label volunteers asked where the order was recorded. Neither trial-label volunteer asked that question during this session.\n[R4] The group did not record sorting times or test another session. It also did not check whether the two pairs had equal prior experience.\n[R5] The group kept the clearer wording for its next session and planned to observe whether further questions arose.\nWord help: 'trial' means a test use; 'prior experience' means what someone had done before this session. These are invented observations, not research findings."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Write a two- or three-sentence summary that includes the label change, the observed question pattern, and one important limitation.",
+          "answer": "Compare with the criteria",
+          "explanation": "Check: identify the added instruction about matching numbers to the lid list; report that both old-label volunteers asked about order and neither trial-label volunteer did in this session; retain a limitation such as different people/unchecked prior experience or no repeat session. Example: 'The group tried a label explaining where to find the card order. Both old-label volunteers asked about order, while neither trial-label volunteer did during this session. Different volunteers used the labels and their prior experience was not checked, so the label's effect was not isolated.' Equivalent wording is valid. Remove claims about speed or all learners.",
+          "hints": [
+            "Make three notes: change, observed result, limit.",
+            "Keep 'during this session' or another clear boundary on the result."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q4",
+          "passage": "THE LABEL TRIAL — FICTIONAL PRACTICE REPORT\n[R1] A reading group compared two labels for its story-card boxes. The old label said 'Cards'. The trial label said 'Story cards: match the number on each card to the list in the lid'.\n[R2] Four volunteers each sorted one practice set. Two used the old label; two different volunteers used the trial label. The sets contained the same number of cards.\n[R3] Both old-label volunteers asked where the order was recorded. Neither trial-label volunteer asked that question during this session.\n[R4] The group did not record sorting times or test another session. It also did not check whether the two pairs had equal prior experience.\n[R5] The group kept the clearer wording for its next session and planned to observe whether further questions arose.\nWord help: 'trial' means a test use; 'prior experience' means what someone had done before this session. These are invented observations, not research findings."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Revise this sentence and explain your edits: 'The new label proved that everyone can sort twice as fast without help.'",
+          "answer": "Compare with the criteria",
+          "explanation": "Remove the unsupported universal claim, speed ratio and proof of cause. One defensible revision is: 'In this session, neither of the two volunteers using the trial label asked where the order was recorded.' Explain that no times were measured (R4), only four volunteers took part (R2), and absence of this one question does not mean no help of any kind was needed. A strong revision preserves the actual observation rather than merely replacing 'proved' with 'showed'.",
+          "hints": [
+            "Underline each part that needs evidence: everyone, twice as fast, without help.",
+            "Replace the unsupported outcome with the specific question pattern in R3."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q5",
+          "passage": "THE LABEL TRIAL — FICTIONAL PRACTICE REPORT\n[R1] A reading group compared two labels for its story-card boxes. The old label said 'Cards'. The trial label said 'Story cards: match the number on each card to the list in the lid'.\n[R2] Four volunteers each sorted one practice set. Two used the old label; two different volunteers used the trial label. The sets contained the same number of cards.\n[R3] Both old-label volunteers asked where the order was recorded. Neither trial-label volunteer asked that question during this session.\n[R4] The group did not record sorting times or test another session. It also did not check whether the two pairs had equal prior experience.\n[R5] The group kept the clearer wording for its next session and planned to observe whether further questions arose.\nWord help: 'trial' means a test use; 'prior experience' means what someone had done before this session. These are invented observations, not research findings."
+        }
+      ],
+      "diagram": null,
+      "prerequisites": [
+        "read-evidence"
+      ]
+    },
+    {
+      "id": "write-instructions",
+      "title": "4 · Turn a vague draft into usable instructions",
+      "track": "Guided: Read & write",
+      "goal": "Name objects clearly, order dependent actions, and include a check tied to the required result.",
+      "materials": "Paper and pencil, or this app's response fields. Read the fictional source aloud with a partner if helpful. This is supported comprehension and writing practice, not a beginning phonics course or a reading-level assessment.",
+      "paragraphs": [
+        "BEFORE YOU WRITE\nAn instruction can sound familiar to its author while leaving a new reader unsure what to do. Decide who will use it and what a finished result must contain. In this lesson the result is a harmless paper packet. A reader should be able to check the packet against the requirement, not merely decide that it looks tidy.",
+        "WORKED EXAMPLE · REPLACE AN UNCLEAR PRONOUN\nDraft: 'Put the list beside the folder, then label it.' The word 'it' could mean the list or the folder.\nRevision, if the folder is the intended object: 'Put the list beside the folder. Write the project name on the folder.'\nReason: the noun resolves the ambiguity. If the author does not know which object was intended, ask; grammatical tidying cannot supply a missing requirement.",
+        "WORKED EXAMPLE · PUT A CHECK WHERE IT CAN HELP\nSuppose a packet must contain three colored paper slips. A useful sequence is: select one of each required color, compare the selection with the requirement, place the slips in the packet, and label it. 'Check everything at some point' does not tell a reader what to compare or when to do it. The check should identify missing or duplicated contents while they can still be corrected easily.",
+        "FROM REQUIREMENT TO STEPS\nUnderline the required objects, quantities, order and label. Make a numbered list with a clear action verb at the beginning of each step. Keep two actions together only if their relationship remains easy to follow. Replace 'there', 'it' and 'them' when more than one object could fit. Do not add details merely to make the list longer.",
+        "A CHECK IS MORE THAN 'BE CAREFUL'\nA useful completion check compares the result with something definite. For example, 'Match each selected slip to the three colors named in the requirement; there must be one of each' is testable. 'Make it nice' leaves the criterion undefined. When a requirement is incomplete, record the missing decision instead of inventing one silently.",
+        "TEST THE WORDING\nRead your instructions aloud or ask another person to act them out with paper. Observe where they pause or ask a question. Record the exact phrase that caused trouble and revise it. One successful trial gives useful feedback about that trial; it is not proof that the instructions will work for every reader. Practice includes both choosing revisions and writing your own complete sequence.",
+        "PRACTICE SOURCE TEXT\nMAKING A STORY-CARD PACKET — FICTIONAL PRACTICE MODEL\n[I1] Required result: one packet containing cards numbered 1, 2, 3 and 4, with each number present once. Card 1 should be on top. The envelope label should say 'River story — cards 1–4'. Use only paper cards and an envelope.\n[I2] Draft instructions: 'Put them in order and put it in there. Check it. Write the name.'\n[I3] Available materials: one envelope; cards marked 1, 2, 3, 3 and 4; a pencil. The extra card 3 is a duplicate and should be set aside, not packed.\n[I4] A previous reader put the envelope away before checking the cards, then had to reopen it to remove a duplicate. This is one reader's experience, not proof that every reader would do the same.\n[I5] Revision goal: make the objects, order of actions and completion check explicit. Do not invent a new story title or change the required contents.\nWord help: 'duplicate' means an extra copy of something already present; 'explicit' means directly stated rather than left for the reader to guess."
+      ],
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which replacement best resolves the vague objects in 'put it in there' for this packet?",
+          "choices": [
+            [
+              "A",
+              "Put it in the correct place."
+            ],
+            [
+              "B",
+              "Place cards 1–4 in the envelope, with card 1 on top."
+            ],
+            [
+              "C",
+              "Put the story anywhere nearby."
+            ]
+          ],
+          "answer": "B",
+          "explanation": "The revised sentence names the cards, the destination and the required top card from I1. It gives the reader concrete referents rather than substituting another vague location.",
+          "hints": [
+            "Identify the object being moved and its destination in I1.",
+            "A useful revision also preserves the required order."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "'It' and 'the correct place' still leave the object and destination unspecified."
+            ],
+            [
+              "C",
+              "'Anywhere nearby' contradicts the specified envelope destination and does not preserve the required order."
+            ]
+          ],
+          "unit": "",
+          "id": "q1",
+          "passage": "MAKING A STORY-CARD PACKET — FICTIONAL PRACTICE MODEL\n[I1] Required result: one packet containing cards numbered 1, 2, 3 and 4, with each number present once. Card 1 should be on top. The envelope label should say 'River story — cards 1–4'. Use only paper cards and an envelope.\n[I2] Draft instructions: 'Put them in order and put it in there. Check it. Write the name.'\n[I3] Available materials: one envelope; cards marked 1, 2, 3, 3 and 4; a pencil. The extra card 3 is a duplicate and should be set aside, not packed.\n[I4] A previous reader put the envelope away before checking the cards, then had to reopen it to remove a duplicate. This is one reader's experience, not proof that every reader would do the same.\n[I5] Revision goal: make the objects, order of actions and completion check explicit. Do not invent a new story title or change the required contents.\nWord help: 'duplicate' means an extra copy of something already present; 'explicit' means directly stated rather than left for the reader to guess."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which check best matches the required contents before packing?",
+          "choices": [
+            [
+              "A",
+              "Choose the four neatest-looking cards."
+            ],
+            [
+              "B",
+              "Put every available card in the envelope."
+            ],
+            [
+              "C",
+              "Confirm that 1, 2, 3 and 4 each appear once; set the extra 3 aside."
+            ]
+          ],
+          "answer": "C",
+          "explanation": "I1 requires each number once. I3 supplies a duplicate 3. Checking the numbers, rather than appearance or total availability, detects the extra copy and preserves the required set.",
+          "hints": [
+            "Compare the required set in I1 with the actual materials in I3.",
+            "What specific mismatch must the check catch?"
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Appearance does not establish that the four selected numbers are exactly 1, 2, 3 and 4."
+            ],
+            [
+              "B",
+              "The available materials include a duplicate 3. Packing all of them would violate 'each number present once'."
+            ]
+          ],
+          "unit": "",
+          "id": "q2",
+          "passage": "MAKING A STORY-CARD PACKET — FICTIONAL PRACTICE MODEL\n[I1] Required result: one packet containing cards numbered 1, 2, 3 and 4, with each number present once. Card 1 should be on top. The envelope label should say 'River story — cards 1–4'. Use only paper cards and an envelope.\n[I2] Draft instructions: 'Put them in order and put it in there. Check it. Write the name.'\n[I3] Available materials: one envelope; cards marked 1, 2, 3, 3 and 4; a pencil. The extra card 3 is a duplicate and should be set aside, not packed.\n[I4] A previous reader put the envelope away before checking the cards, then had to reopen it to remove a duplicate. This is one reader's experience, not proof that every reader would do the same.\n[I5] Revision goal: make the objects, order of actions and completion check explicit. Do not invent a new story title or change the required contents.\nWord help: 'duplicate' means an extra copy of something already present; 'explicit' means directly stated rather than left for the reader to guess."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which feedback is most useful for revising the draft?",
+          "choices": [
+            [
+              "A",
+              "'Check it' does not say which numbers to compare or when to check them."
+            ],
+            [
+              "B",
+              "The draft is bad and the writer is careless."
+            ],
+            [
+              "C",
+              "No reader will ever understand instructions."
+            ]
+          ],
+          "answer": "A",
+          "explanation": "This feedback identifies an exact phrase and the missing information. It points to a revision the writer can make and test, without judging the person or making a universal claim.",
+          "hints": [
+            "Useful feedback names the confusing part and the reader's unresolved question.",
+            "Choose the comment that suggests a specific change."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "Judging the writer does not identify what information a reader needs or how to repair the draft."
+            ],
+            [
+              "C",
+              "This universal claim is unsupported and offers no actionable revision."
+            ]
+          ],
+          "unit": "",
+          "id": "q3",
+          "passage": "MAKING A STORY-CARD PACKET — FICTIONAL PRACTICE MODEL\n[I1] Required result: one packet containing cards numbered 1, 2, 3 and 4, with each number present once. Card 1 should be on top. The envelope label should say 'River story — cards 1–4'. Use only paper cards and an envelope.\n[I2] Draft instructions: 'Put them in order and put it in there. Check it. Write the name.'\n[I3] Available materials: one envelope; cards marked 1, 2, 3, 3 and 4; a pencil. The extra card 3 is a duplicate and should be set aside, not packed.\n[I4] A previous reader put the envelope away before checking the cards, then had to reopen it to remove a duplicate. This is one reader's experience, not proof that every reader would do the same.\n[I5] Revision goal: make the objects, order of actions and completion check explicit. Do not invent a new story title or change the required contents.\nWord help: 'duplicate' means an extra copy of something already present; 'explicit' means directly stated rather than left for the reader to guess."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Rewrite the draft as four or five numbered steps. Preserve the required contents, top card and exact envelope label. Include a check before packing.",
+          "answer": "Compare with the criteria",
+          "explanation": "Check these requirements: select cards 1, 2, 3 and 4 once each; set the duplicate 3 aside; arrange with card 1 on top; compare the selection with the required numbers before packing; place it in the envelope; label the envelope 'River story — cards 1–4'. One possible five-step version: (1) Select one card of each number 1–4; set the extra 3 aside. (2) Arrange the selected cards with 1 on top, then 2, 3 and 4 below. (3) Check that each required number appears once. (4) Place the checked stack in the envelope. (5) Write 'River story — cards 1–4' on the envelope. Other clear sequences are valid if they preserve the stated requirements and check before packing.",
+          "hints": [
+            "Turn the requirements in I1 into a checklist before drafting.",
+            "Keep the duplicate check before the action that puts the stack into the envelope."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q4",
+          "passage": "MAKING A STORY-CARD PACKET — FICTIONAL PRACTICE MODEL\n[I1] Required result: one packet containing cards numbered 1, 2, 3 and 4, with each number present once. Card 1 should be on top. The envelope label should say 'River story — cards 1–4'. Use only paper cards and an envelope.\n[I2] Draft instructions: 'Put them in order and put it in there. Check it. Write the name.'\n[I3] Available materials: one envelope; cards marked 1, 2, 3, 3 and 4; a pencil. The extra card 3 is a duplicate and should be set aside, not packed.\n[I4] A previous reader put the envelope away before checking the cards, then had to reopen it to remove a duplicate. This is one reader's experience, not proof that every reader would do the same.\n[I5] Revision goal: make the objects, order of actions and completion check explicit. Do not invent a new story title or change the required contents.\nWord help: 'duplicate' means an extra copy of something already present; 'explicit' means directly stated rather than left for the reader to guess."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A reader following your instructions still asks, 'What am I supposed to check?' Write a specific replacement step and describe how you would test that revision with paper.",
+          "answer": "Compare with the criteria",
+          "explanation": "Name the comparison and success condition, for example: 'Compare the selected cards with 1, 2, 3 and 4; confirm each appears once and set any duplicate aside.' Then describe giving a reader a practice set containing the extra 3 and observing whether the revised step leads them to detect it. Do not tell them the answer before observing. Record a pause/question or successful detection, then revise if needed. One trial supplies feedback about that trial, not a guarantee for all readers.",
+          "hints": [
+            "A check needs a target and a condition for success.",
+            "Use the duplicate in I3 as a harmless paper test case."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q5",
+          "passage": "MAKING A STORY-CARD PACKET — FICTIONAL PRACTICE MODEL\n[I1] Required result: one packet containing cards numbered 1, 2, 3 and 4, with each number present once. Card 1 should be on top. The envelope label should say 'River story — cards 1–4'. Use only paper cards and an envelope.\n[I2] Draft instructions: 'Put them in order and put it in there. Check it. Write the name.'\n[I3] Available materials: one envelope; cards marked 1, 2, 3, 3 and 4; a pencil. The extra card 3 is a duplicate and should be set aside, not packed.\n[I4] A previous reader put the envelope away before checking the cards, then had to reopen it to remove a duplicate. This is one reader's experience, not proof that every reader would do the same.\n[I5] Revision goal: make the objects, order of actions and completion check explicit. Do not invent a new story title or change the required contents.\nWord help: 'duplicate' means an extra copy of something already present; 'explicit' means directly stated rather than left for the reader to guess."
+        }
+      ],
+      "diagram": null,
+      "prerequisites": [
+        "read-notice",
+        "read-summary"
+      ]
+    },
+    {
+      "id": "write-request",
+      "title": "5 · Revise a request against its evidence",
+      "track": "Guided: Read & write",
+      "goal": "Plan and revise a practical message with a clear request, supported details, an appropriate limit and a next step.",
+      "materials": "Paper and pencil, or this app's response fields. Read the fictional source aloud with a partner if helpful. This is supported comprehension and writing practice, not a beginning phonics course or a reading-level assessment.",
+      "paragraphs": [
+        "START WITH THE READER'S TASK\nBefore writing, complete this sentence: 'After reading my message, I want the reader to…'. A request should make that action easy to identify. Then list the facts the reader needs, the facts you know, and the decisions still open. This separates planning the message from polishing its punctuation.",
+        "WORKED EXAMPLE · PLAN A DIFFERENT REQUEST\nBrief: a group needs three folders on Monday to hold its existing notes; availability is unknown.\nPlan: ask for three folders; explain the note-storage purpose; state Monday; ask what is available.\nDraft: 'Could you provide three folders by Monday for our existing group notes? Please let us know whether they are available; if fewer are available, tell us how many so we can adjust.'\nWhy it works: the quantity, purpose and timing are concrete, while the unconfirmed supply remains a question.",
+        "WORKED REVISION · REMOVE UNSUPPORTED PRESSURE\nDraft: 'Everybody demands these folders now.' The brief did not mention everybody's views or an immediate deadline. A courteous revision can be precise without inventing urgency: 'Could you provide three folders by Monday?' Tone does not excuse changing the facts, and a polite sentence can still be misleading if its quantity or date is wrong.",
+        "REVISION PASSES\nFirst revise meaning: is the requested action clear, and are quantities, dates and evidence accurate? Next revise organization: put the request where the reader can find it, group its purpose with it, and finish with a useful reply or next step. Finally edit sentences and punctuation. Fixing spelling alone will not repair a wrong quantity or an unsupported guarantee.",
+        "USE FEEDBACK AS A QUESTION\nInstead of 'This is unclear', try 'Which materials are requested?' or 'Does this date mean today or the meeting day?' Read the answer from the draft itself. If you have to rely on the writer's spoken explanation, add the needed information to the message. Preserve the reader's question in your notes so you can check the revision against it.",
+        "FINAL PRACTICE AND TRANSFER\nThe source contains a brief and an intentionally flawed draft. Compare every claim in the draft with the brief. Write your own message, then explain one revision and the evidence behind it. Later, use the same routine with a different fictional request. A checked choice is useful practice, but the quality of a whole message still needs human reading and discussion.",
+        "PRACTICE SOURCE TEXT\nREQUEST FOR READING MATERIALS — FICTIONAL PRACTICE BRIEF\n[W1] Purpose: ask the group coordinator for six reusable blank reading cards before Thursday's planning meeting. The cards will be used to draft discussion prompts.\n[W2] Known facts: the group currently has two blank cards. The planning activity calls for eight blank cards in total. The coordinator has not confirmed whether six more are available.\n[W3] If six cards are unavailable, ask the coordinator how many can be supplied; the group will then adjust the activity. No money, attendance count or urgent deadline beyond the planning meeting is specified.\n[W4] Draft message: 'We urgently need loads of things. Everyone is waiting. Send eight new cards tomorrow because the plan is guaranteed to work. Thanks.'\n[W5] Revision goal: make a clear, courteous request that preserves the known quantity, purpose and timing, and asks about availability without claiming it is confirmed.\nWord help: 'coordinator' means the person organizing the group's materials; 'confirmed' means explicitly established, not merely hoped for. The people and arrangements are fictional."
+      ],
+      "questions": [
+        {
+          "kind": "choice",
+          "prompt": "Which requested quantity follows the brief?",
+          "choices": [
+            [
+              "A",
+              "Eight additional cards"
+            ],
+            [
+              "B",
+              "Any number described as 'loads'"
+            ],
+            [
+              "C",
+              "Six additional blank cards"
+            ]
+          ],
+          "answer": "C",
+          "explanation": "W1 explicitly requests six cards. W2 explains why: eight are needed in total and two are already available, leaving six additional cards. Total required and additional requested are different quantities.",
+          "hints": [
+            "Separate the total needed from what the group already has.",
+            "Check W1 against the 8-total and 2-existing facts in W2."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Eight is the total required, not the additional request. Two cards already exist."
+            ],
+            [
+              "B",
+              "The brief provides a precise quantity. 'Loads' makes the coordinator guess what to supply."
+            ]
+          ],
+          "unit": "",
+          "id": "q1",
+          "passage": "REQUEST FOR READING MATERIALS — FICTIONAL PRACTICE BRIEF\n[W1] Purpose: ask the group coordinator for six reusable blank reading cards before Thursday's planning meeting. The cards will be used to draft discussion prompts.\n[W2] Known facts: the group currently has two blank cards. The planning activity calls for eight blank cards in total. The coordinator has not confirmed whether six more are available.\n[W3] If six cards are unavailable, ask the coordinator how many can be supplied; the group will then adjust the activity. No money, attendance count or urgent deadline beyond the planning meeting is specified.\n[W4] Draft message: 'We urgently need loads of things. Everyone is waiting. Send eight new cards tomorrow because the plan is guaranteed to work. Thanks.'\n[W5] Revision goal: make a clear, courteous request that preserves the known quantity, purpose and timing, and asks about availability without claiming it is confirmed.\nWord help: 'coordinator' means the person organizing the group's materials; 'confirmed' means explicitly established, not merely hoped for. The people and arrangements are fictional."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which sentence accurately handles the unconfirmed availability?",
+          "choices": [
+            [
+              "A",
+              "If six cards are unavailable, please tell us how many you can provide."
+            ],
+            [
+              "B",
+              "You have already promised all eight cards."
+            ],
+            [
+              "C",
+              "We know the supply is unlimited."
+            ]
+          ],
+          "answer": "A",
+          "explanation": "W2 says availability is unconfirmed, and W3 gives the fallback question. The selected sentence preserves both facts without inventing a promise or unlimited stock.",
+          "hints": [
+            "Read the uncertainty in W2 and the next step in W3.",
+            "Ask about availability rather than announcing a confirmation."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "W2 says the coordinator has not confirmed availability. The draft cannot turn an open request into a promise."
+            ],
+            [
+              "C",
+              "No source sentence establishes unlimited supply."
+            ]
+          ],
+          "unit": "",
+          "id": "q2",
+          "passage": "REQUEST FOR READING MATERIALS — FICTIONAL PRACTICE BRIEF\n[W1] Purpose: ask the group coordinator for six reusable blank reading cards before Thursday's planning meeting. The cards will be used to draft discussion prompts.\n[W2] Known facts: the group currently has two blank cards. The planning activity calls for eight blank cards in total. The coordinator has not confirmed whether six more are available.\n[W3] If six cards are unavailable, ask the coordinator how many can be supplied; the group will then adjust the activity. No money, attendance count or urgent deadline beyond the planning meeting is specified.\n[W4] Draft message: 'We urgently need loads of things. Everyone is waiting. Send eight new cards tomorrow because the plan is guaranteed to work. Thanks.'\n[W5] Revision goal: make a clear, courteous request that preserves the known quantity, purpose and timing, and asks about availability without claiming it is confirmed.\nWord help: 'coordinator' means the person organizing the group's materials; 'confirmed' means explicitly established, not merely hoped for. The people and arrangements are fictional."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which revision should come before merely correcting punctuation in the draft?",
+          "choices": [
+            [
+              "A",
+              "Add more exclamation marks to make it urgent."
+            ],
+            [
+              "B",
+              "Correct the quantity and replace unsupported urgency and guarantees with the stated facts."
+            ],
+            [
+              "C",
+              "Replace every short word with a longer word."
+            ]
+          ],
+          "answer": "B",
+          "explanation": "The draft changes substantive facts: quantity, timing and certainty. Restoring the brief's meaning is necessary before surface edits can make it a useful request.",
+          "hints": [
+            "Which problems could cause the coordinator to act on wrong information?",
+            "Compare the draft's claims with W1–W3 before editing punctuation."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Stronger punctuation does not supply evidence for urgency or correct the quantity."
+            ],
+            [
+              "C",
+              "Longer words do not make unsupported claims accurate and may make the request harder to understand."
+            ]
+          ],
+          "unit": "",
+          "id": "q3",
+          "passage": "REQUEST FOR READING MATERIALS — FICTIONAL PRACTICE BRIEF\n[W1] Purpose: ask the group coordinator for six reusable blank reading cards before Thursday's planning meeting. The cards will be used to draft discussion prompts.\n[W2] Known facts: the group currently has two blank cards. The planning activity calls for eight blank cards in total. The coordinator has not confirmed whether six more are available.\n[W3] If six cards are unavailable, ask the coordinator how many can be supplied; the group will then adjust the activity. No money, attendance count or urgent deadline beyond the planning meeting is specified.\n[W4] Draft message: 'We urgently need loads of things. Everyone is waiting. Send eight new cards tomorrow because the plan is guaranteed to work. Thanks.'\n[W5] Revision goal: make a clear, courteous request that preserves the known quantity, purpose and timing, and asks about availability without claiming it is confirmed.\nWord help: 'coordinator' means the person organizing the group's materials; 'confirmed' means explicitly established, not merely hoped for. The people and arrangements are fictional."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Write a three- or four-sentence request to the coordinator. Include the additional quantity, purpose, meeting deadline and fallback question. Do not invent a confirmed supply.",
+          "answer": "Compare with the criteria",
+          "explanation": "Check: six additional reusable blank reading cards; used to draft discussion prompts; needed before Thursday's planning meeting; ask how many can be supplied if six are unavailable. Example: 'Could you provide six reusable blank reading cards before Thursday's planning meeting? We have two cards and need eight in total to draft discussion prompts. Please let us know whether six more are available; if not, tell us how many you can provide so we can adjust the activity. Thank you.' Other wording is valid. Do not turn the meeting deadline into an invented date for 'tomorrow', claim everyone is waiting, or guarantee that the plan will work.",
+          "hints": [
+            "Make a four-item checklist from W1–W3 before writing.",
+            "Read your draft as the coordinator: can you identify what is requested and how to reply?"
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q4",
+          "passage": "REQUEST FOR READING MATERIALS — FICTIONAL PRACTICE BRIEF\n[W1] Purpose: ask the group coordinator for six reusable blank reading cards before Thursday's planning meeting. The cards will be used to draft discussion prompts.\n[W2] Known facts: the group currently has two blank cards. The planning activity calls for eight blank cards in total. The coordinator has not confirmed whether six more are available.\n[W3] If six cards are unavailable, ask the coordinator how many can be supplied; the group will then adjust the activity. No money, attendance count or urgent deadline beyond the planning meeting is specified.\n[W4] Draft message: 'We urgently need loads of things. Everyone is waiting. Send eight new cards tomorrow because the plan is guaranteed to work. Thanks.'\n[W5] Revision goal: make a clear, courteous request that preserves the known quantity, purpose and timing, and asks about availability without claiming it is confirmed.\nWord help: 'coordinator' means the person organizing the group's materials; 'confirmed' means explicitly established, not merely hoped for. The people and arrangements are fictional."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Choose one sentence from the flawed draft. Give a before-and-after revision and explain which source fact or missing evidence justified the change.",
+          "answer": "Compare with the criteria",
+          "explanation": "Name a specific original claim, show a repaired sentence, and explain the evidence. Example: before 'Send eight new cards tomorrow'; after 'Could you provide six reusable blank cards before Thursday's planning meeting?'; reason: W2 distinguishes the total of eight from the six additional cards, and W1 specifies the meeting deadline rather than 'tomorrow'. Another valid focus is removing the unsupported guarantee. A revision explanation must connect the change to the brief, not just say the new wording 'sounds better'.",
+          "hints": [
+            "Choose one factual error or unsupported claim, not the whole draft at once.",
+            "Use 'I changed… because W… states…' as a temporary writing scaffold."
+          ],
+          "mistakes": [],
+          "unit": "",
+          "id": "q5",
+          "passage": "REQUEST FOR READING MATERIALS — FICTIONAL PRACTICE BRIEF\n[W1] Purpose: ask the group coordinator for six reusable blank reading cards before Thursday's planning meeting. The cards will be used to draft discussion prompts.\n[W2] Known facts: the group currently has two blank cards. The planning activity calls for eight blank cards in total. The coordinator has not confirmed whether six more are available.\n[W3] If six cards are unavailable, ask the coordinator how many can be supplied; the group will then adjust the activity. No money, attendance count or urgent deadline beyond the planning meeting is specified.\n[W4] Draft message: 'We urgently need loads of things. Everyone is waiting. Send eight new cards tomorrow because the plan is guaranteed to work. Thanks.'\n[W5] Revision goal: make a clear, courteous request that preserves the known quantity, purpose and timing, and asks about availability without claiming it is confirmed.\nWord help: 'coordinator' means the person organizing the group's materials; 'confirmed' means explicitly established, not merely hoped for. The people and arrangements are fictional."
+        }
+      ],
+      "diagram": null,
+      "prerequisites": [
+        "read-summary",
+        "write-instructions"
+      ]
+    }
+  ]
+}

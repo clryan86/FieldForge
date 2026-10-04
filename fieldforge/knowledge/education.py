@@ -20,7 +20,7 @@ from pathlib import Path
 from fieldforge.knowledge._learning_model import parse_number
 
 NOTICE = ("Original AI-assisted teaching drafts; not independently educator-reviewed. "
-          "Numeric checks compare stated answers. Written explanations are self-reviewed. "
+          "Number and choice checks compare stated answers. Written explanations are self-reviewed. "
           "Saved practice is not a qualification or a measurement of mastery.")
 
 
@@ -34,10 +34,17 @@ class Question:
     hints: tuple[str, ...] = ()
     mistakes: tuple[tuple[str, str], ...] = ()
     kind: str = "reflection"
+    choices: tuple[tuple[str, str], ...] = ()
+    passage: str = ""
 
     @property
     def fingerprint(self) -> str:
-        raw = json.dumps(asdict(self), ensure_ascii=True, sort_keys=True)
+        fields = asdict(self)
+        # Preserve fingerprints (and saved work) for every pre-literacy question.
+        for name in ("choices", "passage"):
+            if not fields[name]:
+                del fields[name]
+        raw = json.dumps(fields, ensure_ascii=True, sort_keys=True)
         return hashlib.sha256(raw.encode()).hexdigest()
 
 
@@ -60,16 +67,18 @@ class StudyLesson:
 def lessons() -> tuple[StudyLesson, ...]:
     root = files("fieldforge.content").joinpath("education")
     source = json.loads(root.joinpath("lessons.json").read_text(encoding="utf-8"))
-    guided = json.loads(root.joinpath("guided.json").read_text(encoding="utf-8"))
     result = []
-    for item in guided["lessons"]:
-        questions = tuple(Question(**{**q, "hints": tuple(q["hints"]),
-                                      "mistakes": tuple(tuple(m) for m in q["mistakes"])})
-                          for q in item["questions"])
-        result.append(StudyLesson(**{**item, "questions": questions, "guided": True,
-                                    "paragraphs": tuple(item["paragraphs"]),
-                                    "prerequisites": tuple(item["prerequisites"]),
-                                    "references": tuple(guided["references"])}))
+    for filename in ("guided.json", "guided-literacy.json"):
+        guided = json.loads(root.joinpath(filename).read_text(encoding="utf-8"))
+        for item in guided["lessons"]:
+            questions = tuple(Question(**{**q, "hints": tuple(q["hints"]),
+                                          "mistakes": tuple(tuple(m) for m in q["mistakes"]),
+                                          "choices": tuple(tuple(c) for c in q.get("choices", ()))})
+                              for q in item["questions"])
+            result.append(StudyLesson(**{**item, "questions": questions, "guided": True,
+                                        "paragraphs": tuple(item["paragraphs"]),
+                                        "prerequisites": tuple(item["prerequisites"]),
+                                        "references": tuple(guided["references"])}))
     for item in source["lessons"]:
         result.append(StudyLesson(
             "library-" + item["id"], item["title"], item["track"].replace("-", " ").title(),
@@ -90,13 +99,20 @@ def lessons() -> tuple[StudyLesson, ...]:
         if len({q.id for q in lesson.questions}) != len(lesson.questions):
             raise ValueError("Duplicate study question IDs")
         for q in lesson.questions:
-            if q.kind not in {"number", "reflection"} or not q.prompt or not q.explanation:
+            if q.kind not in {"number", "reflection", "choice"} or not q.prompt or not q.explanation:
                 raise ValueError("Invalid study question")
             if q.kind == "number":
                 parse_number(q.answer)
                 for wrong, _feedback in q.mistakes:
                     if parse_number(wrong) == parse_number(q.answer):
                         raise ValueError("Correct answer listed as a misconception")
+            if q.kind == "choice":
+                keys = [key for key, _label in q.choices]
+                if (not 2 <= len(keys) <= 5 or keys != list("ABCDE"[:len(keys)])
+                        or q.answer not in keys or any(not label.strip() for _, label in q.choices)
+                        or {key for key, _ in q.mistakes} != set(keys) - {q.answer}
+                        or len(q.mistakes) != len(keys) - 1 or not q.passage.strip()):
+                    raise ValueError("Choice questions need ordered options, source text and feedback for each distractor")
     return tuple(result)
 
 
@@ -121,21 +137,34 @@ def revise(work: Work, response: str, reasoning: str) -> Work:
                    reflection="" if changed else work.reflection)
 
 
+def answer_matches(question: Question, response: str) -> bool:
+    if question.kind == "number":
+        return parse_number(response) == parse_number(question.answer)
+    if question.kind == "choice":
+        if response.strip().upper() not in dict(question.choices):
+            raise ValueError("Choose one of the listed options before checking.")
+        return response.strip().upper() == question.answer
+    raise ValueError("Written explanations require self-review")
+
+
 def check(question: Question, work: Work) -> tuple[Work, str]:
-    if question.kind != "number":
+    if question.kind == "reflection":
         return work, "Compare your explanation with the worked answer, then record your reflection."
     try:
-        value = parse_number(work.response)
+        correct = answer_matches(question, work.response)
     except ValueError as exc:
         return work, str(exc)
-    correct = value == parse_number(question.answer)
     updated = replace(work, attempts=work.attempts + 1,
-                      result="correct" if correct else "retry", reflection="")
+                      result="correct" if correct else "retry", reflection="",
+                      response=work.response.strip().upper() if question.kind == "choice" else work.response)
     if correct:
         support = "after a hint or answer was shown" if work.hints or work.revealed else "before hints or answer reveal"
-        return updated, f"Numeric answer matches ({support}).\n\n{question.explanation}\n\nExplain the method in your own words."
+        label = "Numeric answer" if question.kind == "number" else "Selected answer"
+        return updated, f"{label} matches ({support}).\n\n{question.explanation}\n\nExplain your reasoning in your own words."
     for wrong, feedback in question.mistakes:
-        if value == parse_number(wrong):
+        matches = (parse_number(work.response) == parse_number(wrong) if question.kind == "number"
+                   else work.response.strip().upper() == wrong)
+        if matches:
             return updated, feedback + "\n\nRevise your answer, or ask for one hint."
     return updated, "This number does not match. Check what the question asks and its units. Try a sketch or one hint."
 
@@ -184,8 +213,8 @@ class StudyStore:
                 or work.reflection not in {"", "needs practice", "explained it"}):
             raise ValueError("Invalid education work record")
         if work.result == "correct" and (
-                question.kind != "number" or parse_number(work.response) != parse_number(question.answer)):
-            raise ValueError("A correct record needs a matching numeric answer")
+                question.kind == "reflection" or not answer_matches(question, work.response)):
+            raise ValueError("A correct record needs a matching numeric or choice answer")
         if work.reflection and not work.revealed:
             raise ValueError("Read the worked answer before recording a self-review")
 
@@ -246,19 +275,26 @@ class StudyStore:
 def worksheet(lesson: StudyLesson, records: tuple[Work, ...]) -> str:
     """Portable printable HTML; escaped user text, no scripts or remote assets."""
     escape = html.escape
+    passages = {q.passage: index for index, q in enumerate(lesson.questions, 1) if q.passage}
     sections = [f"<h1>{escape(lesson.title)}</h1><p>{escape(NOTICE)}</p>",
                 f"<h2>Goal</h2><p>{escape(lesson.goal)}</p>",
                 f"<h2>Materials</h2><p>{escape(lesson.materials)}</p>"]
-    sections.extend(f"<p class='block'>{escape(p)}</p>" for p in lesson.paragraphs)
+    sections.extend(f"<p class='block'>{escape(p)}</p>" for p in lesson.paragraphs
+                    if p.partition("\n")[2] not in passages)
     if lesson.diagram:
         sections.append(f"<p>{escape(lesson.diagram['description'])}</p>")
     sections.append("<h2>Practice and saved work</h2>")
+    for passage, index in passages.items():
+        sections.append(f"<h3 id='passage-{index}'>Practice source text</h3><pre>{escape(passage)}</pre>")
     for i, (q, work) in enumerate(zip(lesson.questions, records), 1):
         support = f"Hints shown: {work.hints}; answer shown: {'yes' if work.revealed else 'no'}"
-        sections.append(f"<h3>{i}. {escape(q.prompt)}</h3><p>Answer units: {escape(q.unit or 'written response')}</p>"
+        options = "".join(f"<p>{escape(key)}. {escape(label)}</p>" for key, label in q.choices)
+        source = f"<p><a href='#passage-{passages[q.passage]}'>Read the practice source text</a></p>" if q.passage else ""
+        label = "Choose an option" if q.kind == "choice" else f"Answer units: {q.unit or 'written response'}"
+        sections.append(f"<h3>{i}. {escape(q.prompt)}</h3>{source}{options}<p>{escape(label)}</p>"
                         f"<pre>{escape(work.response or '(not answered)')}</pre><pre>{escape(work.reasoning)}</pre>"
                         f"<p>{escape(work.result)}; self-review: {escape(work.reflection or 'not recorded')}. "
-                        f"{support}. Numeric checks: {work.attempts}.</p>")
+                        f"{support}. Answer checks: {work.attempts}.</p>")
     sections.append("<details><summary>Worked answers and comparison criteria (open to print)</summary>")
     sections.extend(f"<h3>{i}. {escape(q.answer)} {escape(q.unit)}</h3><p class='block'>{escape(q.explanation)}</p>"
                     for i, q in enumerate(lesson.questions, 1))

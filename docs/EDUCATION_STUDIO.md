@@ -12,12 +12,29 @@ The default **Guided: Measure & plan** course contains five original lessons:
 4. Scale drawings: object versus drawing dimensions and area scaling.
 5. Paper panel plan: combine the preceding ideas and review an incomplete claim.
 
-Each includes a diagram with a text description, worked reasoning, four numeric
+Each maths lesson includes a diagram with a text description, worked reasoning, four numeric
 exercises and one explanation task. These are paper exercises; they are not
 construction specifications. The existing 172 Education Foundations lessons
 are also available by track or through **All lessons**. Their article text and
 library notes are preserved. These reference lessons use written self-review;
 they have not all been rewritten into the guided course format.
+
+Choose **Guided: Read & write** in the course/track selector for five further lessons:
+
+1. Read a notice: details, conditional requests, changed information and gaps.
+2. Trace events: sequence, stated causes, evidence and limited inferences.
+3. Summarize a report: central point, relevant evidence and limits.
+4. Revise instructions: named objects, action order and completion checks.
+5. Revise a request: purpose, quantity, timing, uncertainty and a useful reply.
+
+These contain original fictional passages, worked before/after revisions,
+15 choice questions and 10 writing tasks. The passages are supported reading,
+not a beginner phonics sequence or an independently established reading level.
+The **Passage / model** tab stays available while you write; **Question & options**
+shows the current prompt and complete option text. Select A, B or C, then use
+**Check choice** for feedback about that option's relationship to the source.
+The explanation field remains self-reviewed. Writing prompts include comparison
+criteria and example responses, allowing more than one valid wording.
 
 ## Practice workflow
 
@@ -51,18 +68,27 @@ detect other help used, and it does not infer independent mastery.
 
 ## Content and storage boundaries
 
-The five guided lessons add 25 exercises to the original 516 reference prompts.
+The ten guided lessons add 50 exercises to the original 516 reference prompts.
 They are AI-assisted teaching drafts, not independently educator-reviewed or
 validated with learner outcomes. Instructional design background is the
 [IES study guide](https://ies.ed.gov/ncee/wwc/PracticeGuide/1); this does not mean
 that IES evaluated or endorsed FieldForge. The original examples, answer keys,
 common-mistake feedback and diagrams are CC BY-SA 4.0.
 
+The literacy course also draws on the IES guides for
+[K–3 comprehension](https://ies.ed.gov/ncee/wwc/PracticeGuide/14) and
+[elementary writing](https://ies.ed.gov/ncee/wwc/PracticeGuide/17) as instructional
+background. The original passages and activities are not those guides' tested
+interventions, and adaptations for older learners have not been validated.
+
 Private responses use the `education_work_v1` table in the active SQLite database.
 Full database snapshots preserve this table; article-only exports do not.
 Question content fingerprints keep revised prompts from inheriting stale check
 results. Existing versions of work remain in the database. Concurrent saves use
 revision checks, so another open window cannot silently replace an older draft.
+The literacy extension preserves all 541 previously shipped question fingerprints.
+New questions include source passages and choices in their fingerprints, so
+changed evidence or options cannot inherit a previous question's check result.
 
 Automated checks cover exact arithmetic, misconception feedback, draft edits,
 self-review, concurrent writes, real backup/restore, HTML escaping, UI navigation,
