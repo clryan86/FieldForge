@@ -1,0 +1,393 @@
+--- fieldforge/navigation/region_install.py
++++ fieldforge/navigation/region_install.py
+@@ -16,6 +16,7 @@
+ import stat
+ import sys
+ import uuid
++import zipfile
+ from dataclasses import dataclass
+ from datetime import datetime, timezone
+ from pathlib import Path
+@@ -36,6 +37,9 @@
+ CHUNK = 1024 * 1024
+ MAX_MANIFEST = 65536
+ RESERVE = 16 * 1024 * 1024
++PACK_MAX_COMPRESSED = 4 * 1024**3
++PACK_MAX_EXPANDED = 7 * 1024**3
++PACK_MEMBERS = frozenset({MANIFEST, *FILES.values()})
+ NOTICE = ('Source geometry and literal names/addresses only. A prepared road graph is an '
+           'experimental distance model, not validated driving directions. No current '
+           'closures, arrival-time estimates, marine navigation or completeness guarantee. '
+@@ -432,6 +436,107 @@
+                 shutil.rmtree(folder, ignore_errors=True)
+ 
+ 
++
++def _region_pack_inventory(archive):
++    """Validate fixed archive structure before any extraction or publication."""
++    entries = archive.infolist()
++    names = [item.filename for item in entries]
++    if len(entries) not in (4, 5) or len(names) != len(set(names)) or not set(names) <= PACK_MEMBERS:
++        raise ValueError('Prepared region ZIP has an unsupported or duplicate member list.')
++    total = 0
++    for item in entries:
++        mode = item.external_attr >> 16
++        if (item.is_dir() or item.flag_bits & 1
++                or stat.S_IFMT(mode) not in (0, stat.S_IFREG)
++                or item.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED)
++                or item.file_size < 1):
++            raise ValueError('Prepared region ZIP contains unsupported member metadata.')
++        total += item.file_size
++        if total > PACK_MAX_EXPANDED:
++            raise ValueError('Prepared region ZIP exceeds the expanded byte budget.')
++    manifest = archive.getinfo(MANIFEST)
++    if manifest.file_size > MAX_MANIFEST:
++        raise ValueError('Prepared region manifest exceeds its size budget.')
++    try:
++        data = json.loads(archive.read(MANIFEST).decode('utf-8'), object_pairs_hook=_unique,
++                          parse_constant=lambda _: (_ for _ in ()).throw(
++                              ValueError('Non-finite region metadata.')))
++    except (UnicodeError, json.JSONDecodeError, TypeError, RecursionError) as exc:
++        raise ValueError('Malformed prepared region manifest.') from exc
++    if (not isinstance(data, dict) or data.get('format') != FORMAT
++            or data.get('state') != 'complete'
++            or re.fullmatch('[0-9a-f]{32}', data.get('id', '')) is None):
++        raise ValueError('Prepared region ZIP has an unsupported manifest.')
++    road = data.get('roads')
++    files = data.get('files')
++    if not isinstance(road, dict) or not isinstance(files, dict):
++        raise ValueError('Prepared region ZIP manifest is incomplete.')
++    required = {MANIFEST, FILES['source'], FILES['map'], FILES['rights']}
++    if road.get('state') == 'prepared-experimental':
++        required.add(FILES['roads'])
++    if set(names) != required:
++        raise ValueError('Prepared region ZIP members do not match its readiness manifest.')
++    return entries, data, total
++
++
++def import_region_pack(pack_path, library, *, cancel=None, progress=None):
++    """Import a prepared region ZIP into a new, fully verified library folder."""
++    library = _directory(library)
++    pack_path = Path(pack_path).expanduser().absolute()
++    if pack_path.suffix.casefold() != '.zip':
++        raise ValueError('Choose a prepared FieldForge region .zip file.')
++    before = signature(pack_path)
++    if not 1 <= before[2] <= PACK_MAX_COMPRESSED:
++        raise ValueError('Prepared region ZIP exceeds the compressed byte budget.')
++    _check(cancel)
++    with zipfile.ZipFile(pack_path) as archive:
++        entries, manifest, expanded = _region_pack_inventory(archive)
++        if shutil.disk_usage(library).free < expanded + RESERVE:
++            raise ValueError('Not enough free storage for this prepared region and reserve.')
++        folder = library / ('region-' + manifest['id'])
++        if folder.exists() or folder.is_symlink():
++            raise ValueError('This prepared region identity is already present in the selected library.')
++        folder.mkdir(mode=0o700)
++        owned = _identity(folder)
++        complete = False
++        try:
++            _new_bytes(folder / MARKER,
++                       b'Incomplete prepared-region import. Do not open as installed data.\n')
++            copied = 0
++            for item in entries:
++                _check(cancel)
++                target = folder / item.filename
++                count = 0
++                with archive.open(item) as source, target.open('xb') as output:
++                    while block := source.read(CHUNK):
++                        _check(cancel)
++                        count += len(block)
++                        copied += len(block)
++                        if count > item.file_size or copied > expanded:
++                            raise ValueError('Prepared region ZIP expanded beyond its declared size.')
++                        output.write(block)
++                        _scaled(progress, 0, 70)(copied, expanded)
++                    output.flush()
++                    os.fsync(output.fileno())
++                if count != item.file_size:
++                    raise ValueError('Prepared region ZIP member was truncated during extraction.')
++            if copied != expanded or signature(pack_path) != before:
++                raise ValueError('Prepared region ZIP changed during import.')
++            result = _verify_region(folder, cancel=cancel,
++                                    progress=_scaled(progress, 70, 99), staging=True)
++            _check(cancel)
++            (folder / MARKER).unlink()
++            _load_manifest(folder)
++            complete = True
++            if progress:
++                progress(100, 100)
++            return result
++        finally:
++            if (not complete and folder.is_dir() and not folder.is_symlink()
++                    and _identity(folder) == owned):
++                shutil.rmtree(folder, ignore_errors=True)
++
++
+ def list_regions(library, *, cancel=None, limit=500):
+     """Bounded metadata-only discovery. Listing never claims file verification."""
+     library = _directory(library)
+@@ -474,6 +579,9 @@
+     listing.add_argument('library', type=Path)
+     verify = sub.add_parser('verify')
+     verify.add_argument('folder', type=Path)
++    pack = sub.add_parser('import-pack')
++    pack.add_argument('pack', type=Path)
++    pack.add_argument('library', type=Path)
+     args = parser.parse_args(argv)
+     try:
+         if args.command == 'install':
+@@ -483,6 +591,9 @@
+         elif args.command == 'verify':
+             result = verify_region(args.folder)
+             payload = {'verified': True, 'manifest': result.manifest}
++        elif args.command == 'import-pack':
++            result = import_region_pack(args.pack, args.library)
++            payload = {'folder': str(result.folder), 'manifest': result.manifest}
+         else:
+             result = list_regions(args.library)
+             payload = {'limited': result.limited, 'regions': [
+@@ -491,7 +602,7 @@
+                 for row in result.entries]}
+         print(json.dumps(payload, ensure_ascii=False, indent=2))
+         return 0
+-    except (OSError, ValueError, sqlite3.Error) as exc:
++    except (OSError, ValueError, sqlite3.Error, zipfile.BadZipFile) as exc:
+         print('Region operation failed: ' + str(exc), file=sys.stderr)
+         return 2
+ 
+--- fieldforge/ui/region_install.py
++++ fieldforge/ui/region_install.py
+@@ -58,6 +58,10 @@
+         self.roads_check.grid(row=3, column=0, columnspan=2, sticky='w', pady=(5, 0))
+         self.install_button = ttk.Button(form, text='Install new snapshot…', command=self.confirm_install)
+         self.install_button.grid(row=3, column=2, padx=(8, 0), pady=(5, 0))
++        ttk.Label(form, text='Already prepared FieldForge region ZIP').grid(
++            row=4, column=0, columnspan=2, sticky='w', pady=(7, 0))
++        self.pack_button = ttk.Button(form, text='Import prepared pack…', command=self.choose_pack)
++        self.pack_button.grid(row=4, column=2, padx=(8, 0), pady=(7, 0))
+         toolbar = ttk.Frame(self)
+         toolbar.grid(row=3, column=0, sticky='ew', padx=16, pady=(10, 6))
+         toolbar.columnconfigure(1, weight=1)
+@@ -98,7 +102,7 @@
+         self.details.grid(row=6, column=0, sticky='nsew', padx=16)
+         self.status_row(self).grid(row=7, column=0, sticky='ew', padx=16, pady=(5, 12))
+         self._controls += [(w, 'normal') for w in (self.folder_button, self.source_button,
+-            self.download_button, self.roads_check, self.install_button, self.refresh_button,
++            self.download_button, self.roads_check, self.install_button, self.pack_button, self.refresh_button,
+             self.search_entry, self.verify_button, self.open_map_button, self.open_roads_button, self.example_button)]
+         self.status.set('Nothing runs automatically. Select an existing library folder and a permitted OSM source.')
+         self._detail('No region is selected. Folder listings read metadata only; opening a region checks its '
+@@ -145,6 +149,38 @@
+         if path:
+             self.source_path.set(path)
+ 
++    def choose_pack(self):
++        if self.busy:
++            return False
++        if not self.library.get().strip():
++            self.status.set('Choose an existing library folder before importing a prepared pack.')
++            return False
++        path = filedialog.askopenfilename(parent=self, title='Choose prepared FieldForge region ZIP',
++                                          filetypes=[('FieldForge prepared map pack', '*.zip')])
++        if not path:
++            return False
++        if not messagebox.askyesno('Import prepared regional map?',
++            'FieldForge will extract only the fixed region-pack files, verify all stored checksums, '
++            'verify the searchable-map database and source identity, and publish a NEW region folder. '
++            'The ZIP and existing map installations will not be overwritten.\n\n'
++            'Large packs can require several gigabytes of free space and verification can take time. '
++            'A prepared map is not proof of complete coverage or validated driving directions. Proceed?',
++            parent=self):
++            return False
++        self._task = 'import'
++        self.last_result = None
++        self.status.set('Importing prepared map into a new folder; existing maps are unchanged.')
++        return self.start_task(install.import_region_pack, Path(path), Path(self.library.get()),
++                               done=self.imported_pack, progress=True)
++
++    def imported_pack(self, result):
++        self.last_result = result
++        self._describe_verified(result)
++        self.status.set('Prepared pack imported and fully checked. Roads: ' +
++                        ROAD_LABELS[result.manifest['roads']['state']] +
++                        '. No navigation certification.')
++        self.refresh()
++
+     def confirm_install(self):
+         if self.busy:
+             return
+@@ -293,6 +329,8 @@
+         if self._task == 'install':
+             stage = ('Copying original source' if percent < 15 else 'Preparing searchable map' if percent < 55
+                      else 'Attempting optional road graph' if percent < 85 else 'Verifying and publishing new snapshot')
++        elif self._task == 'import':
++            stage = 'Extracting fixed prepared-pack files' if percent < 70 else 'Verifying pack hashes and map database'
+         else:
+             stage = 'Verifying installed file hashes and source identities'
+         return f'{stage} — {percent}%. Existing snapshots are unchanged.'
+--- tests/test_region_install.py
++++ tests/test_region_install.py
+@@ -5,6 +5,7 @@
+ import json
+ import socket
+ import threading
++import zipfile
+ from pathlib import Path
+ from types import SimpleNamespace
+ 
+@@ -498,3 +499,90 @@
+     result = run(installation, cancel=cancel, progress=progress)
+     assert cancel.is_set()
+     assert ri.verify_region(result.folder).manifest['map']['state'] == 'prepared'
++
++
++def make_prepared_pack(region, path):
++    import zipfile
++    with zipfile.ZipFile(path, 'w', compression=zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
++        for item in sorted(region.folder.iterdir(), key=lambda p: p.name):
++            archive.write(item, item.name)
++    return path
++
++
++def test_import_prepared_pack_roundtrip_full_verification(tmp_path):
++    source = tmp_path / 'source.osm.pbf'
++    source.write_bytes(diamond())
++    built_library = tmp_path / 'built'
++    built_library.mkdir()
++    built = ri.install_region(source, built_library, 'Prepared fixture', try_roads=True)
++    pack = make_prepared_pack(built, tmp_path / 'prepared.zip')
++    before = hashlib.sha256(pack.read_bytes()).hexdigest()
++    library = tmp_path / 'imported'
++    library.mkdir()
++    imported = ri.import_region_pack(pack, library)
++    assert imported.manifest == built.manifest
++    assert imported.folder.parent == library
++    assert imported.index.metadata['source_sha256'] == built.index.metadata['source_sha256']
++    assert imported.road_pack is not None and imported.road_pack.metadata['nodes'] == built.road_pack.metadata['nodes']
++    assert (imported.folder / ri.FILES['source']).read_bytes() == source.read_bytes()
++    assert not (imported.folder / ri.MARKER).exists()
++    assert hashlib.sha256(pack.read_bytes()).hexdigest() == before
++    assert ri.verify_region(imported.folder).manifest == built.manifest
++
++
++def test_import_prepared_pack_refuses_existing_identity_without_changes(tmp_path):
++    source = tmp_path / 'source.osm.pbf'
++    source.write_bytes(diamond())
++    build = tmp_path / 'build'; build.mkdir()
++    prepared = ri.install_region(source, build, 'Prepared fixture')
++    pack = make_prepared_pack(prepared, tmp_path / 'prepared.zip')
++    library = tmp_path / 'library'; library.mkdir()
++    first = ri.import_region_pack(pack, library)
++    before = {p.name: p.read_bytes() for p in first.folder.iterdir()}
++    with pytest.raises(ValueError, match='already present'):
++        ri.import_region_pack(pack, library)
++    assert before == {p.name: p.read_bytes() for p in first.folder.iterdir()}
++
++
++def test_import_prepared_pack_rejects_extra_member_before_publication(tmp_path):
++    source = tmp_path / 'source.osm.pbf'; source.write_bytes(diamond())
++    build = tmp_path / 'build'; build.mkdir()
++    prepared = ri.install_region(source, build, 'Prepared fixture')
++    pack = make_prepared_pack(prepared, tmp_path / 'prepared.zip')
++    import zipfile
++    with zipfile.ZipFile(pack, 'a') as archive:
++        archive.writestr('../escape.txt', b'no')
++    library = tmp_path / 'library'; library.mkdir()
++    with pytest.raises(ValueError, match='member'):
++        ri.import_region_pack(pack, library)
++    assert not list(library.iterdir())
++    assert not (tmp_path / 'escape.txt').exists()
++
++
++def test_import_prepared_pack_cancel_removes_incomplete_folder(tmp_path):
++    source = tmp_path / 'source.osm.pbf'; source.write_bytes(diamond())
++    build = tmp_path / 'build'; build.mkdir()
++    prepared = ri.install_region(source, build, 'Prepared fixture')
++    pack = make_prepared_pack(prepared, tmp_path / 'prepared.zip')
++    library = tmp_path / 'library'; library.mkdir()
++    cancel = threading.Event()
++    def progress(value, total):
++        if value >= 5:
++            cancel.set()
++    with pytest.raises(MapCancelled):
++        ri.import_region_pack(pack, library, cancel=cancel, progress=progress)
++    assert not list(library.iterdir())
++
++
++def test_import_prepared_pack_rejects_changed_member_crc_and_cleans(tmp_path):
++    source = tmp_path / 'source.osm.pbf'; source.write_bytes(diamond())
++    build = tmp_path / 'build'; build.mkdir()
++    prepared = ri.install_region(source, build, 'Prepared fixture')
++    pack = make_prepared_pack(prepared, tmp_path / 'prepared.zip')
++    raw = bytearray(pack.read_bytes())
++    raw[len(raw)//2] ^= 1
++    pack.write_bytes(raw)
++    library = tmp_path / 'library'; library.mkdir()
++    with pytest.raises((ValueError, OSError, zipfile.BadZipFile)):
++        ri.import_region_pack(pack, library)
++    assert not list(library.iterdir())
+--- tests/test_region_install_ui.py
++++ tests/test_region_install_ui.py
+@@ -3,6 +3,7 @@
+ 
+ import threading
+ import time
++import zipfile
+ 
+ import pytest
+ from test_atlas_ui import screen as screen
+@@ -286,3 +287,53 @@
+     assert 'already committed' in message and 'Scan folder' in message
+     assert 'Existing snapshots were not changed' in message
+     window.destroy()
++
++
++def make_ui_pack(tmp_path):
++    source = tmp_path / 'pack-source.osm.pbf'
++    source.write_bytes(diamond())
++    build = tmp_path / 'pack-build'
++    build.mkdir()
++    region = ri.install_region(source, build, 'Prepared UI fixture', try_roads=True)
++    pack = tmp_path / 'prepared-ui.zip'
++    with zipfile.ZipFile(pack, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
++        for item in sorted(region.folder.iterdir(), key=lambda p: p.name):
++            archive.write(item, item.name)
++    return pack
++
++
++def test_prepared_pack_import_button_verifies_and_lists_new_region(screen, tmp_path, monkeypatch):
++    root, panel, app, window = opened(screen)
++    library = tmp_path / 'library'
++    library.mkdir()
++    pack = make_ui_pack(tmp_path)
++    window.library.set(str(library))
++    monkeypatch.setattr(ui.filedialog, 'askopenfilename', lambda *a, **k: str(pack))
++    monkeypatch.setattr(ui.messagebox, 'askyesno', lambda *a, **k: True)
++    window.pack_button.invoke()
++    finish(root, window)
++    # imported_pack starts the metadata refresh; finish it too when necessary.
++    if window.busy:
++        finish(root, window)
++    assert window.last_result is not None
++    assert len(window.entries) == 1
++    assert window.entries[0].label == 'Prepared UI fixture'
++    assert not (window.last_result.folder / ri.MARKER).exists()
++    assert 'prepared pack imported' in window.status.get().casefold() or 'select a region' in window.status.get().casefold()
++    assert not app.waypoints()
++    window.destroy()
++
++
++def test_prepared_pack_import_requires_library_and_confirmation(screen, tmp_path, monkeypatch):
++    root, _, _, window = opened(screen)
++    window.pack_button.invoke()
++    assert 'library folder' in window.status.get().casefold()
++    library = tmp_path / 'library'; library.mkdir()
++    pack = make_ui_pack(tmp_path)
++    window.library.set(str(library))
++    monkeypatch.setattr(ui.filedialog, 'askopenfilename', lambda *a, **k: str(pack))
++    monkeypatch.setattr(ui.messagebox, 'askyesno', lambda *a, **k: False)
++    window.pack_button.invoke()
++    root.update()
++    assert not window.busy and not list(library.iterdir())
++    window.destroy()
++
