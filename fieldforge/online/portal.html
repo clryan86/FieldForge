@@ -95,7 +95,13 @@
         <div><label for="mapOrder">Order</label><select id="mapOrder" disabled><option value="title">Title</option><option value="smallest">Smallest first</option><option value="largest">Largest first</option></select></div>
         <button id="resetMapFilters" class="secondary" type="button" disabled>Reset filters</button>
       </div>
+      <div class="map-controls">
+        <div><label for="mapLatitude">Maps at latitude</label><input id="mapLatitude" type="text" inputmode="decimal" maxlength="40" placeholder="e.g. 40.7" autocomplete="off" disabled></div>
+        <div><label for="mapLongitude">Longitude</label><input id="mapLongitude" type="text" inputmode="decimal" maxlength="40" placeholder="e.g. -74.0" autocomplete="off" disabled></div>
+        <p class="hint">WGS 84 decimal degrees. Leave both blank to show all maps.</p>
+      </div>
       <p id="mapsStatus" class="status" role="status" aria-live="polite">Connect to see the published map catalog.</p>
+      <p id="mapCoverageNote" class="hint" role="status"></p>
       <section class="map-list" aria-labelledby="downloadListTitle">
         <div class="maps-header"><h3 id="downloadListTitle">Your map download list</h3><span id="downloadListTotal" role="status">0 maps · 0 bytes total</span></div>
         <p class="hint">Select up to 100 maps across filters and pages. Save the list, then import it in FieldForge → Online Maps → Map downloads → Review / import list. The desktop can verify and download them together.</p>
@@ -269,7 +275,7 @@
       for(const result of results){
         const card=el("article",undefined,"result");card.append(el("h3",result.label),el("p",formatCoordinate(result.latitude)+", "+formatCoordinate(result.longitude),"coordinate"));
         const actions=el("div",undefined,"actions");
-        for(const [label,action] of [["Select place",()=>selectAddress(result)],["Use as start",()=>useResult(result,"start")],["Use as destination",()=>useResult(result,"end")],["Copy",()=>copyCoordinates(result)]]){const button=el("button",label,"secondary");button.type="button";button.addEventListener("click",action);actions.append(button);}
+        for(const [label,action] of [["Select place",()=>selectAddress(result)],["Use as start",()=>useResult(result,"start")],["Use as destination",()=>useResult(result,"end")],["Find maps for this place",()=>findMapsForPlace(result)],["Copy",()=>copyCoordinates(result)]]){const button=el("button",label,"secondary");button.type="button";button.addEventListener("click",action);actions.append(button);}
         card.append(actions,el("p",result.source+" · "+result.attribution+" · "+result.license,"provenance"));container.append(card);
       }
     }
@@ -412,16 +418,44 @@
       }catch(error){status("downloadListStatus",error.message,true);}
     });
     function fold(value){return String(value).normalize("NFKD").toLowerCase().replace(/\p{M}/gu,"");}
+    function mapFilterPoint(){
+      const raw=[byId("mapLatitude").value,byId("mapLongitude").value],values=raw.map(value=>value.trim());
+      if(values.every(value=>!value))return null;
+      if(values.some(value=>!value))throw new Error("Enter both latitude and longitude, or clear both to show all maps.");
+      if(raw.some(value=>value.length>40)||values.some(value=>!(/^[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/).test(value)))throw new Error("Enter signed decimal degrees only; no commas, direction letters or expressions.");
+      const point=values.map(Number);
+      for(const [index,limit] of [[0,90],[1,180]])if(!Number.isFinite(point[index])||Math.abs(point[index])>limit)throw new Error((index===0?"Latitude":"Longitude")+" must be between "+(-limit)+" and "+limit+" degrees.");
+      return point;
+    }
+    function mapBounds(map){
+      const bounds=map.coverage;
+      return Array.isArray(bounds)&&bounds.length===4&&bounds.every((value,index)=>typeof value==="number"&&Number.isFinite(value)&&Math.abs(value)<=(index%2?90:180))&&bounds[1]<=bounds[3]?bounds:null;
+    }
+    function mapContains(map,point){
+      const bounds=mapBounds(map);if(!bounds)return false;
+      const [west,south,east,north]=bounds,[latitude,longitude]=point;
+      const longitudes=Math.abs(longitude)===180?[longitude,-longitude]:[longitude];
+      return south<=latitude&&latitude<=north&&longitudes.some(lon=>west<=east?west<=lon&&lon<=east:lon>=west||lon<=east);
+    }
+    function resetMapFilters(){for(const id of ["mapFilter","mapLatitude","mapLongitude"])byId(id).value="";byId("mapKind").value="all";byId("mapOrder").value="title";}
+    function findMapsForPlace(result){
+      selectAddress(result);resetMapFilters();
+      byId("mapLatitude").value=formatCoordinate(result.latitude);byId("mapLongitude").value=formatCoordinate(result.longitude);
+      renderMaps();byId("mapsTitle").scrollIntoView({block:"start"});
+      status("searchStatus","Place coordinates filled the map filter. Only the loaded catalog is used.");
+    }
     function renderMaps(pageIndex=0){
       const terms=fold(byId("mapFilter").value).trim().split(/\s+/).filter(Boolean),kind=byId("mapKind").value,order=byId("mapOrder").value;
-      const maps=state.maps.filter(map=>(kind==="all"||(map.format==="mbtiles"?"mbtiles":"image")===kind)&&terms.every(term=>fold([map.title,map.coverage,map.filename,map.source||"",map.format].join(" ")).includes(term)));
+      let point=null,pointError="";try{point=mapFilterPoint();}catch(error){pointError=error.message;}
+      const maps=pointError?[]:state.maps.filter(map=>(!point||mapContains(map,point))&&(kind==="all"||(map.format==="mbtiles"?"mbtiles":"image")===kind)&&terms.every(term=>fold([map.title,map.coverage,map.filename,map.source||"",map.format].join(" ")).includes(term)));
       maps.sort((a,b)=>(order==="smallest"?a.bytes-b.bytes:order==="largest"?b.bytes-a.bytes:0)||fold(a.title).localeCompare(fold(b.title))||a.id.localeCompare(b.id));
       const pageCount=Math.max(1,Math.ceil(maps.length/24));state.mapPage=Math.max(0,Math.min(pageCount-1,pageIndex));
-      for(const id of ["mapFilter","mapKind","mapOrder","resetMapFilters"])byId(id).disabled=!state.catalogLoaded;
+      for(const id of ["mapFilter","mapKind","mapOrder","resetMapFilters","mapLatitude","mapLongitude"])byId(id).disabled=!state.catalogLoaded;
       byId("mapPrevious").disabled=state.mapPage===0;byId("mapNext").disabled=state.mapPage>=pageCount-1;
       byId("mapPage").textContent=maps.length?"Page "+(state.mapPage+1)+" of "+pageCount:"";
       const container=byId("mapCatalog");container.replaceChildren();
-      status("mapsStatus",state.maps.length?(maps.length+" of "+state.maps.length+" published maps · filters use only the loaded catalog"+(maps.length?"":" · No matches. Reset or broaden your filters.")):"No map files have been published yet. Available regions will appear here as maps are added.");
+      status("mapsStatus",!state.catalogLoaded?"Connect and refresh the catalog when ready; no map request was sent.":pointError||(state.maps.length?(maps.length+" of "+state.maps.length+" published maps · filters use only the loaded catalog"+(maps.length?"":" · No matches. Reset or broaden your filters.")):"No map files have been published yet. Available regions will appear here as maps are added."),Boolean(pointError));
+      status("mapCoverageNote",point&&state.catalogLoaded?state.maps.filter(map=>!mapBounds(map)).length+" maps without numeric bounds hidden. Bounds suggest candidates; inspect map detail and zoom coverage.":"");
       for(const map of maps.slice(state.mapPage*24,(state.mapPage+1)*24)){
         if(!/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/.test(map.id)||map.download_path!=="/api/v1/maps/"+map.id+"/download")continue;
         const card=el("article",undefined,"map-card");card.append(el("p",map.format.toUpperCase()+" · "+bytes(map.bytes),"eyebrow"),el("h3",map.title),el("p",Array.isArray(map.coverage)?"Bounds (W, S, E, N): "+map.coverage.join(", "):map.coverage,"muted"),el("p","Version "+map.version,"small"));
@@ -432,9 +466,9 @@
       }
       renderDownloadList();updateAvailability();
     }
-    byId("mapFilter").addEventListener("input",()=>renderMaps());
+    for(const id of ["mapFilter","mapLatitude","mapLongitude"])byId(id).addEventListener("input",()=>renderMaps());
     for(const id of ["mapKind","mapOrder"])byId(id).addEventListener("change",()=>renderMaps());
-    byId("resetMapFilters").addEventListener("click",()=>{byId("mapFilter").value="";byId("mapKind").value="all";byId("mapOrder").value="title";renderMaps();});
+    byId("resetMapFilters").addEventListener("click",()=>{resetMapFilters();renderMaps();});
     byId("mapPrevious").addEventListener("click",()=>renderMaps(state.mapPage-1));
     byId("mapNext").addEventListener("click",()=>renderMaps(state.mapPage+1));
     byId("connect").addEventListener("click",connect);

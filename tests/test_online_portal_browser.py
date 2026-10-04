@@ -179,6 +179,66 @@ def test_changed_catalog_keeps_selected_snapshot_and_disables_its_download(porta
     _assert_no_horizontal_overflow(page)
 
 
+def test_coordinate_discovery_and_address_handoff_work_offline(portal_page, operated_portal, tmp_path):
+    from PIL import Image
+    from playwright.sync_api import expect
+
+    from fieldforge.online.catalog import publish_map
+
+    url, _provider, source, _asset = operated_portal
+    image = tmp_path / "bounded.png"
+    Image.new("RGB", (8, 8), "green").save(image)
+    for name, bounds in (("County", [-80, 35, -70, 45]),
+                         ("Date line", [170, -20, -170, 20]),
+                         ("Meridian", [180, 0, 180, 0])):
+        publish_map(source.parent / "published-maps", image, map_id=name.lower().replace(" ", "-"),
+                    title=name, attribution="Original fixture", license="Test fixture only",
+                    coverage=bounds, version="1")
+    page, context, calls = portal_page
+    page.goto(url, wait_until="networkidle")
+    _connect(page)
+    page.locator("#addressQuery").fill("Fixture Depot")
+    page.locator("#searchButton").click()
+    expect(page.locator("#searchResults .result")).to_have_count(2)
+    context.set_offline(True)
+    expect(page.locator("#connectionBadge")).to_have_text("Offline")
+    before = len(calls)
+    page.locator("#mapFilter").fill("no matches")
+    page.get_by_role("button", name="Find maps for this place", exact=True).last.click()
+    expect(page.locator("#mapLatitude")).to_have_value("40.02")
+    expect(page.locator("#mapLongitude")).to_have_value("-75.01")
+    expect(page.locator("#mapCatalog .map-card h3")).to_have_text(["County"])
+    expect(page.locator("#mapCoverageNote")).to_contain_text("1 maps without numeric bounds hidden")
+    page.get_by_role("checkbox", name="Add County to download list", exact=True).check()
+    for latitude, longitude, titles in (
+        ("35", "-80", ["County"]), ("45.001", "-75", []),
+        ("0", "175", ["Date line"]), ("0", "-175", ["Date line"]),
+        ("0", "180", ["Date line", "Meridian"]),
+        ("0", "-180", ["Date line", "Meridian"]), ("0", "0", []),
+    ):
+        page.locator("#mapLatitude").fill(latitude)
+        page.locator("#mapLongitude").fill(longitude)
+        expect(page.locator("#mapCatalog .map-card h3")).to_have_text(titles)
+    for latitude, longitude, message in (
+        ("0", "", "Enter both"), ("1e1", "0", "signed decimal"),
+        ("0x10", "0", "signed decimal"), ("NaN", "0", "signed decimal"),
+        ("1,2", "0", "signed decimal"), ("91", "0", "Latitude must"),
+        ("0", "-181", "Longitude must"),
+    ):
+        page.locator("#mapLatitude").fill(latitude)
+        page.locator("#mapLongitude").fill(longitude)
+        expect(page.locator("#mapsStatus")).to_contain_text(message)
+        expect(page.locator("#mapCatalog .map-card")).to_have_count(0)
+    expect(page.locator("#downloadListTotal")).to_contain_text("1 map ·")
+    page.locator("#resetMapFilters").click()
+    expect(page.locator("#mapCatalog .map-card")).to_have_count(4)
+    expect(page.locator("#mapCoverageNote")).to_be_empty()
+    expect(page.get_by_role("link", name="Download County", exact=True)).to_have_attribute("aria-disabled", "true")
+    page.set_viewport_size({"width": 390, "height": 844})
+    _assert_no_horizontal_overflow(page)
+    assert len(calls) == before
+
+
 def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp_path):
     from playwright.sync_api import expect, sync_playwright
 

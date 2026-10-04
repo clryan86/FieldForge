@@ -237,6 +237,8 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         for column, button in enumerate((self.copy_button, self.save_place_button, self.save_place_csv_button, self.start_button,
                                          self.destination_button, self.center_button)):
             button.grid(row=0, column=column, padx=(0, 6))
+        self.find_maps_button = ttk.Button(actions, text="Find maps for this place", command=self.find_maps_for_place)
+        self.find_maps_button.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 0))
 
     def _build_maps(self):
         panel = ttk.Frame(self.tabs, padding=10)
@@ -450,7 +452,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self.search_entry.configure(state="normal" if searchable else "disabled")
         self.search_button.configure(state="normal" if searchable else "disabled")
         for button in (self.copy_button, self.save_place_button, self.start_button,
-                       self.destination_button, self.center_button):
+                       self.destination_button, self.center_button, self.find_maps_button):
             button.configure(state="normal" if self.selected_result is not None else "disabled")
         self.save_place_csv_button.configure(state="normal" if self.selected_result is not None and idle else "disabled")
         catalog = self._available("catalog") and idle
@@ -819,6 +821,15 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             self.end_lat.set(self.latitude.get())
             self.end_lon.set(self.longitude.get())
             self.status.set("Selected coordinates filled the destination. Open Routes to request alternatives.")
+
+    def find_maps_for_place(self):
+        if self._disposed or self.selected_result is None:
+            return
+        self.catalog_filters.use_point(self.selected_result["latitude"], self.selected_result["longitude"])
+        self.tabs.select(self.maps_tab)
+        self.status.set("Showing maps whose published bounds include this place. " + (
+            "Review the map details before adding a download." if self._catalog_loaded else
+            "Connect and refresh the catalog when ready; no request was sent."))
 
     def center_map(self):
         if self._disposed or self.selected_result is None:

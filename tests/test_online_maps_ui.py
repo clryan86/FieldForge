@@ -1089,10 +1089,12 @@ def test_minimum_geometry_keeps_online_and_offline_controls_visible(screen):
         (panel.address_tab, (
             panel.search_entry, panel.search_button, panel.results_tree,
             panel.copy_button, panel.save_place_button, panel.save_place_csv_button, panel.center_button,
+            panel.find_maps_button,
         )),
         (panel.maps_tab, (
             panel.refresh_catalog_button, panel.download_button,
             panel.maps_tree, panel.local_maps_tree, panel.open_map_button,
+            panel.catalog_filters.latitude_entry, panel.catalog_filters.longitude_entry,
         )),
         (panel.routes_tab, (
             panel.route_button, panel.save_route_button, panel.open_route_button,
@@ -1174,6 +1176,50 @@ def _two_list_maps(screen, client):
     screen.panel.refresh_catalog()
     wait(screen.root, screen.panel)
     return maps
+
+
+def test_place_to_map_filter_remains_local_and_keeps_download_list(screen):
+    client = connect(screen)
+    panel = screen.panel
+    chosen = search_and_select(screen)
+    maps = _two_list_maps(screen, client)
+    bounded = dict(maps[0], coverage=[-5, -5, 5, 5])
+    panel._catalog = (bounded, maps[1])
+    panel._render_catalog()
+    panel.maps_tree.selection_set("1")
+    screen.root.update()
+    panel.add_to_list_button.invoke()
+    panel.catalog_filters.query.set("not present")
+    panel.disconnect()
+    before = list(client.calls)
+    panel.find_maps_button.invoke()
+    assert panel.tabs.select() == str(panel.maps_tab)
+    assert float(panel.catalog_filters.latitude.get()) == chosen["latitude"]
+    assert float(panel.catalog_filters.longitude.get()) == chosen["longitude"]
+    assert panel.maps_tree.get_children() == ("0",)
+    assert "1 maps without numeric bounds hidden" in panel.catalog_filters.coverage_note.get()
+    assert not enabled(panel.download_button)
+    assert panel._download_list["maps"] == [maps[1]]
+    panel.catalog_filters.longitude.set("")
+    assert not panel.maps_tree.get_children()
+    assert "Enter both" in panel.catalog_filters.count.get()
+    panel.catalog_filters.reset()
+    assert panel.maps_tree.get_children() == ("0", "1")
+    assert panel.catalog_filters.coverage_note.get() == ""
+    assert client.calls == before
+
+
+def test_place_map_handoff_does_not_load_a_catalog_implicitly(screen):
+    client = connect(screen)
+    panel = screen.panel
+    search_and_select(screen)
+    panel.disconnect()
+    before = list(client.calls)
+    panel.find_maps_button.invoke()
+    assert "no request was sent" in panel.status.get()
+    assert not panel._catalog_loaded
+    assert not enabled(panel.catalog_filters.latitude_entry)
+    assert client.calls == before
 
 
 def test_download_list_survives_filters_and_offline_export_import(screen, tmp_path, monkeypatch):

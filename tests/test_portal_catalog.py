@@ -10,7 +10,7 @@ from map_fixture import make_map
 from PIL import Image
 
 from fieldforge.online.catalog import Catalog, CatalogError, main
-from fieldforge.online.discovery import filter_maps
+from fieldforge.online.discovery import coverage_bounds, filter_maps, filter_point
 from fieldforge.online.inventory import publish_inventory
 
 
@@ -141,3 +141,55 @@ def test_map_filters_keep_original_identity_and_do_not_change_catalog(inventory)
 def test_filters_reject_invalid_controls(kwargs):
     with pytest.raises(ValueError):
         filter_maps([], **kwargs)
+
+
+@pytest.mark.parametrize("coverage,point,match", [
+    ([-80, 35, -70, 45], (40, -75), True),
+    ([-80, 35, -70, 45], (35, -80), True),
+    ([-80, 35, -70, 45], (45, -70), True),
+    ([-80, 35, -70, 45], (45.001, -75), False),
+    ([-80, 35, -70, 45], (40, -69.999), False),
+    ([170, -20, -170, 20], (0, 175), True),
+    ([170, -20, -170, 20], (0, -175), True),
+    ([170, -20, -170, 20], (0, 180), True),
+    ([170, -20, -170, 20], (0, -180), True),
+    ([170, -20, -170, 20], (0, 0), False),
+    ([-180, -90, 180, 90], (90, 0), True),
+    ([170, -20, 180, 20], (0, -180), True),
+    ([-180, -20, -170, 20], (0, 180), True),
+    ([180, 0, 180, 0], (0, -180), True),
+    ([0, 0, 0, 0], (0, 0), True),
+    ([0, 0, 0, 0], (0, 0.001), False),
+    ("North region", (40, -75), False),
+    ("[-80,35,-70,45]", (40, -75), False),
+])
+def test_coordinate_filter_uses_declared_bounds_including_date_line(coverage, point, match):
+    item = {"id": "test", "title": "Éclair", "coverage": coverage, "format": "mbtiles"}
+    assert filter_maps([item], "eclair", "mbtiles", point=point) == ((item,) if match else ())
+    assert filter_maps([item], "", "image", point=point) == ()
+    assert filter_maps([item]) == (item,)  # Clearing the point restores labeled maps.
+
+
+@pytest.mark.parametrize("coverage", [None, [], [0, 0, 0], [0, 1, 0, -1],
+                                     [True, 0, 1, 1], [0, 0, float("nan"), 1],
+                                     [0, 0, 181, 1], [0, -91, 0, 0], ["0", 0, 1, 1]])
+def test_invalid_coverage_never_becomes_a_coordinate_match(coverage):
+    assert coverage_bounds({"coverage": coverage}) is None
+    assert filter_maps([{"coverage": coverage}], point=(0, 0)) == ()
+
+
+@pytest.mark.parametrize("point", [(91, 0), (0, -181), (True, 0), (float("nan"), 0),
+                                  ("40", "-75"), (0,), "0,0"])
+def test_point_validation_applies_even_to_an_empty_catalog(point):
+    with pytest.raises(ValueError):
+        filter_maps([], point=point)
+
+
+def test_coordinate_fields_are_explicit_and_blank_is_not_zero():
+    assert filter_point(" ", "") is None
+    assert filter_point("+0.0", "-0") == (0, 0)
+    assert filter_point("40.123456789", "-75.987654321") == (40.123456789, -75.987654321)
+    for pair in (("0", ""), ("", "0"), ("1e1", "0"), ("0x10", "0"),
+                 ("NaN", "0"), ("1,2", "0"), ("91", "0"), ("0", "-181"), ("0" * 41, "0")):
+        with pytest.raises(ValueError):
+            filter_point(*pair)

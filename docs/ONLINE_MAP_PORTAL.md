@@ -17,6 +17,8 @@ saved routes do not require a portal connection.
    **Use start** or **Use destination** fills the route fields. Filling a saved
    place opens the existing editor, where **Save place** makes the record persistent.
    A selected address can also be exported as CSV for the offline GPS place catalog.
+   **Find maps for this place** opens the map catalog with its coordinates filled
+   in; it does not send a request or start a download.
 4. In **Map downloads**, load the catalog, filter by name, region, source or
    format, and sort by size to find smaller downloads. Choose a pack by coverage,
    format, version, and size. These filters keep working on the loaded metadata
@@ -25,6 +27,23 @@ saved routes do not require a portal connection.
 5. In **Routes**, request route alternatives between the chosen coordinates.
    Inspect the route and its directions, then save the selected route locally.
 6. Disconnect. Open local maps, saved places, and saved route directions as needed.
+
+In the native **Map downloads** tab and browser portal, enter **Maps at latitude**
+and **Longitude** to find packs whose published bounds include a place. Use signed
+WGS 84 decimal degrees, latitude first; both fields must be filled, or both blank
+to disable this filter. **Find maps for this place** clears previous text/format
+filters and fills the selected address's coordinates. Existing list selections
+stay intact. All filtering uses loaded metadata, even after disconnecting; no
+coordinates are sent or added to an exported map list. Filter values last only
+for the current app or browser-page session.
+
+Bounds include their edges and support regions crossing the date line. Maps with
+only text coverage labels are hidden while coordinate filtering is active, and
+the interface reports their count. Clear both coordinates to browse those maps.
+Published bounds identify candidates, not a guarantee of tile/detail coverage
+or image calibration. Inspect the pack and its documented zoom/detail coverage
+before relying on it. The compatibility portal window retains text filters
+because its legacy catalog protocol carries coverage as labels.
 
 If you use the browser portal, download a route as **route JSON**, then open
 **Online Maps → Routes → Import downloaded route…** in the desktop application.
@@ -274,6 +293,15 @@ The inventory accepts 1–5000 maps within 8 MiB of JSON. Each map uses the same
 format limits and immutable publisher as `add`: raster MBTiles up to 16 GiB and
 supported image files up to 64 MiB, subject to decoder limits. Metadata must
 include a unique ID, title, coverage, version, source, attribution and license.
+For coordinate discovery, provide inventory `coverage` as a numeric JSON array
+`[west, south, east, north]`, for example `[-80, 35, -70, 45]`; use the file's
+actual WGS 84 extent. A west bound greater than east denotes a date-line crossing.
+Text labels remain supported but cannot match coordinates. Putting an array in
+quotes creates a label, not bounds. The single-file CLI's `--coverage` is a text
+label; use the inventory or Python publisher for numeric bounds. Describe useful
+detail/zoom levels in the title or accompanying documentation; do not infer them
+from the extent. This metadata does not georeference an image or verify that all
+tiles inside the extent exist.
 Images remain reference images unless separately calibrated in an appropriate
 workflow; vector MBTiles are not supported by the raster viewer.
 

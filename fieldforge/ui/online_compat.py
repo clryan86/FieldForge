@@ -139,7 +139,8 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
             button.pack(side="left", padx=(0, 7))
         self.refresh_button = ttk.Button(maps, text="Load / refresh catalogue", command=self.catalogue)
         self.refresh_button.grid(row=0, column=0, sticky="w")
-        self.catalog_filters = CatalogFilters(maps, changed=self._render_catalog)
+        # This compatibility protocol exposes coverage labels, not numeric bounds.
+        self.catalog_filters = CatalogFilters(maps, changed=self._render_catalog, point_filter=False)
         self.catalog_filters.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(8, 0))
         maps.rowconfigure(2, weight=1)
         self.map_table = ttk.Treeview(maps, columns=("title", "coverage", "size"), show="headings", height=8)

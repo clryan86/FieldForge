@@ -7,6 +7,28 @@ files, and offline route overlay. The earlier clean baseline used for the Tk
 control described below was `68e5011d7b6cec4552e82b8985b449dac78b182f`.
 See [Online map portal](ONLINE_MAP_PORTAL.md) for operation and supported formats.
 
+## Coordinate-based map discovery
+
+The native map tab and browser portal now filter the loaded catalog by an
+explicit latitude/longitude pair. Selected address results can fill these
+filters without a request; existing download-list selections remain intact.
+Text-only coverage is excluded and counted rather than guessed. Compatibility
+catalogs keep their text filters because their coverage field is a label.
+
+The 35 new headless cases cover inclusive boundaries, date-line crossings,
+equivalent +180/-180 longitudes, zero-width extents, poles, labeled or malformed
+coverage, explicit coordinate validation and blank/half-filled form semantics.
+Required GUI checks exercise address handoff with and without a loaded catalog,
+offline filtering, retained selections and minimum-window visibility. A real
+browser workflow covers the same filtering and date-line boundaries, invalid
+inputs, offline address reuse, list retention and a 390-pixel mobile layout.
+
+Local Python 3.12.14 headless validation: **2,247 passed**, 535 GUI/browser skips,
+78 subtests passed and two existing PDF-fixture deprecation warnings. Ruff,
+whitespace and portal JavaScript syntax checks pass. The PR records the exact
+revision's Linux desktop, Windows, Chromium/WebKit and packaging results;
+headless skips are not counted as graphical validation.
+
 ## Resumable partial map transfers
 
 The native list window now keeps partial downloads for explicit retry, with a

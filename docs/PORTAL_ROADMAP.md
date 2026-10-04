@@ -105,6 +105,13 @@ from a generic license or this engineering note.
    retention. Already downloaded files must remain usable without online checks.
 7. Only then replace the draft tier text with actual terms and purchase controls.
 
+Coordinate discovery now uses numeric WGS 84 catalog bounds in the native map
+tab and browser portal. Address results can fill the map filters locally, and
+loaded catalogs stay filterable offline. Text-only coverage is counted separately
+and excluded from coordinate matches; bounds are candidate extents, not verified
+tile completeness. Regional inventories should provide real numeric extents and
+document their useful zoom/detail coverage.
+
 Next engineering priority: regional map publication and usable content-pack
 import contracts. Leave the knowledge placeholders until real bundles
 and their import contracts are ready; do not populate a catalog with fake files.
