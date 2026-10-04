@@ -27,7 +27,7 @@ def course():
 
 def test_all_566_shipped_questions_keep_their_work_identity():
     original = [(lesson.id, q.id, q.fingerprint) for lesson in lessons()
-                if not lesson.id.startswith("evidence-") for q in lesson.questions]
+                if lesson.id.startswith(("guide-", "read-", "write-", "library-")) for q in lesson.questions]
     assert len(original) == 566
     assert hashlib.sha256(json.dumps(original, separators=(",", ":")).encode()).hexdigest() == (
         "8827feb3ec06a417bb6ef88846899413238734e82f68926ced6be97d3536df3d")

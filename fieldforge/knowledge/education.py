@@ -19,6 +19,7 @@ from importlib.resources import files
 from pathlib import Path
 
 from fieldforge.knowledge._learning_model import parse_number
+from fieldforge.knowledge.education_visuals import counters_svg, validate_counters
 
 NOTICE = ("Original AI-assisted teaching drafts; not independently educator-reviewed. "
           "Number and choice checks compare stated answers. Written explanations are self-reviewed. "
@@ -69,7 +70,7 @@ def lessons() -> tuple[StudyLesson, ...]:
     root = files("fieldforge.content").joinpath("education")
     source = json.loads(root.joinpath("lessons.json").read_text(encoding="utf-8"))
     result = []
-    for filename in ("guided.json", "guided-literacy.json", "guided-evidence.json"):
+    for filename in ("guided.json", "guided-literacy.json", "guided-evidence.json", "guided-numbers.json"):
         guided = json.loads(root.joinpath(filename).read_text(encoding="utf-8"))
         for item in guided["lessons"]:
             questions = tuple(Question(**{**q, "hints": tuple(q["hints"]),
@@ -97,6 +98,8 @@ def lessons() -> tuple[StudyLesson, ...]:
     for lesson in result:
         if lesson.diagram and lesson.diagram.get("kind") == "bars":
             bar_chart(lesson.diagram)
+        if lesson.diagram and lesson.diagram.get("kind") == "counters":
+            validate_counters(lesson.diagram)
         if not lesson.questions or any(key not in ids for key in lesson.prerequisites):
             raise ValueError("Missing study questions or prerequisites")
         if len({q.id for q in lesson.questions}) != len(lesson.questions):
@@ -328,6 +331,10 @@ def worksheet(lesson: StudyLesson, records: tuple[Work, ...]) -> str:
         if lesson.diagram["kind"] == "bars":
             sections.append(chart_svg(lesson.diagram))
         sections.append(f"<p>{escape(lesson.diagram['description'])}</p>")
+        if lesson.diagram["kind"] == "counters":
+            for index, step in enumerate(lesson.diagram["steps"]):
+                sections.append(f"<h3>Diagram step {index + 1}: {escape(step['title'])}</h3>"
+                                + counters_svg(lesson.diagram, index) + f"<p>{escape(step['caption'])}</p>")
     sections.append("<h2>Practice and saved work</h2>")
     for passage, index in passages.items():
         sections.append(f"<h3 id='passage-{index}'>Practice source text</h3><pre>{escape(passage)}</pre>")

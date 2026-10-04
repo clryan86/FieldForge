@@ -4,7 +4,32 @@ Open **Education** beside Blueprints, or use **Go to section → Education** in 
 compact window. It works immediately with bundled content, even in an existing
 database where the reference library has not been installed.
 
-The default **Guided: Measure & plan** course contains five original lessons:
+The default **Guided: Numbers & operations** course contains six original lessons:
+
+1. Counting: match each object to one count, recognize zero and compare collections.
+2. Place value: tens and ones, equivalent groupings and the role of zero.
+3. Addition: counting on, making a ten and explaining a carried ten.
+4. Subtraction: removal, gaps, regrouping and checking by addition.
+5. Multiplication: equal groups, arrays and group count versus group size.
+6. Division: equal sharing, full groups, leftovers and interpreting the answer's unit.
+
+Use **Previous step** and **Next step** above the diagram to follow the worked
+model. Each divided rod represents ten ones; each circle represents one. All
+18 diagram steps have textual descriptions and appear in worksheet exports.
+The 36 exercises include 18 numeric checks, six choice checks and twelve written
+tasks with comparison criteria. The diagrams explain worked examples; Practice
+uses separate questions. Viewing a diagram does not change a saved answer.
+
+These are supported introductions: a helper may read aloud or type a learner's
+spoken explanation. The app does not supply audio instruction or a complete early
+mathematics curriculum. Instructional background includes the
+[IES elementary mathematics intervention guide](https://ies.ed.gov/ncee/wwc/practiceguide/26)
+and [OpenStax whole-number concepts](https://openstax.org/books/prealgebra-2e/pages/1-key-concepts).
+The examples and diagrams are original, AI-assisted drafts; these sources did
+not evaluate or endorse the course. Returning learners can use **Resume saved
+practice** to reopen their existing work in any course.
+
+Next, **Guided: Measure & plan** contains five original lessons:
 
 1. Fractions: equal parts, equivalent amounts and a fraction of a length.
 2. Length: nonzero ruler starts, metric units and reverse checks.
@@ -89,7 +114,7 @@ detect other help used, and it does not infer independent mastery.
 
 ## Content and storage boundaries
 
-The fourteen guided lessons add 74 exercises to the original 516 reference prompts.
+The twenty guided lessons add 110 exercises to the original 516 reference prompts.
 They are AI-assisted teaching drafts, not independently educator-reviewed or
 validated with learner outcomes. Instructional design background is the
 [IES study guide](https://ies.ed.gov/ncee/wwc/PracticeGuide/1); this does not mean
@@ -109,6 +134,7 @@ results. Existing versions of work remain in the database. Concurrent saves use
 revision checks, so another open window cannot silently replace an older draft.
 The literacy extension preserves all 541 previously shipped question fingerprints.
 The evidence course additionally preserves all 566 fingerprints shipped before it.
+The number foundations course preserves all 590 question identities shipped before it.
 New questions include source passages and choices in their fingerprints, so
 changed evidence or options cannot inherit a previous question's check result.
 

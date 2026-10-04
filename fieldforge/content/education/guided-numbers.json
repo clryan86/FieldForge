@@ -1,0 +1,1215 @@
+{
+  "edition": "guided-numbers-2026-10-04",
+  "license": "CC BY-SA 4.0",
+  "authorship": "Original AI-assisted FieldForge teaching drafts, not independently educator-reviewed.",
+  "references": [
+    "Instructional background: IES / What Works Clearinghouse, Assisting Students Struggling with Mathematics: Intervention in the Elementary Grades (2021). Clear explanations and connected representations inform these original activities; the guide did not evaluate FieldForge. Accessed 2026-10-04.\nhttps://ies.ed.gov/ncee/wwc/practiceguide/26",
+    "Mathematical background: OpenStax, Prealgebra 2e, Chapter 1 key concepts. All FieldForge examples, practice cards, diagrams and questions are original, not copied textbook activities. Accessed 2026-10-04.\nhttps://openstax.org/books/prealgebra-2e/pages/1-key-concepts"
+  ],
+  "lessons": [
+    {
+      "id": "number-count",
+      "title": "1 · Count objects, keep the amount",
+      "track": "Guided: Numbers & operations",
+      "goal": "Count each object once, recognize zero, and compare quantities without relying on their spacing.",
+      "materials": "Paper and pencil. Draw marks for objects, or use large paper cards. A helper can read the text aloud. These are supported introductions, not an audio course or a complete early-mathematics curriculum.",
+      "prerequisites": [],
+      "paragraphs": [
+        "START WITH SOMETHING YOU CAN COUNT\nDraw four separate marks. Point to one mark as you say each number: one, two, three, four. Move a finger or pencil tip to the next uncounted mark each time. The last number you say tells how many marks there are. Writing the digit 4 records that amount.",
+        "MAKE THE COUNT CHECKABLE\nKeep counted and uncounted objects separate: move a card to a counted pile, or make a light tick beside each mark. Do not count an object twice and do not skip one. Count again in a different order to check. You should get the same total if no objects were added or removed.",
+        "WORKED EXAMPLE · TWO ROWS, ONE COLLECTION\nThere are four marks in one row and three in another. Touch all four in the first row, saying 1, 2, 3, 4. Continue through the second row: 5, 6, 7. There are seven marks altogether. If you move them into one row, there are still seven; the arrangement changes, not the amount.",
+        "ZERO AND COMPARISON\nZero means there are none of the objects being counted. An empty box holds zero cards, not one card because there is one box. To compare two collections, match one object from the first with one from the second. If one collection has objects left over, it has more. A longer-looking row can have fewer objects if they are spread farther apart.",
+        "A MISTAKE TO EXPLAIN\nSomeone counts five cards but says six because one card was touched twice. The problem is the matching of number words to objects. Recount while moving each card once; do not merely choose a different last number. A counting method should let another person see why every card was counted exactly once.",
+        "TRY, EXPLAIN, REVISIT\nUse the practice card below. Enter just the number for numeric questions. For writing tasks, explain or describe a drawing; a helper can type your spoken explanation. Later, draw a new collection of up to ten marks and check it in a different order.",
+        "PRACTICE CARD\nCOUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many marks are in rows A and B together in N1?",
+          "answer": "8",
+          "unit": "marks",
+          "explanation": "Count the five A marks, then continue with B: 6, 7, 8. Every mark is counted once. There are eight altogether; spaces do not add objects.",
+          "hints": [
+            "Start with A's five marks.",
+            "Continue the count for B's three marks instead of restarting your total."
+          ],
+          "mistakes": [
+            [
+              "5",
+              "Five counts only row A. Include the marks in B too."
+            ],
+            [
+              "7",
+              "Check that each of the eight marks is counted once; count marks rather than gaps."
+            ]
+          ],
+          "id": "q1",
+          "passage": "COUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many marks are in the empty box in N2?",
+          "answer": "0",
+          "unit": "marks",
+          "explanation": "There are no marks, so the number of marks is zero. The box itself is not the object being counted.",
+          "hints": [
+            "What object does the question ask you to count?",
+            "Zero names a collection with no objects."
+          ],
+          "mistakes": [
+            [
+              "1",
+              "There is one box, but the question asks for the marks inside it. It has none."
+            ]
+          ],
+          "id": "q2",
+          "passage": "COUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+        },
+        {
+          "kind": "number",
+          "prompt": "After matching the cards in N4, how many P cards are left without a partner?",
+          "answer": "2",
+          "unit": "cards",
+          "explanation": "Match four pairs. Those pairs use four of P's six cards and all four Q cards. Two P cards remain, so P has two more cards than Q.",
+          "hints": [
+            "Use one card from each collection for every pair.",
+            "After four pairs, how many of the six P cards have not been used?"
+          ],
+          "mistakes": [
+            [
+              "6",
+              "Six is P's starting count. Four P cards now have partners."
+            ],
+            [
+              "10",
+              "Ten is the combined number of cards, not the number left without partners."
+            ]
+          ],
+          "id": "q3",
+          "passage": "COUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+        },
+        {
+          "kind": "choice",
+          "prompt": "What can we conclude about the eight cards moved in N3?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "There are more because the row is longer."
+            ],
+            [
+              "B",
+              "There are still eight because none were added or removed."
+            ],
+            [
+              "C",
+              "There are fewer because the gaps are bigger."
+            ]
+          ],
+          "explanation": "Spacing changes the appearance of the row. N3 says no cards enter or leave, so the same eight cards remain. Counting or matching checks the amount.",
+          "hints": [
+            "Did any object enter or leave the collection?",
+            "Separate the number of cards from the distance between them."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "A longer row can result from larger gaps. It does not necessarily contain more cards."
+            ],
+            [
+              "C",
+              "Bigger gaps do not remove cards. N3 says all eight remain."
+            ]
+          ],
+          "id": "q4",
+          "passage": "COUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Describe a way to count N1 so someone watching can check that you counted every mark once.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for: touching or marking each object once, continuing across both rows, and naming eight as the total. Example: 'I touch A's marks while saying 1 to 5, then touch B's while saying 6, 7, 8. I put a small tick beside each counted mark. My last number, eight, is the total.' Other systematic orders are valid.",
+          "hints": [
+            "How will you tell counted marks from uncounted marks?",
+            "Explain what your last number tells the observer."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "COUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Someone says six widely spaced cards must be more than eight closely spaced cards. Explain how you would test that claim using matching or counting.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for distinguishing amount from spacing and identifying eight as more. Example: 'Match each of the six cards to one of the eight. Two of the eight remain without a partner, so eight is more even if its row is shorter.' A correct explanation names the objects counted and the unmatched cards, not just which row looks bigger.",
+          "hints": [
+            "Could you pair one card from each collection?",
+            "Which collection would have two cards without partners?"
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "COUNTING CARD — ORIGINAL PAPER PRACTICE\n[N1] Row A: five marks, written as | | | | |. Row B: three marks, written as | | |. Count marks, not the spaces between them.\n[N2] A third box is empty: it contains no marks.\n[N3] Eight cards are moved from a short row into a long row. No cards are added or removed.\n[N4] Collection P has six cards; collection Q has four cards. Match one P card to one Q card until one collection is used up."
+        }
+      ],
+      "diagram": {
+        "kind": "counters",
+        "description": "Each small circle stands for one. Each divided rod stands for ten ones. Group boxes and written labels identify what is being counted. Use Previous step and Next step to follow the worked example; the worksheet includes every step.",
+        "steps": [
+          {
+            "title": "Count both rows",
+            "caption": "Four marks, then three more: count each once to reach seven.",
+            "groups": [
+              {
+                "label": "First row",
+                "tens": 0,
+                "ones": 4
+              },
+              {
+                "label": "Next row",
+                "tens": 0,
+                "ones": 3
+              }
+            ]
+          },
+          {
+            "title": "Move, do not add",
+            "caption": "These are the same seven marks collected in one box.",
+            "groups": [
+              {
+                "label": "Same seven",
+                "tens": 0,
+                "ones": 7
+              }
+            ]
+          },
+          {
+            "title": "Name an empty set",
+            "caption": "The empty box has zero marks; the other still has seven.",
+            "groups": [
+              {
+                "label": "Empty",
+                "tens": 0,
+                "ones": 0
+              },
+              {
+                "label": "Seven",
+                "tens": 0,
+                "ones": 7
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "number-place",
+      "title": "2 · Tens and ones: the value of a digit",
+      "track": "Guided: Numbers & operations",
+      "goal": "Represent a two-digit number with tens and ones, trade one ten for ten ones, and explain a zero in the ones place.",
+      "materials": "Paper and pencil. Draw marks for objects, or use large paper cards. A helper can read the text aloud. These are supported introductions, not an audio course or a complete early-mathematics curriculum.",
+      "prerequisites": [
+        "number-count"
+      ],
+      "paragraphs": [
+        "BUILD A TEN\nDraw ten small marks and circle the group. Call that group one ten. It still contains ten ones. A ten-rod in the diagram is divided into ten cells to show this relationship. One rod and one loose circle do not have the same value: the rod represents ten ones, the circle one.",
+        "CONNECT GROUPS TO WRITTEN NUMBERS\nIn a two-digit whole number, the left digit tells the number of tens and the right digit tells the number of ones. In 24, the 2 means two tens, or twenty. The 4 means four ones. Together they make twenty-four. The digit's position is part of its meaning; 24 and 42 are different amounts.",
+        "WORKED EXAMPLE · TRADE WITHOUT CHANGING THE AMOUNT\nStart with two tens and four ones: 24. Open one of the tens into ten loose ones. Now there is one ten and fourteen ones. The amount is still 24 because nothing was added or removed. Regroup ten of those loose ones into a rod to return to two tens and four ones.",
+        "WHY ZERO HAS A JOB\nThirty is three tens and no loose ones. Write 30 so the 3 stays in the tens place and the 0 records no ones. Writing 3 instead would mean three ones. Zero can record an empty place; it is not an instruction to erase that place.",
+        "WORKED COMPARISON\nCompare 24 with 42. Two tens are fewer than four tens, so 24 is smaller. Compare tens before ones for these two-digit numbers. If the tens are equal, compare the ones: 24 is smaller than 27 because they both have two tens and four ones are fewer than seven.",
+        "TRY AND CHECK\nBuild the practice amounts with drawn ten-rods and single marks. Count the value of the rods, not only how many shapes you drew. Explain a trade in your own words, then check by counting every represented one.",
+        "PRACTICE CARD\nPLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "What number is represented by P1?",
+          "answer": "36",
+          "unit": "ones in total",
+          "explanation": "Three tens represent 30 ones. Add the six loose ones to get 36. The 3 belongs in the tens place and the 6 in the ones place.",
+          "hints": [
+            "Count 10, 20, 30 for the rods.",
+            "After thirty, count the six loose ones."
+          ],
+          "mistakes": [
+            [
+              "9",
+              "Three rods plus six circles are nine shapes, but each rod represents ten ones."
+            ],
+            [
+              "63",
+              "You reversed tens and ones: P1 has three tens, not six."
+            ]
+          ],
+          "id": "q1",
+          "passage": "PLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+        },
+        {
+          "kind": "number",
+          "prompt": "What number is represented by P2?",
+          "answer": "40",
+          "unit": "ones in total",
+          "explanation": "Four tens are 40 ones. There are zero additional ones, so write 40. Writing 4 would change four tens into four ones.",
+          "hints": [
+            "Count by tens for four rods.",
+            "Keep a zero in the ones place when there are no loose ones."
+          ],
+          "mistakes": [
+            [
+              "4",
+              "Four is the rod count. Each of those rods has value ten."
+            ],
+            [
+              "400",
+              "Four hundreds would be 400; P2 has tens."
+            ]
+          ],
+          "id": "q2",
+          "passage": "PLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the total value of P3, after regrouping or before?",
+          "answer": "33",
+          "unit": "ones in total",
+          "explanation": "Two tens and thirteen ones represent 20 + 13 = 33. Regroup ten loose ones into another ten: three tens and three ones. The grouping changes; the total does not.",
+          "hints": [
+            "Thirteen loose ones can become one ten and three ones.",
+            "Combine that new ten with the original two tens."
+          ],
+          "mistakes": [
+            [
+              "213",
+              "Writing the counts side by side does not combine their values. Thirteen ones need regrouping."
+            ],
+            [
+              "23",
+              "Thirteen ones contain a full ten as well as three ones; keep that ten."
+            ]
+          ],
+          "id": "q3",
+          "passage": "PLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+        },
+        {
+          "kind": "choice",
+          "prompt": "What value does the digit 5 have in P4's number 52?",
+          "answer": "C",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Five ones."
+            ],
+            [
+              "B",
+              "Five hundred ones."
+            ],
+            [
+              "C",
+              "Fifty ones, because it names five tens."
+            ]
+          ],
+          "explanation": "The left digit in 52 is in the tens place. Five tens contain fifty ones. The same digit would have a different value in a different place.",
+          "hints": [
+            "Which place is the 5 in?",
+            "Count five groups of ten."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "That treats the tens digit as if it were in the ones place."
+            ],
+            [
+              "B",
+              "There is no hundreds place in this two-digit number; the 5 names tens."
+            ]
+          ],
+          "id": "q4",
+          "passage": "PLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Show or describe two ways to represent 31 using tens and ones. Explain why both have the same value.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for two valid groupings and a value-preserving trade. Example: 'Three tens and one one make 31. Opening one ten gives two tens and eleven ones, also 31. I replaced one group of ten with the ten ones it contained.' Other representations, such as thirty-one single marks, are valid if you explain their value.",
+          "hints": [
+            "Start with three tens and one one.",
+            "Trade one ten for ten ones without adding new objects."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "PLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A learner says 47 is less than 39 because 7 is less than 9. Explain the mistake with tens and ones.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for checking tens first and identifying 47 as greater. Example: '47 has four tens; 39 has three tens. Even with nine ones, 39 is one short of four tens. So 47 is greater. Comparing only the ones digits ignores their tens.' A drawing or matching argument is also acceptable.",
+          "hints": [
+            "How many full tens does each number have?",
+            "Can three tens and nine ones reach four tens?"
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "PLACE-VALUE CARD — ORIGINAL PAPER PRACTICE\n[P1] A collection has three tens and six ones. Each ten contains ten ones.\n[P2] Another collection has four tens and zero loose ones.\n[P3] A drawing has two tens and thirteen loose ones.\n[P4] In the written number 52, the 5 is in the tens place and the 2 is in the ones place."
+        }
+      ],
+      "diagram": {
+        "kind": "counters",
+        "description": "Each small circle stands for one. Each divided rod stands for ten ones. Group boxes and written labels identify what is being counted. Use Previous step and Next step to follow the worked example; the worksheet includes every step.",
+        "steps": [
+          {
+            "title": "Read the places",
+            "caption": "Two tens and four ones represent 24.",
+            "groups": [
+              {
+                "label": "24",
+                "tens": 2,
+                "ones": 4
+              }
+            ]
+          },
+          {
+            "title": "Open one ten",
+            "caption": "One ten and fourteen ones still represent 24.",
+            "groups": [
+              {
+                "label": "Same 24",
+                "tens": 1,
+                "ones": 14
+              }
+            ]
+          },
+          {
+            "title": "Regroup ten ones",
+            "caption": "Ten loose ones become a ten-rod again; the total stays 24.",
+            "groups": [
+              {
+                "label": "24 again",
+                "tens": 2,
+                "ones": 4
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "number-add",
+      "title": "3 · Addition: combine and regroup",
+      "track": "Guided: Numbers & operations",
+      "goal": "Add by counting on or making a ten, and explain why regrouping preserves the sum.",
+      "materials": "Paper and pencil. Draw marks for objects, or use large paper cards. A helper can read the text aloud. These are supported introductions, not an audio course or a complete early-mathematics curriculum.",
+      "prerequisites": [
+        "number-place"
+      ],
+      "paragraphs": [
+        "WHAT ADDITION ASKS\nAddition can combine two collections. If there are six cards and three more arrive, count all the cards or start at six and count on three steps: seven, eight, nine. The starting six is not the first new card. Write 6 + 3 = 9; the equals sign means the amounts on its two sides are the same.",
+        "WORKED EXAMPLE · MAKE A TEN\nFor 8 + 5, split the five into two and three. Eight plus two makes ten; three remain to add. Ten plus three is thirteen. You moved part of the five into a convenient group; you did not add an extra two. A sketch can show eight marks joined by two of the five, with three left outside the ten.",
+        "WORKED EXAMPLE · TWO-DIGIT SUM\nAdd 27 and 15. Two tens plus one ten make three tens. Seven ones plus five ones make twelve ones. Three tens and twelve ones represent 42, because ten of those ones can be regrouped into a fourth ten with two ones left. The diagram steps show the two starting amounts, the combined groups, and the regrouped sum.",
+        "CONNECT TO THE WRITTEN METHOD\nWhen writing 27 + 15 in columns, line up ones under ones and tens under tens. The ones sum is twelve: record two ones and carry one ten into the tens column. That carried 1 represents ten ones, not one extra loose one. The tens column now has 2 + 1 + 1 = 4 tens.",
+        "CHECK THE SIZE AND THE STORY\nAdding a positive number makes a whole-number amount larger. A sum smaller than either positive starting amount needs checking. Estimate 27 + 15 as about 30 + 10, or 40, then check the exact 42 with the diagram. An estimate is a rough check, not a replacement for the exact answer requested.",
+        "YOUR TURN\nUse new numbers in Practice. Draw the tens and ones before using a written shortcut. Name the value of every carried digit. Later, invent an addition with more than nine ones in its combined ones column and explain the regrouping to someone else.",
+        "PRACTICE CARD\nADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many cards are there after the arrival in A1?",
+          "answer": "13",
+          "unit": "cards",
+          "explanation": "Split five into two and three. 8 + 2 makes 10; add the remaining 3 to make 13. Check by counting five steps after eight: 9, 10, 11, 12, 13.",
+          "hints": [
+            "How many of the five cards would take eight to ten?",
+            "After using two, three of the five remain."
+          ],
+          "mistakes": [
+            [
+              "12",
+              "If counting on, do not count the starting eight as one of the five new steps."
+            ],
+            [
+              "85",
+              "Writing 8 beside 5 does not combine their amounts. Model both collections."
+            ]
+          ],
+          "id": "q1",
+          "passage": "ADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the combined number of cards in A2?",
+          "answer": "43",
+          "unit": "cards",
+          "explanation": "The tens combine to three tens. The ones combine to 6 + 7 = 13 ones. Regroup ten ones into a fourth ten; three ones remain. The sum is 43.",
+          "hints": [
+            "Combine tens and ones separately first.",
+            "Three tens and thirteen ones become four tens and three ones."
+          ],
+          "mistakes": [
+            [
+              "33",
+              "You kept three ones but lost the ten formed by the other ten ones."
+            ],
+            [
+              "313",
+              "Three tens and thirteen ones is a grouping to combine, not digits to join into 313."
+            ]
+          ],
+          "id": "q2",
+          "passage": "ADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many cards must be added to the nine in A3 to make fourteen?",
+          "answer": "5",
+          "unit": "cards",
+          "explanation": "Count from nine to fourteen: 10, 11, 12, 13, 14. That is five added cards. Check: 9 + 5 = 14.",
+          "hints": [
+            "Think of 9 + ? = 14.",
+            "Count the new steps, not the starting nine."
+          ],
+          "mistakes": [
+            [
+              "23",
+              "Adding the two stated numbers answers a different question. You need the missing amount."
+            ],
+            [
+              "4",
+              "Count the move from nine to ten as well as the later moves."
+            ]
+          ],
+          "id": "q3",
+          "passage": "ADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+        },
+        {
+          "kind": "choice",
+          "prompt": "What does the carried 1 from A4's thirteen ones represent?",
+          "answer": "A",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "One ten, moved into the tens column."
+            ],
+            [
+              "B",
+              "One additional one, making the sum 44."
+            ],
+            [
+              "C",
+              "One hundred, moved two places left."
+            ]
+          ],
+          "explanation": "Thirteen ones are one ten and three ones. Record the three ones and include that one ten with the other tens. Regrouping preserves the total; it does not create an extra object.",
+          "hints": [
+            "Ten ones have the same value as which single group?",
+            "The next column to the left of ones is tens."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "The carried mark records a group of ten already in the ones total; it does not add a new one."
+            ],
+            [
+              "C",
+              "Ten ones form a ten, not a hundred. Move one place left."
+            ]
+          ],
+          "id": "q4",
+          "passage": "ADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Explain 18 + 7 by making a ten. State how you split seven and check that you used all seven.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for splitting 7 into 2 and 5, making 20, and reaching 25 without changing the added amount. Example: 'Use two of the seven to take 18 to 20. Five remain, so the total is 25. I used 2 + 5 = 7.' A tens-and-ones explanation is also valid if it accounts for all seven.",
+          "hints": [
+            "How far is eighteen from the next full ten?",
+            "After using two of seven, how many are still available?"
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "ADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A learner writes 26 + 17 = 33. Describe what their drawing probably lost and how to repair it without guessing.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for explicitly identifying thirteen ones and the missing ten. Example: 'Draw two tens and six ones, then one ten and seven ones. There are three tens and thirteen ones. Circle ten of the ones as a new ten, leaving three. That gives four tens and three ones, 43. The answer 33 leaves out the regrouped ten.' This is one possible explanation of the mistake; ask the learner to show their method.",
+          "hints": [
+            "Count the ones before regrouping.",
+            "Where should the group of ten from those ones go?"
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "ADDITION CARD — ORIGINAL PAPER PRACTICE\n[A1] There are eight cards. Five more cards arrive.\n[A2] One pile has 26 cards and another has 17. Both piles are combined.\n[A3] A starting pile of nine cards must become a pile of fourteen cards.\n[A4] In 26 + 17, the ones add to thirteen: one ten and three ones."
+        }
+      ],
+      "diagram": {
+        "kind": "counters",
+        "description": "Each small circle stands for one. Each divided rod stands for ten ones. Group boxes and written labels identify what is being counted. Use Previous step and Next step to follow the worked example; the worksheet includes every step.",
+        "steps": [
+          {
+            "title": "Start with both piles",
+            "caption": "27 is two tens and seven ones; 15 is one ten and five ones.",
+            "groups": [
+              {
+                "label": "27",
+                "tens": 2,
+                "ones": 7
+              },
+              {
+                "label": "15",
+                "tens": 1,
+                "ones": 5
+              }
+            ]
+          },
+          {
+            "title": "Combine by place",
+            "caption": "The combined groups are three tens and twelve ones.",
+            "groups": [
+              {
+                "label": "30 + 12",
+                "tens": 3,
+                "ones": 12
+              }
+            ]
+          },
+          {
+            "title": "Trade ten ones",
+            "caption": "Four tens and two ones: 27 + 15 = 42.",
+            "groups": [
+              {
+                "label": "42",
+                "tens": 4,
+                "ones": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "number-subtract",
+      "title": "4 · Subtraction: remove or find the gap",
+      "track": "Guided: Numbers & operations",
+      "goal": "Subtract whole numbers with a clear model, regroup a ten when needed, and check by addition.",
+      "materials": "Paper and pencil. Draw marks for objects, or use large paper cards. A helper can read the text aloud. These are supported introductions, not an audio course or a complete early-mathematics curriculum.",
+      "prerequisites": [
+        "number-add"
+      ],
+      "paragraphs": [
+        "TWO USEFUL MEANINGS\nSubtraction can ask what remains after removal: 11 cards with 4 removed leaves 7. It can also ask for a gap: how many more are needed to go from 4 to 11? That gap is 7. In both cases 11 − 4 = 7, and 4 + 7 = 11 checks the relationship.",
+        "WORKED EXAMPLE · CROSS A TEN\nFor 13 − 5, remove three to reach ten, then remove two more because 3 + 2 = 5. Eight remain. You must remove five altogether, not three and then another five. Drawing thirteen marks and crossing out exactly five checks the result.",
+        "WORKED EXAMPLE · REGROUP BEFORE REMOVING\nFor 42 − 17, start with four tens and two ones. You need to remove seven ones, but only two are loose. Exchange one ten for ten ones. Now you have three tens and twelve ones, still 42. Remove one ten and seven ones. Two tens and five ones remain: 25.",
+        "WHY THE TENS CHANGE\nOpening a ten does not create ten new ones for free. The tens count decreases by one when the ones count increases by ten. In 42, four tens and two ones become three tens and twelve ones. Keeping four tens as well would incorrectly model 52.",
+        "CHECK WITH ADDITION\nA subtraction answer should make the related addition true. For 42 − 17 = 25, check 17 + 25 = 42. This catches the common error of subtracting the smaller digit from the larger separately in each column. The original amount and the amount removed determine the order.",
+        "TRY A MODEL FIRST\nIn Practice, name what you start with, what you remove, and what remains. Some tasks ask for a gap rather than removal. Use the same addition check for both. Draw a new regrouping example later and explain why opening one ten preserves the starting amount.",
+        "PRACTICE CARD\nSUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many cards remain in S1?",
+          "answer": "8",
+          "unit": "cards",
+          "explanation": "Remove three from thirteen to reach ten, then remove the remaining two to reach eight. Check 8 + 5 = 13.",
+          "hints": [
+            "Split the removal of five into three and two.",
+            "After reaching ten, remove only the two still needed."
+          ],
+          "mistakes": [
+            [
+              "18",
+              "Adding five increases the collection. S1 removes five."
+            ],
+            [
+              "9",
+              "If counting backward, count five moves after thirteen; the starting thirteen is not a move."
+            ]
+          ],
+          "id": "q1",
+          "passage": "SUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many cards remain in S2?",
+          "answer": "25",
+          "unit": "cards",
+          "explanation": "43 is four tens and three ones. Open one ten to get three tens and thirteen ones. Remove one ten and eight ones; two tens and five ones remain, or 25. Check: 25 + 18 = 43.",
+          "hints": [
+            "Three loose ones are not enough to remove eight. Open one ten.",
+            "After the trade there are three tens and thirteen ones. Remove 18 from those groups."
+          ],
+          "mistakes": [
+            [
+              "35",
+              "This can come from reversing the ones subtraction or forgetting that a ten was opened. Model the full 43."
+            ],
+            [
+              "31",
+              "Subtracting 18 requires accounting for all eight removed ones, including crossing a ten."
+            ]
+          ],
+          "id": "q2",
+          "passage": "SUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many more cards are needed in S3?",
+          "answer": "7",
+          "unit": "cards",
+          "explanation": "Count the gap from nine to sixteen: 10, 11, 12, 13, 14, 15, 16. Seven cards are needed. Check: 9 + 7 = 16.",
+          "hints": [
+            "Think of 9 + ? = 16.",
+            "Go one step to ten, then six more steps to sixteen."
+          ],
+          "mistakes": [
+            [
+              "25",
+              "That combines nine and sixteen, instead of finding the amount missing from nine."
+            ],
+            [
+              "6",
+              "Do not omit the first step from nine to ten."
+            ]
+          ],
+          "id": "q3",
+          "passage": "SUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which response best checks and repairs S4?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Accept 35 because each column uses the larger digit first."
+            ],
+            [
+              "B",
+              "Regroup 43 as three tens and thirteen ones, subtract 18, then check by adding 18 back."
+            ],
+            [
+              "C",
+              "Change the problem to 48 − 13 so the written digits are easier."
+            ]
+          ],
+          "explanation": "Subtraction is not a rule to take the larger digit first in each column. The amount 18 is removed from 43. Regrouping preserves 43, gives enough ones, and yields 25. The check 25 + 18 = 43 confirms the relationship; 35 + 18 does not.",
+          "hints": [
+            "Which full amount must stay unchanged before removal?",
+            "A correct difference should add to 18 to recover 43."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "That changes the ones relationship without adjusting tens. Try the full-number addition check."
+            ],
+            [
+              "C",
+              "Changing the starting and removed amounts solves a different problem."
+            ]
+          ],
+          "id": "q4",
+          "passage": "SUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Explain 32 − 16 with tens and ones. State the regrouped form of 32 and show an addition check.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for 32 = two tens and twelve ones, removal of one ten and six ones, result 16, and 16 + 16 = 32. Example: 'Open one of the three tens to make two tens and twelve ones. Remove a ten and six ones. One ten and six ones remain, 16.' Do not keep the opened ten in the tens count too.",
+          "hints": [
+            "One of the three tens will become ten loose ones.",
+            "After the trade, remove the one ten and six ones that make sixteen."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "SUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A learner says that opening one ten in 43 gives four tens and thirteen ones. Explain why that changes the value and repair it.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for recognizing that four tens and thirteen ones is 53, and that preserving 43 requires three tens and thirteen ones. Example: 'The ten loose ones came from one of the four tens. That rod is no longer in the tens pile. Keeping it would count the same ten twice.' A drawing that clearly trades rather than copies the rod is valid.",
+          "hints": [
+            "What happens to the rod whose ones you opened?",
+            "Count the total represented by four tens and thirteen ones."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "SUBTRACTION CARD — ORIGINAL PAPER PRACTICE\n[S1] Start with thirteen cards and remove five.\n[S2] Start with 43 cards and remove 18. A ten can be opened into ten ones.\n[S3] One person has nine cards and needs sixteen altogether.\n[S4] A proposed solution to 43 − 18 is 35: its writer took 8 − 3 in the ones column and 4 − 1 in the tens column."
+        }
+      ],
+      "diagram": {
+        "kind": "counters",
+        "description": "Each small circle stands for one. Each divided rod stands for ten ones. Group boxes and written labels identify what is being counted. Use Previous step and Next step to follow the worked example; the worksheet includes every step.",
+        "steps": [
+          {
+            "title": "Start with 42",
+            "caption": "Four tens and two ones. We need to remove one ten and seven ones.",
+            "groups": [
+              {
+                "label": "42",
+                "tens": 4,
+                "ones": 2
+              }
+            ]
+          },
+          {
+            "title": "Open one ten",
+            "caption": "Three tens and twelve ones still make 42.",
+            "groups": [
+              {
+                "label": "Same 42",
+                "tens": 3,
+                "ones": 12
+              }
+            ]
+          },
+          {
+            "title": "Remove 17",
+            "caption": "After removing one ten and seven ones, 25 remains.",
+            "groups": [
+              {
+                "label": "25 left",
+                "tens": 2,
+                "ones": 5
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "number-multiply",
+      "title": "5 · Multiplication: equal groups",
+      "track": "Guided: Numbers & operations",
+      "goal": "Represent equal groups with repeated addition and multiplication, and distinguish the number of groups from the size of each group.",
+      "materials": "Paper and pencil. Draw marks for objects, or use large paper cards. A helper can read the text aloud. These are supported introductions, not an audio course or a complete early-mathematics curriculum.",
+      "prerequisites": [
+        "number-add"
+      ],
+      "paragraphs": [
+        "START WITH THE GROUPS\nDraw three boxes and put four marks in each. You have three equal groups of four. Count by groups: 4, 8, 12. The repeated addition is 4 + 4 + 4 = 12. In this course, 3 × 4 describes three groups with four in each. State your group convention when explaining a model.",
+        "WHAT THE TWO NUMBERS DO\nOne number tells how many groups; the other tells how many objects are in each group. Do not add those two counts to find the total objects. Three boxes of four cards do not contain 3 + 4 cards; the four-card group occurs three times.",
+        "WORKED EXAMPLE · AN ARRAY\nArrange twelve marks in three rows of four. Each row is a group. Turn the paper and you can see four rows of three, still twelve marks. This helps explain why 3 × 4 and 4 × 3 have the same total, even though a story about three boxes with four each names the groups differently.",
+        "WORKED EXAMPLE · BREAK A GROUP COUNT APART\nFor 5 groups of 6, first count 4 groups: 6 + 6 + 6 + 6 = 24. One more group adds 6, giving 30. Splitting a harder count into known groups is useful if you keep all groups and do not count any twice.",
+        "ZERO, ONE AND UNEQUAL GROUPS\nZero groups of five cards have no cards: 0 × 5 = 0. One group of five has five: 1 × 5 = 5. If groups have different sizes, a statement such as 'four in every group' is false. You can still add their actual sizes; do not assume equality merely because their total happens to match an equal-group model.",
+        "TRY AND EXPLAIN\nDraw each group before calculating the total. Label both the group count and objects per group. After the questions, invent a different group story with the same total and explain what changed and what stayed the same.",
+        "PRACTICE CARD\nEQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many cards are in all the boxes in M1?",
+          "answer": "12",
+          "unit": "cards",
+          "explanation": "Four equal groups of three give 3 + 3 + 3 + 3 = 12, or 4 × 3 = 12. The four boxes are containers, not four extra cards.",
+          "hints": [
+            "Write a three once for each of the four boxes.",
+            "Count 3, 6, 9, then one more group of three."
+          ],
+          "mistakes": [
+            [
+              "7",
+              "Adding the group count and group size does not count the cards in every box."
+            ],
+            [
+              "16",
+              "That uses four cards per box. M1 says three."
+            ]
+          ],
+          "id": "q1",
+          "passage": "EQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many marks are in M2?",
+          "answer": "20",
+          "unit": "marks",
+          "explanation": "Five rows of four contain 4 + 4 + 4 + 4 + 4 = 20 marks. Check by counting 4, 8, 12, 16, 20.",
+          "hints": [
+            "Each of the five rows contributes four marks.",
+            "Four rows contain sixteen; include the fifth row."
+          ],
+          "mistakes": [
+            [
+              "9",
+              "Five is a row count and four is a marks-per-row count. Repeating the group, not adding these labels, gives the total."
+            ],
+            [
+              "16",
+              "That counts only four of the five rows."
+            ]
+          ],
+          "id": "q2",
+          "passage": "EQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many cards are in the bags described in M3?",
+          "answer": "0",
+          "unit": "cards",
+          "explanation": "There are no bags, so there are no groups of six to count. Zero groups contain zero cards.",
+          "hints": [
+            "How many six-card groups actually exist?",
+            "No groups means no cards in those groups."
+          ],
+          "mistakes": [
+            [
+              "6",
+              "Six would be one bag's contents, but there are zero bags."
+            ],
+            [
+              "1",
+              "There is no group to count as one; the number of cards is zero."
+            ]
+          ],
+          "id": "q3",
+          "passage": "EQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which repeated addition follows M4's grouping of three groups with four in each?",
+          "answer": "C",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "3 + 4."
+            ],
+            [
+              "B",
+              "3 + 3 + 3 + 3."
+            ],
+            [
+              "C",
+              "4 + 4 + 4."
+            ]
+          ],
+          "explanation": "Use one addend for each group and make its value the group size. Three groups of four are 4 + 4 + 4. Four groups of three also total twelve, but label the groups differently from this story.",
+          "hints": [
+            "How many addends should there be?",
+            "What value should each addend have?"
+          ],
+          "mistakes": [
+            [
+              "A",
+              "This adds the two labels instead of repeating a four-card group three times."
+            ],
+            [
+              "B",
+              "This also totals twelve, but represents four groups of three, not the three groups of four requested."
+            ]
+          ],
+          "id": "q4",
+          "passage": "EQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Draw or describe an array for 2 groups of 6, then describe 6 groups of 2. Explain the same total and different group descriptions.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for two rows of six versus six rows of two, twelve objects in each, and clear group labels. Example: 'Both have twelve marks. Turning a two-by-six array lets me see six columns of two. The total is unchanged, but I have chosen different groups to describe it.' Equal totals alone do not mean the original group stories were identical.",
+          "hints": [
+            "Count all the marks in each array.",
+            "Name both the number of groups and the marks in each group."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "EQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Three boxes contain 3, 4 and 5 cards. Someone says each box has four because 3 × 4 = 12. Explain what is true and what is not.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for 3 + 4 + 5 = 12, agreement with the total of three fours, and rejection of the claim that each original box has four. Example: 'The total is twelve in both models, but the original boxes are unequal. Moving one card from the five-card box to the three-card box would make them four each; that is a change to the grouping, not a description of the starting boxes.'",
+          "hints": [
+            "Check the total separately from each box's count.",
+            "Would you need to move a card to make every box contain four?"
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "EQUAL-GROUP CARD — ORIGINAL PAPER PRACTICE\n[M1] Four boxes hold three cards each.\n[M2] Five rows each contain four marks.\n[M3] There are zero bags, with six cards assigned to each bag if any existed.\n[M4] The story is three groups of four cards. In this course the first factor names groups, the second cards per group."
+        }
+      ],
+      "diagram": {
+        "kind": "counters",
+        "description": "Each small circle stands for one. Each divided rod stands for ten ones. Group boxes and written labels identify what is being counted. Use Previous step and Next step to follow the worked example; the worksheet includes every step.",
+        "steps": [
+          {
+            "title": "Three equal groups",
+            "caption": "Each box contains four ones: 4 + 4 + 4.",
+            "groups": [
+              {
+                "label": "Group 1",
+                "tens": 0,
+                "ones": 4
+              },
+              {
+                "label": "Group 2",
+                "tens": 0,
+                "ones": 4
+              },
+              {
+                "label": "Group 3",
+                "tens": 0,
+                "ones": 4
+              }
+            ]
+          },
+          {
+            "title": "Count all objects",
+            "caption": "The three groups contain twelve ones altogether.",
+            "groups": [
+              {
+                "label": "12 ones",
+                "tens": 0,
+                "ones": 12
+              }
+            ]
+          },
+          {
+            "title": "Name the total",
+            "caption": "Twelve ones can be represented as one ten and two ones.",
+            "groups": [
+              {
+                "label": "12",
+                "tens": 1,
+                "ones": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "number-divide",
+      "title": "6 · Division: sharing, groups and leftovers",
+      "track": "Guided: Numbers & operations",
+      "goal": "Distinguish sharing among groups from making groups of a given size, interpret whole-object remainders, and check with multiplication.",
+      "materials": "Paper and pencil. Draw marks for objects, or use large paper cards. A helper can read the text aloud. These are supported introductions, not an audio course or a complete early-mathematics curriculum.",
+      "prerequisites": [
+        "number-multiply",
+        "number-subtract"
+      ],
+      "paragraphs": [
+        "SHARE EQUALLY\nSharing 12 cards among 3 people asks how many cards each person receives. Deal one card to each person, then repeat until all cards are used. Each receives four. Write 12 ÷ 3 = 4 and check: 3 people × 4 cards each = 12 cards. Equal sharing means the recipients receive the same number.",
+        "MAKE GROUPS OF A GIVEN SIZE\nPacking 12 cards with 3 in each envelope asks how many envelopes can be filled. Make one group of three at a time. Four full envelopes result. The arithmetic 12 ÷ 3 = 4 is the same, but the answer now counts envelopes rather than cards per person. Label the answer from the story.",
+        "WORKED EXAMPLE · WHOLE-CARD LEFTOVERS\nPack 14 cards in envelopes holding exactly four cards each. Three full envelopes use 3 × 4 = 12 cards; two cards remain. A fourth full envelope would need four cards, so the two are a remainder. Check: 3 × 4 + 2 = 14, and the remainder 2 is smaller than the group size 4.",
+        "WHAT TO DO WITH THE REMAINDER\nThe question determines how to report leftovers. If it asks for full four-card packs, the answer is three packs with two cards left. If it asks for enough envelopes to hold all fourteen with at most four each, you need four envelopes, one partly filled. If objects can be divided into smaller parts, fractions may be appropriate; these questions specify whole cards.",
+        "WHY ZERO GROUP SIZE FAILS\nMaking groups of zero cards never uses any of a positive collection. There is no group count that satisfies 'number of groups × 0 = 12'. So 12 ÷ 0 is not a valid whole-number answer. This differs from sharing zero cards among three people: each receives zero.",
+        "CONNECT AND CONTINUE\nUse Practice to name the group size, group count and remainder. Check that full groups plus leftovers reproduce the starting amount. After this course, choose Guided: Measure & plan for fractions and measurement. Equal-group language will help you discuss the equal parts of a stated whole.",
+        "PRACTICE CARD\nDIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many cards does each person receive in D1?",
+          "answer": "6",
+          "unit": "cards per person",
+          "explanation": "Share eighteen among three equally: six per person. Check 3 × 6 = 18. The answer labels cards per person, not the already-stated number of people.",
+          "hints": [
+            "Try equal groups whose total is eighteen.",
+            "Three groups of six use all eighteen cards."
+          ],
+          "mistakes": [
+            [
+              "3",
+              "Three is the number of people. The question asks for each person's share."
+            ],
+            [
+              "15",
+              "Removing three once does not share eighteen equally among three people."
+            ]
+          ],
+          "id": "q1",
+          "passage": "DIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many full five-card groups can be made in D2?",
+          "answer": "3",
+          "unit": "full groups",
+          "explanation": "Three groups of five use fifteen cards. A fourth full group would use twenty, more than seventeen. Thus there are three full groups, with two cards left over.",
+          "hints": [
+            "Count full groups of five without passing seventeen.",
+            "5, 10, 15 are possible; 20 is too many."
+          ],
+          "mistakes": [
+            [
+              "4",
+              "Four full groups need twenty cards. D2 has only seventeen."
+            ],
+            [
+              "17/5",
+              "That is the exact quotient as a fraction, but this task asks for full groups of whole cards, with leftovers kept separate."
+            ]
+          ],
+          "id": "q2",
+          "passage": "DIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many cards are left after making the full groups in D2?",
+          "answer": "2",
+          "unit": "cards left over",
+          "explanation": "Three full groups use 15 cards. 17 − 15 = 2 remain. Check 3 × 5 + 2 = 17, with 2 less than the group size 5.",
+          "hints": [
+            "First account for the fifteen cards in the three full groups.",
+            "Subtract fifteen from seventeen."
+          ],
+          "mistakes": [
+            [
+              "3",
+              "Three counts the full groups, not the leftover cards."
+            ],
+            [
+              "7",
+              "Seven left would still contain another full group of five. Make all possible full groups."
+            ]
+          ],
+          "id": "q3",
+          "passage": "DIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+        },
+        {
+          "kind": "choice",
+          "prompt": "How many envelopes are needed to hold every card under D3's rule?",
+          "answer": "A",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Four: three full envelopes and one holding the two remaining cards."
+            ],
+            [
+              "B",
+              "Three, ignoring the two cards left over."
+            ],
+            [
+              "C",
+              "Five, because each envelope's capacity is five."
+            ]
+          ],
+          "explanation": "Three envelopes can hold only fifteen cards. To include all seventeen, add one partly filled envelope for the remaining two. Four envelopes suffice; the capacity of five is a different quantity from the envelope count.",
+          "hints": [
+            "Can three envelopes hold all seventeen cards?",
+            "The last envelope is allowed to be partly filled."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "That leaves two cards without an envelope, contrary to 'every card'."
+            ],
+            [
+              "C",
+              "Five is the number of cards allowed in each envelope, not the number of envelopes required."
+            ]
+          ],
+          "id": "q4",
+          "passage": "DIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Compare sharing 12 cards among 4 people with packing 12 cards in groups of 4. Calculate both and label what each answer counts.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for three cards per person in equal sharing, three full groups in packing, and the same multiplication check with different unit meanings. Example: '12 ÷ 4 = 3 in both. For sharing, four people each get three cards. For packing, three groups each contain four cards. In each story the total is twelve, but the unknown counts different things.'",
+          "hints": [
+            "Which quantity is already given: people, or cards per group?",
+            "Finish the sentence 'the answer is three ...' separately for each story."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "DIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Explain both parts of D4: zero cards shared among three people, and twelve cards divided into groups of zero cards. Use a multiplication check.",
+          "answer": "Compare your model and explanation",
+          "unit": "",
+          "explanation": "Compare for 0 ÷ 3 = 0 because 3 × 0 = 0, and no valid answer to 12 ÷ 0 because every group count multiplied by zero gives zero, not twelve. Example: 'Each of three people gets no cards when there are none. But groups containing no cards cannot account for a starting twelve cards, however many groups I name.' Do not treat division by zero as giving zero.",
+          "hints": [
+            "Can you account for every starting card with the proposed groups?",
+            "Compare 3 × 0 with a proposed group count × 0 when the starting amount is twelve."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "DIVISION CARD — ORIGINAL PAPER PRACTICE\n[D1] Eighteen whole cards are shared equally among three people; all cards are shared.\n[D2] Seventeen whole cards are packed into full groups of five cards. Do not split a card.\n[D3] To hold every one of those seventeen cards, each envelope may hold at most five cards and the last may be partly filled.\n[D4] Zero cards are shared among three people. A different proposed task tries to make zero-card groups from twelve cards."
+        }
+      ],
+      "diagram": {
+        "kind": "counters",
+        "description": "Each small circle stands for one. Each divided rod stands for ten ones. Group boxes and written labels identify what is being counted. Use Previous step and Next step to follow the worked example; the worksheet includes every step.",
+        "steps": [
+          {
+            "title": "Start with fourteen",
+            "caption": "Fourteen whole cards are available. Each full pack must contain four.",
+            "groups": [
+              {
+                "label": "14 cards",
+                "tens": 1,
+                "ones": 4
+              }
+            ]
+          },
+          {
+            "title": "Make full packs",
+            "caption": "Three four-card packs use twelve cards; two remain outside the packs.",
+            "groups": [
+              {
+                "label": "Pack 1",
+                "tens": 0,
+                "ones": 4
+              },
+              {
+                "label": "Pack 2",
+                "tens": 0,
+                "ones": 4
+              },
+              {
+                "label": "Pack 3",
+                "tens": 0,
+                "ones": 4
+              },
+              {
+                "label": "Left over",
+                "tens": 0,
+                "ones": 2
+              }
+            ]
+          },
+          {
+            "title": "Check the accounting",
+            "caption": "Full packs use twelve cards. Twelve plus two left over accounts for fourteen.",
+            "groups": [
+              {
+                "label": "Packed 12",
+                "tens": 1,
+                "ones": 2
+              },
+              {
+                "label": "Left over",
+                "tens": 0,
+                "ones": 2
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
