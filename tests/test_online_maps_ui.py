@@ -1136,8 +1136,10 @@ def test_connection_cancel_has_no_requests_and_confirm_opens_only_on_connect(scr
 def test_filters_preserve_download_identity_and_work_offline(screen):
     client = connect(screen)
     panel = screen.panel
-    north = dict(screen.factory.asset, id="north", title="Éclair North", coverage="North region", filename="north.mbtiles")
-    south = dict(screen.factory.asset, id="south", title="Bay South", coverage="South region", filename="south.mbtiles")
+    north = dict(screen.factory.asset, id="north", title="Éclair North", coverage="North region",
+                 filename="north.mbtiles", download_path="/api/v1/maps/north/download")
+    south = dict(screen.factory.asset, id="south", title="Bay South", coverage="South region",
+                 filename="south.mbtiles", download_path="/api/v1/maps/south/download")
     client.catalog = lambda **kwargs: (north, south)
     panel.refresh_catalog()
     wait(screen.root, panel)

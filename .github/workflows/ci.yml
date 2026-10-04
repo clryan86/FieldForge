@@ -118,8 +118,8 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - name: Install browser test tools (not application dependencies)
-        run: python -m pip install -e ".[dev]" "playwright==1.57.0"
+      - name: Install browser test tools and map image support
+        run: python -m pip install -e ".[dev,maps]" "playwright==1.57.0"
       - name: Install the selected browser and system dependencies
         run: python -m playwright install --with-deps ${{ matrix.browser }}
       - name: Require offline reader and map portal browser workflows
