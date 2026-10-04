@@ -88,6 +88,6 @@ def test_source_diagnostics_use_scratch_data_and_real_parser_not_user_database(r
     assert closed == [True]  # A transaction context alone does not close SQLite.
     assert report["status"] == "passed" and not report["packaged"]
     assert "Not attempted" in report["desktop"]
-    assert len(report["checks"]) == 6
+    assert len(report["checks"]) == 7
     assert sentinel.read_bytes() == b"user sentinel - not SQL"
     assert dict(os.environ) == before

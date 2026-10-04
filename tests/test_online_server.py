@@ -598,7 +598,7 @@ class CatalogIntegrityTests(unittest.TestCase):
 
     def test_raster_mbtiles_publishes_but_vector_mbtiles_does_not(self):
         self.source = Path(self.temp.name) / "fixture.mbtiles"
-        with sqlite3.connect(self.source) as db:
+        with contextlib.closing(sqlite3.connect(self.source)) as db, db:
             db.execute("CREATE TABLE metadata(name TEXT,value TEXT)")
             db.execute("CREATE TABLE tiles(zoom_level INTEGER,tile_column INTEGER,"
                        "tile_row INTEGER,tile_data BLOB)")
@@ -608,7 +608,7 @@ class CatalogIntegrityTests(unittest.TestCase):
             db.execute("INSERT INTO tiles VALUES(0,0,0,?)", (_png_bytes(),))
         asset = self.publish()
         self.assertEqual(asset["format"], "mbtiles")
-        with sqlite3.connect(self.source) as db:
+        with contextlib.closing(sqlite3.connect(self.source)) as db, db:
             db.execute("UPDATE metadata SET value='pbf' WHERE name='format'")
         with self.assertRaises(ValueError):
             self.publish(map_id="vector-fixture")

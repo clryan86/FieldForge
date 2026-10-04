@@ -4,6 +4,15 @@
 
 It is designed to remain useful when the internet, cloud services, cellular networks, or normal infrastructure are unavailable. The project combines local planning tools, resource calculations, household readiness, emergency checklists, an offline knowledge library, and optional online map preparation in one auditable desktop application.
 
+**Blueprints is a main desktop tab beside Dashboard.** Select **Create layout
+from dimensions** to enter parts and make drawings without an AI model. Save,
+edit and export the resulting layout in the engineering workspace. The three
+makers also support optional local-model drafting. See [Blueprints](docs/BLUEPRINT_MAKERS.md)
+and [Windows ZIP instructions](docs/WINDOWS_PORTABLE.md). Drawings currently show
+rectangular part envelopes; structural analysis and fabrication CAD are not
+implemented. AI design quality and education learning outcomes have not been
+independently evaluated.
+
 > FieldForge is a preparedness and reference tool. It does not replace emergency services, licensed medical care, official evacuation orders, or professional advice.
 
 ## Design principles
@@ -34,6 +43,20 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - Go-bag and vehicle-kit readiness scoring
 
 ### Offline knowledge
+- [Bundled reference library](docs/REFERENCE_LIBRARY.md): 439 articles across 14 categories, available without downloads
+- [Education Foundations](docs/EDUCATION_FOUNDATIONS.md): 172 original lesson drafts with reading, writing, arithmetic, geometry, teaching, science, maps, practical literacy, data investigations, mathematical modeling, technical and scientific reading, Earth and physical science, ecology, digital skills, historical inquiry, practical project skills, cumulative review and capstone activities, exercises and answer keys
+- [Three AI blueprint makers](docs/BLUEPRINT_MAKERS.md): engineering designs, project guides, and software architecture using optional local models
+- Iterative AI refinement, portable project history, change comparisons and restore without deleting earlier revisions
+- User-owned acceptance limits for dimensions, schedules and components, recomputed independently of model critique
+- Offline source preview and passage-level evidence ranking with repeatable retrieval regression measurements
+- Engineering assembly views, isometric wireframes, dimensioned part sheets and offline parts/materials CSV exports
+- Offline envelope inspection with pair highlighting, contact/gap reports and user-owned geometry acceptance limits
+- Pair-specific clearance, axis-gap and contact requirements with exact comparisons across edits and AI revisions
+- Recomputed revision comparisons with fixed baseline limits, dimension/contact/clearance changes and portable offline reports
+- Measured failure diagnostics, focused AI revision instructions and model-free checks for conflicting exact limits
+- Part measurement editing with metric/imperial input, drawing previews and recomputed revision checks before applying
+- AI revision review with original/candidate drawings, fixed-limit comparisons, separate export, and explicit apply or discard
+- Portable saved AI reviews that reopen offline with verified snapshot lineage and no model required
 - Searchable local field-guide library
 - Topic tags, bookmarks, favorites, and notes
 - Source/provenance metadata
@@ -50,6 +73,9 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 ### Privacy and resilience
 - SQLite local database
+- [Full local backup and restore](docs/FULL_BACKUP.md) for the complete database
+- [Offline evidence retrieval](docs/OFFLINE_EVIDENCE.md) with cited passages from installed articles
+- [Optional local AI drafts](docs/LOCAL_ASSISTANT.md) using an installed Ollama model with cloud features disabled
 - JSON backup/export format
 - Integrity checks
 - Future optional encrypted personal vault
@@ -64,6 +90,8 @@ fieldforge/
   planners/      water, food, power, evacuation and kit calculators
   scenarios/     scenario definitions and action generation
   knowledge/     offline guide/search engine
+  blueprints/    structured design generation, checks, diagrams and exports
+  content/       attributed offline reference pack
   navigation/    geospatial helpers and map-pack interfaces
   ui/            desktop UI
   cli.py          command-line interface

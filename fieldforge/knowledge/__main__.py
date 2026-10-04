@@ -10,7 +10,9 @@ from dataclasses import asdict
 from pathlib import Path
 
 from fieldforge.knowledge import KnowledgeLibrary
+from fieldforge.knowledge.local_model import OllamaClient, draft_answer
 from fieldforge.knowledge.packs import export_pack, import_pack
+from fieldforge.knowledge.retrieval import retrieve_evidence
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -32,8 +34,21 @@ def main(argv: list[str] | None = None) -> int:
     save.add_argument("destination", type=Path)
     save.add_argument("--include-personal", action="store_true")
     sub.add_parser("gui", help="Open the offline knowledge window")
+    context = sub.add_parser("context", help="Find cited local passages for a question")
+    context.add_argument("question")
+    context.add_argument("--limit", type=int, default=5)
+    models = sub.add_parser("models", help="List installed local Ollama models (cloud must be disabled)")
+    models.add_argument("--port", type=int, default=11434)
+    ask = sub.add_parser("ask", help="Draft an answer from local evidence with an installed model")
+    ask.add_argument("question")
+    ask.add_argument("--model", required=True)
+    ask.add_argument("--port", type=int, default=11434)
+    ask.add_argument("--timeout", type=float, default=120)
     args = parser.parse_args(argv)
     try:
+        if args.command == "models":
+            print(json.dumps({"models": OllamaClient(port=args.port).list_models()}, indent=2))
+            return 0
         library = KnowledgeLibrary(args.database)
         if args.command == "list":
             result = [asdict(item) for item in library.browse(
@@ -45,6 +60,12 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "export":
             result = {"path": str(export_pack(library, args.destination,
                                                include_personal=args.include_personal))}
+        elif args.command == "context":
+            result = {"question": args.question, "evidence": [item.as_dict() for item in
+                      retrieve_evidence(library, args.question, limit=args.limit)]}
+        elif args.command == "ask":
+            result = draft_answer(library, args.question, args.model,
+                                  OllamaClient(port=args.port, timeout=args.timeout)).as_dict()
         else:
             from fieldforge.ui.knowledge import run
 

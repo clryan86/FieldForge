@@ -1,0 +1,23 @@
+The Wikibooks reference article text in packs/*.json is adapted from the identified
+Wikibooks contributors under Creative Commons Attribution-ShareAlike 4.0:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Each article preserves the source title, exact revision URL, contributor-history
+URL, license, and an explanation of the text-only adaptation. Images are not
+redistributed. These articles remain subject to the attribution and share-alike
+requirements of their license. This notice applies to the article collection,
+not to FieldForge's application code or unrelated imported documents.
+
+The material is provided without warranties. Community text is not independent
+engineering, medical, or clinical verification. No FieldForge review date is
+asserted. Archived guidance may be incomplete, outdated or locally inapplicable.
+
+See packs/catalog.json for the full revision and attribution inventory.
+
+Education Foundations (fieldforge-education-* articles) is original AI-assisted
+FieldForge draft content, offered under the same CC BY-SA 4.0 terms. It does not
+reproduce third-party textbook text or images. Its external background references
+retain their own rights; those publications are not included in this pack and
+their authors have not endorsed the FieldForge lessons. Preserve the draft notice,
+attribution and license when sharing. No independent educator review is asserted.
+Editable lesson text and the reference inventory are in education/lessons.json.

@@ -189,6 +189,49 @@ def verify_gps_workspace(root) -> None:
             _require(not worker._thread.is_alive(), "GPS diagnostic worker did not stop")
 
 
+def verify_blueprint_workspace(root, directory: Path) -> None:
+    """Exercise the shipped form and export without an AI model or user data."""
+    from fieldforge.blueprints.parameters import prepare_part_edit
+    from fieldforge.blueprints.render import export_blueprint, load_blueprint, save_blueprint
+    from fieldforge.content import install_reference_library
+    from fieldforge.knowledge import KnowledgeLibrary
+    from fieldforge.ui.blueprint_home import BlueprintHome
+
+    library = KnowledgeLibrary(directory / "blueprints.db")
+    install_reference_library(library)
+    _require(library.count() == 439, "Packaged reference collection is incomplete")
+    home = BlueprintHome(root, library)
+    try:
+        form = home.new_layout()
+        form.name.set("Installation test layout")
+        form.part_name.set("Measured panel")
+        form.material.set("User supplied material")
+        for field, value in zip(form.size, ["24 in", "30 cm", "18 mm"]):
+            field.set(value)
+        form.add()
+        form.create_button.invoke()
+        root.update()
+        _require(home.studio is not None, "Blueprint form did not open drawings")
+        maker = home.studio.makers["engineering"]
+        _require(maker.blueprint["design"]["parts"][0]["size_mm"] == [609.6, 300, 18],
+                 "Blueprint form lost user-entered measurements")
+        value = prepare_part_edit(maker.blueprint, "P1", size=["24 in", "35 cm", "18 mm"])["blueprint"]
+        maker.show_blueprint(value)
+        path = save_blueprint(value, directory / "measured-layout.json")
+        reopened = load_blueprint(path)
+        _require(reopened["design"]["parts"][0]["size_mm"][1] == 350,
+                 "Edited blueprint measurements did not survive reopening")
+        export_blueprint(reopened, directory / "blueprint-export")
+        for name in ("report.html", "blueprint.json", "top.svg", "front.svg", "side.svg",
+                     "isometric.svg", "part-001.svg", "parts.csv", "materials.csv"):
+            _require((directory / "blueprint-export" / name).is_file(), "Missing blueprint export: " + name)
+        for mode in ("project", "software"):
+            studio = home.open_maker(mode)
+            _require(str(studio.pages.select()) == str(studio.makers[mode]), "Blueprint maker is unavailable")
+    finally:
+        home.destroy()
+
+
 def verify_installation() -> dict[str, object]:
     import tkinter as tk
 
@@ -254,10 +297,12 @@ def verify_installation() -> dict[str, object]:
             tk_root.update()
             tk_version = str(tk_root.tk.call("info", "patchlevel"))
             verify_gps_workspace(tk_root)
+            verify_blueprint_workspace(tk_root, root_path)
         finally:
             tk_root.destroy()
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
+        checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

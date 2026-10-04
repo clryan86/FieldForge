@@ -8,12 +8,14 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
-from fieldforge.knowledge import KnowledgeLibrary
+from fieldforge.knowledge import Evidence, KnowledgeLibrary
 from fieldforge.knowledge.packs import export_pack, import_pack
 from fieldforge.knowledge.starter import STARTER_ARTICLE_COUNT, install_starter
 from fieldforge.ui.binder import open_binder
 from fieldforge.ui.documents import add_document_import
+from fieldforge.ui.evidence import EvidenceWindow
 from fieldforge.ui.foundations import open_foundations
+from fieldforge.ui.lifecycle import release_tk_references
 from fieldforge.ui.pocket import open_pocket
 
 _ERRORS = (OSError, ValueError, KeyError, sqlite3.Error)
@@ -21,12 +23,17 @@ _PAGE_SIZE = 50
 
 
 class KnowledgeTab(ttk.Frame):
-    def __init__(self, parent: tk.Misc, library: KnowledgeLibrary) -> None:
+    def __init__(self, parent: tk.Misc, library: KnowledgeLibrary, *, install_bundled=False) -> None:
         super().__init__(parent, padding=12)
         self.library = library
+        self.blueprint_home = None
+        self._blueprint_studio = None
         self.slug: str | None = None
         self.offset = 0
         self.busy = False
+        self._closed = False
+        self.evidence_window: EvidenceWindow | None = None
+        self._poll_id: str | None = None
         self._saved = (False, "")
         self._worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fieldforge-pack")
         self.bind("<Destroy>", self._destroyed, add=True)
@@ -63,6 +70,7 @@ class KnowledgeTab(ttk.Frame):
         search.pack(side="left", fill="x", expand=True, padx=(0, 6))
         search.bind("<Return>", lambda _event: self.refresh())
         ttk.Button(tools, text="Search / Browse", command=self.refresh).pack(side="left")
+        ttk.Button(tools, text="Find passages", command=self._evidence).pack(side="left", padx=(6, 0))
         self.categories = ttk.Combobox(tools, state="readonly", textvariable=self.category, width=20)
         self.categories.pack(side="left", padx=6)
         self.categories.bind("<<ComboboxSelected>>", lambda _event: self.refresh())
@@ -109,13 +117,46 @@ class KnowledgeTab(ttk.Frame):
         ttk.Button(files, text="Export Pack", command=self._export).pack(side="left", padx=6)
         ttk.Checkbutton(files, text="Include / restore private notes", variable=self.personal).pack(side="left")
         ttk.Checkbutton(files, text="Allow replacing conflicts", variable=self.replace).pack(side="left", padx=6)
+        makers = ttk.Frame(self)
+        makers.pack(fill="x", pady=(6, 0))
+        ttk.Button(makers, text="Install Reference Library", command=self._install_references).pack(side="left")
+        ttk.Button(makers, text="Blueprint Makers", command=self._blueprints).pack(side="left", padx=6)
         self.refresh()
+        if install_bundled and self.library.count() == 0:
+            self._install_references()
+
+    def _install_references(self):
+        from fieldforge.content import install_reference_library
+        self._start(install_reference_library, self.library)
+
+    def _blueprints(self):
+        if self.busy or not self.save_current():
+            return
+        if self.blueprint_home is not None:
+            self.blueprint_home.open_maker("engineering")
+            return
+        from fieldforge.ui.blueprints import BlueprintStudio
+        if self._blueprint_studio is None or not self._blueprint_studio.winfo_exists():
+            self._blueprint_studio = BlueprintStudio(self, self.library)
+        self._blueprint_studio.lift()
+
+    def can_close(self):
+        return (self.save_current() and (self._blueprint_studio is None
+                or not self._blueprint_studio.winfo_exists() or self._blueprint_studio.can_close()))
 
     def _destroyed(self, event: tk.Event) -> None:
         if event.widget is self:
+            self._closed = True
+            if self._poll_id is not None:
+                self.after_cancel(self._poll_id)
+                self._poll_id = None
+            self.evidence_window = None
             self._worker.shutdown(wait=False, cancel_futures=True)
+            release_tk_references(self)
 
     def save_current(self) -> bool:
+        if self._closed:
+            return True
         if self.busy:
             return False
         if self.slug is None:
@@ -138,11 +179,13 @@ class KnowledgeTab(ttk.Frame):
         self.note.delete("1.0", "end")
         self.body.configure(state="normal")
         self.body.delete("1.0", "end")
+        self.body.tag_remove("evidence", "1.0", "end")
         self.body.configure(state="disabled")
-        self.metadata.set("Select an article. Introductory references and worksheets; no local AI model is included.")
+        self.metadata.set("Select an article. Community references retain source and review status. "
+                          "Local AI models are installed separately.")
 
     def refresh(self, *, reset: bool = True) -> None:
-        if self.busy or not self.save_current():
+        if self._closed or self.busy or not self.save_current():
             return
         if reset:
             self.offset = 0
@@ -196,6 +239,8 @@ class KnowledgeTab(ttk.Frame):
         self.refresh(reset=False)
 
     def _select(self, _event: tk.Event | None = None) -> None:
+        if self._closed:
+            return
         selection = self.results.selection()
         if self.busy or not selection or selection[0] == self.slug:
             return
@@ -204,10 +249,16 @@ class KnowledgeTab(ttk.Frame):
             if previous and self.results.exists(previous):
                 self.results.selection_set(previous)
             return
+        self._load_article(selection[0])
+
+    def _load_article(self, slug: str, evidence: Evidence | None = None) -> bool:
         try:
-            article = self.library.get(selection[0])
+            article = self.library.get(slug)
             if article is None:
-                return
+                raise ValueError("This article is no longer installed. Search again.")
+            if evidence and (article.checksum != evidence.checksum or
+                             article.body[evidence.start_offset:evidence.end_offset] != evidence.passage):
+                raise ValueError("This article changed after the search. Search again for a current passage.")
             annotation = self.library.annotation(article.slug)
             self._clear()
             self.slug = article.slug
@@ -222,22 +273,63 @@ class KnowledgeTab(ttk.Frame):
             self.body.configure(state="normal")
             self.body.insert("1.0", article.body)
             self.body.configure(state="disabled")
+            if evidence:
+                start = self.tk.call("string", "length", article.body[:evidence.start_offset])
+                end = self.tk.call("string", "length", article.body[:evidence.end_offset])
+                self.body.tag_configure("evidence", background="#ffe8a3", foreground="#1c261d")
+                self.body.tag_add("evidence", f"1.0+{start}c", f"1.0+{end}c")
+                self.body.see(f"1.0+{start}c")
+            return True
         except _ERRORS as exc:
             messagebox.showerror("Could not open article", str(exc), parent=self)
+            return False
+
+    def _evidence(self) -> None:
+        if self._closed or self.busy:
+            return
+        if self.evidence_window is not None and self.evidence_window.winfo_exists():
+            self.evidence_window.deiconify()
+            self.evidence_window.lift()
+            return
+        self.evidence_window = EvidenceWindow(self, self.library, self._open_evidence)
+        self.evidence_window.bind("<Destroy>", self._evidence_closed, add=True)
+        self.evidence_window.query.set(self.query.get())
+
+    def _evidence_closed(self, event: tk.Event) -> None:
+        if event.widget is self.evidence_window:
+            # Break parent/window/callback cycles on the Tk thread. Otherwise a
+            # later worker allocation can collect Tk variables on the wrong thread.
+            self.evidence_window = None
+
+    def _open_evidence(self, evidence: Evidence) -> bool:
+        if self._closed or self.busy or not self.save_current():
+            return False
+        if not self._load_article(evidence.slug, evidence):
+            return False
+        # An evidence result may be outside the current browse filter or page.
+        if not self.results.exists(evidence.slug):
+            self.results.insert("", "end", iid=evidence.slug, values=(evidence.title, "Search result"))
+        self.results.selection_set(evidence.slug)
+        self.results.see(evidence.slug)
+        self.status.set("Showing the full source article. The retrieved passage is highlighted.")
+        return True
 
     def _start(self, operation, *args, **kwargs) -> None:
-        if not self.save_current():
+        if self._closed or not self.save_current():
             return
         self.busy = True
         self.starter_button.configure(state="disabled")
         self.note.configure(state="disabled")
         self.status.set("Processing local knowledge pack…")
         future = self._worker.submit(operation, *args, **kwargs)
-        self.after(100, self._poll, future)
+        self._poll_id = self.after(100, self._poll, future)
 
     def _poll(self, future: Future) -> None:
+        self._poll_id = None
+        if self._closed:
+            return
         if not future.done():
-            self.after(100, self._poll, future)
+            self._poll_id = self.after(100, self._poll, future)
             return
         self.busy = False
         self.starter_button.configure(state="normal")
@@ -262,7 +354,7 @@ class KnowledgeTab(ttk.Frame):
         self._start(install_starter, self.library)
 
     def _import(self) -> None:
-        if self.busy:
+        if self._closed or self.busy:
             return
         path = filedialog.askopenfilename(parent=self, title="Import local knowledge pack",
                                           filetypes=[("Knowledge pack", "*.json"), ("All files", "*")])
@@ -274,7 +366,7 @@ class KnowledgeTab(ttk.Frame):
             self._start(import_pack, self.library, path, replace=self.replace.get(), restore_personal=self.personal.get())
 
     def _export(self) -> None:
-        if self.busy:
+        if self._closed or self.busy:
             return
         if self.personal.get() and not messagebox.askyesno(
             "Export private notes?", "This unencrypted JSON file will contain your private notes and bookmarks. Continue?", parent=self
@@ -291,13 +383,13 @@ def run(library: KnowledgeLibrary) -> None:
     root.title("FieldForge — Offline Knowledge Library")
     root.geometry("1150x820")
     root.minsize(800, 650)
-    frame = KnowledgeTab(root, library)
+    frame = KnowledgeTab(root, library, install_bundled=True)
     frame.pack(fill="both", expand=True)
 
     def close() -> None:
         if frame.busy:
             messagebox.showinfo("Pack operation in progress", "Finish the local pack operation before closing.", parent=root)
-        elif frame.save_current():
+        elif frame.can_close():
             root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", close)

@@ -1,0 +1,19 @@
+{
+  "notice": "Small hand-authored regression set for the bundled Wikibooks edition, not an independent benchmark or factual review. Expected text is reused under the source articles' CC BY-SA 4.0 attribution in fieldforge/content/packs/catalog.json.",
+  "cases": [
+    {"id":"shelter-insulation","request":{"mode":"engineering","brief":"Plan a lean-to shelter with insulation between the occupant and the ground."},"expected":[{"slug":"wikibooks-13211","contains":"insulating pad"}]},
+    {"id":"rainwater-fittings","request":{"mode":"engineering","brief":"Lay out a rain barrel using threaded fittings and watertight connectors.","resources":"brass valve pvc coupling o-rings"},"expected":[{"slug":"wikibooks-279591","contains":"Threaded fittings with o-rings"}]},
+    {"id":"rainwater-multiple-passages","request":{"mode":"engineering","brief":"Lay out a rainwater collection barrel.","constraints":"Exclude mosquito larva and other organisms.","resources":"Threaded fittings instead of pipe cement."},"expected":[{"slug":"wikibooks-279591","contains":"Mosquito larva"},{"slug":"wikibooks-279591","contains":"Threaded fittings with o-rings"}]},
+    {"id":"truss-joints","request":{"mode":"engineering","brief":"Analyze unknown forces acting on the joints of a truss structure."},"expected":[{"slug":"wikibooks-109378","contains":"all forces acting on a joint must add to zero"}]},
+    {"id":"electrical-materials","request":{"mode":"engineering","brief":"Compare conductors, semiconductors and insulators for an electrical demonstration."},"expected":[{"slug":"wikibooks-1944","contains":"Superconductors, which allow current"}]},
+    {"id":"scope-changes","request":{"mode":"project","brief":"Plan how to track scope creep and approve changes in project boundaries."},"expected":[{"slug":"wikibooks-241745","contains":"managing scope creep"}]},
+    {"id":"risk-responses","request":{"mode":"project","brief":"Plan how to mitigate failures and enhance positive opportunities."},"expected":[{"slug":"wikibooks-241750","contains":"mitigating potential failures"}]},
+    {"id":"project-scheduling","request":{"mode":"project","brief":"Sequence project activities and estimate durations to develop a schedule."},"expected":[{"slug":"wikibooks-241746","contains":"Estimate Activity Durations"}]},
+    {"id":"stakeholder-communications","request":{"mode":"project","brief":"Assign who sends status updates and meeting minutes to stakeholders."},"expected":[{"slug":"wikibooks-241748","contains":"who receives which communications"}]},
+    {"id":"storage-crash-recovery","request":{"mode":"software","brief":"Preserve filesystem data through power loss and interrupted writes.","constraints":"Consider journaling and corrupted disk sectors."},"expected":[{"slug":"wikibooks-263322","contains":"Journaling, which helps avoid"}]},
+    {"id":"deadlock-prevention","request":{"mode":"software","brief":"Prevent circular waits by ordering resource lock acquisition."},"expected":[{"slug":"wikibooks-138518","contains":"Circular wait prevention consists"}]},
+    {"id":"monitor-synchronization","request":{"mode":"software","brief":"Compare monitors with semaphores to coordinate processes entering a critical section."},"expected":[{"slug":"wikibooks-106259","contains":"alternative to a semaphore"}]},
+    {"id":"unknown-technical-token","request":{"mode":"engineering","brief":"Qzxunobtainium zzznonexistent."},"expected":[]},
+    {"id":"no-content-question","request":{"mode":"software","brief":"Please make a new design."},"expected":[]}
+  ]
+}

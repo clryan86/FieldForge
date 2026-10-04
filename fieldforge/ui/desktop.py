@@ -30,6 +30,7 @@ def run() -> None:
     from tkinter import messagebox, ttk
 
     from fieldforge.ui.assistant import add_ask_library_tab
+    from fieldforge.ui.blueprint_home import BlueprintHome
     from fieldforge.ui.build_info import install_help_menu
     from fieldforge.ui.emergency_actions import ActionWorkspace
     from fieldforge.ui.gps import install_gps_menu
@@ -67,10 +68,13 @@ def run() -> None:
     planners_tab = ttk.Frame(notebook, padding=16)
     emergency_tab = ttk.Frame(notebook, padding=16)
     notebook.add(dashboard_tab, text="Dashboard")
+    blueprints_tab = BlueprintHome(notebook, app.knowledge)
+    notebook.add(blueprints_tab, text="Blueprints")
     notebook.add(inventory_tab, text="Inventory")
     notebook.add(planners_tab, text="Power Planner")
     notebook.add(emergency_tab, text="Emergency Mode")
-    knowledge_tab = KnowledgeTab(notebook, app.knowledge)
+    knowledge_tab = KnowledgeTab(notebook, app.knowledge, install_bundled=True)
+    knowledge_tab.blueprint_home = blueprints_tab
     notebook.add(knowledge_tab, text="Knowledge Library")
     pathways_tab = add_pathways_tab(notebook, knowledge_tab)
     add_ask_library_tab(notebook, app.knowledge)
@@ -123,7 +127,8 @@ def run() -> None:
     def close_application() -> None:
         if (not supplies_panel.can_close() or not household_panel.can_close()
                 or not emergency_panel.can_close() or not places_panel.can_close()
-                or not recovery_tab.can_close() or not online_maps_panel.can_close()):
+                or not recovery_tab.can_close() or not online_maps_panel.can_close()
+                or not blueprints_tab.can_close()):
             return
         if knowledge_tab.busy:
             messagebox.showinfo(

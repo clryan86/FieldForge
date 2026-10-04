@@ -208,7 +208,7 @@ class ReferenceAssistant:
         def check():
             if cancelled.is_set():
                 raise SearchCancelled("search cancelled")
-            if time.monotonic() > deadline:
+            if time.monotonic() >= deadline:
                 raise TimeoutError("search timed out; use a narrower question or category")
 
         check()
@@ -220,7 +220,7 @@ class ReferenceAssistant:
             db.row_factory = sqlite3.Row
             db.execute("PRAGMA query_only=ON")
             db.execute("PRAGMA trusted_schema=OFF")
-            db.set_progress_handler(lambda: int(cancelled.is_set() or time.monotonic() > deadline), 1000)
+            db.set_progress_handler(lambda: int(cancelled.is_set() or time.monotonic() >= deadline), 1000)
             try:
                 db.execute("BEGIN")
                 return self._search(db, question, terms, pattern, category, limit, check)

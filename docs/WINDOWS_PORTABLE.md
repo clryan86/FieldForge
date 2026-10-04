@@ -15,6 +15,17 @@ other Windows security protection to run a download you do not trust.
 No administrator installation, file association, registry change or background
 service is performed by the FieldForge launcher.
 
+BLUEPRINTS
+The Blueprints tab is beside Dashboard. Choose Create layout from dimensions,
+name the layout, enter a part's material, XYZ size and XYZ position, and select
+Add part. Repeat for more parts, then Create drawings. Save the design or export
+its offline report, SVG sheets and CSV tables from the engineering workspace.
+Sizes accept mm, cm, m, in and ft. No AI model or network is needed for this path.
+The Engineering, Projects and guides, and Software architecture buttons open
+the three makers. AI generation requires a separately installed Ollama model.
+These are draft layouts: rectangular part envelopes, not joints, structural
+analysis or fabrication-ready CAD. Real-model design quality is not benchmarked.
+
 YOUR EXISTING DATA
 The default is %USERPROFILE%\.fieldforge\playground.db, matching the existing
 Start FieldForge.cmd source launcher. FIELDFORGE_DB overrides the default.
@@ -49,6 +60,7 @@ Check Installation.cmd runs opt-in checks on generated temporary examples, not
 your selected database. It checks bundled lessons, PDF text extraction through
 the helper process, original PDF preservation, full snapshot recovery, portable
 HTML generation, map tile reading and Tk image decoding. On Windows it also opens
+the blueprint form, creates a layout and verifies saved/exported geometry. It opens
 and normally closes a recovered desktop and the recovery-only window. Temporary
 files are removed normally, not securely erased. No diagnostic report is uploaded
 or automatically written into your application database. The command prints its
@@ -58,7 +70,11 @@ feature, operating system, printer, PDF or map file.
 CONTENTS AND LIMITS
 The 12 starter articles and 20 Foundations lessons are bundled but remain
 explicit library-installation choices. Use Load Starter Library or Foundations
-Pack inside Knowledge Library. There is no specialist-reviewed civilization
+Pack inside Knowledge Library. A separate 439-article reference collection,
+including 172 original Education Foundations lesson drafts, is bundled. It is
+installed automatically only into an empty library; existing libraries offer
+Install Reference Library. The lesson drafts have not had independent educator
+review or demonstrated learning-outcome evaluation. There is no specialist-reviewed civilization
 corpus, local language model, native mobile app or new map collection in this ZIP.
 The standard PDF-text parser, serial adapter and Pillow image codecs are included. Encrypted-PDF extraction is still
 unsupported; original-file storage preserves those bytes without decryption.

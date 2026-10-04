@@ -1,0 +1,221 @@
+# Education Foundations: offline teaching and practice
+
+This collection supplies **172 complete lesson drafts** in the `education` category,
+bringing that category to 184 articles and the full library to 439. Each lesson
+includes an audience, prerequisites, learning goal, materials, explanation and
+worked examples, three practice prompts, answers or assessment guidance, and
+adaptations: **516 practice prompts with corresponding answers or assessment
+guidance**. The text works without network access or a local AI model.
+
+These are original AI-assisted FieldForge drafts, **not an independently reviewed
+or accredited curriculum**. The first edition is in English. Its phonics examples
+are specifically for English; they must not be transferred unchanged to another
+writing system. Adult adaptations are suggestions, not evidence that school-age
+research automatically generalizes to adults.
+
+## Learning paths
+
+Browse the **education** category and look for titles beginning `Education 01:`
+through `Education 172:`. Prerequisites identify skills to check; they do not require
+every learner to repeat a lesson they already understand.
+
+| Path | Lessons | Content |
+| --- | --- | --- |
+| Teaching | 01–04 | Start a learning group; plan a worked-example lesson; spaced practice; useful assessment and feedback |
+| Literacy | 05–10 | English sound-letter relationships; decoding and spelling; short sentences; vocabulary and comprehension; writing; notices and instructions |
+| Numeracy | 11–16 | Counting; place value; addition/subtraction; multiplication/division; fractions; decimals and percentages |
+| Applied numeracy | 17–21 | Metric measurement; perimeter/area; time; tables/graphs; ratios and scaling |
+| Inquiry and transfer | 22–24 | Observation and fair comparisons; source evaluation; teaching a practical skill and keeping a record |
+| Further reading skills | 25–30 | More letter sounds and short vowels; blends; digraphs; silent-e; word endings; connected reading with an explicit word preview |
+| Further writing | 31–33 | Paragraph focus and details; narratives; explanations with evidence and limits |
+| Further mathematics | 34–37 | Unlike-fraction addition/subtraction; fraction multiplication/division; signed integers; simple equations |
+| Science and geography | 38–40 | States of matter; interpreting seed-germination observations; map legends, grids and scale |
+| Longer-word reading | 41–43 | Vowel teams; vowel-plus-r spellings and accent variation; syllables, prefixes and suffixes |
+| Practical literacy | 44–46 | Required and optional form fields; feasible schedules; conditional instructions and conflicting revisions |
+| Arithmetic and data | 47–52 | Rounding and estimation; partial products; larger division and remainders; proportional tables; mean, median and range; probability and observed frequency |
+| Further inquiry | 53–56 | Forces and motion; water-cycle pathways; historical sources and timelines; shared decisions and accurate records |
+| Reading and summarizing | 57–60 | More vowel teams and diphthongs; prepared connected reading and phrasing; accurate informational summaries |
+| Decimal arithmetic and percent | 61–64 | Decimal addition/subtraction, multiplication and division; percent, part and whole; percentage points and relative change |
+| Geometry | 65–68 | Angles and line relationships; triangle angles and area; circle circumference and area; rectangular-prism volume and cubic units |
+| Everyday science | 69–72 | Light-ray models and shadows; vibration, pitch and loudness; food-web arrows; weather records and limits on climate conclusions |
+| Spelling and sentences | 73–76 | Suffix spelling changes; apostrophes and contractions; subject/verb and pronoun clarity; clauses and sentence connections |
+| Practical reading and writing | 77–80 | Requests and confirmation; inventory discrepancy notes; a longer narrative with evidence-based inference; comparison paragraphs |
+| Mathematical reasoning | 81–86 | Operation order; multi-step word problems; coordinate points; rules, tables and lines; translations/reflections; factors and multiples |
+| Data literacy | 87–88 | Neutral survey questions, sampling limits and nonresponse; chart baselines, scale and rate comparisons |
+| Vocabulary, revision and sources | 89–92 | Context and word meanings; revision from reader feedback; supported reading and changed plans; quotations, paraphrases and source notes |
+| Algebra and dimensional reasoning | 93–96 | Two-step equations; inequalities and boundaries; squares and square roots; area and volume unit conversions |
+| Digital literacy and transfer | 97–100 | Files, folders and formats; separate backups and practice restores; paper algorithms, decisions and loops; a learning project with evidence and a rubric |
+| Science reasoning | 101–106 | Repeated measurements and precision; temperature and heat; density; mixtures and separation limits; energy accounts; evidence about living systems |
+| Practical project skills | 107–112 | Scale drawings; material lists and layouts; task dependencies and schedules; prototype criteria; controlled troubleshooting; handovers and revision status |
+| Earth science and maps | 113–118 | Weathering, erosion and deposition; rock-cycle paths; catchments and water budgets; seasons and daylight; contours and slopes; latitude and longitude |
+| Data investigations | 119–124 | Sample selection and estimation; dot displays and distributions; paired data and scatter plots; study design; data cleaning; investigation reports with evidence and limits |
+| Physical science | 125–130 | Net forces and constant velocity; ideal levers and work; average pressure; heat-transfer mechanisms; paper series circuits; magnetic poles and evidence |
+| Plant processes and ecology | 131–136 | Plant organs and transport; photosynthesis and respiration; habitat factors and resource limits; pollination and seed dispersal; population accounts; nutrient cycles and energy flow |
+| Mathematical models and data | 137–145 | Combined rates; setup and per-item time; inverse variation; resource constraints; simultaneous equations; rounding intervals; weighted means; conditional percentages; successive percentage changes |
+| Technical reading and planning | 146–148 | Specification fields and revisions; requirement levels and evidence; an integrated model-based plan with resource and time constraints |
+| Scientific reading and explanation | 149–160 | Technical word meanings; branching processes; diagram legends; referents and cause words; process comparisons; claims and mechanisms; text/table checks; observations and predictions; qualifiers; figure descriptions; revision; an integrated reading brief |
+| Cumulative review and transfer | 161–172 | Support records and mixed practice; timetable inference; requests and revisions; operation/remainder choices; fractions, decimals and percent; measurement quantities; midnight schedules and rates; distributions; unequal samples; algorithm boundaries; model repair; an integrated plan and next-review decision |
+
+For a first session, a facilitator can read lesson 01, then choose a literacy or
+numeracy entry point with the learner. Lessons 05–07 introduce only a small initial
+English phonics sequence; lessons 25–30, 41–43, 57–59 and 73 extend it. The extension
+is designed for multiple sessions and still does not cover a full systematic reading curriculum.
+It includes new-word previews rather than assuming every passage is independently
+decodable for every learner. Lesson 08's richer passage is an explicit read-aloud option
+until the learner knows its additional spelling patterns. No completion timetable,
+grade equivalence or standardized assessment score is claimed.
+
+## Install and browse
+
+New installations receive the lessons through the ordinary bundled library install:
+
+```bash
+python -m fieldforge.blueprints --database fieldforge.db install-library
+python -m fieldforge.knowledge --database fieldforge.db list --category education
+```
+
+The CLI lists the first 100 articles by default. Use `--offset 100` to browse the
+remaining 84, or `--limit 500` to list the whole education category. The desktop
+library provides **Previous** and **Next** buttons for its own page size.
+
+For an existing FieldForge installation, import just the new content using its
+normal knowledge-pack importer:
+
+```bash
+python -m fieldforge.knowledge --database fieldforge.db import fieldforge/content/packs/education-foundations.json
+```
+
+The desktop Knowledge Library also accepts this JSON pack through **Import pack**.
+No personal annotations are included. Repeated imports of identical content are
+idempotent. A conflicting local article aborts the entire import; it is not silently
+replaced. Do not use `--replace` unless you intend to overwrite your local version.
+
+All 267 archived article records and the first 160 education lesson records are
+preserved exactly. Importing the full 172-lesson pack adds 12 lessons to a
+160-lesson installation, 24 to a 148-lesson installation, 36 to a 136-lesson
+installation, 48 to a 124-lesson installation, 60 to a 112-lesson installation,
+72 to a 100-lesson installation, 84 to an 88-lesson installation, 100 to a
+72-lesson installation, 116 to a 56-lesson installation, 132 to a 40-lesson
+installation, or 148 to the original 24-lesson edition, without `--replace`.
+Earlier records are unchanged, and existing notes and bookmarks remain attached
+to their slugs.
+The lessons use the reserved `fieldforge-education-01` through
+`fieldforge-education-172` slugs, so they
+do not duplicate or rename the existing archived education references.
+
+## Sources and rights
+
+The editable source is `fieldforge/content/education/lessons.json`. Its reference
+inventory records titles, publishers, URLs, access dates and the scope of each
+reference. References consulted for this edition include the IES/WWC practice
+guides on foundational reading, reading comprehension, elementary writing, early
+mathematics, and study methods, plus relevant OpenStax *Prealgebra 2e* sections.
+The second set also points to the University of Florida Literacy Institute's
+phonics resources, University of Minnesota Extension's seed-starting information,
+NASA Glenn's states-of-matter reference, and USGS map-symbol resources. It is not
+a reproduction or implementation of those publishers' complete curricula.
+Lessons 41–56 add scoped references for division, statistics and probability,
+NASA's motion overview, USGS's water-cycle overview and the Library of Congress's
+introduction to primary-source inquiry. Historical records, forms, schedules
+and group decisions in this batch are explicitly fictional practice scenarios.
+Lessons 57–72 add references for decimal arithmetic, percent applications,
+geometry, light and sound, plus NOAA resources on food webs and weather/climate.
+Their passages, calculations, pond model and temperature records are original
+teaching examples, not copied source exercises or observations of a real site.
+Lessons 73–88 add scoped references for suffix spelling, edited-English
+conventions, operation order, coordinates, factors, sampling and chart scales.
+They point to UFLI, Purdue OWL, OpenStax, Minnesota STEM Teacher Center and
+the UK Government Analysis Function. Requests, records, narratives, surveys
+and chart data remain original fictional practice examples.
+Lessons 89–100 extend literacy and mathematics with original passages and
+exercises, and add digital-literacy background from Microsoft Support, CISA
+and CS Unplugged. The algorithms and file/backup exercises work on paper;
+optional device practice uses disposable files. The capstone distinguishes
+independent work from prompted or modeled work and is not a certification.
+Lessons 101–112 add science reasoning and practical project skills. Scoped
+OpenStax references cover measurement quality, thermal energy, density,
+mixtures, energy conservation and living systems; NASA/JPL supplies design-process
+background. The readings, energy ledgers, paper layouts, schedules, prototype
+trials and handover records are original fictional exercises. They work on
+paper and do not require heat sources, chemicals, cutting tools or live-system changes.
+Lessons 113–124 add Earth science, maps and data investigations, with scoped
+background from the National Park Service, USGS, NASA, NOAA, OpenStax and the
+UK Government Data Quality Framework. Their maps, coordinates, counts,
+daylight records and data-cleaning examples are original fictional teaching
+materials. They distinguish sampled estimates from complete counts, association
+from causation, and missing records from observed zeros.
+Lessons 125–136 add physical science, plant processes and ecology, with scoped
+OpenStax background references. Force diagrams, lever and circuit calculations,
+plant-route cards, habitat records and population/nutrient ledgers are original
+paper exercises. Ideal equipment models are explicitly limited; the activities
+require no powered circuits, lifting equipment, heat sources or biological cultures.
+They distinguish net change from separate transfers, and nutrient cycling from
+ecosystem energy flow.
+Lessons 137–148 add mathematical models, data interpretation and technical
+reading, with background from OpenStax, NIST and RFC 2119/8174. Their task
+times, inventories, packet records, specification cards and planning brief are
+original fictional exercises. They emphasize explicit denominators, assumptions,
+units, revisions and unresolved evidence. Rounding bounds are distinguished
+from a complete measurement-uncertainty assessment; classroom instruction
+levels are explicitly defined within their own exercise.
+Lessons 149–160 add supported scientific reading and explanation, with scoped
+background from IES/WWC, USGS, OpenStax and W3C WAI. The passages, diagrams
+described in words, shadow and cooling records, feedback and answer guidance
+are original fictional paper exercises. Technical words can be previewed or
+read aloud; the passages are not claimed to be independently decodable.
+Activities distinguish text from inference, observations from model predictions,
+and a record-based explanation from an unsupported general claim.
+Lessons 161–172 add cumulative review and transfer with scoped background
+from IES/WWC, OpenStax and CS Unplugged. Original fictional passages, records
+and mixed problems revisit taught skills and require method choices, units,
+denominators and evidence limits. Worked examples lead to fresh practice;
+support records distinguish independent, prompted and modeled attempts.
+These activities are not standardized assessments or demonstrations of mastery.
+
+Activities, fictional passages, examples and answer keys are original drafts.
+No third-party textbook text or images are reproduced. External references provide
+background, not an endorsement or a claim that these lessons were tested. They
+retain their own rights and are not downloaded at runtime. Article metadata names
+FieldForge as the draft publisher; the body identifies its background references.
+
+The original lesson text is offered under CC BY-SA 4.0. Retain attribution, draft
+status and the license notice when adapting or distributing it. This does not
+change the licensing of application code or external references.
+
+## Maintain and review
+
+Edit the source JSON, then run from the repository root:
+
+```bash
+python -m tools.build_education_library
+pytest tests/test_reference_library.py tests/test_education_library.py
+```
+
+The offline compiler produces the education-only pack, updates the existing
+combined reference pack and its catalog, and leaves other article records intact.
+The combined pack still installs in one database transaction. A Wikibooks refresh
+must be followed by this compiler to restore the education addition.
+
+The source's default edition remains `2026-10-02` for lessons 01–24. Lessons 25–148
+carry an explicit `2026-10-03` edition; lessons 149–172 use `2026-10-04`.
+The compiler honors a per-lesson edition so
+adding a later batch does not rewrite the provenance or body hashes of earlier
+lessons. Changing an already-imported lesson's text still creates a deliberate
+content conflict under the normal importer; this edition mechanism does not
+silently replace a user's content.
+
+Automated checks cover exact source/pack correspondence, original-record
+preservation, prerequisite order, answer coverage, hashes, deterministic rebuilds,
+offline installation/search, upgrades from the archived corpus and all eleven earlier
+education editions (24, 40, 56, 72, 88, 100, 112, 124, 136, 148 and 160 lessons), private-note preservation,
+conflict rollback and browsing all 184 education articles across pages of 100.
+They cannot establish pedagogical effectiveness. Before treating this as reviewed
+material, educators should check factual explanations and answer keys, try the
+activities with appropriate learners, assess accessibility and language needs,
+and record the review's scope. Current `reviewed_on` values remain empty.
+
+Follow-on content priorities: add more reading passages at explicitly supported
+decoding levels, extend fresh practice at varied levels of support, and develop
+more learning activities connecting mathematics, evidence and practical projects.
+Multilingual editions require suitable local expertise. Independent educator
+review remains a gate before any claim of reviewed instructional quality.
