@@ -17,8 +17,8 @@ def test_every_numeric_key_and_misconception_is_exact_and_offline(monkeypatch):
         raise AssertionError("Education must work without a network")
     monkeypatch.setattr(socket, "socket", forbidden)
     guided = [lesson for lesson in lessons() if lesson.track == "Guided: Measure & plan"]
-    assert len(guided) == 5 and len(lessons()) == 186
-    assert sum(len(lesson.questions) for lesson in lessons()) == 590
+    assert len(guided) == 5 and len(lessons()) == 192
+    assert sum(len(lesson.questions) for lesson in lessons()) == 626
     for lesson in guided:
         assert lesson.diagram["description"] and len(lesson.paragraphs) >= 6
         for q in lesson.questions:
@@ -204,7 +204,7 @@ def test_gui_save_failure_keeps_draft_and_export_can_rescue_it(root, tmp_path, m
         raise ValueError("simulated write failure")
     monkeypatch.setattr(tab.store, "save", failure)
     assert not tab.open_lesson("guide-area")
-    assert tab.lesson.id == "guide-fractions"
+    assert tab.lesson.id == "number-count"
     assert tab.response.get("1.0", "end-1c") == "My unsaved work"
     target = tmp_path / "rescue.html"
     monkeypatch.setattr("fieldforge.ui.education.filedialog.asksaveasfilename", lambda **_kw: str(target))

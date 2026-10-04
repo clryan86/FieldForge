@@ -242,7 +242,30 @@ def verify_education_workspace(root, directory: Path) -> None:
     app = FieldForgeApp(directory / "education.db")
     tab = EducationTab(root, app.db.path)
     try:
-        _require(len(tab.catalog) == 186, "Education catalogue missing from the bundle")
+        _require(len(tab.catalog) == 192, "Education catalogue missing from the bundle")
+        _require(tab.lesson.id == "number-count", "Number foundations are not the default starting course")
+        tab.diagram_next.invoke()
+        _require(tab.diagram_index == 1 and len(tab.diagram.find_withtag("one")) == 7,
+                 "Counting diagram step is missing from the executable")
+        tab.open_lesson("number-add")
+        tab.move_question(1)
+        tab.response.insert("1.0", "33")
+        tab.check_button.invoke()
+        _require(tab.work.result == "retry" and "lost the ten" in tab.feedback.get("1.0", "end"),
+                 "Regrouping feedback is missing")
+        tab.hint_button.invoke()
+        tab.response.delete("1.0", "end")
+        tab.response.insert("1.0", "43")
+        tab.reasoning.insert("1.0", "Thirteen ones make another ten with three ones remaining.")
+        tab.check_button.invoke()
+        _require(tab.work.result == "correct" and tab.work.hints == 1, "Foundation arithmetic check failed")
+        number_lesson, number_question, number_work = tab.lesson, tab.question, tab.work
+        tab.open_lesson("number-divide")
+        tab.move_question(5)
+        tab.response.insert("1.0", "Zero cards can be shared, but zero-card groups cannot account for twelve.")
+        tab.reveal_button.invoke()
+        tab.review_button.invoke()
+        division_lesson, division_question, division_work = tab.lesson, tab.question, tab.work
         tab.open_lesson("guide-length")
         tab.response.insert("1.0", "11")
         tab.check_button.invoke()
@@ -316,6 +339,13 @@ def verify_education_workspace(root, directory: Path) -> None:
     backup = create_verified_backup(app.db.path, directory / "education.ffbackup")
     recovered = restore_verified_copy(backup, directory / "education-restored.db", active_database=app.db.path)
     store = StudyStore(recovered)
+    _require(store.read(number_lesson.id, number_question) == number_work
+             and store.read(division_lesson.id, division_question) == division_work,
+             "Number foundations work did not survive backup and restore")
+    number_output = worksheet(number_lesson, tuple(store.read(number_lesson.id, q) for q in number_lesson.questions))
+    _require(number_output.count("<svg") == 3 and "[A4]" in number_output and number_work.reasoning in number_output,
+             "Number worksheet lost a diagram step, source or explanation")
+    (directory / "numbers-worksheet.html").write_text(number_output, encoding="utf-8")
     _require(store.read(lesson.id, question) == expected, "Education work did not survive a full backup")
     _require(store.read(literacy_lesson.id, literacy_question) == literacy_work
              and store.read(literacy_lesson.id, writing_question) == writing_work,
@@ -337,6 +367,10 @@ def verify_education_workspace(root, directory: Path) -> None:
     (directory / "evidence-worksheet.html").write_text(evidence_output, encoding="utf-8")
     reopened = EducationTab(root, recovered)
     try:
+        reopened.open_lesson(number_lesson.id)
+        reopened.move_question(1)
+        _require(reopened.response.get("1.0", "end-1c") == "43" and reopened.work.hints == 1,
+                 "Restored foundation practice is not visible")
         reopened.open_lesson(lesson.id)
         reopened.move_question(4)
         _require(reopened.response.get("1.0", "end-1c") == expected.response,
@@ -424,7 +458,7 @@ def verify_installation() -> dict[str, object]:
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
-        checks.append("Education: 186 lessons; maths, literacy and evidence practice, charts, hints, number/choice feedback, writing self-review, saved work, backup/restore and worksheets with source records")
+        checks.append("Education: 192 lessons; number foundations with stepped diagrams, measurement, literacy and evidence, hints, feedback, writing self-review, backup/restore and worksheets with all diagram steps")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

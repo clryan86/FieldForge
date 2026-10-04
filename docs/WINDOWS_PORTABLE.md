@@ -28,7 +28,12 @@ analysis or fabrication-ready CAD. Real-model design quality is not benchmarked.
 
 EDUCATION
 Education is a main desktop tab after Blueprints. At smaller window sizes use
-Go to section → Education. Start with Guided: Measure & plan for five connected
+Go to section → Education. The default Guided: Numbers & operations starts with
+counting, place value, addition, subtraction, multiplication and division. Its
+six lessons include 36 exercises and worked diagrams with Previous step / Next
+step controls. Worksheets include all 18 steps. A helper may read the text aloud;
+this is not an audio course. Resume saved practice reopens earlier work.
+Choose Guided: Measure & plan for five connected
 lessons on fractions, measurement, area, scale drawings and a paper plan review.
 Choose Practice & explain to attempt new questions, ask for hints and compare
 worked answers. All 172 original reference lessons are searchable using All lessons.

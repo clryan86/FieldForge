@@ -13,7 +13,11 @@ rectangular part envelopes; structural analysis and fabrication CAD are not
 implemented. AI design quality and education learning outcomes have not been
 independently evaluated.
 
-**Education is a main desktop tab.** Choose **Guided: Measure & plan** for five
+**Education is a main desktop tab.** It starts with **Guided: Numbers & operations**:
+six lessons covering counting, place value, addition, subtraction, multiplication
+and division. Step through worked counting diagrams, then try 36 exercises with
+targeted feedback and self-reviewed explanations. Returning learners can use
+**Resume saved practice**. Choose **Guided: Measure & plan** for five
 lessons with diagrams and numeric practice, or **Guided: Read & write** for five
 lessons with original passages, choice feedback, worked revisions and writing
 tasks. Source text stays available beside the question tab while you answer.

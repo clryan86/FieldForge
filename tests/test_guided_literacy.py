@@ -186,10 +186,11 @@ def test_gui_choice_drafts_save_on_navigation_and_corrupt_start_has_no_callback_
     assert tab.work.result == "correct"
     tab.destroy()
     import sqlite3
+    first = next(lesson for lesson in lessons() if lesson.id == "number-count")
     with sqlite3.connect(tmp_path / "corrupt.db") as db:
         db.execute("CREATE TABLE education_work_v1(lesson,question,fingerprint,payload,revision,PRIMARY KEY(lesson,question,fingerprint))")
         db.execute("INSERT INTO education_work_v1 VALUES(?,?,?,?,?)",
-                   ("guide-fractions", "q1", lessons()[0].questions[0].fingerprint, '{"bad":"value"}', 1))
+                   (first.id, "q1", first.questions[0].fingerprint, '{"bad":"value"}', 1))
     broken = EducationTab(root, tmp_path / "corrupt.db")
     assert broken.lesson is None and "Could not open" in broken.status.get()
     broken.check_answer()

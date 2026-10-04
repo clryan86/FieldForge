@@ -29,11 +29,12 @@ class EducationTab(ttk.Frame):
         self.lesson = None
         self.work = None
         self.question_index = 0
+        self.diagram_index = 0
         self._timer = None
         self._loading = False
         self._save_error = ""
         self.search = tk.StringVar()
-        self.track = tk.StringVar(value="Guided: Measure & plan")
+        self.track = tk.StringVar(value="Guided: Numbers & operations")
         self.status = tk.StringVar(value="Choose a lesson. Practice is stored in this device's FieldForge database.")
         self.progress = tk.StringVar()
         self.question_choice = tk.StringVar()
@@ -45,7 +46,7 @@ class EducationTab(ttk.Frame):
         ttk.Label(heading, text="Education", style="Header.TLabel").pack(side="left")
         ttk.Button(heading, text="Export worksheet…", command=self.export).pack(side="right")
         ttk.Button(heading, text="Reload saved answer…", command=self.reload_saved).pack(side="right", padx=8)
-        self.notice = ttk.Label(self, text="Learn → try → explain → review. Guided maths and literacy courses, plus 172 reference lessons, available offline.")
+        self.notice = ttk.Label(self, text="Learn → try → explain → review. Start with numbers, or choose measurement, literacy, evidence and reference courses below.")
         self.notice.pack(anchor="w", pady=(2, 8))
         panes = ttk.Panedwindow(self, orient="horizontal")
         panes.pack(fill="both", expand=True)
@@ -98,7 +99,17 @@ class EducationTab(ttk.Frame):
         self.reading.pack(fill="both", expand=True)
         self.reading.tag_configure("heading", font=("TkDefaultFont", 11, "bold"), spacing1=14, spacing3=5)
         self.reading.tag_configure("body", spacing3=12)
-        self.diagram = tk.Canvas(self.read_page, height=132, background="#f0f5f8", highlightthickness=0)
+        self.diagram_frame = ttk.Frame(self.read_page)
+        self.diagram_controls = ttk.Frame(self.diagram_frame)
+        self.diagram_previous = ttk.Button(self.diagram_controls, text="← Previous step", command=lambda: self.move_diagram(-1))
+        self.diagram_previous.pack(side="left")
+        self.diagram_next = ttk.Button(self.diagram_controls, text="Next step →", command=lambda: self.move_diagram(1))
+        self.diagram_next.pack(side="right")
+        self.diagram_step = ttk.Label(self.diagram_controls, anchor="center")
+        self.diagram_step.pack(fill="x", expand=True)
+        self.diagram = tk.Canvas(self.diagram_frame, height=132, background="#f0f5f8", highlightthickness=0)
+        self.diagram.pack(fill="x")
+        self.diagram_caption = ttk.Label(self.diagram_frame, wraplength=650)
         self.diagram.bind("<Configure>", lambda _e: self.draw_diagram())
         ttk.Button(self.read_page, text="Try the practice →", command=lambda: self.pages.select(self.practice_page)).pack(anchor="e", pady=6)
 
@@ -214,6 +225,7 @@ class EducationTab(ttk.Frame):
             self.status.set(f"Could not open practice: {exc}")
             return False
         self.lesson, self.question_index, self.work = lesson, 0, work
+        self.diagram_index = 0
         if self.tree.exists(key):
             self.tree.selection_set(key)
             self.tree.see(key)
@@ -227,6 +239,9 @@ class EducationTab(ttk.Frame):
         sections = ["GOAL\n" + lesson.goal, "MATERIALS\n" + lesson.materials, *lesson.paragraphs]
         if lesson.diagram:
             sections.append("DIAGRAM DESCRIPTION\n" + lesson.diagram["description"])
+            for index, step in enumerate(lesson.diagram.get("steps", []), 1):
+                groups = "; ".join(f"{g['label']}: {g['tens']} tens and {g['ones']} ones" for g in step["groups"])
+                sections.append(f"DIAGRAM STEP {index} · {step['title']}\n{step['caption']}\n{groups}")
         sections.extend(["ABOUT THESE MATERIALS\n" + NOTICE,
                          "BACKGROUND REFERENCES\n" + "\n\n".join(lesson.references)])
         for section in sections:
@@ -239,10 +254,18 @@ class EducationTab(ttk.Frame):
         self.reading.configure(state="disabled")
         self.reading.yview_moveto(0)
         if lesson.diagram:
-            self.diagram.pack(fill="x", before=self.reading)
+            self.diagram_frame.pack(fill="x", before=self.reading)
+            if lesson.diagram["kind"] == "counters":
+                self.diagram_controls.pack(fill="x", before=self.diagram)
+                self.diagram_caption.pack(fill="x", pady=(2, 5))
+                self.diagram.configure(height=174)
+            else:
+                self.diagram_controls.pack_forget()
+                self.diagram_caption.pack_forget()
+                self.diagram.configure(height=132)
             self.draw_diagram()
         else:
-            self.diagram.pack_forget()
+            self.diagram_frame.pack_forget()
         self.question_picker.configure(values=[f"{i+1} of {len(lesson.questions)} · {q.kind.title() if q.kind != 'reflection' else 'Explain'}"
                                                for i, q in enumerate(lesson.questions)])
         self._show_question()
@@ -464,6 +487,12 @@ class EducationTab(ttk.Frame):
         except (OSError, ValueError, sqlite3.Error) as exc:
             messagebox.showerror("Worksheet was not exported", str(exc), parent=self)
 
+    def move_diagram(self, offset):
+        if not self.lesson or not self.lesson.diagram or self.lesson.diagram["kind"] != "counters":
+            return
+        self.diagram_index = max(0, min(len(self.lesson.diagram["steps"]) - 1, self.diagram_index + offset))
+        self.draw_diagram()
+
     def draw_diagram(self):
         if not self.lesson or not self.lesson.diagram:
             return
@@ -473,7 +502,22 @@ class EducationTab(ttk.Frame):
         diagram = self.lesson.diagram
         kind = diagram["kind"]
         color, ink = "#2c7f99", "#18394a"
-        if kind == "bars":
+        if kind == "counters":
+            from fieldforge.knowledge.education_visuals import counter_scene
+            step = diagram["steps"][self.diagram_index]
+            self.diagram_step.configure(text=f"{self.diagram_index + 1}/{len(diagram['steps'])} · {step['title']}")
+            self.diagram_caption.configure(text=step["caption"], wraplength=max(250, width - 12))
+            self.diagram_previous.configure(state="disabled" if self.diagram_index == 0 else "normal")
+            self.diagram_next.configure(state="disabled" if self.diagram_index == len(diagram["steps"]) - 1 else "normal")
+            for mark in counter_scene(diagram, self.diagram_index, width):
+                if mark.kind == "text":
+                    canvas.create_text(*mark.coords, text=mark.text, fill=ink, font=("TkDefaultFont", 9))
+                elif mark.kind == "one":
+                    canvas.create_oval(*mark.coords, fill=color, outline="", tags=("one",))
+                else:
+                    canvas.create_rectangle(*mark.coords, fill="#dcebf0" if mark.kind == "ten" else "",
+                                            outline=ink, tags=(mark.kind,))
+        elif kind == "bars":
             from fieldforge.knowledge.education import bar_chart
             canvas.create_text(width / 2, 14, text=diagram["title"], fill=ink)
             for label, left, top, right, bottom, value in bar_chart(diagram, width):
