@@ -221,7 +221,7 @@ def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
             from fieldforge.navigation.vector_tiles import render_vector_tile
 
             render_vector_tile(sample[1])
-            warnings.append("Vector features use FieldForge's basic preview style with limited point-name labels; publisher styling and label rules are not applied.")
+            warnings.append("Vector features use FieldForge's basic preview style with bounded point, line, and area labels; publisher styling, fonts, sprites, and advanced label rules are not applied.")
         warnings.append("Zoom availability is not a coverage, freshness, integrity or safety audit. Tiles are checked as viewed.")
     return MapPack(path, signature, tuple(sorted(metadata.items())), zooms, latitude, longitude, z, index_name, tuple(warnings))
 
