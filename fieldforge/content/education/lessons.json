@@ -773,6 +773,83 @@
       "publisher": "OpenStax, Rice University",
       "scope": "Background on distinguishing temperature from thermal energy. FieldForge's comparisons, cooling records and explanation revisions are original fictional paper exercises, not equipment tests or insulation recommendations.",
       "accessed_on": "2026-10-04"
+    },
+    "cumulative-learning": {
+      "title": "Organizing Instruction and Study to Improve Student Learning",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "scope": "Background on spaced review, worked examples, retrieval and explanatory questions. FieldForge's mixed practice, support records and retry decisions are original unvalidated teaching drafts, not a standardized assessment or evidence of mastery.",
+      "accessed_on": "2026-10-04"
+    },
+    "cumulative-mathematics": {
+      "title": "Assisting Students Struggling with Mathematics: Intervention in the Elementary Grades",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/26",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "scope": "Background on systematic instruction, mathematical language, representations and word problems in elementary intervention. The original mixed problems here are not the guide's intervention, and adult adaptations are not validated by school-age evidence.",
+      "accessed_on": "2026-10-04"
+    },
+    "cumulative-reading": {
+      "title": "Improving Reading Comprehension in Kindergarten Through 3rd Grade",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "scope": "Background on supported comprehension and text discussion in K-3 instruction. FieldForge's new timetable narrative is original and uses explicit word preview; it is not claimed to be independently decodable or validated for adults.",
+      "accessed_on": "2026-10-04"
+    },
+    "cumulative-writing": {
+      "title": "Teaching Elementary School Students to Be Effective Writers",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+      "publisher": "Institute of Education Sciences / What Works Clearinghouse",
+      "scope": "Background on writing processes and supported revision for elementary learners. FieldForge's fictional request records, drafts and feedback are original practice, not a tested writing assessment or a reproduced source example.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-percent": {
+      "title": "Prealgebra 2e: Understand Percent",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/6-1-understand-percent",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on percent as a part-whole representation. FieldForge's card counts and comparisons are original numerical examples and answer keys, not source exercises.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-geometry": {
+      "title": "Prealgebra 2e: Use Properties of Rectangles, Triangles, and Trapezoids",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on perimeter and area. FieldForge's dimensions and choice-of-quantity prompts are original paper problems, not material specifications or copied textbook activities.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-volume": {
+      "title": "Prealgebra 2e: Solve Geometry Applications: Volume and Surface Area",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/9-6-solve-geometry-applications-volume-and-surface-area",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on rectangular-prism volume. The original FieldForge models use ideal stated dimensions; they are not claims about usable container capacity or manufacturing tolerances.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-averages": {
+      "title": "Prealgebra 2e: Averages and Probability",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/5-5-averages-and-probability",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on mean and median. FieldForge's fictional time lists, missing-record questions and comparisons are original practice examples, not observations from the source.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-comparisons": {
+      "title": "Introductory Statistics 2e: Experimental Design and Ethics",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/1-4-experimental-design-and-ethics",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on study design and confounding. FieldForge's invented seed counts support arithmetic and evidence appraisal only; they are not experimental results or a reproduction of a source activity.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-algorithms": {
+      "title": "Computational Thinking and CS Unplugged",
+      "url": "https://www.csunplugged.org/en/computational-thinking/",
+      "publisher": "CS Unplugged, University of Canterbury",
+      "scope": "Background on algorithms, logical reasoning and evaluation without a computer. FieldForge's inventory rules, identifiers, boundary cases and trace questions are original paper exercises.",
+      "accessed_on": "2026-10-04"
+    },
+    "review-linear-model": {
+      "title": "College Algebra 2e: Modeling with Linear Functions",
+      "url": "https://openstax.org/books/college-algebra-2e/pages/4-2-modeling-with-linear-functions",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on linear models and their interpretation. FieldForge's setup-time models, error analysis and fresh checks are original fictional exercises, not source examples or measured productivity claims.",
+      "accessed_on": "2026-10-04"
     }
   },
   "lessons": [
@@ -7271,6 +7348,516 @@
         "evidence-model-distinction",
         "cooling-dossier",
         "explanation-portfolio"
+      ]
+    },
+    {
+      "id": "161",
+      "edition": "2026-10-04",
+      "title": "Plan mixed review from observed work",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "02",
+        "03",
+        "04",
+        "24"
+      ],
+      "goal": "Choose a small set of previously taught skills, record the help used, and use actual work to select the next review task.",
+      "materials": "Paper review cards, a learning record and a cover for the answer guidance; no timer or score scale is needed.",
+      "lesson": [
+        "A review session can ask a learner to choose a method instead of repeating one announced operation. Choose three skills already taught, such as reading a notice, finding an elapsed time and making equal groups. Before mixing them, check that the words and representations are accessible. If a skill is unfamiliar, teach it with a worked example first. A difficult first encounter is different from forgetting something previously practiced.",
+        "Try this original pair of cards: A says 'Four packets each contain 6 counters; find the total.' B says 'A session starts at 09:15 and ends at 09:50; find its duration.' A needs equal-group reasoning: 4 x 6 = 24 counters. B needs elapsed-time reasoning: 35 minutes. Naming the quantity and its unit helps select the method. Merely seeing two numbers does not mean the same operation suits both cards.",
+        "Record the card, the first attempt, the learner's explanation and the support given. For example: 'A: 24, independently explained as four sixes. B: 35 after a facilitator drew the clock intervals.' Keep both outcomes; the second is evidence of success with that support, not evidence that the duration was found independently. A learner's confidence is useful to discuss but cannot substitute for the recorded work. Do not combine these observations into a diagnostic label.",
+        "Check an attempt against the answer, discuss a specific mismatch, then use a new example. For B, a later card could run from 10:20 to 10:55. Schedule another short revisit after a gap and note whether the method is selected without the same prompt. Adjust the gap and difficulty to the observed work rather than promising one fixed schedule suits everyone. Retain the original attempt alongside the retry so that a corrected copy is not mistaken for a fresh solution."
+      ],
+      "practice": [
+        "A learner writes 42 for six packets of 7 and explains six equal groups without a hint. What should the support record say?",
+        "A learner finds 25 minutes from 14:10 to 14:35 only after seeing a fully worked solution. Write an accurate record and propose a fresh retry.",
+        "A learner confidently gives 09:45 minus 09:20 as 65 minutes. What evidence and next action should guide the review?"
+      ],
+      "answers": [
+        "Record 42 counters and the equal-group explanation as independent on that attempt. One successful item does not establish every multiplication skill.",
+        "Record 25 minutes as completed after a model, preserving the first attempt if any. A suitable new card is 15:05 to 15:30, also 25 minutes, attempted before revealing its solution.",
+        "Use the incorrect duration and explanation as the evidence, not the confidence alone. Show that 09:20 to 09:45 spans 25 minutes, discuss the error, then try a different interval and record the support used."
+      ],
+      "adaptation": "Allow spoken explanations, large print or movable cards. Separate help with reading the card from help choosing or carrying out the mathematical method.",
+      "references": [
+        "cumulative-learning",
+        "cumulative-mathematics"
+      ],
+      "tags": [
+        "mixed-review-record",
+        "support-level",
+        "fresh-retry",
+        "method-selection"
+      ]
+    },
+    {
+      "id": "162",
+      "edition": "2026-10-04",
+      "title": "Read a changed timetable and support an inference",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "19",
+        "45",
+        "79",
+        "89"
+      ],
+      "goal": "Combine a supported narrative with time calculations while distinguishing directly stated facts from a reasonable inference.",
+      "materials": "The original passage below, paper and an optional clock face; preview revised, reserve and postponed aloud.",
+      "lesson": [
+        "A revised notice has been changed; to reserve here means to keep something available; postponed means moved to a later time. Read this original passage with support as needed: 'Mina and Cal arrived at the reading room at 09:35. Their copied notice said it would open at 09:30. A new sign on the door read: Revised opening today: 10:00. At 09:45 a volunteer came outside. She said, I can reserve your two seats. Mina put away the clock sheet she had planned to use inside. Cal said, We still have time to read the short story on the bench. They opened the story together.'",
+        "List direct facts before drawing conclusions. They arrived at 09:35; the revised opening is 10:00; the volunteer spoke at 09:45. The text does not state why the opening changed or promise when the activity inside will finish. From arrival to the revised opening is 25 minutes. From the volunteer's appearance to that opening is 15 minutes. Both durations are correct because they start at different events.",
+        "An inference combines details with reasoning. It is reasonable to infer that Mina's planned indoor clock activity is being delayed: the room is not open yet and she puts away its sheet. The passage does not directly say she feels angry, and the same actions would fit other feelings. Write 'This suggests...' for a supported interpretation and cite the relevant actions. Do not add an imagined emotion or cause as though it were printed in the passage.",
+        "Check which notice applies. The copied notice gives the older 09:30 time; the door explicitly labels today's 10:00 opening as revised. In this fictional account that is the update. A seat reservation says something about availability of seats, not that the room has already opened. Retell the sequence using the stated times, then mark an unanswered question separately. Comprehension and time arithmetic can be reviewed together while their errors are recorded separately."
+      ],
+      "practice": [
+        "How long after the copied opening time did Mina and Cal arrive, and how long must they wait from arrival until the revised opening?",
+        "Which details support the inference that the indoor clock activity was postponed? Does the text establish Mina's exact feeling?",
+        "After the volunteer appears, they spend 8 minutes reading. What time is it then, and how many minutes remain until the revised opening?"
+      ],
+      "answers": [
+        "They arrive 5 minutes after 09:30. From 09:35 to 10:00 they have a 25-minute wait.",
+        "The revised opening is later than their arrival, and Mina puts away the sheet intended for use inside. These details support delay; they do not establish her exact feeling.",
+        "09:45 plus 8 minutes is 09:53. Seven minutes remain until 10:00."
+      ],
+      "adaptation": "Read the full passage aloud or share the reading. Record whether help concerned decoding, locating a fact, forming an inference or calculating time; the passage is not a phonics-controlled independent reading test.",
+      "references": [
+        "cumulative-reading",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "timetable-inference",
+        "revised-notice",
+        "fact-and-inference",
+        "reading-time-review"
+      ]
+    },
+    {
+      "id": "163",
+      "edition": "2026-10-04",
+      "title": "Write a clear request from an incomplete record",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "44",
+        "77",
+        "90",
+        "112"
+      ],
+      "goal": "Turn a fictional planning record into a concise request that preserves unknown fields and makes the needed reply explicit.",
+      "materials": "Paper or a disposable draft document; use only the fictional records supplied here and do not send the request.",
+      "lesson": [
+        "A useful request helps its reader decide what to do next. This original planning record says: 'Group: Cedar reading circle. Requested room: Room B. Day: Thursday 15 October 2026. Time: 14:00 to 14:45. People: 8. Need: confirm the room and eight chairs. Desired reply: by 12:00 Tuesday 13 October 2026. Coordinator contact: not recorded.' The intended reader is the fictional room coordinator. The record describes a request, not an approved booking.",
+        "Draft from the supplied facts: 'Please confirm whether Room B and eight chairs are available for Cedar reading circle, eight people, on Thursday 15 October from 14:00 to 14:45. Please reply by 12:00 Tuesday 13 October. If the room is unavailable, please tell us so that we can revise the plan.' Add a private draft note: 'Coordinator contact not recorded; find the agreed contact before sending.' Do not invent an address or imply the request has been delivered.",
+        "Review the draft as its reader. It identifies the group, resource, date, interval, number of people, requested decision and reply deadline. The session lasts 45 minutes. The deadline is earlier than the session, allowing time for revision, but that does not guarantee a response. A statement such as 'The room is confirmed' would change the evidence and is unsupported. A reply asking for more information should also remain distinct from an acceptance.",
+        "Now consider a revision note: 'Expected people changed to 10; time unchanged; room capacity not checked.' Update both the people count and chair request to 10, and ask whether Room B can accommodate the revised group. Retain the uncertainty about capacity and contact. A complete revision follows the consequences of the changed field; replacing only one occurrence of eight would leave a contradiction. Record what was checked and what still needs a real answer."
+      ],
+      "practice": [
+        "Draft the first request in two or three sentences using the original eight-person record. Include the requested reply and its deadline.",
+        "Apply the ten-person revision. Name two linked fields that must change and one fact that remains unconfirmed.",
+        "A draft says 'Your approved room will be ready at 14:00; we have emailed the coordinator.' Identify the claims unsupported by the supplied record and replace them."
+      ],
+      "answers": [
+        "Accept a concise request naming Cedar reading circle, Room B, eight people/eight chairs, 15 October 2026 from 14:00 to 14:45, and asking for availability confirmation by noon on 13 October 2026. The contact must remain unresolved in the draft record.",
+        "Change people from 8 to 10 and chairs from 8 to 10. Room capacity/availability and the coordinator contact are still unconfirmed; the request should ask about the revised group.",
+        "Approval and delivery of an email are unsupported. A suitable replacement is 'We request Room B for 14:00 to 14:45; availability is awaiting confirmation, and the coordinator contact has not yet been recorded.'"
+      ],
+      "adaptation": "Permit dictation and use a field checklist. Evaluate the clarity and fidelity of the request separately from spelling or typing support.",
+      "references": [
+        "cumulative-writing",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "request-record-review",
+        "linked-field-revision",
+        "unconfirmed-booking",
+        "audience-and-purpose"
+      ]
+    },
+    {
+      "id": "164",
+      "edition": "2026-10-04",
+      "title": "Choose operations and interpret the remainder",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14",
+        "48",
+        "49",
+        "82"
+      ],
+      "goal": "Solve a mixed whole-number problem and explain why complete kits and storage containers require different treatments of a remainder.",
+      "materials": "Paper counters or a drawn inventory; all counts describe fictional classroom cards.",
+      "lesson": [
+        "The original record says a store has 7 unopened packets of 12 cards and 9 loose cards. Seventeen cards are set aside for another task. Each complete practice kit needs 5 cards. First name what is being counted at each step: packets become cards, a reserved number is removed, then available cards become complete kits. Keeping these quantities visible prevents adding seven packets directly to nine cards.",
+        "Calculate the inventory: 7 x 12 = 84 packaged cards; 84 + 9 = 93 total; 93 - 17 = 76 available. Then 76 divided by 5 is 15 remainder 1. The answer is 15 complete kits and 1 unassigned card. Check by reversing the division: 15 x 5 + 1 = 76. Sixteen complete kits would require 80 cards, which exceeds the available amount by 4.",
+        "Change the question while retaining 76 cards: how many containers are needed if each holds at most 5 cards and every card must be stored? Fifteen full containers hold 75, leaving one card that needs another container. Here the answer is 16 containers, including one partly filled container. Rounding down for complete kits and rounding up for sufficient containers come from the meanings of the questions, not an arbitrary rule that every remainder is treated the same way.",
+        "Estimate and inspect the result. About 80 available cards would make about 16 groups of five, so 15 complete kits is plausible; this does not replace the exact inventory. To find an error, keep the intermediate counts and units instead of erasing all work. A correct final number produced from a contradictory inventory is not yet a clear explanation. After feedback, use a new inventory so the learner must select the steps again."
+      ],
+      "practice": [
+        "A new record has 6 packets of 14 cards plus 8 loose cards, with 19 reserved. How many remain available, and how many complete 4-card kits can be made?",
+        "For those same available cards, how many containers holding at most 4 each are needed to store every card? Explain the difference from the kit answer.",
+        "A learner claims 19 complete 4-card kits can be made from the new inventory. Use multiplication to check the claim and calculate any shortage."
+      ],
+      "answers": [
+        "6 x 14 + 8 - 19 = 73 cards. There are 18 complete kits and 1 card left, since 18 x 4 + 1 = 73.",
+        "19 containers: 18 full containers hold 72 and the last holds 1. A partly filled container still counts, whereas a partly filled kit is not a complete kit.",
+        "19 x 4 = 76 cards would be required; only 73 are available, a shortage of 3. The claim is not supported."
+      ],
+      "adaptation": "Represent packets and cards separately with drawings, then connect each drawing to its equation. Record assistance with operation choice separately from assistance with calculation.",
+      "references": [
+        "cumulative-mathematics",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "remainder-choice-review",
+        "whole-number-transfer",
+        "inventory-operations",
+        "complete-groups"
+      ]
+    },
+    {
+      "id": "165",
+      "edition": "2026-10-04",
+      "title": "Connect fraction, decimal and percent to the same whole",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "15",
+        "16",
+        "35",
+        "64"
+      ],
+      "goal": "Translate a part-whole count between representations and compare quantities only after identifying each whole.",
+      "materials": "Paper grids or counters for the fictional counts; a calculator may be used after the fraction and denominator are explained.",
+      "lesson": [
+        "In this original review record, 24 of 60 reading cards have been checked. The fraction checked is 24/60, which simplifies to 2/5 by dividing numerator and denominator by 12. Dividing 24 by 60 gives 0.4, or 40%. These are three representations of the same share of the same 60-card collection. The unchecked share is 36/60 = 3/5 = 0.6 = 60%; the two shares total one whole.",
+        "Later, 42 of those same 60 cards have been checked. The new share is 42/60 = 7/10 = 0.7 = 70%. Eighteen additional cards have been checked. The percentage rises by 30 percentage points because 70 - 40 = 30. If asked for the relative increase in the checked count, use the earlier 24 as the reference: 18/24 = 75%. These questions have different denominators and therefore different numerical answers.",
+        "Now compare different collections. One quarter of 48 cards is 12 cards; one half of 20 cards is 10 cards. Although one half is the larger fraction, it describes fewer cards here because its whole is smaller. Label every fraction or percent with its reference set. A bare statement such as 'half is more' is incomplete when it means a number of objects from differently sized collections.",
+        "To check a translation, reconstruct the part: 0.4 x 60 = 24. To check a comparison, show both counts and both denominators. If a record supplies only '40% checked' without the collection size, the number of checked cards is unknown. A diagram can show the fraction of a generic whole, but it cannot supply a missing total. Write the missing information as a question rather than selecting a convenient number."
+      ],
+      "practice": [
+        "Thirty of 80 labels have been reviewed. Give the share as a simplest fraction, decimal and percent, and state the unreviewed count.",
+        "A fixed 80-label collection goes from 30 reviewed to 50 reviewed. Find the added count and the increase in percentage points.",
+        "Compare one third of 45 tokens with two fifths of 30 tokens. Which fraction is larger, and which actual token count is larger?"
+      ],
+      "answers": [
+        "30/80 = 3/8 = 0.375 = 37.5%; 50 labels remain unreviewed.",
+        "20 more labels. The shares are 37.5% and 62.5%, so the increase is 25 percentage points.",
+        "Two fifths (0.4) exceeds one third (about 0.333), but one third of 45 is 15 tokens and two fifths of 30 is 12. The first collection contributes the larger count because the wholes differ."
+      ],
+      "adaptation": "Draw equal partitions of a labeled whole or speak the part and total before using symbols. Record whether a hint supplied the denominator or merely helped with division.",
+      "references": [
+        "review-percent",
+        "cumulative-mathematics"
+      ],
+      "tags": [
+        "same-whole-review",
+        "representation-transfer",
+        "denominator-check",
+        "percent-versus-count"
+      ]
+    },
+    {
+      "id": "166",
+      "edition": "2026-10-04",
+      "title": "Choose perimeter, area or volume before calculating",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "18",
+        "68",
+        "96"
+      ],
+      "goal": "Match a question to length, area or volume, calculate from consistent dimensions, and state the corresponding units.",
+      "materials": "Paper sketches of an ideal rectangle and rectangular prism; no construction, cutting or actual capacity measurement is required.",
+      "lesson": [
+        "A fictional flat rectangle has side lengths 12 cm and 8 cm. A question about the length of its boundary asks for perimeter: 12 + 8 + 12 + 8 = 40 cm. A question about the region covered by its face asks for area: 12 x 8 = 96 square centimetres, written cm^2. The dimensions are the same, but the requested quantities differ. Drawing a boundary and shading a face can make that distinction visible before choosing a formula.",
+        "Imagine an ideal rectangular prism with that 12 cm by 8 cm base and a perpendicular height of 3 cm. Its geometric volume is 12 x 8 x 3 = 288 cubic centimetres, written cm^3. Conceptually it has three 1-cm-thick layers, each containing 96 unit cubes. This differs from the base's area and from the area of all its faces. The exercise gives ideal dimensions, not wall thickness or a usable filling level for a real container.",
+        "Unit conversion must follow the quantity. Since 1 m is 100 cm, one square metre contains 10,000 square centimetres, and one cubic metre contains 1,000,000 cubic centimetres. Thus the rectangle's 96 cm^2 is 0.0096 m^2, while the prism's 288 cm^3 is 0.000288 m^3. Dividing either by 100 merely because the length conversion uses 100 would give the wrong quantity conversion.",
+        "Use a decision sentence before calculation: 'I need boundary length, so I will add the four sides'; 'I need face area, so I will multiply two perpendicular lengths'; or 'I need prism volume, so I will multiply base area by perpendicular height.' Inspect the result's units and check the dimensions use the same length unit. A neatly computed number with the wrong unit still answers the wrong question. If the shape or required dimensions are missing, state that limitation."
+      ],
+      "practice": [
+        "A new rectangle is 15 cm by 6 cm. Find its perimeter and area, labeling each quantity and unit.",
+        "A rectangular prism has that 15 cm by 6 cm base and height 4 cm. Find its volume. Does the base area alone answer the volume question?",
+        "A learner writes that 90 cm^2 equals 0.9 m^2 by dividing by 100. Correct the conversion and explain the needed factor."
+      ],
+      "answers": [
+        "Perimeter 2 x (15 + 6) = 42 cm; area 15 x 6 = 90 cm^2.",
+        "Volume 15 x 6 x 4 = 360 cm^3. The base area is only 90 cm^2; a height is also needed to determine this prism's volume.",
+        "90/10,000 = 0.009 m^2. A square metre has 100 by 100 centimetre squares, so the area factor is 10,000, not 100."
+      ],
+      "adaptation": "Use tactile or drawn edges, faces and layers, or describe them orally. Record whether support was needed to choose the quantity, use a formula, calculate or convert units.",
+      "references": [
+        "review-geometry",
+        "review-volume",
+        "cumulative-mathematics"
+      ],
+      "tags": [
+        "quantity-choice-review",
+        "boundary-face-space",
+        "squared-conversion",
+        "unit-check-review"
+      ]
+    },
+    {
+      "id": "167",
+      "edition": "2026-10-04",
+      "title": "Read a schedule across midnight and compare rates",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "19",
+        "45",
+        "63",
+        "137"
+      ],
+      "goal": "Calculate an interval across midnight and distinguish a rate over active time from a rate over a whole session.",
+      "materials": "A paper 24-hour clock or timeline; all times use the same fictional clock with no time-zone or clock-setting change.",
+      "lesson": [
+        "A fictional sorting session starts at 23:20 on Day 1 and ends at 00:20 on Day 2. Split the interval at midnight: 40 minutes from 23:20 to 24:00, then 20 minutes to 00:20. The total is 60 minutes. The day labels matter; subtracting 23:20 from 00:20 as if both belonged to the same date obscures the intended interval. Here 24:00 marks the end of Day 1, the same instant as 00:00 at the start of Day 2.",
+        "The record includes a 12-minute pause and says all other session time was active sorting. Active time is 60 - 12 = 48 minutes. A total of 144 cards was sorted, all during active time. The active-time average rate is 144/48 = 3 cards per minute. Across the entire elapsed session the average is 144/60 = 2.4 cards per minute. Both calculations are valid because their denominators answer different questions.",
+        "Write a complete rate statement: 'The session averaged 3 cards per active minute, excluding the recorded pause.' Do not quietly use that number as the whole-session average. Neither average says exactly three cards were completed in every individual minute. The record could contain faster and slower intervals. A whole-session rate includes the pause in its denominator even though no cards were sorted during that pause.",
+        "Before comparing two sessions, align their definitions. Compare active-time rates with active-time rates, or elapsed-session rates with elapsed-session rates. Check counts, durations and the treatment of breaks. If the pause duration is missing, an active-time rate cannot be reconstructed from the total elapsed time alone. For actual clocks, dates and changes in clock settings can require additional information; the fixed-clock assumption deliberately removes those complications here."
+      ],
+      "practice": [
+        "A fresh session runs from 23:35 on Day 1 to 00:25 on Day 2 on the same unchanged clock. It has one 10-minute pause and no other inactive time. Find elapsed and active minutes.",
+        "That session sorts 120 cards during active time. Find its active-time and whole-session average rates, then compare each with the worked session using the same denominator type.",
+        "A third record reports 90 cards in a 45-minute session but leaves the pause duration blank. Which average rate can be calculated, and which remains unresolved?"
+      ],
+      "answers": [
+        "25 minutes to midnight plus 25 afterward gives 50 elapsed minutes; subtract 10 for 40 active minutes.",
+        "120/40 = 3 cards per active minute; 120/50 = 2.4 cards per elapsed-session minute. Each matches the corresponding worked-session average, although totals and durations differ.",
+        "The whole-session average is 90/45 = 2 cards per minute. The active-time average is unresolved because active duration is unknown; a blank pause field must not be treated as a zero-minute pause."
+      ],
+      "adaptation": "Mark midnight on a line and move along each interval. Allow a calculator for division while asking the learner to name and justify each denominator.",
+      "references": [
+        "cumulative-mathematics",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "midnight-rate-review",
+        "active-time-denominator",
+        "elapsed-session",
+        "rate-definition"
+      ]
+    },
+    {
+      "id": "168",
+      "edition": "2026-10-04",
+      "title": "Inspect a distribution before choosing an average",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "51",
+        "120",
+        "123",
+        "143"
+      ],
+      "goal": "Compute and interpret mean and median for a small complete list, then explain how an unrecorded value limits the conclusion.",
+      "materials": "Paper number cards for the original fictional durations; no real learner speed comparison or performance ranking is required.",
+      "lesson": [
+        "Five recorded durations for a fictional paper task are 2, 3, 3, 4 and 13 minutes. The sum is 25 minutes, so the mean is 25/5 = 5 minutes. The sorted middle value is 3, so the median is 3 minutes. Keep the ordered list beside both summaries. It shows why they differ: the 13-minute duration affects the total strongly, while the third position remains 3.",
+        "Choose a summary for the question, and describe its limits. The mean connects the five-record total to the count: 5 records times 5 minutes equals 25 minutes. The median locates the middle ordered record and is less affected by the size of this one high value. Neither summary is a time achieved by every record, and neither alone describes the full spread. Report the observed range as well when useful: minimum 2, maximum 13, difference 11 minutes.",
+        "A sixth row says 'duration not recorded.' It is not an observed zero. The known-record mean remains 5 and the known-record median remains 3, but a six-record mean cannot be found without the missing value. Keep the sixth row visible and label which five records were used. Removing the row without mentioning it would hide an evidence gap; entering zero would invent a measurement.",
+        "Test the sensitivity by supplying alternative fictional sixth values. If it were 1, the six-record total would be 26, mean 26/6 = 4 1/3, and median 3. If it were 20, the total would be 45, mean 7.5, and median (3 + 4)/2 = 3.5. These are conditional calculations, not recovered data. Do not select the version that gives the preferred result and treat it as the missing observation."
+      ],
+      "practice": [
+        "For the fresh complete list 3, 4, 4, 5, 14 minutes, calculate sum, mean, median and range.",
+        "An additional duration is unrecorded. A learner inserts zero and reports a six-record mean of 5 minutes. What is wrong, and what can be reported from the known records?",
+        "Suppose a later verified record supplies the missing duration as 6 minutes. Recalculate the six-record mean and median; keep this separate from the previous unknown case."
+      ],
+      "answers": [
+        "Sum 30 minutes; mean 30/5 = 6 minutes; median 4 minutes; range 14 - 3 = 11 minutes.",
+        "Zero was invented. For the five known records the mean is 6 and the median is 4; the six-record mean remains unknown until the missing duration is supplied.",
+        "The sorted list is 3, 4, 4, 5, 6, 14. Sum 36, mean 36/6 = 6 minutes, median (4 + 5)/2 = 4.5 minutes. The mean happens to stay the same while the median changes."
+      ],
+      "adaptation": "Arrange movable cards and point to middle positions. Record help with sorting, choosing a denominator and calculating separately; do not interpret task durations as a measure of a learner's worth or ability.",
+      "references": [
+        "review-averages",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "distribution-review",
+        "known-record-average",
+        "missing-duration",
+        "mean-median-choice"
+      ]
+    },
+    {
+      "id": "169",
+      "edition": "2026-10-04",
+      "title": "Check a scientific comparison with unequal sample sizes",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "22",
+        "39",
+        "122",
+        "144",
+        "154"
+      ],
+      "goal": "Compare observed proportions with their denominators and separate a descriptive result from a causal explanation.",
+      "materials": "The fictional seed-count dossier below and paper; this is a data exercise, not a request to grow or handle seeds.",
+      "lesson": [
+        "An original fictional dossier reports two seed groups observed at a stated endpoint. Group A has 8 germinated seeds out of 10 recorded seeds. Group B has 14 germinated out of 20 recorded seeds. A germinated seed is defined here as one with a visible root by day 5. The dossier does not record how seeds were assigned or whether growing conditions matched. First preserve the definition, endpoint, numerator and denominator for each group.",
+        "Group B has more germinated seeds by count: 14 compared with 8. Group A has the greater observed germination proportion: 8/10 = 80%, compared with 14/20 = 70%. The difference is 10 percentage points. These statements can both be true. Comparing counts answers how many; comparing proportions answers what share of each recorded group. For the combined recorded seeds, use (8 + 14)/(10 + 20) = 22/30, about 73.3%, rather than the unweighted mean of 80% and 70%.",
+        "A descriptive claim is 'At day 5, the recorded proportion was higher in A.' A causal claim such as 'A's treatment caused better germination' needs information these records do not provide. Different initial seed characteristics, assignments or conditions could affect the comparison. The counts also do not establish the final outcome at a later day. A correct percentage calculation does not repair an incomplete study design or make the observed difference certain to recur.",
+        "For a paper plan of a more informative comparison, specify the question, seed population, group assignment method, intended differing condition, other conditions to keep comparable, endpoint and scoring definition. Record initial group counts and every outcome, including missing or uncertain observations. Random assignment and repeated trials can strengthen a design but do not guarantee identical groups or eliminate every uncertainty. This review asks for an evidence plan, not an actual experiment or a statistical significance claim."
+      ],
+      "practice": [
+        "A fresh fictional record gives C: 9 germinated of 12 seeds; D: 16 of 24. Compare counts and proportions, giving the percentage-point difference to one decimal place.",
+        "Calculate the combined observed germination proportion for C and D. Why is a simple average of the two group percentages inappropriate for this combined seed count?",
+        "The fresh record does not describe assignments or conditions. Rewrite 'C's treatment definitely caused more germination' as a supported statement and name one specific missing record."
+      ],
+      "answers": [
+        "D has more germinated seeds by count (16 versus 9). C has the larger proportion: 75% versus about 66.7%, a difference of about 8.3 percentage points.",
+        "(9 + 16)/(12 + 24) = 25/36, about 69.4%. The groups have different numbers of seeds; a simple average would give each group equal weight instead of each recorded seed.",
+        "Accept: 'At the recorded endpoint, C's observed proportion was higher, but these counts alone do not establish a treatment cause.' Missing records could include seed assignment, initial seed characteristics, matching conditions or the exact endpoint/scoring definition for this fresh record."
+      ],
+      "adaptation": "Draw two differently sized groups and label numerator and denominator. Let a learner dictate the claim while another records it, noting support with arithmetic separately from support with evidence reasoning.",
+      "references": [
+        "review-comparisons",
+        "review-percent",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "unequal-sample-review",
+        "count-proportion-cause",
+        "endpoint-definition",
+        "pooled-seed-count"
+      ]
+    },
+    {
+      "id": "170",
+      "edition": "2026-10-04",
+      "title": "Trace an algorithm with missing data and boundary cases",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "99",
+        "111",
+        "123"
+      ],
+      "goal": "Follow ordered paper rules exactly, preserve identifiers, and use boundary or invalid-input cases to reveal a rule's limits.",
+      "materials": "Paper records with identifier and quantity columns, plus an output column; the rule is supplied in full below.",
+      "lesson": [
+        "An algorithm needs precise instructions and defined inputs. This original inventory exercise accepts a nonblank unique ID and either a nonnegative whole-number quantity or a blank quantity. Before classifying any row, flag missing or duplicated IDs and quantities outside that allowed form for correction; do not classify flagged rows. For each remaining row: if quantity is blank, output NEEDS CHECK; otherwise, if quantity is at least 5, output READY; otherwise output LOW. These are labels defined only for this exercise.",
+        "Trace these valid-ID records in order: R1 has quantity 5; R2 has 0; R3 is blank; R4 has 8. R1 is READY because at least 5 includes equality. R2 is LOW because zero is a recorded whole-number quantity below 5. R3 is NEEDS CHECK because blank is missing, not zero. R4 is READY. Write an output beside its original ID so a later sort cannot detach a label from the record it describes.",
+        "Now introduce a second row labeled R2 with quantity 7. The ID is no longer unique. Under the stated validation rule, flag both R2 rows and withhold their classification until the records are corrected; choosing the first row silently is not an authorized repair. Preserve both raw rows and the reason for the flag. A duplicated name could describe different items, but this exercise requires unique IDs, so a display title cannot resolve the ambiguity.",
+        "Use test cases deliberately. Quantities 4, 5 and 6 test the decision boundary; zero tests a valid low value; blank tests missing data; a negative or fractional quantity tests input validation. Changing 'at least 5' to 'greater than 5' would change the output at 5. An algorithm may execute consistently and still fail its intended purpose if a rule is wrong. Keep a trace of the supplied rule before proposing and checking a revision."
+      ],
+      "practice": [
+        "Classify unique-ID rows S1: 4, S2: 5, S3: 6, S4: blank and S5: 0 using the supplied rules.",
+        "Two rows share ID T1, one with quantity 3 and one with 9; another unique row T2 has quantity -1. What must happen before classification?",
+        "Someone rewrites the decision as 'if quantity > 5, READY; otherwise LOW,' while preserving the original blank and validation checks. Which of 4, 5 and 6 changes label, and why?"
+      ],
+      "answers": [
+        "S1 LOW; S2 READY; S3 READY; S4 NEEDS CHECK; S5 LOW. Five is included in the READY range, and zero is distinct from blank.",
+        "Flag both T1 rows because the ID is duplicated, and flag T2 because -1 is outside the allowed nonnegative whole-number input. Do not classify these flagged rows or silently choose a replacement value.",
+        "Only 5 changes, from READY to LOW. The strict > comparison excludes equality; 4 stays LOW and 6 stays READY."
+      ],
+      "adaptation": "Read one rule at a time and move a marker through a trace table. Distinguish assistance reading an operator from assistance deciding which branch applies; all work can remain on paper.",
+      "references": [
+        "review-algorithms",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "algorithm-boundary-review",
+        "unique-id-validation",
+        "blank-versus-zero",
+        "ordered-rules"
+      ]
+    },
+    {
+      "id": "171",
+      "edition": "2026-10-04",
+      "title": "Repair an incorrect model and test a fresh case",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "84",
+        "93",
+        "138",
+        "146",
+        "161"
+      ],
+      "goal": "Identify the assumption behind an incorrect equation, repair it, and distinguish copying a correction from using the method on a new case.",
+      "materials": "Paper model cards and a calculator if desired; all times are fictional estimates, not measured production rates.",
+      "lesson": [
+        "A fictional brief says: 'For a run of at least one card, setup takes 6 minutes once per run, and each card takes 2 further minutes. Work happens in sequence with no overlap.' For n cards, total time T in minutes is 6 + 2n. For 15 cards, T = 6 + 30 = 36 minutes. The 6-minute term counts one setup, while 2n counts a repeated per-card amount. Labeling the two terms explains why the rule matches the brief.",
+        "An incorrect draft writes T = (6 + 2)n and gives 120 minutes for 15 cards. Its arithmetic is consistent with that equation, but the equation counts the setup once for each card: 15 setups instead of one. The difference is 120 - 36 = 84 minutes, equal to the 14 extra setups times 6 minutes. Correcting the arithmetic alone would miss the modeling error. Revise the rule and the explanation of what each term counts.",
+        "Check the repaired rule with more than one input. At n = 1, both equations give 8, so that case cannot distinguish them. At n = 2, the intended model gives 10, while the incorrect one gives 16. The brief covers positive whole-number runs. At n = 0, the expression 6 + 2n gives 6 algebraically, but the brief does not say whether a canceled run triggers setup. An operational answer for zero cards therefore needs a stated cancellation rule.",
+        "After discussing the error, hide the correction and offer a fresh brief with different values. Ask the learner to write an equation, label its terms and test a case. Record whether the equation was independent, prompted or copied from a model. Retrying the same visible answer shows a different kind of evidence from applying the structure to a new case. Keep limitations, such as the assumed constant per-card time, with the result instead of presenting the model as a measured guarantee."
+      ],
+      "practice": [
+        "A new brief has one 4-minute setup plus 3 minutes per card, for positive whole-number runs with no overlap. Write the rule and find the time for 8 cards.",
+        "A draft for that new brief uses (4 + 3)n. Explain its error and select a positive test value that distinguishes it from the correct model.",
+        "The correct new expression evaluates to 4 at n = 0. Does the brief establish that canceling an empty run takes 4 minutes? State the missing rule."
+      ],
+      "answers": [
+        "T = 4 + 3n minutes. At n = 8, T = 4 + 24 = 28 minutes.",
+        "It counts the 4-minute setup once per card. For example n = 2 gives 14 under the wrong rule and 10 under the correct rule; n = 1 would not distinguish them.",
+        "No. The brief covers positive runs and does not specify whether setup occurs when no cards are processed. Ask whether an empty/canceled run incurs setup before interpreting the zero-input value operationally."
+      ],
+      "adaptation": "Use one setup card and repeated per-item cards to represent the terms. Record help identifying the fixed amount separately from help with multiplication or equation notation.",
+      "references": [
+        "review-linear-model",
+        "cumulative-learning"
+      ],
+      "tags": [
+        "model-error-review",
+        "discriminating-test-case",
+        "setup-count",
+        "fresh-model-retry"
+      ]
+    },
+    {
+      "id": "172",
+      "edition": "2026-10-04",
+      "title": "Complete a transfer task and choose the next review",
+      "track": "cumulative-review",
+      "audience": "Learners revisiting taught skills with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "100",
+        "140",
+        "148",
+        "161",
+        "163",
+        "164",
+        "167"
+      ],
+      "goal": "Produce a small plan that reconciles materials and time, respond to a changed requirement, and choose further practice from recorded evidence.",
+      "materials": "The fictional reading-room brief below, paper and a support record; no booking or actual event is requested.",
+      "lesson": [
+        "This original brief plans for 14 participant seats, arranged in pairs. Each pair needs 4 cards, and 30 usable cards are available. The room interval is 09:40 to 10:25. A proposed sequence has a 5-minute welcome, three 10-minute practice rounds and one 5-minute break, all in sequence with no overlap. For this exercise, transitions require no additional time. Actual attendance and any facilitator seating needs have not been recorded. State these assumptions instead of treating them as observed facts.",
+        "First reconcile the materials: 14 participant seats make 7 pairs, requiring 7 x 4 = 28 cards, with 2 cards left from 30. Then reconcile the clock: the room interval is 45 minutes. The sequence takes 5 + 3 x 10 + 5 = 40 minutes, leaving a 5-minute margin. One feasible timeline is welcome 09:40-09:45, round 1 09:45-09:55, break 09:55-10:00, round 2 10:00-10:10 and round 3 10:10-10:20. The unused interval ends at 10:25.",
+        "Now apply a revision: 'Plan for 16 participant seats in pairs; card stock and session times are unchanged.' Eight pairs need 32 cards, so the 30-card stock is short by 2. The original two spare cards do not cover a new pair's four-card requirement. The timing still fits under the same assumptions, but the materials do not. A revised brief should request two additional usable cards or identify a separately approved change to the requirement; it must not quietly reduce cards per pair and call the original requirement satisfied.",
+        "Prepare a plan with its version, participant count, pair count, card calculation, timeline, assumptions and unresolved items. Distinguish planned capacity from actual attendance. After checking it, make a learning record by skill: interpreting the brief, choosing operations, computing quantities, checking time and explaining the revision. Note the first attempt and any prompts or models for each. Choose a specific fresh review task from an observed difficulty; one completed plan is not a certification of every prerequisite skill."
+      ],
+      "practice": [
+        "Create a concise version 1 plan for 14 participant seats, including pairs, cards, remaining stock and a timeline that fits the supplied interval.",
+        "Revise the materials section for 16 participant seats. State what is short, what can still fit, and at least one item that the brief leaves unconfirmed.",
+        "A learner independently gets 8 pairs and 32 cards after the revision but writes '2 cards left' until prompted to compare 32 with stock 30. Write a support record and choose a fresh review question with its answer."
+      ],
+      "answers": [
+        "Seven pairs need 28 cards, leaving 2. The supplied sample timeline fits, using 40 of 45 minutes; equivalent sequences are acceptable if all five activities fit without overlap. Keep actual attendance and facilitator seating unresolved.",
+        "Eight pairs need 32 cards, creating a shortage of 2. The 40-minute activity sequence still fits the 45-minute interval under the stated assumptions. Actual attendance, facilitator seating or provision of the two additional cards remains unconfirmed.",
+        "Record pair and required-card calculations as independent; record the stock comparison and correction from surplus to shortage as prompted. A suitable fresh question is 'Nine pairs need four cards each; stock is 34. Surplus or shortage?' Answer: 36 required, shortage of 2. Attempt it before revealing the answer and record any help."
+      ],
+      "adaptation": "Allow an oral plan, a timeline drawing or dictated fields. Assign a smaller part of the brief first when needed, and preserve separate records for reading, arithmetic and planning support.",
+      "references": [
+        "cumulative-learning",
+        "cumulative-mathematics",
+        "cumulative-writing"
+      ],
+      "tags": [
+        "cumulative-transfer-plan",
+        "revision-consequences",
+        "skill-evidence-record",
+        "next-review-choice"
       ]
     }
   ]

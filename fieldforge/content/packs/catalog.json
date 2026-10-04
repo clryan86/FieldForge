@@ -6095,6 +6095,288 @@
         "https://www.w3.org/WAI/tutorials/images/complex/"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-161",
+      "title": "Education 161: Plan mixed review from observed work",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 777,
+      "body_sha256": "973efdcb0a5b9aeb07d4126a70ba41436edb95ab8e8559ec57bea008fa3c38f9",
+      "prerequisites": [
+        "fieldforge-education-02",
+        "fieldforge-education-03",
+        "fieldforge-education-04",
+        "fieldforge-education-24"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/26"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-162",
+      "title": "Education 162: Read a changed timetable and support an inference",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 776,
+      "body_sha256": "9707e11c3bb7699438b8d76c448bcd729d318f348edd6d0fde9e3f8cd87f4b40",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-45",
+        "fieldforge-education-79",
+        "fieldforge-education-89"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/14",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-163",
+      "title": "Education 163: Write a clear request from an incomplete record",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 791,
+      "body_sha256": "6a986e00ec108334715bbc0eae0ab46d3a0601a1569cb14dcf13ade07b8a7c8d",
+      "prerequisites": [
+        "fieldforge-education-44",
+        "fieldforge-education-77",
+        "fieldforge-education-90",
+        "fieldforge-education-112"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-164",
+      "title": "Education 164: Choose operations and interpret the remainder",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 763,
+      "body_sha256": "93122fcd59a70f18791e81821bd1fe975202196e3848e37e3d4467c127a87c9d",
+      "prerequisites": [
+        "fieldforge-education-14",
+        "fieldforge-education-48",
+        "fieldforge-education-49",
+        "fieldforge-education-82"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/26",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-165",
+      "title": "Education 165: Connect fraction, decimal and percent to the same whole",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 712,
+      "body_sha256": "a2cd8342a77d1c9a244ed1e987558f1ef6d68c4a4205c760c4de86252d86099b",
+      "prerequisites": [
+        "fieldforge-education-15",
+        "fieldforge-education-16",
+        "fieldforge-education-35",
+        "fieldforge-education-64"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/6-1-understand-percent",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/26"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-166",
+      "title": "Education 166: Choose perimeter, area or volume before calculating",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 772,
+      "body_sha256": "52a3a1892d38356e68e49be73e8d1d342d453f0feff7e8e730ca73dd1e86bda1",
+      "prerequisites": [
+        "fieldforge-education-18",
+        "fieldforge-education-68",
+        "fieldforge-education-96"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids",
+        "https://openstax.org/books/prealgebra-2e/pages/9-6-solve-geometry-applications-volume-and-surface-area",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/26"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-167",
+      "title": "Education 167: Read a schedule across midnight and compare rates",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 773,
+      "body_sha256": "957ef3ae9ca79de554bd309c1ee8edd17dc40b32d1a9129d5b2597f1b9c19007",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-45",
+        "fieldforge-education-63",
+        "fieldforge-education-137"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/26",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-168",
+      "title": "Education 168: Inspect a distribution before choosing an average",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 755,
+      "body_sha256": "b57c2e9b55a479abc5021374193b34d129b0fae44138c9c9a6675f7a9d03e6b9",
+      "prerequisites": [
+        "fieldforge-education-51",
+        "fieldforge-education-120",
+        "fieldforge-education-123",
+        "fieldforge-education-143"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/5-5-averages-and-probability",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-169",
+      "title": "Education 169: Check a scientific comparison with unequal sample sizes",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 841,
+      "body_sha256": "045240502356fd40eaeb51eebe54599612106e7155531beb2fa191e81ca56520",
+      "prerequisites": [
+        "fieldforge-education-22",
+        "fieldforge-education-39",
+        "fieldforge-education-122",
+        "fieldforge-education-144",
+        "fieldforge-education-154"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/1-4-experimental-design-and-ethics",
+        "https://openstax.org/books/prealgebra-2e/pages/6-1-understand-percent",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-170",
+      "title": "Education 170: Trace an algorithm with missing data and boundary cases",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 769,
+      "body_sha256": "1bc50459b7411fb9ff431ed17ab8ae28843a263c34903ca8f4ae5d526131e22d",
+      "prerequisites": [
+        "fieldforge-education-99",
+        "fieldforge-education-111",
+        "fieldforge-education-123"
+      ],
+      "references": [
+        "https://www.csunplugged.org/en/computational-thinking/",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-171",
+      "title": "Education 171: Repair an incorrect model and test a fresh case",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 815,
+      "body_sha256": "7eff766b606201f8d51b250ec2691b9cc4785eacfbfeb248fba0b27af6bc3ad9",
+      "prerequisites": [
+        "fieldforge-education-84",
+        "fieldforge-education-93",
+        "fieldforge-education-138",
+        "fieldforge-education-146",
+        "fieldforge-education-161"
+      ],
+      "references": [
+        "https://openstax.org/books/college-algebra-2e/pages/4-2-modeling-with-linear-functions",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-172",
+      "title": "Education 172: Complete a transfer task and choose the next review",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-04",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 945,
+      "body_sha256": "8a97df8aad0890d2b677a6bb041f5ea69947f0f68c8a974cabbb68fa5502047f",
+      "prerequisites": [
+        "fieldforge-education-100",
+        "fieldforge-education-140",
+        "fieldforge-education-148",
+        "fieldforge-education-161",
+        "fieldforge-education-163",
+        "fieldforge-education-164",
+        "fieldforge-education-167"
+      ],
+      "references": [
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/26",
+        "https://ies.ed.gov/ncee/wwc/PracticeGuide/17"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [
