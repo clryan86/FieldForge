@@ -67,11 +67,16 @@ def vector_tile():
     )
 
 
-def named_place_tile(name="FieldForge Junction"):
-    value = _text(1, name)
-    feature = _packed(2, [0, 0]) + _uint(3, 1) + _packed(4, [9, _zigzag(2048), _zigzag(2048)])
-    layer = (_text(1, "place") + _bytes(2, feature) + _text(3, "name")
-             + _bytes(4, value) + _uint(5, 4096) + _uint(15, 2))
+def named_place_tile(name="FieldForge Junction", *additional_names):
+    names = (name, *additional_names)
+    features = b"".join(
+        _bytes(2, _packed(2, [0, index]) + _uint(3, 1)
+               + _packed(4, [9, _zigzag(2048), _zigzag(2048)]))
+        for index in range(len(names))
+    )
+    values = b"".join(_bytes(4, _text(1, label)) for label in names)
+    layer = (_text(1, "place") + features + _text(3, "name") + values
+             + _uint(5, 4096) + _uint(15, 2))
     return _bytes(3, layer)
 
 
@@ -95,6 +100,21 @@ def test_vector_tile_draws_bounded_source_name_labels():
     with _image(labeled) as label_image, _image(unlabeled) as plain_image:
         changed = sum(a != b for a, b in zip(label_image.tobytes(), plain_image.tobytes()))
         assert changed > 20  # Marker pixels are identical; the name added the extra ink.
+
+
+def test_overlapping_vector_labels_are_suppressed(monkeypatch):
+    from PIL import ImageDraw
+
+    drawn = []
+    original = ImageDraw.ImageDraw.text
+
+    def record(draw, xy, text, *args, **kwargs):
+        drawn.append(text)
+        return original(draw, xy, text, *args, **kwargs)
+
+    monkeypatch.setattr(ImageDraw.ImageDraw, "text", record)
+    render_vector_tile(named_place_tile("First Place", "Second Place"))
+    assert drawn == ["First Place"]
 
 
 @pytest.mark.parametrize("bad", [b"", b"bad", b"\x1f\x8bcorrupt", b"\x1a\x05abc"])
