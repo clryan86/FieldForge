@@ -619,6 +619,83 @@
       "publisher": "OpenStax, Rice University",
       "accessed_on": "2026-10-03",
       "scope": "Background on matter moving among living systems and environmental stores. FieldForge's nutrient-token ledger and pathway questions are original paper activities, not a source diagram or measured nutrient budget."
+    },
+    "interval-rates": {
+      "title": "Rates of Change and Behavior of Graphs",
+      "url": "https://openstax.org/books/college-algebra-2e/pages/3-3-rates-of-change-and-behavior-of-graphs",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on average change per input interval and units. FieldForge's sorting records, pauses and calculations are original fictional teaching examples, not textbook exercises.",
+      "accessed_on": "2026-10-03"
+    },
+    "fixed-variable-model": {
+      "title": "Modeling with Linear Functions",
+      "url": "https://openstax.org/books/college-algebra-2e/pages/4-2-modeling-with-linear-functions",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on linear models, intercepts and rates. FieldForge's setup times, comparison rules and model reports are original paper activities; they are not measured production standards.",
+      "accessed_on": "2026-10-03"
+    },
+    "inverse-model": {
+      "title": "Modeling Using Variation",
+      "url": "https://openstax.org/books/college-algebra-2e/pages/5-8-modeling-using-variation",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on inverse variation and a constant product. FieldForge's helper-time accounts explicitly assume a divisible workload and are original hypothetical examples, not staffing predictions.",
+      "accessed_on": "2026-10-03"
+    },
+    "multiple-constraints": {
+      "title": "Graphing Systems of Linear Inequalities",
+      "url": "https://openstax.org/books/elementary-algebra-2e/pages/5-6-graphing-systems-of-linear-inequalities",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on satisfying several inequalities simultaneously. FieldForge's card/clip inventory and whole-number kit choices are original paper models; no source graph or exercise is reproduced.",
+      "accessed_on": "2026-10-03"
+    },
+    "two-equations": {
+      "title": "Solving Systems of Equations by Substitution",
+      "url": "https://openstax.org/books/elementary-algebra-2e/pages/5-2-solving-systems-of-equations-by-substitution",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on substitution and checking a solution against both equations. FieldForge's packet counts and inconsistent-record cases are original teaching examples.",
+      "accessed_on": "2026-10-03"
+    },
+    "pooled-means": {
+      "title": "Measures of the Center of the Data",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/2-5-measures-of-the-center-of-the-data",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on arithmetic means and frequencies. FieldForge's grouped timing records and pooled calculations are original fictional data; the lesson distinguishes weighting observations from weighting groups equally.",
+      "accessed_on": "2026-10-03"
+    },
+    "conditional-tables": {
+      "title": "Contingency Tables",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/3-4-contingency-tables",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on two-way tables and conditional denominators. FieldForge's envelope records and percentages are original examples and do not reproduce a source survey or imply causation.",
+      "accessed_on": "2026-10-03"
+    },
+    "successive-percent": {
+      "title": "Solve General Applications of Percent",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/6-2-solve-general-applications-of-percent",
+      "publisher": "OpenStax, Rice University",
+      "scope": "Background on percent increase/decrease and the reference amount. FieldForge's successive changes and factor checks are original hypothetical quantity models, not financial or population forecasts.",
+      "accessed_on": "2026-10-03"
+    },
+    "measurement-intervals": {
+      "title": "Measurement Uncertainty",
+      "url": "https://www.nist.gov/itl/sed/topic-areas/measurement-uncertainty",
+      "publisher": "National Institute of Standards and Technology",
+      "scope": "Background on uncertainty in measurement results. FieldForge's explicit rounding rule, interval arithmetic and fictional specification cards are original exercises, not a NIST uncertainty evaluation or a calibration procedure.",
+      "accessed_on": "2026-10-03"
+    },
+    "requirement-words": {
+      "title": "RFC 2119: Key words for use in RFCs to Indicate Requirement Levels",
+      "url": "https://www.rfc-editor.org/info/rfc2119/",
+      "publisher": "RFC Editor / IETF",
+      "scope": "Background on explicitly defined requirement levels in a technical specification. FieldForge's classroom packet specification defines its own terms; it is not an IETF protocol or a reproduced standards exercise.",
+      "accessed_on": "2026-10-03"
+    },
+    "requirement-context": {
+      "title": "RFC 8174: Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words",
+      "url": "https://www.rfc-editor.org/rfc/rfc8174.html",
+      "publisher": "RFC Editor / IETF",
+      "scope": "Background on the scoped use of requirement keywords. FieldForge's reading lesson emphasizes checking a document's stated conventions rather than assigning standards meanings to every ordinary sentence.",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -6106,6 +6183,507 @@
         "decomposer-pathways",
         "energy-flow",
         "ecosystem-budget"
+      ]
+    },
+    {
+      "id": "137",
+      "edition": "2026-10-03",
+      "title": "Combine rates using total change and total time",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "19",
+        "21",
+        "51",
+        "63"
+      ],
+      "goal": "Calculate an overall rate for unequal time intervals and state whether pauses are included in its denominator.",
+      "materials": "Paper and the fictional sorting log below; a calculator may be used after the fraction is set up.",
+      "lesson": [
+        "An average rate over an interval is total change divided by the interval's length. State what changes, where the interval begins and ends, and the units. If a completed-card counter rises from 12 to 72, the change is 60 cards, not 72. Dividing by 16 elapsed minutes gives 3.75 cards per minute. This summarizes the interval; it does not say every minute had the same output.",
+        "Use an original two-part sorting log. In the first 4 minutes, 24 cards are sorted, a rate of 6 per minute. In the next 12 minutes, 36 are sorted, a rate of 3 per minute. The overall rate is (24 + 36)/(4 + 12) = 60/16 = 3.75 cards per minute. Simply averaging 6 and 3 gives 4.5 and gives each interval equal weight even though their durations differ.",
+        "A pause changes the question. If a four-minute pause belongs inside the measured session, its output is zero and the session lasts 20 minutes. The session rate is then 60/20 = 3 cards per minute. Excluding that pause gives an active-work rate of 3.75. Both calculations can be meaningful if labeled correctly; quietly using different denominators makes comparisons misleading.",
+        "Before pooling records, check that they measure the same kind of completed item, use compatible units and do not overlap in time or double-count output. Keep the original intervals so another reader can reconstruct the total. A single overall rate can hide slow intervals, pauses or changing conditions. Use it to answer the stated summary question, while retaining the detail needed for other questions."
+      ],
+      "practice": [
+        "A fictional worker sorts 30 cards in 5 minutes and another 30 in the next 15 minutes. Find both interval rates and the overall active-work rate.",
+        "A four-minute pause is added within that same session. What is the rate across the complete 24-minute session?",
+        "Why is the simple mean of the two interval rates not the overall rate in the first question?"
+      ],
+      "answers": [
+        "The interval rates are 6 and 2 cards per minute. Overall active-work rate = 60/20 = 3 cards per minute.",
+        "60/24 = 2.5 cards per minute, including the pause.",
+        "The intervals have unequal durations. The simple mean, 4 cards per minute, weights the 5-minute and 15-minute intervals equally. Total output divided by total time uses their actual durations."
+      ],
+      "adaptation": "Draw equal-width minute boxes and group them by interval. Learners can count total output and time before using decimals; allow spoken unit labels.",
+      "references": [
+        "interval-rates"
+      ],
+      "tags": [
+        "pooled-rate",
+        "unequal-intervals",
+        "elapsed-time",
+        "rate-denominator"
+      ]
+    },
+    {
+      "id": "138",
+      "edition": "2026-10-03",
+      "title": "Compare a fixed setup with a per-item rate",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "81",
+        "84",
+        "93",
+        "137"
+      ],
+      "goal": "Build and compare two time models with fixed and variable parts, and identify where the preferred method changes.",
+      "materials": "Paper for a table with item count, method A time and method B time; use the invented rules below.",
+      "lesson": [
+        "A proportional model has no added fixed term, but many tasks include a setup. For a fictional card-labeling run, method A takes 8 minutes of setup plus 3 minutes per item: A(n) = 8 + 3n. Method B takes 20 minutes of setup plus 1 minute per item: B(n) = 20 + n. Here n is the number of items and the output is elapsed minutes for one run. These are assumptions for the exercise, not measured work standards.",
+        "Compare complete times, not just per-item rates. At n = 4, A takes 20 minutes and B takes 24, so A is faster. At n = 10, A takes 38 and B takes 30, so B is faster. B has the faster per-item step but the larger setup. A table makes both contributions visible and avoids treating one method as faster for every possible run size.",
+        "Find the crossing by solving 8 + 3n = 20 + n. Subtract n and 8 from both sides to get 2n = 12, so n = 6. Both methods then take 26 minutes. For positive whole-number runs below six, A is faster under these rules; above six, B is faster. Checking values on both sides helps verify the interpretation of the equation.",
+        "State the domain and purpose of the model. For this exercise consider runs of 1 to 20 items, with one setup and no interruption or rework. The expression at n = 0 would count setup even though a real decision to do no run might involve no work at all. Large runs may need extra setups or breaks. A rule's arithmetic can be correct while its assumptions fail outside the stated setting."
+      ],
+      "practice": [
+        "Using the lesson's rules, compare A and B for eight items.",
+        "For what run size are the modeled times equal, and what is that time?",
+        "Why can 'B takes one minute per item' be insufficient evidence that B is faster for a four-item run?"
+      ],
+      "answers": [
+        "A(8) = 8 + 24 = 32 minutes; B(8) = 20 + 8 = 28 minutes. B is four minutes faster in this model.",
+        "Six items; each method takes 26 minutes.",
+        "It omits B's 20-minute setup. For four items, A takes 20 minutes in total and B takes 24."
+      ],
+      "adaptation": "Build the model with one setup card and repeated per-item cards. Learners can use a table before solving the crossing algebraically.",
+      "references": [
+        "fixed-variable-model"
+      ],
+      "tags": [
+        "fixed-plus-variable",
+        "setup-time",
+        "model-crossing",
+        "model-domain"
+      ]
+    },
+    {
+      "id": "139",
+      "edition": "2026-10-03",
+      "title": "Test the assumptions behind inverse proportion",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "21",
+        "50",
+        "109",
+        "138"
+      ],
+      "goal": "Use an inverse-variation model for a divisible workload and distinguish its ideal result from a prediction about real helpers.",
+      "materials": "Paper workload tokens and a table of helper counts; no timed human-performance experiment is required.",
+      "lesson": [
+        "In inverse proportion, multiplying one quantity by a factor divides the other by that factor while their product stays constant. Suppose an invented, perfectly divisible task requires 60 helper-minutes. If n equally productive helpers work independently at the same time, the ideal time is t = 60/n minutes. Two helpers take 30 minutes, three take 20 and five take 12. In each case n x t = 60 helper-minutes.",
+        "The formula contains assumptions. Work must be divisible among helpers, all must start together, and access to materials or a shared tool must not create a queue. Coordination and interference are omitted. If everyone needs the same single work station in sequence, merely increasing the number of helpers does not divide that station's processing time. Write the assumptions before applying the calculation.",
+        "Add a six-minute setup that must finish before parallel work begins and cannot be shortened by extra helpers. Total elapsed time becomes T = 6 + 60/n. Two helpers then take 36 minutes; four take 21. Doubling helpers did halve the parallel part from 30 to 15 minutes, but it did not halve the total of 36 minutes. The fixed part changes the relationship.",
+        "Check the kind of quantity being counted. Helper-minutes add time contributed by people; elapsed minutes describe clock time. Neither tells us whether the output met a quality requirement. In a real planning note, distinguish an ideal estimate from observed timing and record what would test the assumptions. Do not use a fractional helper count as an actionable staffing instruction in this whole-person model."
+      ],
+      "practice": [
+        "A divisible workload is 84 helper-minutes. Under the ideal assumptions, find the times for three and seven helpers.",
+        "Add a six-minute serial setup to each case. What are the complete elapsed times?",
+        "Name two circumstances in which more helpers would fail to reduce elapsed time exactly in inverse proportion."
+      ],
+      "answers": [
+        "84/3 = 28 minutes; 84/7 = 12 minutes.",
+        "34 minutes for three helpers and 18 minutes for seven, including setup.",
+        "Examples include an unavoidable serial setup, a shared work station, tasks that cannot be divided, different working rates, delayed starts or added coordination time. Any two with an explanation are sufficient."
+      ],
+      "adaptation": "Distribute counters equally into helper columns and keep the setup counters in a separate row. Accept a verbal explanation of why the fixed row does not shrink.",
+      "references": [
+        "inverse-model"
+      ],
+      "tags": [
+        "inverse-variation",
+        "helper-minutes",
+        "serial-work",
+        "divisible-work"
+      ]
+    },
+    {
+      "id": "140",
+      "edition": "2026-10-03",
+      "title": "Choose whole-number plans that satisfy every resource limit",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "83",
+        "94",
+        "108"
+      ],
+      "goal": "Translate two resource limits into inequalities, test candidate plans, and distinguish a feasible plan from a plan meeting a chosen objective.",
+      "materials": "Twelve paper card tokens, twelve clip tokens and labels for two imaginary kit types; the tokens represent inventory only.",
+      "lesson": [
+        "A feasible plan satisfies all stated constraints. In an original kit model, each A kit uses 2 cards and 1 clip; each B kit uses 1 card and 2 clips. Stock is 12 cards and 12 clips. If a and b are kit counts, require 2a + b <= 12 for cards and a + 2b <= 12 for clips. Both counts must be nonnegative whole numbers because partial kits are not allowed.",
+        "Check a candidate against each rule separately. A plan of three A kits and three B kits uses 9 cards and 9 clips, leaving 3 of each; it is feasible. Five A and two B use 12 cards and 9 clips, also feasible. Two A and six B use only 10 cards but 14 clips, so that plan fails. Spare cards do not make up for a shortage of clips under this model.",
+        "Feasible does not automatically mean best. A goal such as maximizing the number of complete kits differs from producing at least a certain number of type A. State the objective before comparing feasible plans. To see an upper bound on the total number of kits, add the two stock inequalities: 3a + 3b <= 24, or a + b <= 8. A plan achieving eight would reach that bound, if it also satisfies each separate limit.",
+        "Keep the model connected to the inventory assumptions. The cards and clips here are interchangeable within each type, every item is usable, and no reserve stock is required. If some items are damaged or a reserve is introduced, update the available quantities and recheck the plan. A grid of possible whole-number pairs can show alternatives without pretending that every point on a continuous graph is an allowable kit count."
+      ],
+      "practice": [
+        "Test a = 4, b = 3 against both resource limits and report what remains.",
+        "Test a = 5, b = 4. Does satisfying the whole-number rule make the plan feasible?",
+        "Find a feasible eight-kit plan. Use the total-resource bound to explain why nine kits cannot be made under these rules."
+      ],
+      "answers": [
+        "Cards used = 8 + 3 = 11; clips used = 4 + 6 = 10. It is feasible, with 1 card and 2 clips left.",
+        "No. It needs 14 cards and 13 clips, exceeding both stocks. Whole-number counts are necessary but not sufficient.",
+        "Four A and four B use 12 cards and 12 clips, producing eight kits. Nine kits would need 27 resource items in total, but only 24 are available; equivalently, a + b <= 8."
+      ],
+      "adaptation": "Use two shapes of tokens and a small table of candidate pairs. Learners can check each resource physically on paper before writing inequalities.",
+      "references": [
+        "multiple-constraints"
+      ],
+      "tags": [
+        "feasible-plan",
+        "resource-constraints",
+        "whole-number-solutions",
+        "objective"
+      ]
+    },
+    {
+      "id": "141",
+      "edition": "2026-10-03",
+      "title": "Use two equations to reconstruct a packet count",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "78",
+        "81",
+        "93",
+        "140"
+      ],
+      "goal": "Solve a count model by substitution, check both totals, and recognize records that have no whole-number solution under the stated assumptions.",
+      "materials": "Paper packet cards labeled two contents or five contents, plus the fictional totals below.",
+      "lesson": [
+        "Two different totals can constrain the same unknown counts. Suppose every small packet holds 2 cards and every large packet holds 5. A fictional record lists 9 complete packets containing 30 cards altogether. Let s be the number of small packets and l the number of large packets. The packet equation is s + l = 9; the contents equation is 2s + 5l = 30. Label the variables so that packet counts are not confused with card counts.",
+        "The first equation gives s = 9 - l. Substitute that expression into the second: 2(9 - l) + 5l = 30. Expanding gives 18 - 2l + 5l = 30, so 3l = 12 and l = 4. Then s = 5. Check both original statements: 5 + 4 = 9 packets, and 2 x 5 + 5 x 4 = 30 cards.",
+        "A proposed answer must fit the context as well as the equations. Packet counts must be nonnegative whole numbers. If the record instead claimed 9 packets and 31 cards, the same method gives l = 13/3, which is not a whole number. Do not round that to a nearby count and call the record reconciled. Under these assumptions the pair of totals has no valid packet-count solution.",
+        "An inconsistency does not identify which record is wrong. There could be a transcription error, an incomplete packet, an unrecorded packet type or a mistaken contents rule. Preserve the original entries, note the failed check and seek additional evidence. Algebra tests the compatibility of an account; it does not authorize silently rewriting an observed total to make the model work."
+      ],
+      "practice": [
+        "There are 10 complete packets of the same two types and 32 cards altogether. Write the equations and solve for each type.",
+        "Check the answer using both the packet total and the contents total.",
+        "A record claims 10 complete packets and 33 cards under these same rules. Explain why rounding an algebraic result would not resolve the discrepancy."
+      ],
+      "answers": [
+        "s + l = 10 and 2s + 5l = 32. Substituting s = 10 - l gives 20 + 3l = 32, so l = 4 and s = 6.",
+        "6 + 4 = 10 packets; 2 x 6 + 5 x 4 = 12 + 20 = 32 cards.",
+        "The equations give l = 13/3, not an allowable whole packet count. Rounding would fail at least one original total. The records or model assumptions need investigation."
+      ],
+      "adaptation": "Start with packet cards to check a candidate by counting. Learners can then connect the substitution step to replacing every small-packet count with the remaining number of packets.",
+      "references": [
+        "two-equations"
+      ],
+      "tags": [
+        "simultaneous-equations",
+        "substitution",
+        "count-reconciliation",
+        "integer-check"
+      ]
+    },
+    {
+      "id": "142",
+      "edition": "2026-10-03",
+      "title": "Read rounded values as intervals with stated limits",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "47",
+        "61",
+        "94",
+        "101"
+      ],
+      "goal": "Find the interval represented by a rounded positive value and avoid confusing a rounding bound with a complete measurement-uncertainty assessment.",
+      "materials": "Paper number lines and fictional lengths; use the rounding rule explicitly supplied in the lesson.",
+      "lesson": [
+        "For this exercise, round positive lengths to the nearest whole centimetre and round an exact half upward. Under that rule a reported 18 cm represents an unrounded reading x with 17.5 <= x < 18.5 cm. The lower endpoint is included because 17.5 rounds to 18; the upper is excluded because 18.5 rounds to 19. Write the rule alongside the interval, since different tie conventions can change endpoint inclusion.",
+        "Consider two readings reported as 18 cm and 12 cm under that same rule. Their unrounded reading intervals are [17.5, 18.5) and [11.5, 12.5). Adding bounds gives a sum interval [29, 31) cm. The reported values sum to 30 cm, but the unrounded sum is not established as exactly 30. Square brackets mean an endpoint is included; parentheses mean it is excluded.",
+        "Now compare the information with a fictional paper requirement that the first unrounded reading be no greater than 18.2 cm. A report of 18 cm alone cannot establish that requirement: compatible readings lie on either side of 18.2. Record the outcome as unresolved with the available rounding information. More suitable evidence would be needed; inventing extra decimal places does not supply it.",
+        "These intervals describe only the rounding of a reading. They are not guaranteed bounds for the true object's length: calibration, alignment, environmental effects and other measurement issues are outside the model. Nor does an interval say every value within it is equally likely. Separate the mathematical consequence of an explicit rounding rule from any broader claim about measurement quality or compliance."
+      ],
+      "practice": [
+        "Under the lesson's positive-value, half-up rule, what interval of unrounded readings is reported as 23 cm?",
+        "Add intervals for reported readings of 23 cm and 8 cm. What interval contains their unrounded sum under the model?",
+        "Does a rounded report of 23 cm establish that the unrounded reading is at most 23.1 cm? Explain, and name one uncertainty source outside this rounding model."
+      ],
+      "answers": [
+        "22.5 <= x < 23.5 cm, written [22.5, 23.5) cm.",
+        "The second interval is [7.5, 8.5), giving a sum in [30, 32) cm.",
+        "No. Compatible readings include values above and below 23.1 cm. Calibration error, alignment or environmental effects are examples of issues not covered by the rounding interval."
+      ],
+      "adaptation": "Use open and filled endpoint marks as well as inequality words. Begin with the intervals of readings only, then explicitly discuss why they are not a complete description of the true length.",
+      "references": [
+        "measurement-intervals"
+      ],
+      "tags": [
+        "rounding-interval",
+        "endpoint-inclusion",
+        "measurement-limits",
+        "interval-sum"
+      ]
+    },
+    {
+      "id": "143",
+      "edition": "2026-10-03",
+      "title": "Combine group means using the number of observations",
+      "track": "data-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "51",
+        "61",
+        "63",
+        "120",
+        "137"
+      ],
+      "goal": "Recover group totals from exact means and counts, then calculate a pooled mean without giving unequal groups equal weight by accident.",
+      "materials": "Paper timing cards for fictional sorting trials, with one card per observation.",
+      "lesson": [
+        "A mean is a total divided by a count. When combining non-overlapping groups of comparable observations, recover each group's total before pooling. If a group has n observations with an exact mean m, its total is n x m. The pooled mean is the sum of the group totals divided by the sum of their counts. This gives each observation equal weight rather than giving each group equal weight.",
+        "Use original trial times measured in minutes. Group A has two records, 4 and 6, so its total is 10 and mean is 5. Group B has six records, 8, 8, 9, 9, 10 and 10, so its total is 54 and mean is 9. Together there are eight records totaling 64 minutes, giving a mean of 8 minutes. Averaging the two group means gives 7, which answers a different question by weighting the groups equally.",
+        "If two groups have equal counts, the simple mean of their exact means does equal the pooled mean. Counts are the key, not whether the group labels look equally important. Also check units and eligibility: do both groups measure the same task definition, are all intended records included, and does any observation occur in both groups? Repeated records should not receive extra weight merely because they appear in two files.",
+        "Rounded means need care. Multiplying a rounded mean by a count gives an approximate total, not necessarily the original exact total. Preserve the underlying records or exact totals when possible, and label approximations. A pooled mean can also conceal group differences and variation within groups. Keep group counts and distributions available so a reader can see what the single number summarizes."
+      ],
+      "practice": [
+        "Group C contains three observations with an exact mean of 4 minutes. Group D contains seven with an exact mean of 10 minutes. Calculate the pooled mean.",
+        "Two groups each contain five observations and have exact means of 6 and 10. Find the pooled mean and explain why averaging those means works here.",
+        "A report supplies only means rounded to whole minutes. Can multiplying them by group counts recover exact original totals? Explain."
+      ],
+      "answers": [
+        "Totals are 3 x 4 = 12 and 7 x 10 = 70 minutes. Pooled mean = 82/10 = 8.2 minutes.",
+        "The totals are 30 and 50 across ten observations, so the pooled mean is 8. Equal group counts make the groups' weights equal.",
+        "Not in general. Rounding discarded information. The reconstructed totals and pooled mean may be approximate; raw records or exact totals would be needed for an exact reconstruction."
+      ],
+      "adaptation": "Give each record one token and compare the number of tokens behind each mean. Learners can audit a pooled total by adding the original small data sets directly.",
+      "references": [
+        "pooled-means"
+      ],
+      "tags": [
+        "weighted-mean",
+        "group-counts",
+        "pooled-observations",
+        "rounded-summary"
+      ]
+    },
+    {
+      "id": "144",
+      "edition": "2026-10-03",
+      "title": "Choose the denominator in a two-way table",
+      "track": "data-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "52",
+        "64",
+        "123"
+      ],
+      "goal": "Calculate overall, joint and conditional percentages from one table and explain why reversing a condition changes the denominator.",
+      "materials": "Paper for a two-row envelope table using the fictional counts supplied below.",
+      "lesson": [
+        "A two-way table classifies the same records by two attributes. In an original envelope inventory, color is blue or green and status is sealed or unsealed. Draw columns for sealed, unsealed and row total. The blue row is 12, 8, 20. The green row is 18, 42, 60. Column totals are 30 sealed and 50 unsealed, with 80 envelopes overall. The categories are exhaustive and mutually exclusive for this exercise.",
+        "Read the question before selecting the denominator. 'What percentage of all envelopes are sealed?' uses 30/80 = 37.5%. 'What percentage of blue envelopes are sealed?' restricts the group to the 20 blue envelopes, so it uses 12/20 = 60%. 'What percentage of sealed envelopes are blue?' restricts the group to the 30 sealed envelopes and uses 12/30 = 40%. The same cell count can support different fractions because the comparison groups differ.",
+        "A joint question asks for records satisfying both conditions out of the full collection. Blue and sealed accounts for 12/80 = 15% of all envelopes. If one envelope is selected uniformly at random from this defined collection, these proportions also describe the corresponding selection probabilities. The table by itself does not establish a probability for a different collection or a future process.",
+        "Check totals before interpreting. A missing status should not be silently entered as unsealed, and an envelope counted twice inflates both relevant totals. If categories or counts are incomplete, document how that affects the denominator. A difference between conditional percentages is an association in this inventory; it does not prove that an envelope's color caused its sealing status."
+      ],
+      "practice": [
+        "What percentage of green envelopes are sealed? State the numerator and denominator.",
+        "What percentage of all envelopes are both blue and sealed? How does its denominator differ from 'sealed among blue'?",
+        "A learner claims '60% of blue envelopes are sealed, so 60% of sealed envelopes are blue.' Correct the second percentage and explain the change."
+      ],
+      "answers": [
+        "18/60 = 30%, using sealed green envelopes over all green envelopes.",
+        "12/80 = 15%. The joint percentage uses all 80 envelopes; 'sealed among blue' uses only the 20 blue envelopes.",
+        "12/30 = 40% of sealed envelopes are blue. Reversing the condition changes the reference group from all blue envelopes to all sealed envelopes."
+      ],
+      "adaptation": "Circle the eligible row or column before counting its target cells. Use shape labels as well as color names; the task works with written category names alone.",
+      "references": [
+        "conditional-tables"
+      ],
+      "tags": [
+        "conditional-denominator",
+        "two-way-table",
+        "joint-percentage",
+        "reference-group"
+      ]
+    },
+    {
+      "id": "145",
+      "edition": "2026-10-03",
+      "title": "Track successive percentage changes with factors",
+      "track": "mathematical-modeling",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "62",
+        "64",
+        "81"
+      ],
+      "goal": "Apply each percentage change to its current base and explain why equal percentage increases and decreases do not generally cancel.",
+      "materials": "Paper arrows labeled starting amount, percentage factor and new amount; quantities are hypothetical.",
+      "lesson": [
+        "An increase of p percent multiplies the current amount by 1 + p/100. A decrease of p percent multiplies it by 1 - p/100. State the base for each step. In an original quantity model, start at 200 units, increase by 10% to 220, then decrease that new amount by 10% to 198. The decrease removes 22 units, not the 20 units added in the first step.",
+        "Write the full chain before calculating: 200 x 1.10 x 0.90 = 198. The combined factor is 0.99, so the overall change is a 1% decrease from the original 200. Adding +10% and -10% would wrongly treat both changes as based on the original amount. It is the changing base that makes the two-step result different.",
+        "Repeated increases also compound. Two increases of 10% from 200 give 200 x 1.10 x 1.10 = 242, a 21% increase overall. To reverse a factor, use its reciprocal: after multiplying by 0.80, returning to the original amount requires multiplying by 1/0.80 = 1.25, an increase of 25%. Keep the intermediate amount visible to check what each percentage means.",
+        "These are deterministic paper rules, not forecasts. Real quantities may have varying rates, whole-item restrictions or rounding at each step. If rounding is part of the rule, record when it happens; do not silently round intermediate values and then report an exact result. For a decrease model, also check that the chosen percentage and domain make sense: subtracting more than the complete available amount would require a different interpretation."
+      ],
+      "practice": [
+        "Start at 160 units, increase by 25%, then decrease the new amount by 25%. Find the final amount and overall percentage change.",
+        "Start at 100 units and apply two successive 20% increases. Find the final amount and overall percentage increase.",
+        "A quantity falls from 100 to 75. What percentage increase from 75 would restore it to 100?"
+      ],
+      "answers": [
+        "160 x 1.25 = 200; 200 x 0.75 = 150. The net loss is 10/160 = 6.25% of the original amount.",
+        "100 x 1.20 x 1.20 = 144, an overall increase of 44%.",
+        "The required gain is 25 on a base of 75: 25/75 = 1/3, or 33 1/3%. The original decrease was 25%, but the restoring increase uses the smaller base."
+      ],
+      "adaptation": "Use a base box for every step and write the percentage beside that box. Learners can first compute each change separately, then connect the sequence to multiplication factors.",
+      "references": [
+        "successive-percent"
+      ],
+      "tags": [
+        "successive-percentages",
+        "changing-base",
+        "growth-factor",
+        "reverse-percentage"
+      ]
+    },
+    {
+      "id": "146",
+      "edition": "2026-10-03",
+      "title": "Read a specification card with units, conditions and revision",
+      "track": "technical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "44",
+        "46",
+        "101",
+        "110",
+        "112",
+        "142"
+      ],
+      "goal": "Extract a target, allowed interval, units, conditions and revision from a fictional specification without treating a label or one reading as complete evidence.",
+      "materials": "Paper copies of the two fictional card specifications and observation record below; no manufactured device is being certified.",
+      "lesson": [
+        "A specification can contain a nominal target, an allowed range and conditions for interpreting a result. These are different kinds of information. Use an original paper-card example: CARD-B, revision 2, states a nominal width of 82 mm and an allowed recorded-width interval of 81.5 to 82.5 mm inclusive. Its comparison rule uses a dry card lying flat and a record naming the measurement method. Here nominal means the named target, not a promise that every card measures exactly 82 mm.",
+        "Extract a compact checklist before comparing numbers: item identifier CARD-B; revision 2; quantity width; unit mm; inclusive limits 81.5 and 82.5; stated card condition; measurement-method record. A fictional record of 82.4 mm is numerically within those limits. If the method or condition is missing, report that omission separately instead of treating the number as complete evidence. The classroom rule is a reading exercise, not a general conformity-assessment procedure.",
+        "Revision matters. An earlier CARD-B revision 1 used a nominal width of 80 mm and limits of 79.5 to 80.5 mm. The task sheet explicitly calls for revision 2. Applying revision 1 would answer the wrong question even if the arithmetic were flawless. Record the required revision rather than selecting whichever limits happen to accept the reading or assuming an unlabeled sheet is current.",
+        "Units and evidence must also match. A width recorded as 8.24 cm equals 82.4 mm; a bare 8.24 without a unit cannot be compared reliably. Report the observation, its unit, relevant conditions and the rule used. Measurement uncertainty and actual object properties remain broader questions than a simple recorded-number comparison. Do not turn a fictional table check into a claim that real equipment or materials have been technically approved."
+      ],
+      "practice": [
+        "For CARD-B revision 2, identify the nominal width, inclusive allowed interval and unit.",
+        "Convert a recorded 8.24 cm to millimetres and compare it numerically with revision 2. What missing record information would still need attention if only the number and unit were supplied?",
+        "Why would using revision 1 to reject an 82.4 mm record be the wrong comparison when the task explicitly requires revision 2?"
+      ],
+      "answers": [
+        "Nominal width is 82 mm; the inclusive interval is 81.5 to 82.5 mm.",
+        "8.24 cm = 82.4 mm, within the interval. The record still needs the stated condition and measurement method, along with clear item/revision identification, for the exercise's complete evidence check.",
+        "Revision 1 specifies different limits for an earlier definition. The required rule is revision 2, so a revision-1 verdict does not answer the assigned question."
+      ],
+      "adaptation": "Mark each field with its name rather than relying on table position. A learner may dictate the extracted checklist and comparison while a partner records the exact units and revision.",
+      "references": [
+        "measurement-intervals"
+      ],
+      "tags": [
+        "specification-reading",
+        "nominal-target",
+        "revision-match",
+        "conditions-and-units"
+      ]
+    },
+    {
+      "id": "147",
+      "edition": "2026-10-03",
+      "title": "Separate requirements, recommendations and options",
+      "track": "technical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "44",
+        "46",
+        "77",
+        "110",
+        "146"
+      ],
+      "goal": "Read explicitly defined instruction levels and write an evidence checklist that does not confuse an optional feature with a requirement.",
+      "materials": "Paper for an original classroom packet specification and three example packet records.",
+      "lesson": [
+        "Technical documents sometimes define particular words to signal different instruction levels. Read the document's own convention before assigning a special meaning. RFC 2119 and its clarification RFC 8174 illustrate a scoped convention for technical specifications; their keyword meanings are not automatically rules for every ordinary use of 'must,' 'should' or 'may.' Our classroom specification below states its own small convention for the exercise.",
+        "In this original packet specification, MUST means required for this exercise, MUST NOT means prohibited, SHOULD means recommended with any departure explained, and MAY means optional. Its rules are: each packet MUST carry a unique ID; it MUST NOT contain a duplicate page; it SHOULD include a contents list; and it MAY have a colored cover. A plain cover therefore does not by itself show a failure to meet a required rule.",
+        "Inspect a fictional packet record: ID P-17 is present and unique within the supplied batch, pages have been checked with no duplicates, the contents list is omitted with the stated reason 'single-page packet,' and the cover is plain. The record supports the two mandatory checks, records an explained departure from the recommendation, and omits an optional feature. Evaluating whether the reason is convincing is a separate discussion; do not relabel the recommendation as a prohibition or call missing evidence a confirmed pass.",
+        "Make the checklist traceable. Copy or restate the rule accurately, name the evidence and record the result or what remains unknown. If the rule only says 'make the packet good,' ask for observable criteria before inventing a numerical threshold. A requirement's wording, scope and revision should stay attached to its check so that another reader can understand why the result was recorded."
+      ],
+      "practice": [
+        "A packet meets the ID and duplicate-page rules but has a plain cover. Does the cover violate this specification? Explain.",
+        "A packet has a contents list and colored cover but no ID. Which instruction level is violated?",
+        "A record says 'duplicate-page check not done.' Should the mandatory no-duplicate rule be marked passed, failed or unverified from that record alone? Explain."
+      ],
+      "answers": [
+        "No. A colored cover is optional under MAY. A plain cover is allowed by these stated rules.",
+        "It violates the MUST requirement for a unique ID. Recommended or optional features do not compensate for a missing mandatory item.",
+        "Unverified. The record supplies no completed check establishing whether duplicate pages are present; lack of evidence is not the same as a confirmed duplicate or a confirmed absence."
+      ],
+      "adaptation": "Use separate cards for the four instruction levels and sort example rules by their stated meaning. Keep the fictional convention visible throughout the exercise.",
+      "references": [
+        "requirement-words",
+        "requirement-context"
+      ],
+      "tags": [
+        "requirement-levels",
+        "mandatory-optional",
+        "unverified-check",
+        "evidence-checklist"
+      ]
+    },
+    {
+      "id": "148",
+      "edition": "2026-10-03",
+      "title": "Write a model-based plan with constraints and unresolved evidence",
+      "track": "integrated-project",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "92",
+        "110",
+        "124",
+        "138",
+        "140",
+        "142",
+        "146",
+        "147"
+      ],
+      "goal": "Combine resource limits, time models and an evidence checklist in a short planning note that separates a feasible estimate from verified completion.",
+      "materials": "Paper, the kit rules from lesson 140 and the fictional method/time rules supplied here; this is a planning exercise only.",
+      "lesson": [
+        "Use this original planning brief: prepare at least 7 complete kits, including at least 3 type A, from 12 cards and 12 clips. Type A uses 2 cards and 1 clip; type B uses 1 card and 2 clips. The whole preparation must fit within a modeled 32-minute session. Write the requirements and units first. Reuse the inequalities from lesson 140, then add a + b >= 7 and a >= 3.",
+        "Test the candidate a = 3, b = 4. It produces 7 kits, uses 10 cards and 11 clips, and leaves 2 cards and 1 clip. Two fictional preparation methods include all setup and checking steps: method M takes 9 + 3n minutes and method N takes 18 + 2n, where n is the total kit count. At seven kits, M takes 30 minutes and N takes 32, so both fit the stated limit, with different modeled margins.",
+        "Revise one assumption at a time. If M's per-kit time is only known to lie from 3 to 3.5 minutes inclusive while its setup stays exactly 9, its seven-kit total lies from 30 to 33.5 minutes. The available bound no longer establishes completion within 32 minutes. N's stated 32-minute result is still a model assumption, not a timed observation. State what timing evidence and completed-kit checks would be needed before claiming the work actually met the brief.",
+        "Write a short note with the chosen counts, resource arithmetic, model and assumptions, comparison with the limit, unresolved evidence and next check. A possible beginning is: 'Three A and four B satisfy the stated stock and mix constraints. Method M predicts 30 minutes under the 3-minute rate assumption, but the revised range extends beyond the limit.' Keep this conditional conclusion visible. Correct arithmetic and a plausible plan do not establish that kits were produced, checked or delivered."
+      ],
+      "practice": [
+        "Check the plan of four A and four B against stock and mix requirements. At eight kits, do either M or N fit the original 32-minute time limit?",
+        "For seven kits and M's revised rate interval of 3 to 3.5 minutes per kit, calculate the elapsed-time interval and explain the conclusion about the deadline.",
+        "Write a two- or three-sentence planning conclusion for three A and four B, including a resource result, a conditional timing result and one unresolved evidence need."
+      ],
+      "answers": [
+        "Four A and four B use 12 cards and 12 clips and satisfy the minimum total and A-count requirements. M takes 9 + 24 = 33 minutes and N takes 18 + 16 = 34; neither fits 32 minutes under the original rules.",
+        "9 + 7 x 3 = 30 and 9 + 7 x 3.5 = 33.5, so the inclusive interval is [30, 33.5] minutes. It overlaps the deadline: the supplied range does not establish completion within 32 minutes.",
+        "Accept a conclusion that gives 7 kits using 10 cards and 11 clips, labels timing as conditional on the chosen model, acknowledges the revised timing range if using M, and requests relevant timing or kit-check evidence. Do not accept an unsupported claim that production or delivery has already succeeded."
+      ],
+      "adaptation": "Allow an oral planning note supported by a labeled table. A facilitator can supply the formulas while the learner chooses the inputs, checks the constraints and explains the limits of the conclusion.",
+      "references": [
+        "fixed-variable-model",
+        "multiple-constraints",
+        "measurement-intervals"
+      ],
+      "tags": [
+        "model-based-plan",
+        "constraint-check",
+        "time-bound",
+        "conditional-conclusion"
       ]
     }
   ]

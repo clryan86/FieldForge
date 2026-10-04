@@ -5540,6 +5540,279 @@
         "https://openstax.org/books/biology-2e/pages/46-3-biogeochemical-cycles"
       ],
       "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-137",
+      "title": "Education 137: Combine rates using total change and total time",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 638,
+      "body_sha256": "ed4b75ea1defd82dfbdc2dcb296ed5602521cbca0093bee8b9b6ac99e614ae23",
+      "prerequisites": [
+        "fieldforge-education-19",
+        "fieldforge-education-21",
+        "fieldforge-education-51",
+        "fieldforge-education-63"
+      ],
+      "references": [
+        "https://openstax.org/books/college-algebra-2e/pages/3-3-rates-of-change-and-behavior-of-graphs"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-138",
+      "title": "Education 138: Compare a fixed setup with a per-item rate",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 636,
+      "body_sha256": "9aa89926c316e77a239fe79384920d79acfcedc30312ed59ae7f18dbb36891a8",
+      "prerequisites": [
+        "fieldforge-education-81",
+        "fieldforge-education-84",
+        "fieldforge-education-93",
+        "fieldforge-education-137"
+      ],
+      "references": [
+        "https://openstax.org/books/college-algebra-2e/pages/4-2-modeling-with-linear-functions"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-139",
+      "title": "Education 139: Test the assumptions behind inverse proportion",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 614,
+      "body_sha256": "ec589d2d974c4f8aac384d9fec62a23a7a048bcc96d6f0314781fb26c3e33468",
+      "prerequisites": [
+        "fieldforge-education-21",
+        "fieldforge-education-50",
+        "fieldforge-education-109",
+        "fieldforge-education-138"
+      ],
+      "references": [
+        "https://openstax.org/books/college-algebra-2e/pages/5-8-modeling-using-variation"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-140",
+      "title": "Education 140: Choose whole-number plans that satisfy every resource limit",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 676,
+      "body_sha256": "7b59270836ad658ecdef4ec4520c720a9c1a7ab68a1f58e0891e8bde4185e342",
+      "prerequisites": [
+        "fieldforge-education-83",
+        "fieldforge-education-94",
+        "fieldforge-education-108"
+      ],
+      "references": [
+        "https://openstax.org/books/elementary-algebra-2e/pages/5-6-graphing-systems-of-linear-inequalities"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-141",
+      "title": "Education 141: Use two equations to reconstruct a packet count",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 670,
+      "body_sha256": "bfd16288fb9a2f55a897010ab357b6a008fb8fc7dfe6530a5d068f6eb93ad5ec",
+      "prerequisites": [
+        "fieldforge-education-78",
+        "fieldforge-education-81",
+        "fieldforge-education-93",
+        "fieldforge-education-140"
+      ],
+      "references": [
+        "https://openstax.org/books/elementary-algebra-2e/pages/5-2-solving-systems-of-equations-by-substitution"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-142",
+      "title": "Education 142: Read rounded values as intervals with stated limits",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 638,
+      "body_sha256": "ed40ed9f78a9b941a1e380294f56bc0d65e7169e8bd6872bb4ed35bd541c5afa",
+      "prerequisites": [
+        "fieldforge-education-47",
+        "fieldforge-education-61",
+        "fieldforge-education-94",
+        "fieldforge-education-101"
+      ],
+      "references": [
+        "https://www.nist.gov/itl/sed/topic-areas/measurement-uncertainty"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-143",
+      "title": "Education 143: Combine group means using the number of observations",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 698,
+      "body_sha256": "4db655733bfd587a58d1039ca45b471a200ba916205dcd3f64c97b4c90c31b9b",
+      "prerequisites": [
+        "fieldforge-education-51",
+        "fieldforge-education-61",
+        "fieldforge-education-63",
+        "fieldforge-education-120",
+        "fieldforge-education-137"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/2-5-measures-of-the-center-of-the-data"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-144",
+      "title": "Education 144: Choose the denominator in a two-way table",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 628,
+      "body_sha256": "2419ac1faedbcfe5cff5bbd44b60b37a9608977c69ede343776f8e04af9c9e9c",
+      "prerequisites": [
+        "fieldforge-education-20",
+        "fieldforge-education-52",
+        "fieldforge-education-64",
+        "fieldforge-education-123"
+      ],
+      "references": [
+        "https://openstax.org/books/introductory-statistics-2e/pages/3-4-contingency-tables"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-145",
+      "title": "Education 145: Track successive percentage changes with factors",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 623,
+      "body_sha256": "dc98ca2b6ab9f6a7c33286ccba25997f201b517e3759eb11f1a9621c6dcf289d",
+      "prerequisites": [
+        "fieldforge-education-62",
+        "fieldforge-education-64",
+        "fieldforge-education-81"
+      ],
+      "references": [
+        "https://openstax.org/books/prealgebra-2e/pages/6-2-solve-general-applications-of-percent"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-146",
+      "title": "Education 146: Read a specification card with units, conditions and revision",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 710,
+      "body_sha256": "6f44f8832198aa8a60e1046b151406dd1d9e9173aab9e19bd87ed261f43356c0",
+      "prerequisites": [
+        "fieldforge-education-44",
+        "fieldforge-education-46",
+        "fieldforge-education-101",
+        "fieldforge-education-110",
+        "fieldforge-education-112",
+        "fieldforge-education-142"
+      ],
+      "references": [
+        "https://www.nist.gov/itl/sed/topic-areas/measurement-uncertainty"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-147",
+      "title": "Education 147: Separate requirements, recommendations and options",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 729,
+      "body_sha256": "6736be537d70856420bc3d1822674244e381f2019d2c8e8d3aa2f274117f46b6",
+      "prerequisites": [
+        "fieldforge-education-44",
+        "fieldforge-education-46",
+        "fieldforge-education-77",
+        "fieldforge-education-110",
+        "fieldforge-education-146"
+      ],
+      "references": [
+        "https://www.rfc-editor.org/info/rfc2119/",
+        "https://www.rfc-editor.org/rfc/rfc8174.html"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
+    },
+    {
+      "slug": "fieldforge-education-148",
+      "title": "Education 148: Write a model-based plan with constraints and unresolved evidence",
+      "category": "education",
+      "origin": "fieldforge-original",
+      "edition": "2026-10-03",
+      "source_file": "fieldforge/content/education/lessons.json",
+      "source_url": "https://github.com/clryan86/FieldForge",
+      "contributors": "FieldForge (AI-assisted draft)",
+      "words": 899,
+      "body_sha256": "a6530eb7e74fce8d66e712cc010287ce59a2b7d1bb4908a1322603d1c11c29e9",
+      "prerequisites": [
+        "fieldforge-education-92",
+        "fieldforge-education-110",
+        "fieldforge-education-124",
+        "fieldforge-education-138",
+        "fieldforge-education-140",
+        "fieldforge-education-142",
+        "fieldforge-education-146",
+        "fieldforge-education-147"
+      ],
+      "references": [
+        "https://openstax.org/books/college-algebra-2e/pages/4-2-modeling-with-linear-functions",
+        "https://openstax.org/books/elementary-algebra-2e/pages/5-6-graphing-systems-of-linear-inequalities",
+        "https://www.nist.gov/itl/sed/topic-areas/measurement-uncertainty"
+      ],
+      "review_status": "unreviewed-ai-assisted-draft"
     }
   ],
   "skipped": [
