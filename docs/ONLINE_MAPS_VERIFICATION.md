@@ -14,9 +14,10 @@ real Tk 9.0 display under Xvfb; the browser script also ran under Node.
 
 | Check | Result |
 | --- | --- |
-| Complete headless pytest suite after the platform corrections | **2,117 passed**, 516 skipped, 78 subtests passed; 2 existing PDF-fixture deprecation warnings |
-| Targeted desktop, map, place, GPS, and portal integration group with a required display | **149 passed**, no skips; includes the 54 HTTP/compatibility cases also covered headlessly |
+| Complete headless checkpoint after the map-publication/mobile-layout corrections | **2,117 passed**, 516 skipped, 78 subtests passed; 2 existing PDF-fixture deprecation warnings |
+| Broad desktop, map, place, GPS, and portal integration checkpoint with a required display | **149 passed**, no skips; includes the 54 HTTP/compatibility cases also covered headlessly |
 | Focused publisher and actual portal/client/desktop integration after the Windows correction | **48 passed**, 78 subtests passed, no skips |
+| Final online, compatibility, place, and UI-lifetime group with a required display | **61 passed**, no skips or warnings; tracked original finalizers and weak references confirm UI-thread cleanup while closed window objects remain referenced |
 | Ruff and patch whitespace | Passed |
 | Wheel build | Passed; includes the portal HTML and shared image validation module |
 | Installed wheel outside the source checkout, with site packages disabled | Native HTTP and the WSGI compatibility factory served the exact bundled HTML, CSP, status API, and empty configured map catalog; both client APIs connected/disconnected explicitly |
@@ -94,10 +95,22 @@ and directions. Both strict mobile-width assertions remain in place, with
 element-size diagnostics on failure. The PR links the final hosted run so these
 corrections can be checked on the actual platforms.
 
+A passing Windows 3.12 map run also logged a Tk variable-finalizer warning. The
+main Online Maps tab retained two detail-panel traces and a container of endpoint
+variables. Inspection closed those retention paths; an allocation probe then
+identified five remaining variables from the destroyed place editor being
+finalized on a background thread during the real online-to-saved-place workflow.
+Both windows now use the existing UI-thread cleanup helper. Tab close removes
+all six owned traces and parent callbacks; destruction releases its widget and
+variable references. Place-editor destruction also clears its owned field
+dictionary and completed callback. The regressions retain plain selected data,
+record/change diagnostics, and worker diagnostics while confirming that owned
+Tk variables finalize on the UI thread.
+
 A complete all-tests run with this environment's Tk 9.0 runtime aborted in
 native code during garbage collection in an existing starter-library worker.
 The same abort was reproduced by running `tests/test_starter_ui.py` alone in a
-clean worktree of the unchanged baseline commit above. The final 149-case
+clean worktree of the unchanged baseline commit above. The 149-case
 required-display integration group completed successfully. A complete local
 all-GUI-suite pass is not claimed.
 

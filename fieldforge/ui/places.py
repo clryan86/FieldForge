@@ -15,12 +15,13 @@ from fieldforge.navigation.places import (
     make_place,
 )
 from fieldforge.ui.place_exchange import PlaceExchangeDialog
+from fieldforge_gps.tk_cleanup import TkCleanupMixin
 
 _ERRORS = (OSError, ValueError, sqlite3.Error)
 _PAGE = 50
 
 
-class PlaceEditor(tk.Toplevel):
+class PlaceEditor(TkCleanupMixin, tk.Toplevel):
     def __init__(self, parent, store, record=None, *, finished=None, initial=None):
         # A portal result fills an ordinary editor; only Save place commits it.
         # Validate before opening a window so invalid prefills leave no orphan UI.
@@ -129,6 +130,15 @@ class PlaceEditor(tk.Toplevel):
             self._disposed = True
             if self.finished:
                 self.finished(self.changed)
+
+    def destroy(self):
+        try:
+            super().destroy()
+        finally:
+            # The field variables are owned inside a dictionary, outside the
+            # mixin's direct-attribute cleanup. Finalize them on the UI thread.
+            self.fields.clear()
+            self.finished = None
 
 
 class PlacesTab(ttk.Frame):

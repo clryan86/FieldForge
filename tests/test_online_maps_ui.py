@@ -989,6 +989,92 @@ def test_parent_destroy_cancels_pending_search_without_touching_destroyed_tk(scr
     assert not screen.opened and not screen.used
 
 
+def test_close_removes_all_owned_traces_and_destroy_releases_tk_references(screen, monkeypatch):
+    import tkinter as tk
+    import weakref
+
+    client = connect(screen)
+    panel, root = screen.panel, screen.root
+    search_and_select(screen, 1)
+    request_and_select_route(screen)
+    panel.refresh_catalog()
+    wait(root, panel)
+    panel.maps_tree.selection_set(panel.maps_tree.get_children()[0])
+    panel.select_map()
+    root.update()
+    selected, route = panel.selected_result, panel.current_route
+    results, routes, worker = panel._results, panel._routes, panel._worker
+    variables = {name: value for name, value in vars(panel).items() if isinstance(value, tk.Variable)}
+    references = {id(value): weakref.ref(value) for value in variables.values()}
+    traced = {name for name, value in variables.items() if value.trace_info()}
+    assert traced == {"start_lat", "start_lon", "end_lat", "end_lon", "selected_info", "map_info"}
+    expected = {
+        (id(variable), callback)
+        for variable in variables.values()
+        for _modes, callback in variable.trace_info()
+    }
+    removals = []
+    finalizers = []
+    remove = tk.Variable.trace_remove
+    finalize = tk.Variable.__del__
+    ui_thread = threading.get_ident()
+
+    def record_removal(variable, modes, callback):
+        removals.append((id(variable), callback, threading.get_ident()))
+        return remove(variable, modes, callback)
+
+    def record_finalization(variable):
+        identity = id(variable)
+        if identity in references:
+            finalizers.append((identity, threading.get_ident()))
+        return finalize(variable)
+
+    monkeypatch.setattr(tk.Variable, "trace_remove", record_removal)
+    monkeypatch.setattr(tk.Variable, "__del__", record_finalization)
+    panel.close()
+    assert panel._disposed and not client.connected
+    assert panel._route_endpoint_traces == []
+    assert all(not variable.trace_info() for variable in variables.values())
+    assert expected <= {(identity, callback) for identity, callback, _thread in removals}
+    assert removals and all(thread == ui_thread for _identity, _callback, thread in removals)
+    panel.destroy()
+    root.update()
+
+    # Inspect owned references without asking another thread to collect live Tk
+    # objects. Keeping these variables here lets us verify removal safely on Tk's
+    # thread; application-owned containers must release their references too.
+    leaks, visited = [], set()
+
+    def inspect(value, path):
+        if isinstance(value, (tk.Variable, tk.Misc)):
+            leaks.append((path, type(value).__name__))
+            return
+        if id(value) in visited:
+            return
+        visited.add(id(value))
+        if isinstance(value, dict):
+            for key, child in value.items():
+                inspect(child, f"{path}[{key!r}]")
+        elif isinstance(value, (tuple, list, set, frozenset)):
+            for index, child in enumerate(value):
+                inspect(child, f"{path}[{index}]")
+
+    for name, value in vars(panel).items():
+        if name not in {"master", "children", "tk", "_tclCommands"}:
+            inspect(value, name)
+    del name, value
+    assert leaks == []
+    assert all(not variable.trace_info() for variable in variables.values())
+    assert panel._route_endpoint_traces == []
+    assert panel.selected_result is selected and panel.current_route is route
+    assert panel._results is results and panel._routes is routes
+    assert panel._worker is worker and panel._disposed
+    variables.clear()
+    assert all(reference() is None for reference in references.values())
+    assert {identity for identity, _thread in finalizers} == references.keys()
+    assert all(thread == ui_thread for _identity, thread in finalizers)
+
+
 def test_minimum_geometry_keeps_online_and_offline_controls_visible(screen):
     panel, root = screen.panel, screen.root
     root.geometry("1000x700")

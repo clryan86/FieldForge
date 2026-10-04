@@ -95,6 +95,63 @@ def test_new_place_editor_requires_coordinates_and_saves_notes(screen):
     assert app.waypoints()[0].longitude == 1.25
 
 
+def test_saved_place_editor_releases_owned_variables_on_ui_thread(screen, monkeypatch):
+    import tkinter as tk
+    import weakref
+
+    root, panel, app, _ = screen
+    panel.add_button.invoke()
+    editor = panel.dialog
+    store, record = editor.store, editor.record
+    finished = editor.finished
+    completed, finalizers = [], []
+    ui_thread = threading.get_ident()
+
+    def record_completion(changed):
+        completed.append((changed, threading.get_ident()))
+        return finished(changed)
+
+    editor.finished = record_completion
+    editor.fields["name"].set("Manual cleanup test place")
+    editor.fields["latitude"].set("12.3456789")
+    editor.fields["longitude"].set("-98.7654321")
+    editor.fields["kind"].set("waypoint")
+    editor.note.insert("1.0", "Manually entered coordinates and private notes.")
+    variables = (*editor.fields.values(), editor.status)
+    references = {id(variable): weakref.ref(variable) for variable in variables}
+    assert len(references) == 5 and not editor.changed and not app.waypoints()
+    del variables
+    finalize = tk.Variable.__del__
+
+    def record_finalization(variable):
+        identity = id(variable)
+        if identity in references:
+            finalizers.append((identity, threading.get_ident()))
+        return finalize(variable)
+
+    monkeypatch.setattr(tk.Variable, "__del__", record_finalization)
+    editor.save_button.invoke()
+    root.update()
+    assert panel.dialog is None and completed == [(True, ui_thread)]
+    assert editor.changed and editor._disposed
+    assert editor.store is store and editor.record is record
+    assert editor.fields == {} and editor.status is None and editor.finished is None
+    # Keep the destroyed editor alive while checking its variables are gone; the
+    # test retains only weak references and forwards Tk's real finalizer.
+    assert all(reference() is None for reference in references.values())
+    assert len(finalizers) == 5
+    assert {identity for identity, _thread in finalizers} == references.keys()
+    assert all(thread == ui_thread for _identity, thread in finalizers)
+    saved, = app.waypoints()
+    assert saved.name == "Manual cleanup test place" and saved.kind == "waypoint"
+    assert (saved.latitude, saved.longitude) == (12.3456789, -98.7654321)
+    assert saved.notes == "Manually entered coordinates and private notes."
+    assert store.snapshot().records[0].point == saved
+    editor.destroy()
+    root.update()
+    assert completed == [(True, ui_thread)] and len(app.waypoints()) == 1
+
+
 def test_existing_place_edit_stale_save_keeps_entered_values(screen):
     root, panel, _, _ = screen
     a, _ = points(root, panel)

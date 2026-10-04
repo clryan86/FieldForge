@@ -24,6 +24,7 @@ from fieldforge.online.compat import Address, address_csv, save_new
 from fieldforge.online.models import validate_portal_url
 from fieldforge.online.storage import PortalLibrary
 from fieldforge.ui.online_compat import OnlineMapWindow as OnlineMapWindow
+from fieldforge_gps.tk_cleanup import TkCleanupMixin
 
 HEALTH_CHECK_MS = 30_000
 _NETWORK = {"connect", "health", "search", "catalog", "route", "download"}
@@ -51,7 +52,7 @@ def _route_endpoints(route):
             for label, key in (("Start", "start"), ("Destination", "end"))]
 
 
-class OnlineMapsTab(ttk.Frame):
+class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
     def __init__(self, parent, database, *, on_open_map=None, on_center=None,
                  on_use_place=None, on_show_route=None, client_factory=PortalClient):
         super().__init__(parent, padding=12)
@@ -1019,9 +1020,15 @@ class OnlineMapsTab(ttk.Frame):
         if self._disposed:
             return
         self._disposed = True
-        for value, token in self._route_endpoint_traces:
-            value.trace_remove("write", token)
+        # These variables belong to this tab. Remove the detail-panel traces as
+        # well as the endpoint traces before any callback can retain a closed UI.
+        for value in tuple(self.__dict__.values()):
+            if isinstance(value, tk.Variable):
+                for modes, callback in value.trace_info():
+                    value.trace_remove(modes, callback)
         self._route_endpoint_traces.clear()
+        self._route_endpoint_fields = ()
+        self.on_open_map = self.on_center = self.on_use_place = self.on_show_route = None
         self._cancel_work()
         self._offline()
         self._worker.shutdown(wait=False, cancel_futures=True)
@@ -1029,6 +1036,12 @@ class OnlineMapsTab(ttk.Frame):
             if window.winfo_exists():
                 window.destroy()
         self._map_windows.clear()
+
+    def destroy(self):
+        try:
+            self.close()
+        finally:
+            super().destroy()
 
     def _destroyed(self, event):
         if event.widget is self:
