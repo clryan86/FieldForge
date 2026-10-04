@@ -27,7 +27,7 @@ specific MBTiles subset:
   ordinary `metadata` and `tiles` tables through the same indexed read-only path.
   FieldForge draws common land, water, building, road, boundary, rail and point
   geometries with a built-in preview palette. It places a limited set of labels
-  from names embedded in point features. It does not apply publisher MapLibre
+  from names embedded in point, line, and area features. It does not apply publisher MapLibre
   styles, filters, sprites, font glyphs, or publisher symbol-placement rules.
 - Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
   256-screen-pixel logical footprint. There is no extra detail invented from a
@@ -155,7 +155,7 @@ U.S. states. ZIPs over 2 GiB and indexes over 4 GiB are rejected.
 These indexes are for display and local feature search. They do not contain a
 prepared routing graph, support turn-by-turn navigation, or verify road access,
 freshness, safety, or completeness. The current portal does not distribute
-`.ffmap` indexes. See the [regional data
+`.ffmap` indexes or extract ZIP packages. See the [regional data
 plan](GLOBAL_MAP_DATA_PLAN.md) for provenance and acquisition gaps.
 
 Tests cover independent projection examples and round trips, TMS row reversal,
