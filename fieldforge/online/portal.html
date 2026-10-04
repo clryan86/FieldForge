@@ -19,6 +19,7 @@
     .card,.result,.selected-address,.route-card>*{min-width:0;overflow-wrap:anywhere;word-break:break-word}
     .coords>div,.form-row>*{min-width:0}.route-card{flex-wrap:wrap}.preview-caption{flex-wrap:wrap}
     .portal-nav{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1.3rem}.portal-nav a{padding:.45rem .75rem;background:var(--tint);border-radius:7px;font-size:.85rem;text-decoration:none;font-weight:650}
+    .skill-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:.35rem .65rem}.skill-options label{display:flex;gap:.5rem;align-items:flex-start;margin:0;font-weight:500}.skill-options input{margin-top:.32rem;flex:none}
     .map-controls{display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;margin-top:1rem}.map-controls>div{flex:1;min-width:140px}.map-controls .map-filter{flex:2;max-width:none}.map-controls button{font-size:.85rem}
     .catalog-pages{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap;margin-top:1rem}.catalog-pages button{font-size:.8rem;padding:.4rem .7rem}
     .pack-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;margin-top:1rem}.pack{border:1px solid var(--line);border-radius:9px;padding:1rem;min-width:0}.pack p{font-size:.84rem}.pack .badge{display:inline-block;margin-bottom:.5rem}.pack details{color:var(--muted)}
@@ -38,7 +39,7 @@
       <div class="hero-note">Your downloaded files stay useful after you disconnect. New searches and route calculations need a connected portal.</div>
     </section>
     <nav class="portal-nav" aria-label="Download areas">
-      <a href="#mapsTitle">Maps &amp; images</a><a href="#routeTitle">Routes</a><a href="#searchTitle">Address lookup</a><a href="#libraryTitle">Knowledge &amp; program packs</a><a href="#tiersTitle">Package tiers</a>
+      <a href="#mapsTitle">Maps &amp; images</a><a href="#routeTitle">Routes</a><a href="#searchTitle">Address lookup</a><a href="#libraryTitle">Knowledge &amp; program packs</a><a href="#tiersTitle">Package tiers</a><a href="#commonsTitle">Commons</a><a href="#resourceTitle">Resources</a>
     </nav>
     <section class="card connection-panel" aria-labelledby="connectionTitle">
       <h2 id="connectionTitle">A connection you control</h2>
@@ -154,6 +155,61 @@
         <article class="pack"><span class="badge">Draft · not available</span><h3>Organization</h3><p>Shared, curated packages for a team or institution. Earlier planning used 50 GiB per purchase as a placeholder; seats, pricing and licensing are not defined.</p></article>
       </div>
       <p class="bottom-note">Any future payment would cover only content and delivery rights FieldForge is allowed to provide. A tier will not override third-party licenses. There are no user accounts, payments, entitlements or download quotas on this portal yet.</p>
+    </section>
+    <section class="card maps-section" aria-labelledby="commonsTitle">
+      <div class="section-top"><h2 id="commonsTitle">FieldForge Commons</h2><span class="badge">Preview · membership not active</span></div>
+      <p class="muted">An optional online community for people who want to share practical skills and preparedness knowledge. The offline FieldForge library remains available without a Commons account.</p>
+      <div class="pack-grid">
+        <article class="pack">
+          <span class="badge">Member access · setup required</span>
+          <h3>Create an account or sign in</h3>
+          <p>Email registration, selected social sign-in providers, profile photos, consent controls and moderation are not connected yet. Choose and configure identity and email services before opening membership.</p>
+          <button type="button" disabled aria-disabled="true">Member sign-in unavailable</button>
+        </article>
+        <article class="pack">
+          <span class="badge">Owner / admin · setup required</span>
+          <h3>Administrator access</h3>
+          <p>The owner console will manage membership, reports and published resources. It needs server-side authentication, multi-factor protection and recovery setup before it can be enabled.</p>
+          <button type="button" disabled aria-disabled="true">Admin console unavailable</button>
+        </article>
+        <article class="pack">
+          <span class="badge">Local preview · nothing is sent</span>
+          <h3>Preview a skill profile</h3>
+          <p>Select areas you know or want to learn. These labels are self-reported, not verified credentials. A profile stays private unless its owner later chooses to list it.</p>
+          <form id="skillsPreviewForm">
+            <fieldset>
+              <legend>Skills and interests</legend>
+              <div class="skill-options">
+                <label><input type="checkbox" name="skill" value="Medical care and first aid">Medical care and first aid</label>
+                <label><input type="checkbox" name="skill" value="Food and farming">Food and farming</label>
+                <label><input type="checkbox" name="skill" value="Water and sanitation">Water and sanitation</label>
+                <label><input type="checkbox" name="skill" value="Construction and repair">Construction and repair</label>
+                <label><input type="checkbox" name="skill" value="Power and machinery">Power and machinery</label>
+                <label><input type="checkbox" name="skill" value="Logistics and planning">Logistics and planning</label>
+                <label><input type="checkbox" name="skill" value="Communications">Communications</label>
+                <label><input type="checkbox" name="skill" value="Navigation and maps">Navigation and maps</label>
+                <label><input type="checkbox" name="skill" value="Education and research">Education and research</label>
+              </div>
+            </fieldset>
+            <label><input id="listSkillPreview" type="checkbox">Preview these labels as visible to Commons members</label>
+            <button id="previewSkills" type="button" class="secondary">Preview my profile</button>
+          </form>
+          <p id="skillsPreview" class="status" role="status" aria-live="polite">Choose any skills to preview. Nothing is sent or saved.</p>
+        </article>
+      </div>
+      <p class="bottom-note">No account, profile photo, public directory, chat or encrypted messaging is active here. Any future messaging needs a reviewed implementation; FieldForge will not present homemade encryption as secure.</p>
+    </section>
+    <section class="card maps-section" aria-labelledby="resourceTitle">
+      <h2 id="resourceTitle">Preparedness resource directory</h2>
+      <p class="muted small">Planned categories for curated learning and supply resources. These are topic labels, not live store links or endorsements; vendors, availability, safety information and reuse rights must be checked before publishing links.</p>
+      <div class="pack-grid">
+        <article class="pack"><span class="badge">Planned · review required</span><h3>Medical supplies and training</h3><p>First-aid learning, supply references and medical preparedness resources with clear scope and review dates.</p></article>
+        <article class="pack"><span class="badge">Planned · review required</span><h3>Food, MREs and farming</h3><p>Food storage, meal-kit information, gardening and agriculture references, with current vendor details only after review.</p></article>
+        <article class="pack"><span class="badge">Planned · review required</span><h3>Water and sanitation</h3><p>Water storage, treatment, hygiene and sanitation references for household and field use.</p></article>
+        <article class="pack"><span class="badge">Planned · review required</span><h3>Construction, tools and repair</h3><p>Practical references for shelter, repairs, tools, materials and equipment maintenance.</p></article>
+        <article class="pack"><span class="badge">Planned · review required</span><h3>Power and communications</h3><p>Energy planning, radios, charging, communications equipment and operating references.</p></article>
+        <article class="pack"><span class="badge">Planned · legal and regional review</span><h3>Military surplus and field equipment</h3><p>Potentially useful surplus and field gear sources, subject to local laws, product safety, current availability and accurate descriptions.</p></article>
+      </div>
     </section>
   </main>
   <footer>FieldForge download portal · Coordinates use WGS 84 decimal degrees. Save your files before disconnecting. This page does not store typed addresses or route endpoints in browser storage.</footer>
@@ -490,6 +546,11 @@
     window.addEventListener("offline",()=>disconnect("Connection lost. Downloaded files remain usable offline. Press Connect when your network is available."));
     window.addEventListener("online",()=>{updateAvailability();if(!state.sessionActive)status("connectionStatus","Network available. Press Connect when you want online services.");});
     setInterval(()=>{if(state.sessionActive&&state.reachable&&navigator.onLine&&!state.searchBusy&&!state.routeBusy&&document.visibilityState==="visible")checkConnection(false);},30000);
+    byId("previewSkills").addEventListener("click",()=>{
+      const selected=[...document.querySelectorAll('#skillsPreviewForm input[name="skill"]:checked')].map(input=>input.value);
+      const visible=byId("listSkillPreview").checked;
+      byId("skillsPreview").textContent=selected.length===0?"Choose at least one skill to preview. Nothing is sent or saved.":visible?"Self-reported profile labels: "+selected.join(", ")+". This preview stays on this device and is not saved.":"Private profile preview. "+selected.length+" self-reported skill"+(selected.length===1?"":"s")+" selected; no labels will be listed. Nothing is sent or saved.";
+    });
     // Opening the page and a later network-online event never start API work.
     renderDownloadList();updateAvailability();
   </script>
