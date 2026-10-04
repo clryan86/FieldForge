@@ -242,9 +242,12 @@ def _style(layer: str, properties: dict):
 
 def _label(layer: str, properties: dict):
     """Return a bounded source label and stable priority for named features."""
-    if not any(token in layer for token in ("place", "poi", "name", "peak", "label")):
+    if not any(token in layer for token in (
+            "place", "poi", "name", "peak", "label", "transportation",
+            "road", "water", "waterway", "boundary", "park")):
         return None
-    value = next((properties.get(key) for key in ("name:en", "name:latin", "name")
+    value = next((properties.get(key) for key in (
+        "name:en", "name_en", "name:latin", "name:local", "name")
                   if isinstance(properties.get(key), str) and properties[key].strip()), None)
     if value is None:
         return None
@@ -254,11 +257,87 @@ def _label(layer: str, properties: dict):
     kind = str(properties.get("class", "")).lower()
     tier = 0 if layer == "place" and kind in {"continent", "country", "state", "province"} else 1
     tier += 0 if properties.get("capital") in (True, 1, "yes") else 1
+    if any(token in layer for token in ("transportation", "road")):
+        tier += 0 if kind in {"motorway", "trunk", "primary"} else 2
+    elif any(token in layer for token in ("water", "waterway")):
+        tier += 1
     try:
         rank = float(properties.get("rank", 99))
     except (TypeError, ValueError):
         rank = 99
     return tier, rank, value
+
+
+def _line_anchor(paths):
+    """Return the halfway point of the longest line, avoiding route-wide averages."""
+    choices = []
+    for path in paths:
+        if len(path) < 2:
+            continue
+        lengths = [((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5
+                   for a, b in zip(path, path[1:])]
+        total = sum(lengths)
+        if total:
+            choices.append((total, path, lengths))
+    if not choices:
+        return None
+    _, path, lengths = max(choices, key=lambda item: item[0])
+    remaining = sum(lengths) / 2
+    for a, b, length in zip(path, path[1:], lengths):
+        if remaining <= length:
+            fraction = remaining / length
+            return (round(a[0] + (b[0] - a[0]) * fraction),
+                    round(a[1] + (b[1] - a[1]) * fraction))
+        remaining -= length
+    return path[-1]
+
+
+def _ring_centroid(ring):
+    """Compute a polygon ring's area centroid, or None for a degenerate ring."""
+    area2 = sum(x1 * y2 - x2 * y1
+                for (x1, y1), (x2, y2) in zip(ring, ring[1:] + ring[:1]))
+    if not area2:
+        return None
+    x = sum((x1 + x2) * (x1 * y2 - x2 * y1)
+            for (x1, y1), (x2, y2) in zip(ring, ring[1:] + ring[:1])) / (3 * area2)
+    y = sum((y1 + y2) * (x1 * y2 - x2 * y1)
+            for (x1, y1), (x2, y2) in zip(ring, ring[1:] + ring[:1])) / (3 * area2)
+    return round(x), round(y)
+
+
+def _inside_ring(point, ring):
+    x, y = point
+    inside = False
+    previous = ring[-1]
+    for current in ring:
+        x1, y1 = previous
+        x2, y2 = current
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            inside = not inside
+        previous = current
+    return inside
+
+
+def _polygon_anchor(paths):
+    """Place a label inside the largest ring; skip concave/outside centroids."""
+    rings = [path for path in paths if len(path) >= 3]
+    if not rings:
+        return None
+    outer = max(rings, key=lambda ring: abs(_ring_area(ring)))
+    point = _ring_centroid(outer)
+    if point is not None and _inside_ring(point, outer):
+        return point
+    return None
+
+
+def _label_anchor(geom_type, paths):
+    if geom_type == 1:
+        return paths[0][0] if paths and paths[0] else None
+    if geom_type == 2:
+        return _line_anchor(paths)
+    if geom_type == 3:
+        return _polygon_anchor(paths)
+    return None
 
 
 def _place_label(draw, image, font, point, value, occupied):
@@ -295,8 +374,9 @@ def render_vector_tile(data: bytes) -> bytes:
                 style = _style(layer, properties)
                 parsed.append((style, geom_type, paths))
                 label = _label(layer, properties)
-                if label and geom_type == 1 and paths and paths[0]:
-                    labels.append((label, paths[0][0]))
+                anchor = _label_anchor(geom_type, paths)
+                if label and anchor is not None:
+                    labels.append((label, anchor))
         draw = ImageDraw.Draw(image)
         fills = {"water": "#a8cfe0", "green": "#c7d9b4", "building": "#d4c8bd"}
         strokes = {"road": ("#ffffff", "#d1a871", 3, 1),
