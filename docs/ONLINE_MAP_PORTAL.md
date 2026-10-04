@@ -200,7 +200,7 @@ Raster MBTiles use the existing map reader's supported schema and image formats.
 Gzip-compressed Mapbox Vector Tile MBTiles (`format=pbf`) can be published after
 a real vector tile is rendered during preflight; the desktop then draws common
 feature geometries with a basic built-in style and limited labels from names
-embedded in point features. Publisher styles, fonts, sprites and label-placement
+embedded in point, line, and area features, with basic overlap suppression. Publisher styles, fonts, sprites and advanced label-placement
 rules are not applied. The existing viewer limits are 16 GiB for an MBTiles
 pack and 64 MiB for a map image, with at most 32 million pixels and a
 32,768-pixel side. Publication and desktop installation apply the same image
