@@ -7,6 +7,7 @@ trusted, closed map-pack copies. The pack remains external to the app database.
 from __future__ import annotations
 
 import math
+import re
 import sqlite3
 import stat
 import struct
@@ -22,6 +23,8 @@ from fieldforge.navigation.map_view import TILE_SIZE, TileSlot, Viewport, unproj
 MAX_PACK_BYTES = 16 * 1024**3
 MAX_TILE_BYTES = 2 * 1024**2
 MAX_FRAME_BYTES = 32 * 1024**2
+MAX_METADATA_ROWS = 128
+MAX_METADATA_VALUE_BYTES = 16 * 1024
 QUERY_SECONDS = 3.0
 NOTICE = (
     "Offline map images are reference material, not verified routes or current conditions. "
@@ -43,10 +46,10 @@ def _signature(path: Path) -> tuple[int, int, int, int, int]:
     info = path.stat()
     if not stat.S_ISREG(info.st_mode) or not 16 <= info.st_size <= MAX_PACK_BYTES:
         raise ValueError("Choose a regular .mbtiles file of at most 16 GiB.")
-    for suffix in ("-wal", "-journal"):
+    for suffix in ("-wal", "-journal", "-shm"):
         sidecar = Path(str(path) + suffix)
         if sidecar.exists() and sidecar.stat().st_size:
-            raise ValueError("Map has an active WAL/journal. Use a closed, fully exported single-file map copy.")
+            raise ValueError("Map has an active WAL/journal/shared-memory sidecar. Use a closed, fully exported single-file map copy.")
     return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
 
 
@@ -55,6 +58,15 @@ def _read_database(path: Path, signature, cancel: Event | None = None) -> Iterat
     _cancelled(cancel)
     if _signature(path) != signature:
         raise ValueError("Map file changed since opening. Close and reopen the intended map pack.")
+    # A WAL-mode header can cause SQLite to create auxiliary files even for a
+    # read-only connection. Match the GPS viewer's closed rollback-mode subset
+    # before opening SQLite, including when no sidecars currently exist.
+    with path.open("rb") as stream:
+        header = stream.read(100)
+    if not header.startswith(b"SQLite format 3\x00"):
+        raise sqlite3.DatabaseError("Not a SQLite MBTiles file.")
+    if header[18:20] != b"\x01\x01":
+        raise ValueError("Unsupported SQLite header or WAL-mode map; use a closed rollback-mode export.")
     deadline = time.monotonic() + QUERY_SECONDS
     db = sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=0.25)
     try:
@@ -134,28 +146,38 @@ def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
         objects = dict(db.execute("SELECT name,type FROM sqlite_master WHERE name IN ('metadata','tiles')"))
         if objects != {"metadata": "table", "tiles": "table"}:
             raise ValueError("This reader requires ordinary metadata/tiles tables; normalized/view-based MBTiles are not supported yet.")
-        for table, fields in (("metadata", {"name", "value"}),
-                              ("tiles", {"zoom_level", "tile_column", "tile_row", "tile_data"})):
-            schema = db.execute("SELECT sql FROM sqlite_master WHERE name=?", (table,)).fetchone()[0] or ""
-            if "VIRTUAL" in schema.upper().split() or not fields <= {row[1] for row in db.execute(f"PRAGMA table_info({table})")}:
-                raise ValueError("Unsupported map table structure; file was not modified.")
+        for table, expected in (
+            ("metadata", (("name", "TEXT"), ("value", "TEXT"))),
+            ("tiles", (("zoom_level", "INTEGER"), ("tile_column", "INTEGER"),
+                       ("tile_row", "INTEGER"), ("tile_data", "BLOB"))),
+        ):
+            schema = db.execute("SELECT substr(sql,1,2048) FROM sqlite_master WHERE name=?", (table,)).fetchone()[0] or ""
+            columns = tuple((row[1], row[2].upper()) for row in
+                            db.execute(f"PRAGMA table_info({table})").fetchmany(len(expected) + 1))
+            if not re.match(r"\s*CREATE\s+TABLE\b", schema, re.I) or columns != expected:
+                raise ValueError("Unsupported map table structure, column layout or declared types; file was not modified.")
         indexes = db.execute("PRAGMA index_list(tiles)").fetchmany(65)
         if len(indexes) > 64:
             raise ValueError("Too many map indexes.")
         index_name = ""
         for row in indexes:
             if row[2] and not row[4]:
-                fields = [item[2] for item in db.execute(f"PRAGMA index_info({_quoted(row[1])})")]
-                if fields == ["zoom_level", "tile_column", "tile_row"]:
+                columns = [item for item in db.execute(f"PRAGMA index_xinfo({_quoted(row[1])})").fetchmany(5) if item[5]]
+                if ([item[2] for item in columns] == ["zoom_level", "tile_column", "tile_row"]
+                        and all(item[4] == "BINARY" for item in columns)):
                     index_name = row[1]
                     break
         if not index_name:
-            raise ValueError("Map needs a unique (zoom_level, tile_column, tile_row) index. This reader does not alter files or build indexes.")
-        sizes = db.execute("SELECT length(CAST(name AS BLOB)),length(CAST(value AS BLOB)) FROM metadata LIMIT 65").fetchall()
-        if len(sizes) > 64 or any(type(a) is not int or type(b) is not int or a > 128 or b > 8192 for a, b in sizes):
+            raise ValueError("Map needs a unique non-partial BINARY (zoom_level, tile_column, tile_row) index. This reader does not alter files or build indexes.")
+        # Keep the metadata budget shared with the already-supported GPS
+        # viewer, so a portal download can be opened in either offline viewer.
+        sizes = db.execute("SELECT length(CAST(name AS BLOB)),length(CAST(value AS BLOB)) FROM metadata LIMIT ?",
+                           (MAX_METADATA_ROWS + 1,)).fetchall()
+        if len(sizes) > MAX_METADATA_ROWS or any(type(a) is not int or type(b) is not int
+                                                or a > 128 or b > MAX_METADATA_VALUE_BYTES for a, b in sizes):
             raise ValueError("Map metadata exceeds the supported bounds.")
         metadata = {}
-        for key, value in db.execute("SELECT name,value FROM metadata LIMIT 65"):
+        for key, value in db.execute("SELECT name,value FROM metadata LIMIT ?", (MAX_METADATA_ROWS + 1,)):
             if not isinstance(key, str) or not isinstance(value, str) or key in metadata or "\x00" in key + value:
                 raise ValueError("Invalid or duplicate map metadata.")
             metadata[key] = value

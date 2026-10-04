@@ -111,7 +111,7 @@ def test_retina_dimensions_and_outside_projection_cells(tmp_path):
 
 
 @pytest.mark.parametrize('metadata', [{'format': 'pbf'}, {'scheme': 'xyz'},
-    {'name': ''}, {'name': 'bad\x00name'}, {'description': 'x'*8193}])
+    {'name': ''}, {'name': 'bad\x00name'}, {'description': 'x'*16385}])
 def test_unsupported_map_metadata_rejected(tmp_path, metadata):
     path = make_map(tmp_path/'bad.mbtiles', metadata=metadata)
     before = path.read_bytes()
@@ -282,3 +282,121 @@ def test_no_network_or_database_modification_to_read_a_map(pack_path, tmp_path, 
         db.execute("INSERT INTO waypoints(name,latitude,longitude,kind,notes) VALUES('Bad',100,0,'waypoint','')")
     with pytest.raises(ValueError, match='Invalid saved place'):
         read_markers(app.db.path)
+
+
+@pytest.mark.parametrize('rows,attribution', [(65, 'a' * 8193), (128, 'a' * 16384),
+                                             (128, 'é' * 8192)])
+def test_public_gps_metadata_budget_opens_in_both_offline_viewers(tmp_path, rows, attribution):
+    from fieldforge_gps.mbtiles import inspect_pack as inspect_gps
+    from fieldforge_gps.mbtiles import read_tiles
+
+    # The fixture supplies seven standard entries. These bounds were already
+    # accepted by the GPS portal downloader and must survive a main Maps handoff.
+    metadata = {f'field_{index}': f'Original fixture field {index}' for index in range(rows - 7)}
+    metadata['attribution'] = attribution
+    path = make_map(tmp_path / 'published-raster.mbtiles', metadata=metadata)
+    before = path.read_bytes()
+    gps = inspect_gps(path, consent=True)
+    pack = inspect_pack(path)
+    assert len(pack.metadata) == rows
+    assert dict(pack.metadata)['attribution'] == attribution
+    assert dict(gps.metadata)['attribution'] == attribution
+    assert read_tiles(gps, ((2, 1, 1),))[0].state == 'ready'
+    assert all(tile.data for tile in read_frame(pack, Viewport(0, 0, 2, 512, 512)).tiles)
+    assert path.read_bytes() == before
+    assert not any((tmp_path / (path.name + suffix)).exists() for suffix in ('-wal', '-journal', '-shm'))
+
+
+@pytest.mark.parametrize('metadata', [
+    {f'field_{index}': 'Original fixture field' for index in range(122)},
+    {'attribution': 'a' * 16385},
+    {'attribution': 'é' * 8193},
+    {'k' * 129: 'Original fixture field'},
+])
+def test_shared_metadata_bounds_reject_extra_rows_and_oversized_utf8_bytes(tmp_path, metadata):
+    from fieldforge_gps.mbtiles import inspect_pack as inspect_gps
+
+    path = make_map(tmp_path / 'oversized-metadata.mbtiles', metadata=metadata)
+    before = path.read_bytes()
+    with pytest.raises(ValueError, match='metadata'):
+        inspect_pack(path)
+    with pytest.raises(ValueError, match='metadata'):
+        inspect_gps(path, consent=True)
+    assert path.read_bytes() == before
+
+
+@pytest.mark.parametrize('mutation', [
+    'ALTER TABLE metadata ADD COLUMN extra TEXT',
+    'ALTER TABLE tiles ADD COLUMN extra TEXT',
+    '''ALTER TABLE metadata RENAME TO previous_metadata;
+       CREATE TABLE metadata(name VARCHAR(128),value TEXT);
+       INSERT INTO metadata SELECT name,value FROM previous_metadata;''',
+    '''ALTER TABLE tiles RENAME TO previous_tiles;
+       CREATE TABLE tiles(zoom_level INT,tile_column INTEGER,tile_row INTEGER,tile_data BLOB);
+       INSERT INTO tiles SELECT * FROM previous_tiles;
+       CREATE UNIQUE INDEX new_tile_index ON tiles(zoom_level,tile_column,tile_row);''',
+])
+def test_shared_flat_typed_schema_rejects_extensions_and_alternate_declared_types(pack_path, mutation):
+    from fieldforge_gps.mbtiles import inspect_pack as inspect_gps
+
+    with sqlite3.connect(pack_path) as db:
+        db.executescript(mutation)
+    before = pack_path.read_bytes()
+    with pytest.raises(ValueError, match='structure|layout'):
+        inspect_pack(pack_path)
+    with pytest.raises(ValueError, match='layout'):
+        inspect_gps(pack_path, consent=True)
+    assert pack_path.read_bytes() == before
+
+
+@pytest.mark.parametrize('index_sql', [
+    'CREATE UNIQUE INDEX replacement ON tiles(zoom_level COLLATE NOCASE,tile_column,tile_row)',
+    'CREATE UNIQUE INDEX replacement ON tiles(zoom_level,tile_column,tile_row) WHERE zoom_level=1',
+    'CREATE UNIQUE INDEX replacement ON tiles(tile_column,zoom_level,tile_row)',
+])
+def test_shared_tile_index_requires_binary_full_unique_coordinate_key(pack_path, index_sql):
+    from fieldforge_gps.mbtiles import inspect_pack as inspect_gps
+
+    with sqlite3.connect(pack_path) as db:
+        db.execute('DROP INDEX tile_index')
+        db.execute(index_sql)
+    before = pack_path.read_bytes()
+    with pytest.raises(ValueError, match='unique'):
+        inspect_pack(pack_path)
+    with pytest.raises(ValueError, match='unique'):
+        inspect_gps(pack_path, consent=True)
+    assert pack_path.read_bytes() == before
+
+
+def test_active_shared_memory_sidecar_is_refused_without_changes(pack_path):
+    from fieldforge_gps.mbtiles import inspect_pack as inspect_gps
+
+    sidecar = pack_path.with_name(pack_path.name + '-shm')
+    sidecar.write_bytes(b'active shared-memory fixture')
+    before = pack_path.read_bytes()
+    with pytest.raises(ValueError, match='sidecar'):
+        inspect_pack(pack_path)
+    with pytest.raises(ValueError, match='sidecar'):
+        inspect_gps(pack_path, consent=True)
+    assert pack_path.read_bytes() == before
+    assert sidecar.read_bytes() == b'active shared-memory fixture'
+
+
+def test_wal_header_without_sidecars_is_rejected_before_sqlite_creates_auxiliary_files(pack_path):
+    from fieldforge_gps.mbtiles import inspect_pack as inspect_gps
+
+    db = sqlite3.connect(pack_path)
+    try:
+        assert db.execute('PRAGMA journal_mode=WAL').fetchone()[0] == 'wal'
+        db.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+    finally:
+        db.close()
+    before = pack_path.read_bytes()
+    assert before[18:20] == b'\x02\x02'
+    assert not any(pack_path.with_name(pack_path.name + suffix).exists() for suffix in ('-wal', '-shm'))
+    with pytest.raises(ValueError, match='rollback-mode'):
+        inspect_pack(pack_path)
+    with pytest.raises(ValueError, match='rollback-mode'):
+        inspect_gps(pack_path, consent=True)
+    assert pack_path.read_bytes() == before
+    assert not any(pack_path.with_name(pack_path.name + suffix).exists() for suffix in ('-wal', '-journal', '-shm'))

@@ -2,7 +2,7 @@
 
 **FieldForge is an offline-first emergency preparedness and survival operations system.**
 
-It is designed to remain useful when the internet, cloud services, cellular networks, or normal infrastructure are unavailable. The project combines local planning tools, resource calculations, household readiness, emergency checklists, an offline knowledge library, and optional downloadable map packs in one auditable desktop application.
+It is designed to remain useful when the internet, cloud services, cellular networks, or normal infrastructure are unavailable. The project combines local planning tools, resource calculations, household readiness, emergency checklists, an offline knowledge library, and optional online map preparation in one auditable desktop application.
 
 > FieldForge is a preparedness and reference tool. It does not replace emergency services, licensed medical care, official evacuation orders, or professional advice.
 
@@ -42,8 +42,11 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 ### Navigation and mapping
 - Coordinates, distance, bearing, and waypoint tools
-- Offline MBTiles and image maps; optional portal downloads, address lookup and planned routes
-- Exportable routes and rendezvous points
+- Local raster MBTiles and image-map viewers
+- Optional online address lookup to fill saved places and route endpoints
+- A configurable map portal with verified map downloads and saved route alternatives
+- Offline route directions, planned-route overlays, and GPX export
+- Additional world map coverage and offline rerouting remain future work
 
 ### Privacy and resilience
 - SQLite local database
@@ -71,7 +74,9 @@ knowledge_base/
 docs/
 ```
 
-The core package intentionally avoids internet APIs. Optional integrations must never be required for emergency operation.
+The core planning and reference features avoid internet APIs. The separate `fieldforge.online`
+package contacts only a configured portal after the user chooses to connect. Optional
+integrations are not required for emergency operation.
 
 ## Initial development milestones
 
@@ -128,15 +133,32 @@ with pan/zoom and an explicit uncalibrated-reference label. Source installations
 use `pip install ".[maps,gps,pdf]"` for image, serial-receiver and PDF support. External map files are **not included in database backups**. See
 [Offline Maps](docs/OFFLINE_MAPS.md) for formats, limits, privacy and separate backups.
 
-## Optional online map portal
+## Prepare maps and routes online, use them offline
 
-**Navigation → Online map portal…** enables address-to-coordinate search, verified
-map downloads and planned driving routes after an explicit connection. Selected
-coordinates can fill the existing place editor; CSV, GPX, MBTiles and image files
-remain usable offline. The browser portal and operator-configured service are
-included. A public deployment, search/routing providers and regional map packs
-still need operator setup; no worldwide data service is bundled. See
-[Online map portal setup and workflow](docs/ONLINE_MAP_PORTAL.md).
+Open **Online Maps**, or **Navigation → Online maps, addresses & routes…**.
+Enter the address of an operated FieldForge portal and choose **Connect**.
+The application starts disconnected and does not submit addresses while typing.
+
+- **Address search:** submit an address, choose the intended match, then copy its
+  latitude/longitude, fill a saved-place editor, center a local map, or fill a route endpoint.
+  **Find address online…** in an open place editor fills that editor for review;
+  **Navigation → Online map portal…** also preserves the GPS coordinate-form handoff.
+  Selected coordinates can be saved as CSV for the offline place catalog.
+- **Map downloads:** browse the portal's actual catalog, review coverage, format,
+  size and attribution, and download a selected map. Completed files are checked
+  against the catalog's byte count and SHA-256 checksum before installation.
+- **Routes:** request driving-route alternatives, inspect the directions, and save
+  a selected route locally. Reopen saved directions, show the planned route over
+  a local MBTiles map, or export its geometry as GPX after disconnecting.
+  Routes downloaded from the browser portal can also be imported while offline.
+
+This repository includes the **portal server and browser interface**, with adapters
+for an operator-configured Nominatim geocoder and OSRM driving router. It does
+not provision a public website, contain all world maps, or provide a default
+public geocoding/routing account. A portal operator must supply permitted map packs,
+hosting, and provider data. Saved routes do not provide live traffic or automatic
+offline rerouting. See [Online map portal](docs/ONLINE_MAP_PORTAL.md) for setup,
+file locations, supported formats, and the online/offline boundary.
 
 ## Windows development application
 

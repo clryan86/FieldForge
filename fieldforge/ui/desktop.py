@@ -38,6 +38,7 @@ def run() -> None:
     from fieldforge.ui.maps import MapsTab
     from fieldforge.ui.pathways import add_pathways_tab
     from fieldforge.ui.places import PlacesTab
+    from fieldforge.ui.portal_integration import install_online_maps
     from fieldforge.ui.recovery import add_recovery_tab
     from fieldforge.ui.recreation import add_recreation_tab
     from fieldforge.ui.supplies import SuppliesTab
@@ -79,6 +80,9 @@ def run() -> None:
     notebook.add(places_panel, text="Places")
     maps_panel = MapsTab(notebook, app.db.path)
     notebook.add(maps_panel, text="Maps")
+    online_maps_panel = install_online_maps(
+        notebook, app.db.path, places_panel, maps_panel, gps_workspace, menu_bar
+    )
 
     # A compact-window selector keeps every section reachable when notebook
     # tabs extend past the right edge. It uses the same tab-change save guards.
@@ -118,7 +122,8 @@ def run() -> None:
 
     def close_application() -> None:
         if (not supplies_panel.can_close() or not household_panel.can_close()
-                or not emergency_panel.can_close() or not places_panel.can_close() or not recovery_tab.can_close()):
+                or not emergency_panel.can_close() or not places_panel.can_close()
+                or not recovery_tab.can_close() or not online_maps_panel.can_close()):
             return
         if knowledge_tab.busy:
             messagebox.showinfo(
@@ -129,6 +134,7 @@ def run() -> None:
         elif (knowledge_tab.save_current() and pathways_tab.save_current()
                 and gps_workspace.can_close()):
             gps_workspace.close()
+            online_maps_panel.close()
             root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", close_application)

@@ -14,9 +14,14 @@ that you trust it and have permission to use it. Both the Maps tab and GPS works
 specific MBTiles subset:
 
 - PNG, JPEG or WebP raster imagery in ordinary `metadata` and `tiles` tables, using MBTiles'
-  TMS rows and Web Mercator tile coordinates.
+  TMS rows and Web Mercator tile coordinates. The declared columns must be
+  `metadata(name TEXT, value TEXT)` and
+  `tiles(zoom_level INTEGER, tile_column INTEGER, tile_row INTEGER, tile_data BLOB)`
+  in that order, without additional columns.
 - A unique, non-partial index on `(zoom_level, tile_column, tile_row)` in that
-  order, plus `name` and `format=png`, `jpg`, `jpeg` or `webp` metadata. The reader never builds an index
+  order with `BINARY` collation, plus `name` and `format=png`, `jpg`, `jpeg` or `webp`
+  metadata. Up to 128 metadata entries and 16 KiB per UTF-8 value are supported.
+  The reader never builds an index
   or changes the supplied pack to make it compatible.
 - Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
   256-screen-pixel logical footprint. There is no extra detail invented from a
@@ -32,7 +37,8 @@ image files are not MBTiles. The app does not convert these formats automaticall
 Open ordinary map images through **Navigation → Open map image…**; see
 [image formats and limits](GPS_WORKSPACE.md#mbtiles-and-image-files). Source users
 install `.[maps]` for JPEG/WebP and map-image decoding; native PNG tiles continue
-to work without Pillow. Use a fully exported, closed map copy; nonempty WAL/journal sidecars are refused.
+to work without Pillow. Use a fully exported, closed rollback-mode map copy;
+WAL-mode headers and nonempty WAL, journal, or shared-memory sidecars are refused.
 
 The map file is read in place, not copied into SQLite or registered in a persistent
 map catalog. Closing the map or application forgets its file selection and view.

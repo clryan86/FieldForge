@@ -70,6 +70,8 @@ class GPSWorkspace:
         return self.receiver
 
     def can_close(self):
+        if self.portal_window is not None and self.portal_window.winfo_exists() and not self.portal_window.can_close():
+            return False
         return self.receiver is None or self.receiver._closed or self.receiver.request_close()
 
     def request_close(self):
@@ -78,6 +80,8 @@ class GPSWorkspace:
 
     def close(self):
         if self.portal_window is not None and self.portal_window.winfo_exists():
+            if not self.portal_window.can_close():
+                return False
             self.portal_window.close()
         self.portal_window = None
         receiver, window = self.receiver, self.window

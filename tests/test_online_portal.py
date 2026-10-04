@@ -1,10 +1,14 @@
 """Real local HTTP integration; never query a public geocoder or personal address."""
 
+import base64
 import hashlib
 import io
 import json
+import re
 import shutil
 import threading
+import urllib.parse
+import xml.etree.ElementTree as ET
 from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
@@ -14,6 +18,7 @@ import pytest
 
 import fieldforge_gps
 from fieldforge import map_portal, online
+from fieldforge.online import compat
 from fieldforge_gps.gpx_review import parse_gpx
 from fieldforge_gps.places import read_catalog
 
@@ -54,12 +59,22 @@ def portal(tmp_path, map_entry):
                      {"display_name": "Fictional Beacon Park", "lat": "10.2", "lon": "20.3"}]
         else:
             value = {"code": "Ok", "routes": [{"distance": 1234.5, "duration": 321,
-                     "geometry": {"type": "LineString", "coordinates": [[20.25, 10.125], [20.3, 10.2], [20.5, 10.4]]}}]}
+                     "geometry": {"type": "LineString", "coordinates": [[20.25, 10.125], [20.3, 10.2], [20.5, 10.4]]},
+                     "legs": [{"summary": "Fictional Beacon Road", "steps": [
+                         {"name": "Fictional Beacon Road", "distance": 700, "duration": 180,
+                          "maneuver": {"type": "depart", "location": [20.25, 10.125]}},
+                         {"name": "Fictional Plaza Lane", "distance": 534.5, "duration": 141,
+                          "maneuver": {"type": "turn", "modifier": "right", "location": [20.3, 10.2]}},
+                         {"name": "", "distance": 0, "duration": 0,
+                          "maneuver": {"type": "arrive", "location": [20.5, 10.4]}},
+                     ]}]}]}
         return map_portal.Portal.reply(start, "200 OK", value)
     with serving(provider) as provider_url:
         config = {"version": 1, "maps": [map_entry],
-                  "geocoder": {"url": provider_url, "name": "Fictional geocoder", "attribution": "Original fixture"},
-                  "router": {"url": provider_url, "name": "Fictional routing", "attribution": "Original fixture"}}
+                  "geocoder": {"url": provider_url, "name": "Fictional geocoder", "attribution": "Original fixture",
+                               "license": "Original synthetic fixture data"},
+                  "router": {"url": provider_url, "name": "Fictional routing", "attribution": "Original fixture",
+                             "license": "Original synthetic fixture data"}}
         app = map_portal.Portal(config, folder=tmp_path)
         with serving(app) as url:
             yield url, app, provider_calls
@@ -75,7 +90,9 @@ def invoke(app, path, method="GET", payload=None, headers=None):
     raw = json.dumps(payload).encode() if payload is not None else b""
     environ = {"PATH_INFO": path, "REQUEST_METHOD": method, "wsgi.input": io.BytesIO(raw),
                "CONTENT_TYPE": "application/json", "CONTENT_LENGTH": str(len(raw)),
-               "wsgi.url_scheme": "https", "HTTP_HOST": "portal.example", **(headers or {})}
+               "wsgi.url_scheme": "http", "HTTP_HOST": "127.0.0.1:8765",
+               "SERVER_NAME": "127.0.0.1", "SERVER_PORT": "8765", "SERVER_PROTOCOL": "HTTP/1.1",
+               "QUERY_STRING": "", "SCRIPT_NAME": "", **(headers or {})}
     captured = []
     response = app(environ, lambda status, fields: captured.append((status, dict(fields))))
     try:
@@ -87,7 +104,7 @@ def invoke(app, path, method="GET", payload=None, headers=None):
 
 
 def test_offline_default_and_unconsented_connect_do_not_touch_network(monkeypatch):
-    monkeypatch.setattr(online, "open_request", lambda *a, **kw: pytest.fail("No network allowed"))
+    monkeypatch.setattr(compat, "open_request", lambda *a, **kw: pytest.fail("No network allowed"))
     client = online.PortalSession()
     assert not client.ready
     with pytest.raises(online.OnlineError):
@@ -119,7 +136,13 @@ def test_real_http_search_select_save_and_read_offline(portal, tmp_path):
 def test_real_route_uses_lon_lat_upstream_but_exports_correct_gpx(portal, tmp_path):
     client = connected(portal)
     value = client.route((10.125, 20.25), (10.4, 20.5))
-    assert "/20.25,10.125;20.5,10.4" in portal[2][0][0]
+    upstream_path, upstream_query = portal[2][0]
+    positions = upstream_path.rsplit("/", 1)[1].split(";")
+    assert [[float(number) for number in point.split(",")] for point in positions] == [
+        [20.25, 10.125], [20.5, 10.4],
+    ]
+    query = urllib.parse.parse_qs(upstream_query)
+    assert query["steps"] == ["true"] and query["alternatives"] == ["true"]
     client.disconnect()
     path = tmp_path / "planned.gpx"
     raw = online.route_gpx(value)
@@ -127,8 +150,24 @@ def test_real_route_uses_lon_lat_upstream_but_exports_correct_gpx(portal, tmp_pa
     document = parse_gpx(raw)
     assert document.point_count == 3
     assert "PLANNED" in document.tracks[0].name
-    assert b"not a recorded GPS trip" in raw and b"Original fixture" in raw
-    assert b"<time>" not in raw  # Do not invent a recorded trip or point timestamps.
+    assert b"not a recorded" in raw and b"Original fixture" in raw
+    root = ET.fromstring(raw)
+    assert not root.findall(".//{*}trkpt/{*}time")  # Planning metadata may have a time; GPS fixes may not.
+
+
+def test_legacy_singular_route_endpoint_preserves_geometry_and_provenance(portal):
+    status, _, raw = invoke(portal[1], "/api/v1/route", "POST",
+                            {"start": [10.125, 20.25], "end": [10.4, 20.5]})
+    assert status.startswith("200")
+    route = json.loads(raw)
+    assert route["profile"] == "driving"
+    assert route["coordinates"] == [[20.25, 10.125], [20.3, 10.2], [20.5, 10.4]]
+    assert route["distance_m"] == 1234.5 and route["duration_s"] == 321
+    assert route["source"] == "Fictional routing" and route["attribution"] == "Original fixture"
+    assert route["license"] == "Original synthetic fixture data"
+    query = urllib.parse.parse_qs(portal[2][0][1])
+    assert query["steps"] == ["true"] and query["alternatives"] == ["true"]
+    assert parse_gpx(online.route_gpx(route)).point_count == 3
 
 
 def test_map_download_verified_and_opens_offline_without_overwriting(portal, tmp_path, map_entry):
@@ -153,7 +192,7 @@ def test_map_checksum_failure_discards_partial_and_preserves_other_files(portal,
     item, = client.maps()
     item = online.MapItem.parse({**asdict(item), "sha256": "0" * 64})
     path = tmp_path / "bad.mbtiles"
-    with pytest.raises(online.OnlineError, match="checksum"):
+    with pytest.raises(online.OnlineError, match="checksum|SHA-256"):
         client.download(item, path)
     assert not path.exists() and not path.with_name(path.name + ".source.json").exists()
     assert not list(tmp_path.glob(".fieldforge-*"))
@@ -162,12 +201,12 @@ def test_map_checksum_failure_discards_partial_and_preserves_other_files(portal,
 def test_disconnect_during_download_removes_temporary_file(portal, tmp_path, monkeypatch):
     client = connected(portal)
     item, = client.maps()
-    original = online.open_request
+    original = compat.open_request
     def cancel_after_open(*args, **kwargs):
         response = original(*args, **kwargs)
         client.disconnect()
         return response
-    monkeypatch.setattr(online, "open_request", cancel_after_open)
+    monkeypatch.setattr(compat, "open_request", cancel_after_open)
     path = tmp_path / "cancelled.mbtiles"
     with pytest.raises(online.Cancelled):
         client.download(item, path)
@@ -181,7 +220,7 @@ def test_connection_loss_does_not_erase_saved_results_or_retry(monkeypatch, port
     def failed(*args, **kwargs):
         calls.append(args)
         raise OSError("unreachable")
-    monkeypatch.setattr(online, "open_request", failed)
+    monkeypatch.setattr(compat, "open_request", failed)
     with pytest.raises(online.OnlineError, match="reach"):
         client.search("Another")
     assert not client.ready and old[0].latitude == 10.125
@@ -194,7 +233,7 @@ def test_connection_loss_does_not_erase_saved_results_or_retry(monkeypatch, port
                                  "https://portal.example/?secret=1", "https://portal.example/#fragment",
                                  "https://portal.example/\n", "https://portal.example:999999", "https://x\\y"])
 def test_invalid_portal_urls_rejected_without_requests(url, monkeypatch):
-    monkeypatch.setattr(online, "open_request", lambda *a, **kw: pytest.fail("Must reject before network"))
+    monkeypatch.setattr(compat, "open_request", lambda *a, **kw: pytest.fail("Must reject before network"))
     with pytest.raises(ValueError):
         online.PortalSession().connect(url, consent=True)
 
@@ -225,6 +264,62 @@ def test_map_changed_after_catalogue_is_not_served(portal, tmp_path):
     assert status.startswith("503")
 
 
+def test_legacy_file_download_alias_serves_the_exact_catalogued_bytes(portal, map_entry):
+    status, headers, raw = invoke(portal[1], "/api/v1/maps/fictional-grid/file")
+    assert status.startswith("200")
+    assert len(raw) == map_entry["size"] == int(headers["Content-Length"])
+    assert hashlib.sha256(raw).hexdigest() == map_entry["sha256"]
+
+
+def test_legacy_long_source_and_version_survive_catalogue_and_download(tmp_path, map_entry):
+    source = "Original synthetic source: " + "reference-record-" * 20
+    version = "2026-10-04-" + "licensed-export-" * 16
+    entry = {**map_entry, "source": source, "updated": version}
+    app = map_portal.Portal({"version": 1, "maps": [entry]}, folder=tmp_path)
+    status, _, raw = invoke(app, "/api/v1/maps")
+    assert status.startswith("200")
+    wire, = json.loads(raw)["maps"]
+    assert wire["source"] == source and wire["updated"] == version
+    assert wire["version"] == version
+    with serving(app) as url:
+        client = connected((url,))
+        item, = client.maps()
+        assert item.source == source and item.updated == version
+        destination = tmp_path / "long-metadata.mbtiles"
+        client.download(item, destination)
+        client.disconnect()
+    note = json.loads(destination.with_name(destination.name + ".source.json").read_text())
+    assert note["source"] == source and note["updated"] == version
+
+
+@pytest.mark.parametrize("kind", ["geocoder", "router"])
+def test_legacy_provider_without_license_has_an_explicit_migration_error(tmp_path, kind):
+    configuration = {"version": 1, kind: {
+        "url": "https://provider.example", "name": "Original synthetic provider",
+        "attribution": "Original synthetic fixture attribution",
+    }}
+    with pytest.raises(ValueError, match="(?i)license") as raised:
+        map_portal.Portal(configuration, folder=tmp_path)
+    message = str(raised.value).lower()
+    assert any(word in message for word in ("required", "add", "must", "missing", "supply"))
+
+
+@pytest.mark.parametrize("host", ["portal.example", "localhost.attacker.example", "127.0.0.1:8766"])
+def test_wsgi_rejects_unconfigured_host_even_with_matching_origin(portal, host):
+    status, _, _ = invoke(portal[1], "/api/v1/search", "POST", {"query": "Fictional"},
+                          {"HTTP_HOST": host, "HTTP_ORIGIN": "http://" + host})
+    assert status.startswith("403")
+    assert not portal[2]
+
+
+def test_wsgi_accepts_explicit_public_origin_for_https_proxy_host(tmp_path):
+    app = map_portal.Portal({"version": 1, "public_origin": "https://maps.example"}, folder=tmp_path)
+    status, _, raw = invoke(app, "/api/v1/status", headers={
+        "HTTP_HOST": "maps.example", "HTTP_ORIGIN": "https://maps.example", "wsgi.url_scheme": "https",
+    })
+    assert status.startswith("200") and json.loads(raw)["api_version"] == 1
+
+
 def test_unconfigured_provider_and_same_origin_controls(tmp_path):
     app = map_portal.Portal({"version": 1}, folder=tmp_path)
     status, _, data = invoke(app, "/api/v1/status")
@@ -242,15 +337,19 @@ def test_provider_gate_has_no_background_queue_or_public_default(portal):
         client.search("second")
     assert len(portal[2]) == 1
     for url in ("https://nominatim.openstreetmap.org", "https://router.project-osrm.org"):
-        with pytest.raises(ValueError, match="owned or contracted"):
-            map_portal.Provider({"url": url, "name": "No default", "attribution": "Example"}, "geocoder")
+        with pytest.raises(ValueError, match="owned or contracted|licensed service|community.*demo"):
+            map_portal.Provider({"url": url, "name": "No default", "attribution": "Example",
+                                 "license": "Original synthetic fixture data"}, "geocoder")
 
 
 @pytest.mark.parametrize("coordinates", [[[0, float("nan")], [1, 1]], [[0, 91], [1, 1]], [[True, 0], [1, 1]], [[0, 0]]])
 def test_invalid_route_geometry_never_becomes_a_saved_file(coordinates):
+    valid = {"profile": "driving", "coordinates": [[0, 0], [1, 1]], "source": "Fixture",
+             "attribution": "Fixture", "license": "Original synthetic fixture data",
+             "created_at": "2026-10-04T00:00:00Z", "distance_m": 1, "duration_s": 1}
+    assert parse_gpx(online.route_gpx(valid)).point_count == 2
     with pytest.raises(ValueError):
-        online.route_gpx({"profile": "driving", "coordinates": coordinates, "source": "Fixture", "attribution": "Fixture",
-                          "created_at": "2026-10-04", "distance_m": 1, "duration_s": 1})
+        online.route_gpx({**valid, "coordinates": coordinates})
 
 
 def test_new_file_write_preserves_existing_destination(tmp_path):
@@ -264,7 +363,16 @@ def test_new_file_write_preserves_existing_destination(tmp_path):
 def test_portal_assets_are_local_with_restrictive_csp(portal):
     status, headers, body = invoke(portal[1], "/")
     assert status.startswith("200") and b"Address" in body
-    assert "script-src 'self'" in headers["Content-Security-Policy"]
+    policy = headers["Content-Security-Policy"]
+    assert "default-src 'none'" in policy and "connect-src 'self'" in policy
+    assert "'unsafe-inline'" not in policy and "'unsafe-eval'" not in policy
+    inline_scripts = re.findall(rb"<script>(.*?)</script>", body, flags=re.S)
+    if inline_scripts:
+        for script in inline_scripts:
+            digest = base64.b64encode(hashlib.sha256(script).digest()).decode()
+            assert f"'sha256-{digest}'" in policy
+    else:
+        assert "script-src 'self'" in policy
     assert b"https://" not in body and b"cdn" not in body
     assert invoke(portal[1], "/api/v1/maps/../../file")[0].startswith("404")
 
@@ -289,17 +397,13 @@ def test_image_map_download_decodes_and_preserves_exact_original_bytes(tmp_path,
     assert read_reference(destination, consent=True)
 
 
-def test_checksum_matching_but_undecodable_image_is_never_published(tmp_path, map_entry):
+def test_checksum_matching_but_undecodable_image_is_rejected_before_serving(tmp_path, map_entry):
     source = tmp_path / "fake.png"
     source.write_bytes(b"not an image")
     entry = {**map_entry, "filename": source.name, "kind": "image", "size": source.stat().st_size,
              "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
-    app = map_portal.Portal({"version": 1, "maps": [entry]}, folder=tmp_path)
-    with serving(app) as url:
-        client = connected((url,))
-        item, = client.maps()
-        with pytest.raises(ValueError):
-            client.download(item, tmp_path / "saved.png")
+    with pytest.raises(ValueError):
+        map_portal.Portal({"version": 1, "maps": [entry]}, folder=tmp_path)
     assert not (tmp_path / "saved.png").exists() and not list(tmp_path.glob(".fieldforge-*"))
     assert not list(tmp_path.glob("*.source.json"))
 
@@ -307,9 +411,16 @@ def test_checksum_matching_but_undecodable_image_is_never_published(tmp_path, ma
 @pytest.mark.parametrize("change", [{"version": True}, {"providers": []}, {"providers": {"geocoding": None}},
                                    {"name": None}, {"capabilities": {"geocoding": "true", "routing": False}}])
 def test_malformed_status_does_not_enable_connection(monkeypatch, change):
-    status = {"version": 1, "name": "Fixture", "providers": {"geocoding": {"name": "Fixture", "attribution": "Fixture"}},
-              "capabilities": {"geocoding": True, "routing": False}, **change}
-    monkeypatch.setattr(online, "request_json", lambda *a, **kw: status)
+    valid = {"version": 1, "name": "Fixture", "providers": {"geocoding": {
+        "name": "Fixture", "attribution": "Fixture", "license": "Original synthetic fixture data"}},
+        "capabilities": {"geocoding": True, "routing": False}}
+    monkeypatch.setattr(compat, "request_json", lambda *a, **kw: valid)
+    baseline = online.PortalSession()
+    baseline.connect("https://portal.example", consent=True)
+    assert baseline.ready
+    baseline.disconnect()
+    status = {**valid, **change}
+    monkeypatch.setattr(compat, "request_json", lambda *a, **kw: status)
     client = online.PortalSession()
     with pytest.raises(ValueError):
         client.connect("https://portal.example", consent=True)

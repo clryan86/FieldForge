@@ -21,7 +21,10 @@ _PAGE = 50
 
 
 class PlaceEditor(tk.Toplevel):
-    def __init__(self, parent, store, record=None, *, finished=None):
+    def __init__(self, parent, store, record=None, *, finished=None, initial=None):
+        # A portal result fills an ordinary editor; only Save place commits it.
+        # Validate before opening a window so invalid prefills leave no orphan UI.
+        prefill = make_place(**initial) if initial is not None and record is None else None
         super().__init__(parent)
         self.store, self.record, self.finished = store, record, finished
         self.changed = False
@@ -35,7 +38,7 @@ class PlaceEditor(tk.Toplevel):
         self.bind("<Destroy>", self._destroyed, add=True)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(6, weight=1)
-        point = record.point if record else None
+        point = record.point if record else prefill
         self.fields = {key: tk.StringVar(value=str(getattr(point, key)) if point else "waypoint" if key == "kind" else "")
                        for key in ("name", "latitude", "longitude", "kind")}
         if point:
@@ -58,8 +61,7 @@ class PlaceEditor(tk.Toplevel):
         if point:
             self.note.insert("1.0", point.notes)
         ttk.Label(self, text="Names and coordinates are sensitive even without notes. Records and full backups are unencrypted. "
-                  "Manual entry works offline. Address lookup sends only searches you enter after connecting to the portal.",
-                  wraplength=680, padding=(16, 10),
+                  "Saving this form stays on this device; online address lookup requires a separate connection.", wraplength=680, padding=(16, 10),
                   justify="left").grid(row=7, column=0, columnspan=2, sticky="ew")
         actions = ttk.Frame(self, padding=(16, 0))
         actions.grid(row=8, column=0, columnspan=2, sticky="ew")
@@ -73,6 +75,8 @@ class PlaceEditor(tk.Toplevel):
         self.grab_set()
 
     def find_address(self):
+        if self._disposed:
+            return None
         if self.online_window is not None and self.online_window.winfo_exists():
             self.online_window.lift()
             return self.online_window
@@ -90,10 +94,18 @@ class PlaceEditor(tk.Toplevel):
         self.online_window.grab_set()
         return self.online_window
 
+    def _online_can_close(self):
+        if self.online_window is not None and self.online_window.winfo_exists() and not self.online_window.can_close():
+            self.status.set("Finish the online window's local file action before saving or closing this place.")
+            return False
+        return True
+
     def _values(self):
         return (*(self.fields[key].get() for key in self.fields), self.note.get("1.0", "end-1c"))
 
     def save(self):
+        if not self._online_can_close():
+            return
         try:
             point = make_place(**{key: value.get() for key, value in self.fields.items()},
                                notes=self.note.get("1.0", "end-1c"), place_id=self.record.point.id if self.record else None)
@@ -105,6 +117,8 @@ class PlaceEditor(tk.Toplevel):
         self.destroy()
 
     def close(self):
+        if not self._online_can_close():
+            return
         if self._values() != self.initial and not messagebox.askyesno("Discard unsaved place edits?",
                 "Discard these edits? Your saved waypoint remains unchanged.", parent=self):
             return

@@ -1,181 +1,293 @@
-# Online preparation, offline use
+# Online map preparation and offline use
 
-FieldForge starts offline. The optional portal supplies address matches, published
-map files and planned driving routes. Saved coordinates, MBTiles, map images and
-GPX files open through the existing offline readers without a portal connection.
+FieldForge can connect to an operated map portal while the internet is available,
+then keep the selected maps, coordinates, and route directions on the device.
+The desktop application starts disconnected. Its local maps, saved places, and
+saved routes do not require a portal connection.
 
-This repository includes the desktop client, browser portal and WSGI service.
-It does **not** include a deployed public portal, worldwide map packs, or a
-geocoding/routing subscription. An operator must host the service, configure
-providers and publish maps they have permission to redistribute. The example
-configuration is deliberately empty; it never selects a public provider for you.
+## What the user does
 
-## Desktop workflow
+1. Open **Online Maps** from the section selector or Navigation menu.
+2. Enter the FieldForge portal URL supplied by the operator and connect.
+3. In **Address search**, submit an address and choose the intended result.
+   Results show the full location label and WGS 84 latitude/longitude. Choosing
+   **Use start** or **Use destination** fills the route fields. Filling a saved
+   place opens the existing editor, where **Save place** makes the record persistent.
+   A selected address can also be exported as CSV for the offline GPS place catalog.
+4. In **Map downloads**, choose a pack by coverage, format, version, and size.
+   Download it while connected, then open the completed local file.
+5. In **Routes**, request route alternatives between the chosen coordinates.
+   Inspect the route and its directions, then save the selected route locally.
+6. Disconnect. Open local maps, saved places, and saved route directions as needed.
 
-1. Open **Navigation → Online map portal…**. Enter the operator's HTTPS URL,
-   acknowledge sending entered queries/route coordinates, and choose **Connect**.
-   `FIELDFORGE_MAP_PORTAL` can prefill the URL; it does not connect automatically.
-2. **Address search:** enter an address with city/country and press Search. There
-   is no autocomplete. Choose a possible match explicitly. **Use coordinates**
-   fills the GPS workspace's manual coordinate fields for review; **Show
-   coordinate** remains a separate action. **Copy lat, lon** and **Save place
-   CSV…** work on the selected result, including after disconnecting.
-3. **Places → Add/Edit → Find address online…** fills the place editor's name,
-   latitude, longitude and source note. Close the portal, review the fields, and
-   choose **Save place**. Search never writes a household record automatically.
-4. **Download maps:** load the catalogue, inspect coverage, date and attribution,
-   select a file, and choose a new destination. The desktop checks the declared
-   size, SHA-256 and offline decoder before publishing the file and its
-   `.source.json` companion. **Open downloaded map** also works offline.
-5. **Plan & save route:** use selected address matches as endpoints or enter WGS84
-   latitude/longitude. Request a driving route, then save GPX. Open it using the
-   workspace's GPX controls. The GPX contains a **PLANNED** track, not a recorded
-   trip, and supplies no invented point timestamps. Download its regional map
-   separately. There is no offline route calculation, rerouting or turn guidance.
-6. **Go offline / cancel** disables online controls, cancels unfinished work and
-   rejects late results. A failed desktop request also returns the window to
-   offline mode. Reconnect explicitly; there are no background retries.
+If you use the browser portal, download a route as **route JSON**, then open
+**Online Maps → Routes → Import downloaded route…** in the desktop application.
+Choose that file from Downloads. FieldForge validates it, saves a local copy,
+and opens its directions; this import also works offline and leaves the original
+download unchanged. Browser-downloaded map files can be opened through the
+existing **Maps → Open local map…** or **Navigation → Open map image…** controls.
 
-Disconnecting cannot retract a request already received by the server. An active
-socket read may take up to its eight-second timeout to return. Selected results
-stay in memory until the window closes; saved files remain yours. Place CSVs are
-opened through **Find places / coordinates… → Open place CSV / GeoJSON…**, with the normal
-local-file/WGS84 confirmation. Maps, CSVs and GPX exports are external files and
-are not included in household database backups.
+Typing into the search field does not send an address. Only submitting the query
+does so. The app does not infer an address from household records or obtain the
+device's location for online lookup. A result must be selected before its
+coordinates are used. Several matches may describe different locations.
 
-## Browser workflow
+The address and route services are enabled only when a portal connection has
+been established and the portal advertises that service. A connection failure
+or explicit disconnect disables online requests. Entered coordinates and local
+files remain available. The application does not reconnect automatically.
 
-Open the portal URL, acknowledge sending entered queries and choose **Connect**.
-Search, select, copy or save a place CSV; fill route endpoints and save planned
-GPX; download map packs and source notes. Loss of connectivity disables search
-and map links. Restoring connectivity does not reconnect automatically.
+## Online and offline capabilities
 
-The browser page itself requires the portal to load; it is not a service worker
-or a replacement for the offline desktop. There are no CDN scripts, analytics,
-automatic searches, cookies or local-storage records. Downloaded files can be
-transferred to an offline computer. Browser map downloads use the browser's
-download manager: **Go offline** stops portal API work, but cancel an already
-started file download in that manager. Save its source note and compare the
-SHA-256 before opening; automatic checksum/decoder verification is provided by
-the desktop downloader. Source notes do not establish accuracy or safety.
+| Action | Connection needed? | Data used |
+|---|---|---|
+| Search a new street address | Yes | Configured portal/geocoder |
+| Copy or use an already selected result | No | Result retained in the session |
+| Reopen a saved place | No | Existing FieldForge waypoint database |
+| Browse the current portal catalog | Yes | Operator's published catalog |
+| Download a new map | Yes | Operator's immutable map file |
+| Reopen a completed map download | No | Local MBTiles or image file |
+| Request new driving-route alternatives | Yes | Configured routing server |
+| Read saved route directions | No | Local route JSON |
+| Import a route downloaded through the browser | No | Selected portal route JSON file |
+| Show a saved route over a local map | No | Saved route geometry and local MBTiles |
+| Export a saved planned route as GPX | No | Saved geometry |
+| Recalculate a route after an offline detour | Not implemented | Requires a local routing engine and graph |
 
-## Run a local portal
+An image or raster MBTiles pack supplies the map picture. It is not a routing
+graph. A saved route supplies the chosen path and instructions at the time it
+was requested. It does not update for a road closure, changing conditions,
+traffic, or a departure from that route. Alternative requests can return only
+one route if the provider has no suitable alternatives.
+
+## Local files and portability
+
+The desktop stores its portal settings and downloaded files in `online-maps`
+beside the active FieldForge database. Maps live under `maps`; saved route
+documents live under `routes`. A completed map retains its catalog metadata,
+including attribution, license, coverage, version, and checksum. Route documents
+retain their endpoints, complete geometry, directions, source, attribution,
+license, and retrieval timestamp.
+
+These files are separate from ordinary household-database backups. Back up the
+`online-maps` directory when moving the map/route collection to another device.
+Saved place coordinates continue to use the existing waypoint database and its
+normal backups. Portal URL settings do not store an account password.
+
+The existing **Navigation → Online map portal…** window also remains available.
+It supports choosing an exact destination for a map download and writes a
+`.source.json` companion beside that file. Its place CSV and planned GPX exports
+remain ordinary local files. Back up those chosen locations separately from the
+managed `online-maps` collection.
+
+Inside a place editor, **Find address online…** fills the current editor for
+review and preserves its existing notes. Closing the lookup returns to that
+editor; the lookup does not press **Save place**. The GPS portal action can fill
+the GPS manual-coordinate form, where **Show coordinate** remains a separate
+choice. These actions do not create a receiver fix or start recording.
+
+Downloads stream to a temporary file. Wrong lengths, failed checksums, invalid
+formats, cancellation, and transport failures do not install a completed map.
+Existing files are not silently replaced. A saved route is written as a validated,
+versioned local document. GPX export creates a **planned track**, clearly labeled
+as planned route geometry; it does not fabricate receiver fixes or trip times.
+
+Supported portal map formats are raster MBTiles, PNG, JPEG, WebP, TIFF, GIF,
+BMP, ICO, PPM/PGM/PBM/PNM, TGA, JPEG 2000, and AVIF. The additional image families
+use the existing optional image decoder and require the appropriate installed codec.
+Raster MBTiles use the existing map reader's supported schema and
+image formats. The existing viewer limits are 16 GiB for a raster MBTiles pack
+and 64 MiB for a map image, with at most 32 million pixels and a 32,768-pixel side.
+Publication and desktop installation apply the same image preflight.
+Vector MBTiles, PMTiles, raw OSM PBF, and archive extraction are
+not implemented in this portal client. Opening many image formats uses the
+existing optional Pillow dependency (`pip install ".[maps]"`). An ordinary
+image remains an image reference; downloading it does not calibrate it.
+
+Route JSON documents are limited to 8 MiB, including the saved-file envelope.
+Routes retain up to 50,000 geometry points and 10,000 written instructions within
+that byte limit. The browser exports compact UTF-8 JSON so its downloaded route
+files can be imported by the desktop without expanding beyond the file limit.
+
+## Run a portal locally
 
 From a source checkout:
 
-```sh
-python -m pip install -e ".[maps]"
-python -m fieldforge.map_portal --config examples/map-portal.json --port 8765
+```bash
+python -m fieldforge.online.server --config examples/map-portal.json
 ```
 
-Open `http://127.0.0.1:8765` in a browser, or enter that URL in the desktop.
-The installed equivalent is `fieldforge-map-portal --config /path/portal.json`.
-This development server binds only to loopback. With the empty configuration,
-the catalogue is empty and address/route controls explain that their providers
-are not configured. No household database or account is needed for the portal.
+After installation, `fieldforge-map-portal --config examples/map-portal.json`
+is the equivalent entry point. The earlier module command,
+`python -m fieldforge.map_portal --config examples/map-portal.json`, runs the
+same server. Both module commands accept an optional `--port 8766` override;
+without `--config` they start an unconfigured local portal. The example listens
+on `127.0.0.1:8765`.
+Open `http://127.0.0.1:8765` in a browser, or use that URL in the desktop app.
 
-## Configure providers
+The browser requires an explicit connection choice before requesting portal
+status, maps, addresses, or routes. **Go offline** cancels pending requests and
+retains selected coordinates and route downloads. Restored connectivity alone
+does not reconnect it. `FIELDFORGE_MAP_PORTAL` can prefill the desktop portal URL;
+prefilling a URL does not establish a connection.
 
-Use an owned or contracted **Nominatim-compatible search endpoint** and
-**OSRM-compatible driving endpoint**, reachable over HTTPS. Each configuration
-object has `url`, `name`, and `attribution`, for example:
+The example has an empty catalog and no geocoder/router. It can serve published
+map packs, but address search and route requests remain unavailable until the
+operator configures those services. Empty configuration does not silently fall
+back to a public provider or display fictional worldwide coverage.
+
+`catalog_root` resolves relative to the configuration file. The example uses a
+`portal-maps` directory in the repository root; keep operator data outside the
+source checkout in production.
+
+### Publish a permitted map pack
+
+The catalog publisher copies a file into immutable storage, computes its size
+and checksum, validates its supported format, and records its attribution.
+
+```bash
+python -m fieldforge.online.catalog add \
+  --root ./portal-maps \
+  --file /path/to/permitted-region.mbtiles \
+  --id region-overview-v1 \
+  --title "Regional overview" \
+  --license "License applicable to this map" \
+  --attribution "Required source and creator attribution" \
+  --source "Actual provider or dataset reference" \
+  --coverage "The actual area and detail level covered by this file" \
+  --version "2026-10-03"
+```
+
+The publisher does not acquire rights to a map. Supply the actual license and
+attribution for a file you may distribute. Each catalog entry describes a real
+published file, not a promise of complete world or country coverage. Use new
+IDs for new immutable pack versions.
+The optional `--source` records the map's provider or dataset identity alongside
+its license and attribution; `--file` identifies the file to publish.
+
+### Configure address and routing providers
+
+An operator configuration can contain these provider records:
 
 ```json
 {
-  "url": "https://your-owned-geocoder.example",
-  "name": "Your search provider",
-  "attribution": "The actual data attribution required by your provider"
+  "host": "127.0.0.1",
+  "port": 8765,
+  "catalog_root": "/srv/fieldforge/maps",
+  "public_origin": "https://maps.example.org",
+  "providers": {
+    "geocoding": {
+      "url": "https://geocoder.example.org",
+      "name": "FieldForge address search",
+      "source": "FieldForge geocoder — https://geocoder.example.org",
+      "attribution": "© OpenStreetMap contributors — https://www.openstreetmap.org/copyright",
+      "license": "ODbL 1.0"
+    },
+    "routing": {
+      "url": "https://router.example.org",
+      "name": "FieldForge driving routes",
+      "source": "FieldForge driving graph — https://router.example.org",
+      "attribution": "© OpenStreetMap contributors — https://www.openstreetmap.org/copyright",
+      "license": "ODbL 1.0"
+    }
+  }
 }
 ```
 
-Set this object as `geocoder`; set an equivalent routing object as `router`.
-Use base URLs, without `/search` or `/route/v1/driving`, query strings, embedded
-credentials or redirectors. HTTP is accepted only for localhost development.
-Providers needing API-key headers require an operator-controlled adapter; keys
-must never be put into map manifests, client URLs or browser JavaScript.
+The example hostnames are placeholders. Replace them with services the operator
+actually runs or is authorized to use. Match the attribution and license to
+the underlying data. Provider URLs require HTTPS; explicitly enabled loopback
+HTTP is available for local service testing. The desktop accepts HTTPS portal
+URLs, with HTTP allowed only for loopback development.
 
-The service sends Nominatim `q`, `format=jsonv2`, `limit=5`, and uses OSRM full
-GeoJSON route geometry. The desktop API takes **latitude, longitude**; the
-adapter converts to OSRM's **longitude, latitude** order. Each provider instance
-has a nonblocking request gate (one new request per 1.1 seconds), plus a ten-minute
-in-memory cache limited to 128 entries and 16 MiB of serialized responses. This
-is per process, not a deployment-wide quota or a persistent address database.
-Provider responses remain in memory during their cache lifetime. The operator
-must enforce its contract's total rate, retention and access rules externally.
+The optional provider `name` is the label displayed on connection and defaults
+to its `source`. Request timing and result caching can be configured per provider:
 
-No community public/demo service is a default; known Nominatim/OSRM community
-hosts are rejected. OSM's standard tile endpoint forbids offline bulk downloads.
-Use licensed prepared packs or your own map infrastructure. Relevant primary
-references: [Nominatim search API](https://nominatim.org/release-docs/latest/api/Search/),
-[OSRM API](https://project-osrm.org/docs/v5.24.0/api/),
-[Nominatim policy](https://operations.osmfoundation.org/policies/nominatim/), and
-[OSM tile policy](https://operations.osmfoundation.org/policies/tiles/).
+| Setting | Modern `providers` default | Legacy version-1 default |
+|---|---|---|
+| `minimum_interval_seconds` | `0` (no added request spacing) | `1.1` |
+| `cache_ttl_seconds` | `0` (cache disabled) | `600` |
 
-## Publish regional maps
+Both settings accept 0–3,600 seconds. Each provider permits one request in
+progress per process. When enabled, its process-local cache retains at most
+128 results and 16 MiB of serialized result data. Configure any deployment-wide
+rate limit at the provider or hosting layer; multiple workers have separate gates
+and caches.
 
-`asset_folder` is relative to the configuration file. Put regular map files
-directly in it and add entries to `maps`. A manifest entry has these fields:
+The geocoding adapter uses Nominatim's search API. The routing adapter uses
+OSRM's driving route API with requested alternatives, full GeoJSON geometry,
+and maneuver steps. OSRM's transport profile comes from the data used to build
+the router; changing a URL segment does not create walking or cycling coverage.
 
-| Field | Meaning |
-| --- | --- |
-| `id` | Distinct lowercase letters, digits and dashes; maximum 80 characters |
-| `title`, `coverage` | Human-readable title and actual geographic coverage |
-| `filename`, `kind` | Portable basename; kind `mbtiles` or `image` |
-| `size`, `sha256` | Exact byte count and lowercase SHA-256 of the published file |
-| `updated` | Actual source revision/vintage, or explicitly unknown |
-| `source`, `attribution`, `license` | Actual origin, required credit and redistribution terms |
+### Existing portal configurations
 
-For example, obtain a file's size/hash without loading it all into memory:
+Version-1 configurations retain `geocoder`/`router`, `asset_folder`, and inline
+`maps`, including their `kind`, `size`, and `updated` fields. They use the same
+portal and validation as the modern configuration. Original map files are
+verified and served read-only in place; loading a legacy configuration does not
+copy files or rewrite the configuration. Prefer `catalog_root` and the catalog
+publisher for new deployments.
+
+Before upgrading a legacy configuration, add an explicit `license` to each
+configured geocoder and router. Use the actual provider/data license; startup
+rejects a missing license because it cannot be inferred from a provider name.
+
+## Operate a public portal
+
+The included Python server is a self-hostable application, not a purchased
+hosting account or a deployed worldwide map service. Put it behind a maintained
+HTTPS reverse proxy and configure the public origin. Supply capacity, request
+limits, access control if needed, backups, storage, and actual regional data at
+the hosting layer. The application is deliberately read-only over HTTP: map
+publication is an operator CLI operation, not an anonymous upload endpoint.
+
+Set `public_origin` to the exact external HTTPS origin, such as
+`https://maps.example.org` or `https://maps.example.org:8443`, and preserve its
+host and any nondefault port in the forwarded `Host` header. Host the portal at that
+origin's root; a URL subpath is unsupported. A rewritten upstream host can cause
+the portal's Host/Origin checks to reject browser requests.
+
+For an existing WSGI deployment, the compatible entry point is:
 
 ```python
-import hashlib
-from pathlib import Path
+from fieldforge.map_portal import create_app
 
-path = Path("maps/your-region.mbtiles")
-digest = hashlib.sha256()
-with path.open("rb") as stream:
-    for block in iter(lambda: stream.read(1024**2), b""):
-        digest.update(block)
-print(path.stat().st_size, digest.hexdigest())
+application = create_app("/etc/fieldforge/map-portal.json")
 ```
 
-Catalogue limit: 500 files; MBTiles limit: 16 GiB; images: 64 MiB. File names must
-be ASCII letters/digits/dot/underscore/dash with no path components or Windows
-device names. Start-up verifies each file's size/hash. Restart with an updated
-manifest when replacing files; never modify a published file in place.
+The WSGI host and reverse proxy must bound incoming header/body reads, concurrent
+requests, and request runtime, including clients that send data slowly.
+`request_timeout_seconds` limits provider requests, not incoming WSGI reads.
+The included native server has a 15-second socket timeout and a 16-request
+worker bound; retain the public hosting controls when using it behind a proxy.
 
-Supported MBTiles are flat, indexed **raster** packs using PNG/JPEG/WebP, Web
-Mercator/TMS, 256- or 512-pixel square tiles. Vector/PBF and normalized/view-based
-MBTiles are unsupported. Supported map-image families include PNG, JPEG, WebP,
-TIFF, BMP, GIF, ICO, PPM, TGA, JPEG 2000 and AVIF, subject to installed codecs.
-Images remain uncalibrated references, without GPS overlays or GeoTIFF/world-file
-interpretation. See [GPS workspace](GPS_WORKSPACE.md) and [map limits](OFFLINE_MAPS.md).
+The desktop sends a submitted address or chosen route coordinates to this
+portal; the portal forwards that request to the configured provider. The server
+does not write address/query access logs itself. Configure proxy and provider
+logging with this data flow in mind. No service credentials should be embedded
+in a distributed desktop application.
 
-## Production service
+## Provider references and implementation decisions
 
-Deploy `fieldforge.map_portal.create_app("/absolute/path/portal.json")` with a
-production WSGI server behind HTTPS. For example, an operator-owned `portal_wsgi.py`
-can expose `application = create_app(...)`. Serve at the site's root: browser
-asset/API paths are absolute. Do not expose the `wsgiref` development server.
+- [Nominatim search API](https://nominatim.org/release-docs/latest/api/Search/)
+  documents free-form address queries and coordinate results.
+- [OSMF public Nominatim policy](https://operations.osmfoundation.org/policies/nominatim/)
+  imposes app-wide limits, identification, and other restrictions on its public
+  server. FieldForge has no hidden public-geocoder default.
+- [OSRM route API](https://project-osrm.org/docs/v5.24.0/api/) describes
+  alternatives, full route geometry, steps, and profile behavior.
+- [OSRM demo-server policy](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
+  limits the public demonstration service. It is not a commercial backend default.
+- [OSMF tile policy](https://operations.osmfoundation.org/policies/tiles/)
+  prohibits offline tile scraping/prefetch from the public standard tile service.
+  The portal serves prepared files from its own catalog instead.
+- [OpenStreetMap data license](https://www.openstreetmap.org/copyright) and
+  [Natural Earth terms](https://www.naturalearthdata.com/about/terms-of-use/)
+  are relevant starting points for permitted data production. Neither link
+  means that its datasets are already installed in this repository.
 
-Terminate TLS with a trusted proxy that supplies the correct WSGI URL scheme and
-Host; same-origin POST checks depend on those values. Configure request-size and
-time limits, deployment-wide quotas, bandwidth limits and provider egress. The
-portal API has no built-in authentication or billing. Choose public access only
-when intended; private deployments need access controls compatible with the
-desktop client (which sends no browser session cookies).
-
-The app does not log queries, but your proxy, WSGI host and upstream providers
-may. Keep address/coordinate bodies and upstream query URLs out of access logs.
-Serve a separate directory of approved map packs; never point it at household
-files or allow untrusted writers to change active map files/configuration.
-
-## Verification
-
-`tests/test_online_portal.py` exercises real localhost HTTP, provider adaptation,
-offline gating, result validation, checksum/image validation and partial-file
-cleanup. `tests/test_online_maps_ui.py` exercises real Tk actions, reviewed
-place saves and cancellation. `tests/test_online_portal_browser.py` runs in the
-Chromium/WebKit CI jobs and reopens browser exports with the offline readers.
-Fixtures are fictional; these checks do not establish real provider coverage,
-address accuracy, route suitability or a working public deployment.
+Future work includes operating the public portal, adding licensed US-first and
+then worldwide map coverage, regional routing graphs for genuine offline
+recalculation, walking/cycling providers, and independent mobile application
+packaging. This implementation extends the current desktop application and
+adds a browser portal; it does not claim finished Android or iOS native apps.

@@ -26,13 +26,14 @@ fieldforge = "fieldforge.cli:main"
 fieldforge-gui = "fieldforge.ui.desktop:run"
 fieldforge-gps = "fieldforge_gps.__main__:main"
 fieldforge-workspace = "fieldforge_gps.live_map_ui:main"
-fieldforge-map-portal = "fieldforge.map_portal:main"
+fieldforge-map-portal = "fieldforge.online.server:main"
 
 [tool.setuptools.packages.find]
 include = ["fieldforge*"]
 
 [tool.setuptools.package-data]
 fieldforge_gps = ["data/*"]
+"fieldforge.online" = ["portal.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

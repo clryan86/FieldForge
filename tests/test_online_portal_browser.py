@@ -1,133 +1,485 @@
-"""Browser portal served over real localhost HTTP; no public data requests."""
+"""Browser portal -> downloaded route -> offline desktop storage compatibility.
 
-import hashlib
+The existing Chromium/WebKit CI job opts in. No live third-party service or real
+personal address is involved: both portal and providers are local test servers.
+"""
+
 import json
+import os
+from xml.etree import ElementTree as ET
 
 import pytest
-from test_online_portal import map_entry as map_entry
-from test_online_portal import portal as portal
-from test_pocket_browser import browser as browser
+import test_online_integration
 
+from fieldforge.online.storage import PortalLibrary
 from fieldforge_gps.gpx_review import parse_gpx
 from fieldforge_gps.places import read_catalog
 
+operated_portal = test_online_integration.operated_portal
+
+pytestmark = pytest.mark.skipif(
+    os.environ.get("FIELDFORGE_PORTAL_BROWSER_TESTS") != "1",
+    reason="The dedicated Chromium/WebKit CI job requires the portal browser workflow",
+)
+
+
+def _connect(page):
+    from playwright.sync_api import expect
+
+    page.locator("#consent").check()
+    page.locator("#connect").click()
+    expect(page.locator("#connectionBadge")).to_have_text("Portal connected")
+
+
+def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp_path):
+    from playwright.sync_api import expect, sync_playwright
+
+    url, provider, source, asset = operated_portal
+    # Provider data must remain literal text in the page and in downloaded XML.
+    label = 'Fixture Depot <img src=x onerror="window.bad=true">'
+    provider.geocoding[0]["display_name"] = label
+    failures, calls = [], []
+    with sync_playwright() as playwright:
+        browser_type = getattr(playwright, os.environ.get("FIELDFORGE_BROWSER", "chromium"))
+        browser = browser_type.launch()
+        context = browser.new_context(viewport={"width": 1280, "height": 900}, accept_downloads=True)
+        page = context.new_page()
+        page.on("pageerror", lambda error: failures.append(str(error)))
+        page.on("request", lambda request: calls.append(request.url))
+        try:
+            page.goto(url, wait_until="networkidle")
+            assert not any("/api/" in call for call in calls)
+            expect(page.locator("#addressQuery")).to_be_disabled()
+            expect(page.locator("#routeButton")).to_be_disabled()
+            expect(page.locator("#connectionBadge")).to_have_text("Offline")
+            page.locator("#connect").click()
+            expect(page.locator("#connectionStatus")).to_contain_text("Choose to send")
+            assert not any("/api/" in call for call in calls)
+            page.locator("#consent").check()
+            assert not any("/api/" in call for call in calls)
+            page.locator("#connect").click()
+            expect(page.locator("#addressQuery")).to_be_enabled()
+            expect(page.locator("#mapCatalog .map-card")).to_have_count(1)
+            expect(page.locator("#providers")).to_contain_text("Fixture geocoder")
+            assert provider.requests == []
+            page.locator("#addressQuery").fill("Fixture Depot")
+            assert provider.requests == []  # No autocomplete/request on keystrokes.
+            page.locator("#searchButton").click()
+            expect(page.locator("#searchResults .result")).to_have_count(2)
+            expect(page.locator("#searchResults .result h3").first).to_have_text(label)
+            assert page.locator("#searchResults img").count() == 0
+            expect(page.locator("#selectedAddress")).to_be_hidden()
+            results = page.locator("#searchResults .result")
+            results.nth(0).get_by_role("button", name="Select place", exact=True).click()
+            expect(page.locator("#selectedAddressTitle")).to_have_text(label)
+            assert page.locator("#selectedAddress img").count() == 0
+            results.nth(0).get_by_role("button", name="Use as start", exact=True).click()
+            results.nth(1).get_by_role("button", name="Use as destination", exact=True).click()
+            expect(page.locator("#startLatitude")).to_have_value("40")
+            expect(page.locator("#startLongitude")).to_have_value("-75")
+            expect(page.locator("#endLatitude")).to_have_value("40.02")
+            expect(page.locator("#endLongitude")).to_have_value("-75.01")
+
+            with page.expect_download() as transfer:
+                page.get_by_role("link", name="Download " + asset["title"], exact=True).click()
+            downloaded_map = tmp_path / transfer.value.suggested_filename
+            transfer.value.save_as(downloaded_map)
+            assert downloaded_map.read_bytes() == source.read_bytes()
+
+            page.locator("#routeButton").click()
+            expect(page.locator("#routeOptions .route-card")).to_have_count(2)
+            page.locator("#routeOptions .route-card").nth(1).get_by_role("button", name="Review").click()
+            expect(page.locator("#routePreview")).to_be_visible()
+            expect(page.locator("#routeDetails")).to_contain_text("Turn right onto Test Lane.")
+            encoded_positions = provider.requests[-1]["path"].split("/route/v1/driving/", 1)[1].split("?", 1)[0]
+            assert [tuple(map(float, point.split(","))) for point in encoded_positions.split(";")] == [
+                (-75.0, 40.0), (-75.01, 40.02),
+            ]
+            provider_requests = len(provider.requests)
+            context.set_offline(True)
+            expect(page.locator("#addressQuery")).to_be_disabled()
+            expect(page.locator("#routeButton")).to_be_disabled()
+            expect(page.locator("#startLongitude")).to_have_value("-75")
+            assert page.locator(".download-link").get_attribute("href") is None
+            assert page.locator("#downloadPlace").is_enabled()
+            with page.expect_download() as transfer:
+                page.locator("#downloadPlace").click()
+            downloaded_place = tmp_path / transfer.value.suggested_filename
+            transfer.value.save_as(downloaded_place)
+            selected = read_catalog(downloaded_place, consent=True, wgs84_confirmed=True).places[0]
+            assert selected.name == provider.geocoding[1]["display_name"]
+            assert (selected.latitude, selected.longitude) == (40.02, -75.01)
+            assert "Fixture geocoder" in selected.source
+            page.locator("#mapCatalog summary").click()
+            with page.expect_download() as transfer:
+                page.get_by_role("button", name="Save map details", exact=True).click()
+            source_note = tmp_path / transfer.value.suggested_filename
+            transfer.value.save_as(source_note)
+            assert json.loads(source_note.read_bytes())["sha256"] == asset["sha256"]
+            with page.expect_download() as transfer:
+                page.locator("#downloadRoute").click()
+            downloaded_route = tmp_path / transfer.value.suggested_filename
+            transfer.value.save_as(downloaded_route)
+            assert downloaded_route.name.endswith(".route.json")
+            envelope = json.loads(downloaded_route.read_text())
+            library = PortalLibrary(tmp_path / "offline-library")
+            installed_route = library.import_route(downloaded_route)
+            route = library.load_route(installed_route)
+            assert route == envelope["route"]
+            assert route["geometry"][1] == [-75.008, 40.012]
+            assert route["steps"][1]["instruction"] == "Turn right onto Test Lane."
+
+            with page.expect_download() as transfer:
+                page.locator("#downloadGpx").click()
+            downloaded_gpx = tmp_path / transfer.value.suggested_filename
+            transfer.value.save_as(downloaded_gpx)
+            document = ET.fromstring(downloaded_gpx.read_bytes())
+            ns = {"g": "http://www.topografix.com/GPX/1/1"}
+            assert document.find("g:trk/g:type", ns).text == "planned-route"
+            assert document.findall(".//g:trkpt/g:time", ns) == []
+            assert len(document.findall(".//g:trkpt", ns)) == len(route["geometry"])
+            assert parse_gpx(downloaded_gpx.read_bytes()).point_count == len(route["geometry"])
+            assert len(provider.requests) == provider_requests
+
+            # A network-online event enables Connect but never starts API work.
+            old_calls = len(calls)
+            context.set_offline(False)
+            expect(page.locator("#connect")).to_be_enabled()
+            expect(page.locator("#addressQuery")).to_be_disabled()
+            assert len(calls) == old_calls
+            _connect(page)
+            expect(page.locator("#addressQuery")).to_be_enabled()
+            page.locator("#disconnect").click()
+            expect(page.locator("#connectionBadge")).to_have_text("Offline")
+            expect(page.locator("#addressQuery")).to_be_disabled()
+            assert page.locator(".download-link").get_attribute("href") is None
+            assert len(provider.requests) == provider_requests
+
+            page.set_viewport_size({"width": 390, "height": 844})
+            assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+            expect(page.locator("#downloadRoute")).to_be_enabled()
+            page.screenshot(path=str(tmp_path / "portal-mobile-offline.png"), full_page=True)
+            assert all(not origin["localStorage"] for origin in context.storage_state()["origins"])
+            assert all(call.startswith(url + "/") or call.startswith("blob:") for call in calls)
+            assert failures == []
+        finally:
+            context.close()
+            browser.close()
+
 
 @pytest.fixture
-def page(browser, portal):
-    context = browser.new_context(accept_downloads=True, viewport={"width": 1280, "height": 1000})
-    tab = context.new_page()
+def offline_route_download_page(operated_portal):
+    from playwright.sync_api import expect, sync_playwright
+
+    url, provider, _source, _asset = operated_portal
+    failures = []
+    with sync_playwright() as playwright:
+        browser_type = getattr(playwright, os.environ.get("FIELDFORGE_BROWSER", "chromium"))
+        browser = browser_type.launch()
+        context = browser.new_context(viewport={"width": 1280, "height": 900}, accept_downloads=True)
+        page = context.new_page()
+        page.on("pageerror", lambda error: failures.append(str(error)))
+        try:
+            page.goto(url, wait_until="networkidle")
+            _connect(page)
+            expect(page.locator("#connectionBadge")).to_have_text("Portal connected")
+            context.set_offline(True)
+            expect(page.locator("#connectionBadge")).to_have_text("Offline")
+            yield page, provider
+        finally:
+            context.close()
+            browser.close()
+    assert failures == []
+
+
+def _large_browser_export_route():
+    from fieldforge.online.models import validate_route
+
+    geometry = [
+        [-75.123456789 + index * 1e-8, 40.123456789 + index * 1e-8]
+        for index in range(50_000)
+    ]
+    return validate_route({
+        "id": "large-fictional-browser-route",
+        "title": "Large fictional browser export",
+        "mode": "driving",
+        "distance_m": 10_000,
+        "duration_s": 10_000,
+        "geometry": geometry,
+        "steps": [{
+            "instruction": "Turn right onto " + "X" * 400 + ".",
+            "distance_m": 1,
+            "duration_s": 1,
+            "latitude": 40,
+            "longitude": -75,
+        } for _ in range(10_000)],
+        "start": {"latitude": geometry[0][1], "longitude": geometry[0][0]},
+        "end": {"latitude": geometry[-1][1], "longitude": geometry[-1][0]},
+        "source": "Original FieldForge browser regression fixture",
+        "attribution": "Synthetic route data for software verification; no real roads.",
+        "license": "CC0-1.0",
+        "created_at": "2026-10-04T00:00:00Z",
+    })
+
+
+def test_large_browser_route_download_stays_importable(offline_route_download_page, tmp_path):
+    from fieldforge.online.models import MAX_JSON_BYTES
+
+    page, provider = offline_route_download_page
+    route = _large_browser_export_route()
+    envelope = {
+        "schema_version": 1, "kind": "planned-route",
+        "saved_at": "2026-10-04T00:00:00.000Z", "route": route,
+    }
+    # This valid route reproduces the regression: indentation alone used to make
+    # its browser download larger than the desktop's complete-document limit.
+    compact = json.dumps(envelope, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    pretty = json.dumps(envelope, ensure_ascii=False, indent=2).encode("utf-8")
+    assert len(compact) <= MAX_JSON_BYTES < len(pretty)
+    page.evaluate("""route => {
+        state.routes = [route];
+        state.selected = route;
+        document.getElementById("routePreview").hidden = false;
+    }""", route)
+    with page.expect_download() as transfer:
+        page.locator("#downloadRoute").click()
+    downloaded = tmp_path / transfer.value.suggested_filename
+    transfer.value.save_as(downloaded)
+    document_bytes = downloaded.read_bytes()
+    assert downloaded.name.endswith(".route.json")
+    assert len(document_bytes) <= MAX_JSON_BYTES
+    assert json.loads(document_bytes)["route"] == route
+    library = PortalLibrary(tmp_path / "large-route-offline-library")
+    imported = library.import_route(downloaded)
+    assert library.load_route(imported) == route
+    assert PortalLibrary(library.root).load_route(imported) == route
+    assert downloaded.read_bytes() == document_bytes
+    assert provider.requests == []
+
+
+def test_oversized_utf8_route_envelope_shows_error_without_download(offline_route_download_page):
+    from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+    from playwright.sync_api import expect
+
+    from fieldforge.online.models import MAX_JSON_BYTES
+
+    page, provider = offline_route_download_page
+    sizes = page.evaluate("""({route, limit}) => {
+        const envelope = {
+            schema_version: 1, kind: "planned-route",
+            saved_at: new Date().toISOString(), route,
+        };
+        const byteSize = value => new Blob([JSON.stringify(value)]).size;
+        let remaining = limit + 1 - byteSize(envelope);
+        if (remaining <= 0) throw new Error("The base fixture must fit the document limit.");
+        for (const step of route.steps) {
+            const room = 1000 - step.instruction.length;
+            const unicode = Math.min(room, Math.floor(remaining / 2));
+            step.instruction += "é".repeat(unicode);
+            remaining -= unicode * 2;
+            if (remaining === 1 && unicode < room) {
+                step.instruction += "X";
+                remaining--;
+            }
+            if (remaining === 0) break;
+        }
+        if (remaining !== 0) throw new Error("Insufficient valid instruction space for the fixture.");
+        state.routes = [route];
+        state.selected = route;
+        window.__routeBeforeFailedExport = JSON.stringify(route);
+        document.getElementById("routePreview").hidden = false;
+        return {
+            routeBytes: byteSize(route),
+            envelopeBytes: byteSize(envelope),
+            envelopeCharacters: JSON.stringify(envelope).length,
+            longestInstruction: Math.max(...route.steps.map(step => step.instruction.length)),
+        };
+    }""", {"route": _large_browser_export_route(), "limit": MAX_JSON_BYTES})
+    # Neither measuring just the route nor counting JavaScript characters catches
+    # this exact full-envelope overflow; the multibyte text must be counted.
+    assert sizes["routeBytes"] <= MAX_JSON_BYTES
+    assert sizes["envelopeCharacters"] < MAX_JSON_BYTES
+    assert sizes["envelopeBytes"] == MAX_JSON_BYTES + 1
+    assert sizes["longestInstruction"] <= 1000
+    downloads = []
+    page.on("download", downloads.append)
+    with pytest.raises(PlaywrightTimeoutError):
+        with page.expect_download(timeout=1000):
+            page.locator("#downloadRoute").click()
+    expect(page.locator("#routeStatus.error")).to_be_visible()
+    expect(page.locator("#routeStatus")).to_contain_text("8 MiB")
+    expect(page.locator("#downloadRoute")).to_be_enabled()
+    assert downloads == []
+    assert page.evaluate("""() => state.selected === state.routes[0]
+        && JSON.stringify(state.selected) === window.__routeBeforeFailedExport""")
+    assert provider.requests == []
+
+
+@pytest.fixture
+def portal_page(operated_portal):
+    from playwright.sync_api import sync_playwright
+
+    url = operated_portal[0]
     errors, calls = [], []
-    tab.on("pageerror", lambda error: errors.append(str(error)))
-    tab.on("request", lambda request: calls.append(request.url))
-    tab.goto(portal[0], wait_until="networkidle")
-    assert not any("/api/" in url for url in calls)
-    yield tab, context, calls
-    assert all(not origin["localStorage"] for origin in context.storage_state()["origins"])
-    context.close()
-    assert not errors
-    assert all(url.startswith(portal[0] + "/") or url.startswith("blob:") for url in calls)
+    with sync_playwright() as playwright:
+        browser_type = getattr(playwright, os.environ.get("FIELDFORGE_BROWSER", "chromium"))
+        browser = browser_type.launch()
+        context = browser.new_context(accept_downloads=True, viewport={"width": 1280, "height": 900})
+        page = context.new_page()
+        page.on("pageerror", lambda error: errors.append(str(error)))
+        page.on("request", lambda request: calls.append(request.url))
+        try:
+            yield page, context, calls
+            assert all(not origin["localStorage"] for origin in context.storage_state()["origins"])
+        finally:
+            context.close()
+            browser.close()
+    assert errors == []
+    assert all(call.startswith(url + "/") or call.startswith("blob:") for call in calls)
 
 
-def connect(page):
-    tab = page[0]
-    tab.locator("#consent").check()
-    tab.locator("#connect").click()
-    tab.wait_for_function("() => !document.querySelector('#query').disabled")
+def test_disconnect_rejects_late_search_and_network_failure_requires_connect(portal_page, operated_portal):
+    from playwright.sync_api import expect
+
+    page, _context, calls = portal_page
+    # The first search deliberately ignores AbortSignal. Its late completion
+    # must not replace results from a new explicit connection or change controls.
+    page.add_init_script("""(() => {
+        const original = window.fetch.bind(window);
+        let holdFirstSearch = true;
+        window.fetch = (path, options) => {
+            if (path === "/api/v1/search" && holdFirstSearch) {
+                holdFirstSearch = false;
+                window.__heldSearchSignal = options.signal;
+                return new Promise(resolve => {
+                    window.__finishOldSearch = () => resolve(new Response(JSON.stringify({results: [{
+                        label: "Obsolete search must not replace new results", latitude: 1, longitude: 2,
+                        source: "Fixture", attribution: "Fixture", license: "CC0-1.0",
+                        retrieved_at: "2026-10-04T00:00:00Z",
+                    }]}), {status: 200, headers: {"Content-Type": "application/json"}}));
+                });
+            }
+            return original(path, options);
+        };
+    })();""")
+    page.goto(operated_portal[0], wait_until="networkidle")
+    assert not any("/api/" in call for call in calls)
+    _connect(page)
+    page.locator("#addressQuery").fill("First fictional search")
+    page.locator("#searchButton").click()
+    page.wait_for_function("() => typeof window.__finishOldSearch === 'function'")
+    page.locator("#disconnect").click()
+    expect(page.locator("#connectionBadge")).to_have_text("Offline")
+    assert page.evaluate("window.__heldSearchSignal.aborted")
+    _connect(page)
+    page.locator("#addressQuery").fill("New fictional search")
+    page.locator("#searchButton").click()
+    expect(page.locator("#searchResults .result")).to_have_count(2)
+    expected = page.locator("#searchResults").text_content()
+    page.evaluate("async () => { window.__finishOldSearch(); await new Promise(resolve => setTimeout(resolve, 0)); }")
+    expect(page.locator("#searchResults")).to_have_text(expected)
+    expect(page.locator("#connectionBadge")).to_have_text("Portal connected")
+    expect(page.locator("#addressQuery")).to_be_enabled()
+
+    page.route("**/api/v1/search", lambda request: request.abort("failed"))
+    page.locator("#addressQuery").fill("Network failure fixture")
+    page.locator("#searchButton").click()
+    expect(page.locator("#connectionBadge")).to_have_text("Offline")
+    expect(page.locator("#connectionStatus")).to_contain_text("Press Connect")
+    before_online_event = len(calls)
+    page.evaluate("window.dispatchEvent(new Event('online'))")
+    expect(page.locator("#connect")).to_be_enabled()
+    expect(page.locator("#addressQuery")).to_be_disabled()
+    assert len(calls) == before_online_event
+    expect(page.locator("#searchResults")).to_have_text(expected)
 
 
-def select_address(page):
-    tab = page[0]
-    tab.locator("#query").fill("Fictional Beacon")
-    tab.locator("#search").click()
-    tab.locator(".result").first.wait_for()
-    assert tab.locator("#selected").is_hidden()
-    tab.locator(".result").first.click()
-    assert tab.locator("#coordinates").input_value() == "10.125, 20.25"
-    assert "<test>" in tab.locator("#address-label").inner_text()
-    assert tab.locator("#address-label test").count() == 0
+def test_selected_csv_tiny_coordinates_and_full_source_survive_offline(portal_page, operated_portal, tmp_path):
+    from playwright.sync_api import expect
 
+    from fieldforge.online.models import validate_search_result
 
-def save_download(tab, selector, target):
-    with tab.expect_download() as pending:
-        tab.locator(selector).click()
-    pending.value.save_as(target)
-
-
-def test_offline_search_gate_selected_coordinates_save_and_no_autoreconnect(page, portal, tmp_path):
-    tab, context, calls = page
-    assert tab.locator("#query").is_disabled()
-    tab.locator("#connect").click()
-    assert not any("/api/" in url for url in calls)
-    connect(page)
-    tab.locator("#query").fill("Fictional")
-    assert not portal[2]  # Typing is not autocomplete or an automatic search.
-    select_address(page)
+    page, context, calls = portal_page
+    url, provider, _source, _asset = operated_portal
+    chosen = validate_search_result({
+        "label": 'Fictional "tiny", مكان <test> ' + "界" * 170,
+        "latitude": 1e-7, "longitude": -2e-7,
+        "source": "Original fixture " + "S" * 450,
+        "attribution": "Original fixture attribution " + "A" * 3000,
+        "license": "CC0-1.0", "retrieved_at": "2026-10-04T00:00:00Z",
+    })
+    page.route("**/api/v1/search", lambda request: request.fulfill(json={"results": [chosen]}))
+    candidate = provider.routing["routes"][0]
+    candidate["geometry"]["coordinates"] = [[-2e-7, 1e-7], [0.0, 0.0]]
+    candidate["legs"][0]["steps"] = [candidate["legs"][0]["steps"][0], candidate["legs"][0]["steps"][-1]]
+    candidate["legs"][0]["steps"][0]["maneuver"]["location"] = [-2e-7, 1e-7]
+    candidate["legs"][0]["steps"][1]["maneuver"]["location"] = [0.0, 0.0]
+    provider.routing["routes"] = [candidate]
+    page.goto(url, wait_until="networkidle")
+    assert not any("/api/" in call for call in calls)
+    _connect(page)
+    page.locator("#addressQuery").fill("Fictional tiny place")
+    page.locator("#searchButton").click()
+    expect(page.locator("#searchResults .result")).to_have_count(1)
+    expect(page.locator("#selectedAddress")).to_be_hidden()
+    page.get_by_role("button", name="Select place", exact=True).click()
+    expect(page.locator("#selectedAddressTitle")).to_have_text(chosen["label"])
+    assert page.locator("#selectedAddressTitle test").count() == 0
+    page.get_by_role("button", name="Use as start", exact=True).click()
+    expect(page.locator("#startLatitude")).to_have_value("0.0000001")
+    expect(page.locator("#startLongitude")).to_have_value("-0.0000002")
+    page.locator("#endLatitude").fill("0")
+    page.locator("#endLongitude").fill("0")
+    page.locator("#routeButton").click()
+    expect(page.locator("#routePreview")).to_be_visible()
+    page.locator("#endLatitude").fill("1")
+    expect(page.locator("#routeSelectionStatus")).to_be_visible()
+    expect(page.locator("#routeProvenance")).to_contain_text("to 0, 0")
     context.set_offline(True)
-    tab.wait_for_function("() => document.querySelector('#query').disabled")
-    assert tab.locator("a.download").get_attribute("href") is None
-    target = tmp_path / "place.csv"
-    save_download(tab, "#save-address", target)
-    assert read_catalog(target, consent=True, wgs84_confirmed=True).places[0].longitude == 20.25
-    old_calls = len(calls)
-    context.set_offline(False)
-    tab.wait_for_function("() => !document.querySelector('#connect').disabled")
-    assert tab.locator("#query").is_disabled() and len(calls) == old_calls
+    expect(page.locator("#connectionBadge")).to_have_text("Offline")
+    with page.expect_download() as pending:
+        page.locator("#downloadPlace").click()
+    csv_path = tmp_path / pending.value.suggested_filename
+    pending.value.save_as(csv_path)
+    catalog = read_catalog(csv_path, consent=True, wgs84_confirmed=True)
+    place = catalog.places[0]
+    assert (place.latitude, place.longitude) == (1e-7, -2e-7)
+    assert len(place.name) <= 160 and place.name.startswith('Fictional "tiny", مكان <test>')
+    assert len(place.source) <= 512 and "fieldforge-place.source.json" in place.source
+    expect(page.locator("#searchStatus")).to_contain_text("shortened")
+    with page.expect_download() as pending:
+        page.locator("#downloadPlaceDetails").click()
+    source_path = tmp_path / pending.value.suggested_filename
+    pending.value.save_as(source_path)
+    assert json.loads(source_path.read_bytes()) == chosen
+    with page.expect_download() as pending:
+        page.locator("#downloadGpx").click()
+    gpx_path = tmp_path / pending.value.suggested_filename
+    pending.value.save_as(gpx_path)
+    assert parse_gpx(gpx_path.read_bytes()).point_count == 2
+    assert b'lat="0.0000001"' in gpx_path.read_bytes()
+    assert b'lon="-0.0000002"' in gpx_path.read_bytes()
+    page.set_viewport_size({"width": 390, "height": 844})
+    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
 
 
-def test_route_map_and_source_downloads_survive_offline(page, portal, tmp_path, map_entry):
-    tab = page[0]
-    connect(page)
-    select_address(page)
-    tab.locator("#use-start").click()
-    tab.locator("#end-lat").fill("10.4")
-    tab.locator("#end-lon").fill("20.5")
-    tab.locator("#plan").click()
-    tab.locator("#route-result").wait_for(state="visible")
-    assert "20.25,10.125;20.5,10.4" in portal[2][-1][0]
-    target = tmp_path / "map.mbtiles"
-    save_download(tab, "a.download", target)
-    assert hashlib.sha256(target.read_bytes()).hexdigest() == map_entry["sha256"]
-    tab.locator("#disconnect").click()
-    note = tmp_path / "source.json"
-    save_download(tab, ".map-card button", note)
-    assert json.loads(note.read_text())["sha256"] == map_entry["sha256"]
-    route = tmp_path / "route.gpx"
-    save_download(tab, "#save-route", route)
-    assert parse_gpx(route.read_bytes()).point_count == 3
-    assert b"PLANNED" in route.read_bytes() and b"<time>" not in route.read_bytes()
+def test_unconfigured_provider_status_keeps_online_actions_unavailable(portal_page, operated_portal):
+    from playwright.sync_api import expect
 
-
-def test_tiny_coordinates_export_as_decimal_and_mobile_does_not_overflow(page, tmp_path):
-    tab = page[0]
-    connect(page)
-    # Server-valid small coordinates must remain readable by the offline readers.
-    tab.route("**/api/v1/search", lambda route: route.fulfill(json={"results": [{
-        "label": "Fictional tiny coordinate", "latitude": 1e-7, "longitude": -2e-7,
-        "source": "Fixture", "attribution": "Original fixture"}]}))
-    tab.route("**/api/v1/route", lambda route: route.fulfill(json={"profile": "driving",
-        "coordinates": [[-2e-7, 1e-7], [0, 0]], "distance_m": 1, "duration_s": 1,
-        "source": "Fixture", "attribution": "Original fixture", "created_at": "2026-10-04"}))
-    tab.set_viewport_size({"width": 390, "height": 844})
-    tab.locator("#query").fill("Fictional")
-    tab.locator("#search").click()
-    tab.locator(".result").click()
-    tab.locator("#use-start").click()
-    tab.locator("#use-end").click()
-    assert tab.locator("#start-lat").input_value() == "0.0000001"
-    tab.locator("#plan").click()
-    tab.locator("#route-result").wait_for(state="visible")
-    assert tab.evaluate("document.documentElement.scrollWidth <= innerWidth")
-    target = tmp_path / "tiny.gpx"
-    save_download(tab, "#save-route", target)
-    assert parse_gpx(target.read_bytes()).point_count == 2
-    assert b'lat="0.0000001"' in target.read_bytes()
-
-
-def test_unconfigured_providers_keep_search_and_route_unavailable(page, portal):
-    portal[1].geocoder = portal[1].router = None
-    tab = page[0]
-    tab.locator("#consent").check()
-    tab.locator("#connect").click()
-    tab.wait_for_function("() => !document.querySelector('#refresh').disabled")
-    assert tab.locator("#query").is_disabled() and tab.locator("#plan").is_disabled()
-    assert "not configured" in tab.locator("#status").inner_text()
+    page, _context, calls = portal_page
+    page.route("**/api/v1/status", lambda request: request.fulfill(json={
+        "api_version": 1, "name": "Unconfigured fixture portal", "geocoding": False,
+        "routing": False, "catalog": True, "route_modes": [], "providers": {},
+    }))
+    page.goto(operated_portal[0], wait_until="networkidle")
+    assert not any("/api/" in call for call in calls)
+    _connect(page)
+    expect(page.locator("#mapCatalog .map-card")).to_have_count(1)
+    expect(page.locator("#addressQuery")).to_be_disabled()
+    expect(page.locator("#routeButton")).to_be_disabled()
+    expect(page.locator("#connectionStatus")).to_contain_text("Address provider not configured")
+    expect(page.locator("#connectionStatus")).to_contain_text("Route provider not configured")
+    expect(page.locator("#providers")).to_be_hidden()
+    page.locator("#consent").uncheck()
+    expect(page.locator("#connectionBadge")).to_have_text("Offline")
+    assert page.locator(".download-link").get_attribute("href") is None

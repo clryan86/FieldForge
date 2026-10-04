@@ -1,272 +1,132 @@
-"""Operator-configured WSGI map portal. No public provider is selected by default.
+"""Compatibility entry points for the unified FieldForge map portal.
 
-Run ``python -m fieldforge.map_portal --config portal.json`` for local development.
-Deploy ``create_app(config_path)`` behind a TLS reverse proxy / WSGI server.
+``python -m fieldforge.map_portal --config portal.json [--port 8765]`` runs
+exactly the same server as ``python -m fieldforge.online.server``. Existing WSGI
+hosts may keep ``create_app(config_path)``. Both legacy inline catalogs and the
+new immutable catalog configuration use the same providers, validation, security
+headers and browser UI. Legacy providers must explicitly include their license.
 """
 
 from __future__ import annotations
 
-import argparse
-import hashlib
-import json
-import os
-import threading
-import time
-import urllib.parse
-from collections import OrderedDict
-from dataclasses import asdict
-from datetime import datetime, timezone
+from dataclasses import replace
 from pathlib import Path
-from wsgiref.simple_server import WSGIRequestHandler, make_server
+from wsgiref.simple_server import WSGIRequestHandler
 
-from fieldforge.online import (
-    Address,
-    MapItem,
-    OnlineError,
-    base_url,
-    request_json,
-    text,
-    validate_route,
+from fieldforge.online.models import validate_coordinates
+from fieldforge.online.server import (
+    Busy,
+    PortalApplication,
+    PortalConfig,
+    PortalError,
+    PortalResponse,
+    WSGIApplication,
+    _legacy_route,
+    load_config,
+    main,
+    portal_assets,
 )
 
-
-class Busy(OnlineError):
-    pass
+__all__ = ["Busy", "Portal", "Provider", "QuietHandler", "create_app", "main"]
 
 
 class Provider:
-    """One-process request gate and bounded in-memory response cache."""
+    """Original provider facade backed by the unified application's transport."""
 
     def __init__(self, config, kind):
-        self.url = base_url(config["url"])
-        self.name = text(config.get("name"), "Provider name")
-        self.attribution = text(config.get("attribution"), "Attribution", 2000)
-        host = urllib.parse.urlsplit(self.url).hostname
-        if host in {"nominatim.openstreetmap.org", "router.project-osrm.org", "routing.openstreetmap.de"}:
-            raise ValueError("Configure an owned or contracted provider, not a community public/demo endpoint.")
+        if kind not in {"geocoder", "router"}:
+            raise ValueError("Provider kind must be geocoder or router.")
+        self._app = PortalApplication(PortalConfig.from_dict({"version": 1, kind: config}))
         self.kind = kind
-        self.lock = threading.Lock()
-        self.cache = OrderedDict()
-        self.cache_bytes = 0
-        self.next_request = 0.0
+        self._kind = "geocoding" if kind == "geocoder" else "routing"
 
-    def call(self, path, key):
-        # Reject bursts instead of accumulating background/bulk requests.
-        if not self.lock.acquire(blocking=False):
-            raise Busy("Another request is in progress.")
-        try:
-            now = time.monotonic()
-            cached = self.cache.get(key)
-            if cached and now - cached[0] < 600:
-                self.cache.move_to_end(key)
-                return cached[1]
-            if cached:
-                self.cache_bytes -= self.cache.pop(key)[2]
-            if now < self.next_request:
-                raise Busy("Wait before searching again.")
-            self.next_request = now + 1.1
-            result = request_json(self.url + path)
-            size = len(json.dumps(result).encode())
-            self.cache[key] = (time.monotonic(), result, size)
-            self.cache_bytes += size
-            while len(self.cache) > 128 or self.cache_bytes > 16 * 1024**2:
-                self.cache_bytes -= self.cache.popitem(last=False)[1][2]
-            return result
-        finally:
-            self.lock.release()
+    @classmethod
+    def _from_app(cls, app, kind):
+        value = cls.__new__(cls)
+        value._app, value._kind = app, kind
+        value.kind = "geocoder" if kind == "geocoding" else "router"
+        return value
+
+    @property
+    def config(self):
+        return getattr(self._app.config, self._kind)
+
+    @property
+    def lock(self):
+        return self._app._gates[self._kind].lock
+
+    @property
+    def url(self):
+        return self.config.url
+
+    @property
+    def name(self):
+        return self.config.name or self.config.source
+
+    @property
+    def attribution(self):
+        return self.config.attribution
+
+    @property
+    def license(self):
+        return self.config.license
 
     def search(self, query):
-        query = text(query, "Address", 300)
-        params = urllib.parse.urlencode({"q": query, "format": "jsonv2", "limit": 5})
-        values = self.call("/search?" + params, hashlib.sha256(query.casefold().encode()).hexdigest())
-        if not isinstance(values, list) or len(values) > 10:
-            raise OnlineError("Unsupported address provider response.")
-        return [asdict(Address.parse({"label": value.get("display_name"), "latitude": value.get("lat"),
-                                     "longitude": value.get("lon"), "source": self.name,
-                                     "attribution": self.attribution})) for value in values if isinstance(value, dict)]
+        if self._kind != "geocoding":
+            raise ValueError("Address search requires a geocoder provider.")
+        return self._app.search(query)["results"]
 
     def route(self, start, end):
-        from fieldforge.navigation.places import coordinate, coordinate_text
-
-        points = []
-        for pair in (start, end):
-            if not isinstance(pair, list) or len(pair) != 2:
-                raise ValueError("Enter start and destination as latitude, longitude.")
-            points.append((coordinate(pair[0], latitude=True), coordinate(pair[1], latitude=False)))
-        positions = ";".join(f"{coordinate_text(lon)},{coordinate_text(lat)}" for lat, lon in points)
-        path = f"/route/v1/driving/{positions}?overview=full&geometries=geojson&steps=false&alternatives=false"
-        value = self.call(path, hashlib.sha256(positions.encode()).hexdigest())
-        if (not isinstance(value, dict) or value.get("code") != "Ok"
-                or not isinstance(value.get("routes"), list) or not value["routes"]):
-            raise OnlineError("No driving route was returned for those coordinates.")
-        route = value["routes"][0]
-        if not isinstance(route, dict) or not isinstance(route.get("geometry"), dict):
-            raise OnlineError("Invalid route geometry.")
-        if route["geometry"].get("type") != "LineString":
-            raise OnlineError("Unsupported route geometry.")
-        return validate_route({"profile": "driving", "coordinates": route["geometry"].get("coordinates"),
-                               "distance_m": route.get("distance"), "duration_s": route.get("duration"),
-                               "source": self.name, "attribution": self.attribution,
-                               "created_at": datetime.now(timezone.utc).isoformat()})
+        if self._kind != "routing":
+            raise ValueError("Route planning requires a routing provider.")
+        start, end = (dict(zip(("latitude", "longitude"), validate_coordinates(pair))) for pair in (start, end))
+        routes = self._app.routes(start, end)["routes"]
+        if not routes:
+            raise PortalError(404, "no_route", "No driving route was returned for those coordinates.")
+        return _legacy_route(routes[0])
 
 
-def _identity(info):
-    return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns
+class Portal(WSGIApplication):
+    """Legacy WSGI constructor; source catalogs remain read-only and in place."""
 
+    def __init__(self, config, *, folder=None):
+        if not isinstance(config, PortalConfig):
+            config = PortalConfig.from_dict(config)
+        if folder is not None and config.legacy_maps is not None:
+            config = replace(config, legacy_root=Path(folder).expanduser().resolve())
+        super().__init__(config)
 
-class Portal:
-    def __init__(self, config, *, folder):
-        if not isinstance(config, dict) or config.get("version") != 1:
-            raise ValueError("Portal configuration must have version 1.")
-        self.name = text(config.get("name", "FieldForge map portal"), "Portal name")
-        self.geocoder = Provider(config["geocoder"], "geocoder") if config.get("geocoder") else None
-        self.router = Provider(config["router"], "router") if config.get("router") else None
-        entries = config.get("maps", [])
-        if not isinstance(entries, list) or len(entries) > 500:
-            raise ValueError("Map catalogue limit is 500 files.")
-        self.maps = {}
-        for entry in entries:
-            item = MapItem.parse(entry)
-            if item.id in self.maps:
-                raise ValueError("Map IDs must be distinct.")
-            path = Path(folder) / item.filename
-            if path.is_symlink() or not path.is_file():
-                raise ValueError("Catalogue maps must be regular files in the configured asset folder.")
-            before = path.stat()
-            checksum = hashlib.sha256()
-            with path.open("rb") as stream:
-                for block in iter(lambda: stream.read(1024**2), b""):
-                    checksum.update(block)
-            if (_identity(path.stat()) != _identity(before) or before.st_size != item.size
-                    or checksum.hexdigest() != item.sha256):
-                raise ValueError("Catalogue map checksum/size changed; rebuild the manifest before serving.")
-            self.maps[item.id] = (item, path, _identity(before))
+    @property
+    def name(self):
+        return self.app.config.name
+
+    @property
+    def geocoder(self):
+        return Provider._from_app(self.app, "geocoding") if self.app.config.geocoding is not None else None
+
+    @property
+    def router(self):
+        return Provider._from_app(self.app, "routing") if self.app.config.routing is not None else None
 
     @staticmethod
     def reply(start_response, status, payload, *, content_type="application/json; charset=utf-8", extra=()):
-        data = payload if isinstance(payload, bytes) else json.dumps(payload, allow_nan=False).encode("utf-8")
-        headers = [("Content-Type", content_type), ("Content-Length", str(len(data))),
-                   ("Cache-Control", "no-store"), ("X-Content-Type-Options", "nosniff"),
-                   ("Referrer-Policy", "no-referrer"), *extra]
-        start_response(status, headers)
-        return [data]
-
-    @staticmethod
-    def body(environ):
-        if environ.get("CONTENT_TYPE", "").split(";")[0] != "application/json":
-            raise ValueError("Send a JSON request.")
-        raw_length = environ.get("CONTENT_LENGTH", "")
-        if not raw_length.isdigit() or not 1 <= int(raw_length) <= 4096:
-            raise ValueError("Request size is invalid.")
-        data = environ["wsgi.input"].read(int(raw_length))
-        if len(data) != int(raw_length):
-            raise ValueError("Incomplete request.")
-        value = json.loads(data)
-        if not isinstance(value, dict):
-            raise ValueError("Send a JSON object.")
-        return value
-
-    def __call__(self, environ, start_response):
-        path, method = environ.get("PATH_INFO", ""), environ.get("REQUEST_METHOD", "GET")
-        try:
-            if method == "GET" and path in {"/", "/portal.js", "/portal.css"}:
-                from fieldforge.portal_web import CSS, HTML, SCRIPT
-                value, mime = {"/": (HTML, "text/html; charset=utf-8"),
-                               "/portal.js": (SCRIPT, "text/javascript; charset=utf-8"),
-                               "/portal.css": (CSS, "text/css; charset=utf-8")}[path]
-                return self.reply(start_response, "200 OK", value.encode(), content_type=mime,
-                                  extra=[("Content-Security-Policy", "default-src 'none'; script-src 'self'; "
-                                          "style-src 'self'; connect-src 'self'; img-src 'self'; "
-                                          "base-uri 'none'; form-action 'none'; frame-ancestors 'none'")])
-            if method == "GET" and path == "/api/v1/status":
-                return self.reply(start_response, "200 OK", {"version": 1, "name": self.name,
-                    "capabilities": {"geocoding": self.geocoder is not None, "routing": self.router is not None},
-                    "providers": {key: {"name": provider.name, "attribution": provider.attribution}
-                                  for key, provider in (("geocoding", self.geocoder), ("routing", self.router)) if provider}})
-            if method == "GET" and path == "/api/v1/maps":
-                return self.reply(start_response, "200 OK", {"maps": [asdict(v[0]) for v in self.maps.values()]})
-            if method == "GET" and path.startswith("/api/v1/maps/") and path.endswith("/file"):
-                identifier = path[len("/api/v1/maps/"):-len("/file")]
-                if identifier not in self.maps:
-                    return self.reply(start_response, "404 Not Found", {"error": "Map not found."})
-                item, source, identity = self.maps[identifier]
-                stream = source.open("rb")
-                if _identity(os.fstat(stream.fileno())) != identity or source.is_symlink():
-                    stream.close()
-                    raise OnlineError("Map changed on server; the catalogue needs updating.")
-                start_response("200 OK", [("Content-Type", "application/octet-stream"),
-                    ("Content-Length", str(item.size)), ("X-Content-Type-Options", "nosniff"),
-                    ("Content-Disposition", f'attachment; filename="{item.filename}"'),
-                    ("ETag", '"' + item.sha256 + '"'), ("Cache-Control", "private, max-age=0")])
-                def blocks():
-                    try:
-                        remaining = item.size
-                        while remaining:
-                            block = stream.read(min(128 * 1024, remaining))
-                            if not block:
-                                break
-                            remaining -= len(block)
-                            yield block
-                    finally:
-                        stream.close()
-                return blocks()
-            if method == "POST" and path in {"/api/v1/search", "/api/v1/route"}:
-                # Reject cross-origin browser callers; native clients send no Origin.
-                origin = environ.get("HTTP_ORIGIN")
-                expected = environ.get("wsgi.url_scheme", "http") + "://" + environ.get("HTTP_HOST", "")
-                if origin is not None and origin != expected:
-                    return self.reply(start_response, "403 Forbidden", {"error": "Same-origin requests only."})
-                payload = self.body(environ)
-                provider = self.geocoder if path.endswith("search") else self.router
-                if provider is None:
-                    return self.reply(start_response, "503 Service Unavailable", {"error": "Provider not configured."})
-                if path.endswith("search"):
-                    if set(payload) != {"query"}:
-                        raise ValueError("Send one address query.")
-                    result = {"results": provider.search(payload["query"])}
-                else:
-                    if set(payload) != {"start", "end"}:
-                        raise ValueError("Send a start and destination coordinate.")
-                    result = provider.route(payload["start"], payload["end"])
-                return self.reply(start_response, "200 OK", result)
-            return self.reply(start_response, "404 Not Found", {"error": "Resource not found."})
-        except Busy:
-            return self.reply(start_response, "429 Too Many Requests", {"error": "Wait before requesting again."},
-                              extra=[("Retry-After", "2")])
-        except OnlineError:
-            return self.reply(start_response, "503 Service Unavailable", {"error": "Provider or map unavailable. Try later."})
-        except (ValueError, TypeError, KeyError, UnicodeError, RecursionError):
-            return self.reply(start_response, "400 Bad Request", {"error": "Invalid request or provider response."})
-        except OSError:
-            return self.reply(start_response, "503 Service Unavailable", {"error": "Portal resource unavailable."})
+        """Preserve the original small response helper using shared headers."""
+        code = int(status.split(" ", 1)[0])
+        response = PortalResponse(code, payload, content_type) if isinstance(payload, bytes) else PortalResponse.json(code, payload)
+        response.content_type = content_type
+        response.extra_headers = tuple(extra)
+        start_response(status, response.headers(portal_assets()[1]))
+        return response
 
 
 def create_app(config_path):
-    path = Path(config_path).resolve()
-    with path.open("rb") as stream:
-        raw = stream.read(1024**2 + 1)
-    if len(raw) > 1024**2:
-        raise ValueError("Portal configuration exceeds one MiB.")
-    config = json.loads(raw)
-    folder = (path.parent / config.get("asset_folder", "maps")).resolve()
-    return Portal(config, folder=folder)
+    return Portal(load_config(config_path))
 
 
 class QuietHandler(WSGIRequestHandler):
     def log_message(self, format, *args):
-        pass  # No address/coordinate query logging in the development server.
-
-
-def main(argv=None):
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", required=True)
-    parser.add_argument("--port", type=int, default=8765)
-    args = parser.parse_args(argv)
-    app = create_app(args.config)
-    with make_server("127.0.0.1", args.port, app, handler_class=QuietHandler) as server:
-        print(f"FieldForge development portal: http://127.0.0.1:{server.server_port}")
-        server.serve_forever()
+        return  # Request paths can contain provider queries in local test fixtures.
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -1,8 +1,6 @@
 {
-  "version": 1,
-  "name": "FieldForge map portal",
-  "asset_folder": "maps",
-  "geocoder": null,
-  "router": null,
-  "maps": []
+  "host": "127.0.0.1",
+  "port": 8765,
+  "catalog_root": "../portal-maps",
+  "providers": {}
 }
