@@ -3,9 +3,12 @@
 The desktop **Places** tab brings the existing waypoint records into an editable
 workspace. Add a name/alias, signed latitude, signed longitude, type and optional
 private notes. Saved meeting points are user records, **not verified safe
-locations**. Nothing is seeded from profiles, messages, addresses or devices.
-There is no current-location request, geocoding, GPS receiver integration, base
-map, route finding, terrain/access check, or notification to another person.
+locations**. Nothing is automatically seeded from profiles, messages or devices.
+Manual entry and saved-place search work offline. **Find address online…** in
+the editor opens the optional [map portal](ONLINE_MAP_PORTAL.md): connect, enter
+a search, select a match and fill the fields for review before saving. This does
+not request your current location or notify another person. The Places tab's
+distance/bearing estimates remain separate from online driving-route planning.
 
 ## Enter and edit places
 
