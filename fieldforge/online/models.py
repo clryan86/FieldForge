@@ -262,7 +262,7 @@ def validate_asset(value) -> dict:
     asset_id = validate_id(value["id"])
     declared_format = value["format"]
     if not isinstance(declared_format, str) or declared_format not in FORMATS:
-        raise ValidationError("Map format is unsupported; choose raster MBTiles or a map image.")
+        raise ValidationError("Map format is unsupported; choose MBTiles or a raster map image.")
     filename = validate_filename(value["filename"], declared_format)
     if value["download_path"] != f"/api/v1/maps/{asset_id}/download":
         raise ValidationError("Map downloads must use the catalog entry's same-origin path.")

@@ -39,18 +39,23 @@ while deliberately supporting only an indexed, ordinary-table PNG subset:
 
 - Ordinary `metadata(name TEXT, value TEXT)` and
   `tiles(zoom_level INTEGER, tile_column INTEGER, tile_row INTEGER, tile_data BLOB)`
-  tables with that column ordering. Views/virtual tables and extra columns are
+  tables with that column ordering. Raster packs use supported image formats;
+  vector packs use gzip-compressed Mapbox Vector Tile protobuf (`format=pbf`).
+  Views/virtual tables and extra columns are
   not accepted by this first reader. Other valid MBTiles layouts can be rejected.
 - A unique non-partial BINARY-collated index whose key columns are precisely
   `(zoom_level, tile_column, tile_row)`. The app never repairs or builds an index.
-- Required `name` and `format=png`. An explicitly supplied `scheme` must be TMS.
+- Required `name` and a supported image format or `format=pbf`. An explicitly
+  supplied `scheme` must be TMS.
   Metadata is bounded to 128 entries, 128 bytes per key and 16 KiB per value;
   duplicate keys, non-text fields, control-bearing keys and oversized fields fail.
 - Zoom levels actually observed between 0 and 22. Metadata `minzoom`/`maxzoom`
   does not invent levels. An observed level is not evidence of full coverage.
-- Square PNG tiles, 256 or 512 pixels. The latter are subsampled to a 256-pixel
-  logical footprint. There is no lower/higher-zoom substitution or resampling
-  beyond that retina-tile reduction. No JPEG, WebP or PBF/vector decoder is added.
+- Square raster tiles, 256 or 512 pixels. The latter are subsampled to a
+  256-pixel logical footprint. PBF vector tiles receive a basic geometry preview
+  style, without publisher styles, fonts, sprites, filters, expressions or labels.
+  There is no lower/higher-zoom substitution or resampling beyond retina-tile
+  reduction.
 - SQLite rollback-mode header and no nonempty WAL/journal/SHM sidecars. Use a
   completely exported, closed copy on a local drive. URL/UNC-style inputs are
   rejected. Mapped/mounted network filesystems cannot be reliably identified.

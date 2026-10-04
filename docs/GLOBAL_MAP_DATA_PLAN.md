@@ -6,7 +6,7 @@ Status checked 2026-10-04. This is an acquisition and compatibility record, not 
 
 MBTiles is a container specification, not a single global map collection. It permits image tiles and vector tiles, and a file's geographic coverage, zooms, data age, content, style, and reuse rights depend on the specific publisher and package. There is no complete registry of every MBTiles file made by every publisher. FieldForge's product target is a maintained catalog of real worldwide datasets by layer and region, with exact version/date, measured file size, coverage, zoom levels, attribution, license, and checksum.
 
-The active desktop reader opens supported **raster** MBTiles (PNG, JPEG, WebP). It does not render vector/PBF MBTiles. A world vector tileset may be a strong street-map source, but it is not usable in FieldForge until a local vector renderer, style, fonts, sprites, and offline tests are shipped. A visually tiled map also is not a turn-by-turn routing graph.
+The active desktop readers open supported raster MBTiles (PNG, JPEG, WebP) and gzip-compressed Mapbox Vector Tile MBTiles (`format=pbf`). Vector features are drawn offline with a built-in basic preview style covering common water, land, buildings, roads, boundaries, rails, and points. The publisher's style JSON, filters, fonts, sprites, and text labels are not applied, so this is not full MapLibre cartography. A visually tiled map also is not a turn-by-turn routing graph.
 
 The user-shared Wave 5 collection contains four real OSM regional archives for Kansas, Nebraska, North Dakota, and South Dakota: 1,558,226,547 bytes of ZIP downloads (about 1.45 GiB) and 3,644,960,240 bytes expanded (about 3.40 GiB). Their prepared `.ffmap` SQLite indexes report 5,226,766 features, including 370,827 objects with address tags. The collection marks these files `verified-download`, `installed_on_device: not-checked`, and `validated_navigation: false`. They are **not MBTiles**, have no prepared road graphs, are not hosted by the current portal, and cannot be opened by the current GitHub branch. The South Dakota archive was independently checked here against its catalog SHA-256; the other three payload files were not independently re-downloaded in this workspace.
 
@@ -29,7 +29,7 @@ No purchase, vendor inquiry, account creation, or third-party message has been m
 
 ## Work required before calling worldwide maps delivered
 
-- Add a vector MBTiles renderer and offline style assets; validate OpenMapTiles and other MBTiles vector layers without contacting a tile service.
+- Expand the basic vector preview toward a reviewed offline cartographic style, including local fonts, labels, and source style assets where licensing permits; validate more publisher schemas and uncommon MVT geometry cases.
 - Build a versioned world overview plus downloadable country/region/detail packages. Keep data packages outside Git history; test download size, free-space needs, cancellation, checksum, extraction, rights metadata, and offline reopening.
 - Add raster terrain, hydrography, relief, and lawful aerial/satellite layers where separately available. Report gaps and source dates instead of filling them with invented coverage.
 - Keep routing data and route-engine validation separate from display tiles; never label a map tileset as route-ready.

@@ -1,4 +1,4 @@
-"""Read a limited, flat/indexed raster MBTiles subset without network or writes.
+"""Read a limited, flat/indexed raster and vector MBTiles subset, offline.
 
 This is NOT a general MBTiles validator or a malicious-file sandbox. Only open
 trusted, closed map-pack copies. The pack remains external to the app database.
@@ -139,7 +139,7 @@ def _png_size(data: bytes) -> int:
 def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
     path = Path(source).expanduser().resolve()
     if path.suffix.lower() != ".mbtiles":
-        raise ValueError("Choose a local raster .mbtiles map pack, not a URL, image, GPX or vector pack.")
+        raise ValueError("Choose a local raster or vector .mbtiles pack, not a URL, image or GPX file.")
     signature = _signature(path)
     warnings = []
     with _read_database(path, signature, cancel) as db:
@@ -183,8 +183,8 @@ def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
             metadata[key] = value
         if not metadata.get("name", "").strip():
             raise ValueError("Map metadata must supply a name.")
-        if metadata.get("format", "").lower() not in {"png", "jpg", "jpeg", "webp"}:
-            raise ValueError("Use PNG, JPEG or WebP raster MBTiles; PBF/vector tiles are not supported.")
+        if metadata.get("format", "").lower() not in {"png", "jpg", "jpeg", "webp", "pbf"}:
+            raise ValueError("Use PNG, JPEG, WebP raster MBTiles or gzip-compressed Mapbox vector MBTiles.")
         if metadata.get("scheme", "tms").lower() != "tms":
             raise ValueError("Map row scheme must be MBTiles/TMS, not XYZ.")
         indexed = f"tiles INDEXED BY {_quoted(index_name)}"
@@ -213,6 +213,15 @@ def inspect_pack(source: str | Path, *, cancel: Event | None = None) -> MapPack:
                 warnings.append(f"Declared {key} differs from observed levels; observed levels are used.")
         if not metadata.get("attribution", "").strip():
             warnings.append("No attribution supplied; verify source and reuse rights separately.")
+        if metadata.get("format", "").lower() == "pbf":
+            sample = db.execute(f"SELECT typeof(tile_data),tile_data FROM {indexed} LIMIT 1").fetchone()
+            if (sample is None or sample[0] != "blob" or not isinstance(sample[1], bytes)
+                    or len(sample[1]) > MAX_TILE_BYTES or not sample[1].startswith(b"\x1f\x8b")):
+                raise ValueError("Vector MBTiles has no bounded PBF tile sample.")
+            from fieldforge.navigation.vector_tiles import render_vector_tile
+
+            render_vector_tile(sample[1])
+            warnings.append("Vector features use FieldForge's basic preview style; publisher styles and labels are not applied.")
         warnings.append("Zoom availability is not a coverage, freshness, integrity or safety audit. Tiles are checked as viewed.")
     return MapPack(path, signature, tuple(sorted(metadata.items())), zooms, latitude, longitude, z, index_name, tuple(warnings))
 
@@ -235,7 +244,9 @@ def read_frame(pack: MapPack, view: Viewport, *, cancel: Event | None = None) ->
                 data, pixels, issue = None, 0, ""
                 if info is None:
                     issue = "Tile not installed"
-                elif info[0] != "blob" or type(info[1]) is not int or not 33 <= info[1] <= MAX_TILE_BYTES:
+                elif (info[0] != "blob" or type(info[1]) is not int
+                      or not (1 if dict(pack.metadata)["format"].lower() == "pbf" else 33)
+                      <= info[1] <= MAX_TILE_BYTES):
                     issue = "Invalid/oversized tile"
                 else:
                     total += info[1]
@@ -243,13 +254,24 @@ def read_frame(pack: MapPack, view: Viewport, *, cancel: Event | None = None) ->
                         raise ValueError("Visible map data exceeds the 32 MiB frame budget; use a smaller window.")
                     data = db.execute(f"SELECT tile_data FROM {table} WHERE zoom_level=? AND tile_column=? AND tile_row=?", key).fetchone()[0]
                     try:
-                        if dict(pack.metadata)["format"].lower() != "png":
+                        tile_format = dict(pack.metadata)["format"].lower()
+                        if tile_format == "pbf":
+                            from fieldforge.navigation.vector_tiles import render_vector_tile
+
+                            if not data.startswith(b"\x1f\x8b"):
+                                raise ValueError("PBF MBTiles tiles must be gzip-compressed.")
+                            converted = render_vector_tile(data)
+                        elif tile_format != "png":
                             from fieldforge_gps.raster import tile_png
-                            converted = tile_png(data, dict(pack.metadata)["format"])
+
+                            converted = tile_png(data, tile_format)
+                        else:
+                            converted = data
+                        if tile_format != "png":
                             total += max(0, len(converted) - len(data))
                             if total > MAX_FRAME_BYTES:
                                 raise ValueError("Decoded tile buffers exceed the 32 MiB frame budget.")
-                            data = converted
+                        data = converted
                         pixels = _png_size(data)
                     except ValueError as exc:
                         data, issue = None, str(exc)

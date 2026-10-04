@@ -40,10 +40,12 @@ are not established by the automated software tests.
 ## MBTiles and image files
 
 Both the main Maps tab and this workspace display flat, indexed MBTiles with
-PNG, JPEG (`format=jpg` or `jpeg`) or WebP raster tiles. Tiles must be square,
-256 or 512 pixels, in Web Mercator/TMS layout. Existing read-only checks, size
-limits, missing-tile labels and source/rights inspection remain. Vector/PBF,
-animated tiles and normalized/view-based databases are unsupported. See
+PNG, JPEG (`format=jpg` or `jpeg`) or WebP raster tiles, plus gzip-compressed
+Mapbox Vector Tile PBF. Raster tiles must be square, 256 or 512 pixels, in Web
+Mercator/TMS layout. Vector tiles use a basic preview renderer; publisher
+styles, fonts, sprites and text labels are not applied. Existing read-only
+checks, size limits, missing-tile labels and source/rights inspection remain.
+Animated tiles and normalized/view-based databases are unsupported. See
 [MBTiles details](OFFLINE_MAPS.md).
 
 Choose **Navigation → Open map image…**, or **Open map image…** inside the

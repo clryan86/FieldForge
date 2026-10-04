@@ -365,7 +365,7 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
     assert status.startswith("200") and b"Address" in body
     assert b"Worldwide map sources and purchase holds" in body
     assert b"MapTiler On-prem Standard" in body and b"excludes B2C/B2B" in body
-    assert b"FieldForge currently opens raster MBTiles only" in body
+    assert b"basic offline preview style" in body and b"Publisher styles, fonts, sprites and labels are not applied" in body
     assert b"four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota" in body
     assert b"not hosted in this portal or yet supported by the current GitHub build" in body
     external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)

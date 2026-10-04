@@ -1,4 +1,4 @@
-"""Offline raster MBTiles viewer with an explicitly selected planned route.
+"""Offline raster/vector MBTiles viewer with an explicitly selected planned route.
 
 Tk owns rendering; workers only read bounded local data. External map files and
 selected routes are never imported into the household database or snapshots.
@@ -64,7 +64,7 @@ class MapsTab(ttk.Frame):
         self._drag = None
         self._worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fieldforge-map")
         self.busy = False
-        self.source = tk.StringVar(value="No map open. Choose a trusted, locally stored raster MBTiles pack.")
+        self.source = tk.StringVar(value="No map open. Choose a trusted, locally stored MBTiles pack.")
         self.status = tk.StringVar(value="No maps are bundled or downloaded automatically. Your location is not requested.")
         self.pointer = tk.StringVar(value="Pointer coordinates appear only over a loaded map view.")
         self.attribution = tk.StringVar(value="Source attribution will appear here. Map accuracy and reuse rights are not verified.")
@@ -158,7 +158,7 @@ class MapsTab(ttk.Frame):
         self.credit_label = fixed_label(8, 44, self.attribution)
         self.footer = fixed_label(9, 58, self.status)
         self.bind("<Configure>", self._wrap, add=True)
-        self._blank("Open a local raster map pack to begin.\n\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
+        self._blank("Open a local MBTiles pack to begin.\n\nRaster tiles and basic vector previews work offline. Publisher styles and labels are not applied to vector packs.\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
         self._buttons()
 
     def _wrap(self, event):
@@ -224,10 +224,10 @@ class MapsTab(ttk.Frame):
         self.route, self._route_geometry = checked, geometry
         self._route_drawing = self._route_drawing_view = None
         if self.pack_info is None or self.view is None:
-            self.status.set("Planned route ready. Open a local raster MBTiles pack to view it offline. "
+            self.status.set("Planned route ready. Open a local MBTiles pack to view it offline. "
                             "Showing a route keeps this selection for the session; use Save route to keep it after restarting.")
             if not self.busy:
-                self._blank("Planned route ready.\nOpen a local raster MBTiles map to show it.\n"
+                self._blank("Planned route ready.\nOpen a local MBTiles map to show it.\n"
                             "This is a stored plan, with no live guidance or location receiver.")
         elif geometry.start is not None:
             self.center_route()
@@ -244,7 +244,7 @@ class MapsTab(ttk.Frame):
         self._route_drawing = self._route_drawing_view = None
         self.canvas.delete("planned-route")
         if self.pack_info is None and not self.busy:
-            self._blank("No map open.\nChoose Open local map… to read a compatible raster MBTiles file.")
+            self._blank("No map open.\nChoose Open local map… to read a compatible raster or vector MBTiles file.")
         self.status.set("Planned route overlay cleared. No saved route file was deleted or changed.")
         self._buttons()
 
@@ -309,11 +309,11 @@ class MapsTab(ttk.Frame):
         self._poll_id = self.after(40, self._poll, self._future, operation, self._generation)
 
     def choose(self):
-        path = filedialog.askopenfilename(parent=self, title="Open a trusted raster MBTiles pack",
-                                          filetypes=[("Raster MBTiles map", "*.mbtiles")])
+        path = filedialog.askopenfilename(parent=self, title="Open a trusted MBTiles pack",
+                                          filetypes=[("MBTiles map", "*.mbtiles")])
         if path:
             if messagebox.askyesno("Open a trusted offline map?", "Only open a map pack you trust and have permission to use. "
-                                   "This build supports flat, indexed PNG/JPEG/WebP raster MBTiles; vector maps are not supported. "
+                                   "This build supports flat, indexed PNG/JPEG/WebP raster MBTiles and PBF vector MBTiles with a basic preview style. Publisher styles, sprites, fonts and labels are not applied. "
                                    "No malware, accuracy or route-safety check is performed. The file stays external to your database backups. Continue?",
                                    parent=self):
                 self.open_path(path)
@@ -344,7 +344,7 @@ class MapsTab(ttk.Frame):
         self.pointer.set("No map coordinates available.")
         self.status.set("Closed map view. No map file or saved-place record was deleted or changed."
                         + (" Planned route retained; open a local map to show it again." if self.route else ""))
-        self._blank("No map open.\nChoose Open local map… to read a compatible raster MBTiles file.")
+        self._blank("No map open.\nChoose Open local map… to read a compatible raster or vector MBTiles file.")
         self._buttons()
 
     def _dimensions(self):
@@ -387,7 +387,9 @@ class MapsTab(ttk.Frame):
             if operation == "open":
                 self.pack_info = value
                 self.zoom_picker.configure(values=tuple(str(z) for z in value.zooms))
-                self.source.set(f"{value.name[:120]} · raster · stored zooms {', '.join(map(str, value.zooms))}")
+                tile_format = dict(value.metadata).get("format", "unknown").lower()
+                kind = "vector preview" if tile_format == "pbf" else "raster"
+                self.source.set(f"{value.name[:120]} · {kind} · stored zooms {', '.join(map(str, value.zooms))}")
                 attribution = dict(value.metadata).get("attribution", "Not supplied — verify source and rights")
                 compact = " ".join(attribution.split())
                 self.attribution.set("Attribution (pack-supplied): " + compact[:200]
@@ -594,7 +596,7 @@ class MapsTab(ttk.Frame):
                     "Metadata below is supplied by the pack, not independently checked or fetched. HTML/URLs remain inert text.\n\n"
                     + "\n\n".join(f"{key}:\n{value}" for key, value in pack.metadata)
                     + "\n\nLIMITS\n" + "\n".join(pack.warnings)
-                    + "\n\nFlat/indexed PNG/JPEG/WebP MBTiles with 256/512-pixel tiles; no vector or normalized views. "
+                    + "\n\nFlat/indexed raster MBTiles and gzip-compressed PBF vector MBTiles with a basic preview style; publisher styles, fonts, sprites and labels are not applied. Normalized/views are unsupported. "
                     "The file signature detects ordinary changes, not malicious tampering or full integrity. "
                     "Only open trusted data with an up-to-date Python/Tk/SQLite installation.\n\n" + NOTICE)
         text.configure(state="disabled")

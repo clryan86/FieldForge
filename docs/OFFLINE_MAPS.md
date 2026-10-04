@@ -1,7 +1,7 @@
-# Offline raster maps — local MBTiles
+# Offline maps — local raster/vector MBTiles
 
 The desktop **Maps** section opens an already-local map pack, renders its raster
-tiles, and provides pan, zoom, coordinate centering and an optional saved-place
+tiles or a basic styled preview from vector tiles, and provides pan, zoom, coordinate centering and an optional saved-place
 overlay. It has no network client, tile-server setting, GPS/location request,
 geocoding, road routing, travel-time estimate or current-hazard data. No map data
 is automatically downloaded, purchased or installed. A displayed map and a saved
@@ -23,6 +23,11 @@ specific MBTiles subset:
   metadata. Up to 128 metadata entries and 16 KiB per UTF-8 value are supported.
   The reader never builds an index
   or changes the supplied pack to make it compatible.
+- Gzip-compressed Mapbox Vector Tile data declared as `format=pbf`, decoded from
+  ordinary `metadata` and `tiles` tables through the same indexed read-only path.
+  FieldForge draws common land, water, building, road, boundary, rail and point
+  geometries with a built-in preview palette. It does not apply publisher
+  MapLibre styles, filters, sprites, font glyphs, symbol placement or labels.
 - Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
   256-screen-pixel logical footprint. There is no extra detail invented from a
   lower zoom, no resampling fallback from another level and no remote fallback.
@@ -30,9 +35,9 @@ specific MBTiles subset:
   the tiles table, not just claimed by metadata. A level's presence does NOT
   establish that every part of the viewport or declared region is covered.
 
-PBF/vector tiles, animated tiles and normalized/view-based MBTiles layouts are
-**not supported**. Those can be valid MBTiles formats; rejection means this reader
-cannot display them, not that their files are corrupt. GPX, PDF maps and ordinary
+Animated tiles and normalized/view-based MBTiles layouts are **not supported**.
+Those can be valid MBTiles formats; rejection means this reader cannot display
+them, not that their files are corrupt. GPX, PDF maps and ordinary
 image files are not MBTiles. The app does not convert these formats automatically.
 Open ordinary map images through **Navigation → Open map image…**; see
 [image formats and limits](GPS_WORKSPACE.md#mbtiles-and-image-files). Source users

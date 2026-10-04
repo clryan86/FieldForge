@@ -1,0 +1,296 @@
+"""Bounded, dependency-light Mapbox Vector Tile (MVT) preview renderer.
+
+This renders common geometry layers from an offline PBF MBTiles tile into a
+plain PNG. It deliberately does not execute a publisher's MapLibre style,
+fonts, glyph ranges, sprites, filters, or expressions. It is a basic offline
+preview style, not a full cartographic style engine.
+"""
+
+from __future__ import annotations
+
+import gzip
+import io
+import struct
+
+MAX_TILE_BYTES = 2 * 1024**2
+MAX_UNCOMPRESSED_BYTES = 8 * 1024**2
+MAX_FIELDS = 200_000
+MAX_FEATURES = 20_000
+MAX_COMMANDS = 250_000
+TILE_PIXELS = 256
+
+
+def _varint(data: bytes, offset: int) -> tuple[int, int]:
+    value = 0
+    for shift in range(0, 70, 7):
+        if offset >= len(data):
+            raise ValueError("Truncated vector tile protobuf integer.")
+        byte = data[offset]
+        offset += 1
+        value |= (byte & 0x7F) << shift
+        if byte < 0x80:
+            if shift == 63 and byte > 1:
+                raise ValueError("Vector tile protobuf integer overflows 64 bits.")
+            return value, offset
+    raise ValueError("Vector tile protobuf integer is too long.")
+
+
+def _fields(data: bytes):
+    offset = 0
+    count = 0
+    while offset < len(data):
+        count += 1
+        if count > MAX_FIELDS:
+            raise ValueError("Vector tile contains too many protobuf fields.")
+        tag, offset = _varint(data, offset)
+        number, wire = tag >> 3, tag & 7
+        if number == 0:
+            raise ValueError("Vector tile has an invalid protobuf field number.")
+        if wire == 0:
+            value, offset = _varint(data, offset)
+        elif wire == 1:
+            end = offset + 8
+            if end > len(data):
+                raise ValueError("Truncated fixed64 vector tile field.")
+            value, offset = data[offset:end], end
+        elif wire == 2:
+            length, offset = _varint(data, offset)
+            end = offset + length
+            if end > len(data):
+                raise ValueError("Truncated length-delimited vector tile field.")
+            value, offset = data[offset:end], end
+        elif wire == 5:
+            end = offset + 4
+            if end > len(data):
+                raise ValueError("Truncated fixed32 vector tile field.")
+            value, offset = data[offset:end], end
+        else:
+            raise ValueError("Unsupported protobuf wire type in vector tile.")
+        yield number, wire, value
+
+
+def _packed(data: bytes) -> list[int]:
+    values, offset = [], 0
+    while offset < len(data):
+        value, offset = _varint(data, offset)
+        values.append(value)
+        if len(values) > MAX_COMMANDS:
+            raise ValueError("Vector tile geometry has too many commands.")
+    return values
+
+
+def _decode_value(data: bytes):
+    for number, wire, value in _fields(data):
+        if number == 1 and wire == 2:
+            try:
+                return value.decode("utf-8")
+            except UnicodeDecodeError as exc:
+                raise ValueError("Vector tile contains invalid UTF-8 properties.") from exc
+        if number == 2 and wire == 5:
+            return struct.unpack("<f", value)[0]
+        if number == 3 and wire == 1:
+            return struct.unpack("<d", value)[0]
+        if number == 4 and wire == 0:
+            return value
+        if number == 5 and wire == 0:
+            return value
+        if number == 6 and wire == 0:
+            return (value >> 1) ^ -(value & 1)
+        if number == 7 and wire == 0:
+            return bool(value)
+    return None
+
+
+def _feature(data: bytes, keys: list[str], values: list[object]):
+    geom_type, tags, commands = 0, [], []
+    for number, wire, value in _fields(data):
+        if number == 2:
+            if wire == 2:
+                tags.extend(_packed(value))
+            elif wire == 0:
+                tags.append(value)
+        elif number == 3 and wire == 0:
+            geom_type = value
+        elif number == 4:
+            if wire == 2:
+                commands.extend(_packed(value))
+            elif wire == 0:
+                commands.append(value)
+    if len(tags) % 2:
+        raise ValueError("Vector tile feature has an incomplete property pair.")
+    properties = {}
+    for index in range(0, len(tags), 2):
+        key, item = tags[index:index + 2]
+        if key >= len(keys) or item >= len(values):
+            raise ValueError("Vector tile feature references a missing property.")
+        properties[keys[key]] = values[item]
+    return geom_type, properties, commands
+
+
+def _geometry(commands: list[int], extent: int):
+    paths, path, x, y, cursor = [], [], 0, 0, 0
+    while cursor < len(commands):
+        command = commands[cursor]
+        cursor += 1
+        command_id, count = command & 7, command >> 3
+        if count < 1 or command_id not in (1, 2, 7):
+            raise ValueError("Vector tile has an invalid geometry command.")
+        if command_id == 7:
+            if count != 1 or len(path) < 3:
+                raise ValueError("Vector tile has an invalid polygon close command.")
+            paths.append(path)
+            path = []
+            continue
+        for _ in range(count):
+            if cursor + 1 >= len(commands):
+                raise ValueError("Vector tile geometry coordinate pair is truncated.")
+            dx, dy = commands[cursor], commands[cursor + 1]
+            cursor += 2
+            x += (dx >> 1) ^ -(dx & 1)
+            y += (dy >> 1) ^ -(dy & 1)
+            if not -extent <= x <= 2 * extent or not -extent <= y <= 2 * extent:
+                raise ValueError("Vector tile geometry coordinate exceeds the tile buffer bounds.")
+            point = (round(x * TILE_PIXELS / extent), round(y * TILE_PIXELS / extent))
+            if command_id == 1:
+                if path:
+                    paths.append(path)
+                path = [point]
+            else:
+                if not path:
+                    raise ValueError("Vector tile line command appears before a move command.")
+                path.append(point)
+    if path:
+        paths.append(path)
+    return paths
+
+
+def _layer(data: bytes, feature_limit: int):
+    name, features, keys, raw_values, extent = "", [], [], [], 4096
+    for number, wire, value in _fields(data):
+        if number == 1 and wire == 2:
+            name = value.decode("utf-8", errors="strict")
+        elif number == 2 and wire == 2:
+            features.append(value)
+            if len(features) > feature_limit:
+                raise ValueError("Vector tile layer contains too many features.")
+        elif number == 3 and wire == 2:
+            keys.append(value.decode("utf-8", errors="strict"))
+        elif number == 4 and wire == 2:
+            raw_values.append(value)
+        elif number == 5 and wire == 0:
+            extent = value
+        elif number == 15 and wire == 0 and value not in (1, 2):
+            raise ValueError("Unsupported vector tile layer version.")
+    if not name or not 1 <= extent <= 65536:
+        raise ValueError("Vector tile layer has invalid metadata or extent.")
+    values = [_decode_value(item) for item in raw_values]
+    parsed = [_feature(item, keys, values) for item in features]
+    return name.lower(), extent, parsed
+
+
+def _layers(data: bytes):
+    if type(data) is not bytes or not data or len(data) > MAX_TILE_BYTES:
+        raise ValueError("Vector tile is empty or exceeds the 2 MiB tile limit.")
+    if data.startswith(b"\x1f\x8b"):
+        try:
+            with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
+                data = stream.read(MAX_UNCOMPRESSED_BYTES + 1)
+        except (OSError, EOFError) as exc:
+            raise ValueError("Vector tile gzip data is unreadable.") from exc
+        if len(data) > MAX_UNCOMPRESSED_BYTES:
+            raise ValueError("Expanded vector tile exceeds the 8 MiB limit.")
+    if len(data) > MAX_UNCOMPRESSED_BYTES:
+        raise ValueError("Expanded vector tile exceeds the 8 MiB limit.")
+    layers = []
+    feature_count = command_count = 0
+    for number, wire, value in _fields(data):
+        if number == 3 and wire == 2:
+            layer = _layer(value, MAX_FEATURES - feature_count)
+            feature_count += len(layer[2])
+            command_count += sum(len(feature[2]) for feature in layer[2])
+            if command_count > MAX_COMMANDS:
+                raise ValueError("Vector tile has too many geometry commands.")
+            layers.append(layer)
+            if len(layers) > 64:
+                raise ValueError("Vector tile contains too many layers.")
+    if not layers:
+        raise ValueError("Vector tile contains no Mapbox Vector Tile layers.")
+    return layers
+
+
+def _style(layer: str, properties: dict):
+    subtype = str(properties.get("class", properties.get("subclass", ""))).lower()
+    if any(word in layer for word in ("water", "ocean", "lake", "river")):
+        return "line" if any(word in layer for word in ("way", "line")) else "water"
+    if "park" in layer or "landcover" in layer or "landuse" in layer or "land" == layer:
+        return "green"
+    if "building" in layer:
+        return "building"
+    if "transportation" in layer or "road" in layer or "highway" in layer:
+        return "road-major" if subtype in {"motorway", "trunk", "primary"} else "road"
+    if "boundary" in layer or "admin" in layer:
+        return "boundary"
+    if "rail" in layer:
+        return "rail"
+    if "place" in layer or "poi" in layer or "label" in layer:
+        return "point"
+    return "minor"
+
+
+def render_vector_tile(data: bytes) -> bytes:
+    """Render common MVT geometry into a 256 px RGBA PNG preview tile."""
+    try:
+        from PIL import Image, ImageDraw
+    except ImportError as exc:
+        raise ValueError('Vector preview needs Pillow; install FieldForge with the "maps" extra.') from exc
+
+    # Draw opaque geographic areas first, then linework and point markers.
+    image = Image.new("RGBA", (TILE_PIXELS, TILE_PIXELS), "#e9e6dc")
+    try:
+        parsed = []
+        for layer, extent, features in _layers(data):
+            for geom_type, properties, commands in features:
+                paths = _geometry(commands, extent) if geom_type in (1, 2, 3) else []
+                parsed.append((_style(layer, properties), geom_type, paths))
+        draw = ImageDraw.Draw(image)
+        fills = {"water": "#a8cfe0", "green": "#c7d9b4", "building": "#d4c8bd"}
+        strokes = {"road": ("#ffffff", "#d1a871", 3, 1),
+                   "road-major": ("#fffdf7", "#dc9954", 5, 2),
+                   "boundary": ("#aa819b", "#aa819b", 1, 0),
+                   "rail": ("#8b8380", "#f7f3ec", 2, 1),
+                   "line": ("#89bcd1", "#89bcd1", 2, 0),
+                   "minor": ("#b4afa4", "#b4afa4", 1, 0)}
+        for kind, geom_type, paths in parsed:
+            if geom_type != 3 or kind not in fills:
+                continue
+            mask = Image.new("L", image.size, 0)
+            mask_draw = ImageDraw.Draw(mask)
+            rings = [path for path in paths if len(path) >= 3]
+            for ring in rings:
+                mask_draw.polygon(ring, fill=255 if _ring_area(ring) >= 0 else 0)
+            color = Image.new("RGBA", image.size, fills[kind])
+            image.alpha_composite(Image.composite(color, image, mask))
+            mask.close()
+            color.close()
+        draw = ImageDraw.Draw(image)
+        for kind, geom_type, paths in parsed:
+            if geom_type == 2:
+                casing, color, casing_width, width = strokes[kind]
+                for path in paths:
+                    if len(path) >= 2:
+                        if casing_width:
+                            draw.line(path, fill=casing, width=casing_width, joint="curve")
+                        draw.line(path, fill=color, width=width or 1, joint="curve")
+            elif geom_type == 1 and paths:
+                color = "#566f47" if kind == "point" else "#715f53"
+                for x, y in (point for path in paths for point in path):
+                    draw.ellipse((x - 2, y - 2, x + 2, y + 2), fill=color)
+        result = io.BytesIO()
+        image.save(result, format="PNG", optimize=False)
+        return result.getvalue()
+    finally:
+        image.close()
+
+
+def _ring_area(points):
+    return sum(x1 * y2 - x2 * y1 for (x1, y1), (x2, y2) in zip(points, points[1:] + points[:1]))

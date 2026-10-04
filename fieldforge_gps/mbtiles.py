@@ -1,4 +1,4 @@
-"""Bounded, read-only local raster MBTiles reader. No network or household database.
+"""Bounded, read-only local raster/vector MBTiles reader. No network or household database.
 
 Supports a deliberately narrow, indexed ordinary-table subset of MBTiles 1.3.
 Use trusted, fully exported files on maintained Python/SQLite/Tk installations.
@@ -209,9 +209,10 @@ def inspect_pack(path, *, consent: bool = False, cancel: Event | None = None) ->
             "jpg",
             "jpeg",
             "webp",
+            "pbf",
         }:
             raise ValueError(
-                "A map name and PNG, JPEG or WebP raster format are required; vector/PBF is not supported."
+                "A map name and PNG, JPEG, WebP raster or Mapbox PBF vector format are required."
             )
         if metadata.get("scheme", "tms").lower() != "tms":
             raise ValueError("This reader requires MBTiles TMS rows, not an XYZ-row extension.")
@@ -263,6 +264,15 @@ def inspect_pack(path, *, consent: bool = False, cancel: Event | None = None) ->
                 notice = "Start is pack-declared, not verified coverage or a current location."
             except (ValueError, OverflowError):
                 notice = "Invalid declared center ignored; using an observed tile center, not current location."
+        if metadata.get("format", "").lower() == "pbf":
+            row = db.execute("SELECT typeof(tile_data),tile_data FROM tiles LIMIT 1").fetchone()
+            if (row is None or row[0] != "blob" or not isinstance(row[1], bytes)
+                    or len(row[1]) > MAX_TILE_BYTES or not row[1].startswith(b"\x1f\x8b")):
+                raise ValueError("Vector MBTiles has no bounded PBF tile sample.")
+            from fieldforge.navigation.vector_tiles import render_vector_tile
+
+            render_vector_tile(row[1])
+            notice += " Vector tiles use a basic preview style; publisher styles and labels are not applied."
         return MapPack(path, identity, tuple(metadata.items()), tuple(levels), start, notice)
 
 
@@ -317,14 +327,21 @@ def read_tiles(pack: MapPack, keys, *, cancel: Event | None = None) -> tuple[Til
                 results[key] = Tile(key, "missing", reason="Tile not installed at this zoom")
                 continue
             kind, size, data = row
-            if kind != "blob" or size > MAX_TILE_BYTES:
-                results[key] = Tile(key, "bad", reason="Tile is not raster bytes or exceeds 2 MiB")
+            tile_format = dict(pack.metadata)["format"].lower()
+            if kind != "blob" or size > MAX_TILE_BYTES or size < (1 if tile_format == "pbf" else 33):
+                results[key] = Tile(key, "bad", reason="Tile is unreadable or exceeds the 2 MiB limit")
                 continue
             try:
-                if dict(pack.metadata)["format"].lower() != "png":
+                if tile_format == "pbf":
+                    from fieldforge.navigation.vector_tiles import render_vector_tile
+
+                    if not data.startswith(b"\x1f\x8b"):
+                        raise ValueError("PBF MBTiles tiles must be gzip-compressed.")
+                    data = render_vector_tile(data)
+                elif tile_format != "png":
                     from .raster import tile_png
 
-                    data = tile_png(data, dict(pack.metadata)["format"])
+                    data = tile_png(data, tile_format)
                 png_preflight(data)
             except ValueError as exc:
                 results[key] = Tile(key, "bad", reason=str(exc))
