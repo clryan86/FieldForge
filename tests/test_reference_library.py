@@ -19,10 +19,14 @@ def test_bundled_corpus_is_substantial_attributed_and_entirely_offline(tmp_path,
         article = library.get(source["slug"])
         assert article.checksum == source["body_sha256"]
         assert len(article.body.split()) >= 180
-        assert "oldid=" in article.source_url
         assert article.reviewed_on == ""
         assert "CC BY-SA" in article.license
         assert source["contributors"] in article.body
+        if source.get("origin") == "fieldforge-original":
+            assert "AI-assisted" in article.body
+            assert source["review_status"] == "unreviewed-ai-assisted-draft"
+        else:
+            assert "oldid=" in article.source_url
     for query in ("water", "voltage", "project", "software", "soil"):
         assert library.search(query), query
     first = catalog["articles"][0]["slug"]
