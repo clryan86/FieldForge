@@ -29,7 +29,7 @@ No purchase, vendor inquiry, account creation, or third-party message has been m
 
 ## Work required before calling worldwide maps delivered
 
-- Expand the basic vector preview toward a reviewed offline cartographic style, including local fonts, labels, and source style assets where licensing permits; validate more publisher schemas and uncommon MVT geometry cases.
+- Expand the basic vector preview toward a reviewed offline cartographic style. Point-feature names now receive simple local labels; continue with line/area name placement, stronger multilingual font coverage, and source style assets where licensing permits. Validate more publisher schemas and uncommon MVT geometry cases.
 - Build a versioned world overview plus downloadable country/region/detail packages. Keep data packages outside Git history; test download size, free-space needs, cancellation, checksum, extraction, rights metadata, and offline reopening.
 - Add raster terrain, hydrography, relief, and lawful aerial/satellite layers where separately available. Report gaps and source dates instead of filling them with invented coverage.
 - Keep routing data and route-engine validation separate from display tiles; never label a map tileset as route-ready.
