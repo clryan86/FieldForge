@@ -513,10 +513,16 @@ def main(argv=None) -> int:
     add.add_argument("--source", dest="source_name", help="Actual source or provider reference for this map.")
     listing = subparsers.add_parser("list", help="Print the current public map catalog.")
     listing.add_argument("--root", required=True)
+    build = subparsers.add_parser("build", help="Prepare all maps in an explicit inventory as one new catalog.")
+    build.add_argument("--root", required=True, help="New catalog directory; must not already exist.")
+    build.add_argument("--inventory", required=True, help="JSON inventory with approved maps and their provenance.")
     args = parser.parse_args(argv)
     try:
         if args.command == "list":
             result = {"maps": Catalog(args.root).assets()}
+        elif args.command == "build":
+            from fieldforge.online.inventory import publish_inventory
+            result = {"maps": publish_inventory(args.root, args.inventory)}
         else:
             result = publish_map(args.root, args.file, map_id=args.id, title=args.title,
                                  attribution=args.attribution, license=args.license,

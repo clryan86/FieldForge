@@ -7,7 +7,30 @@ files, and offline route overlay. The earlier clean baseline used for the Tk
 control described below was `68e5011d7b6cec4552e82b8985b449dac78b182f`.
 See [Online map portal](ONLINE_MAP_PORTAL.md) for operation and supported formats.
 
-## Local results
+## Portal home, consent, map discovery and inventory extension
+
+The subsequent portal extension adds a default-No connection warning and
+browser-home handoff, labeled knowledge-pack placeholders and draft tier notes,
+local map filters/size sorting, browser pagination, and inventory publication
+through the shared immutable map publisher. It preserves the platform fixes
+and subsequent Tk lifecycle cleanup through `5ca680deb55e63389a076a115f8b66f3a3152a75`.
+
+Local Python 3.12.14 headless verification for this extension: **2,142 passed**,
+523 GUI/browser skips, 78 subtests passed, two existing PDF-fixture deprecation
+warnings. Ruff and whitespace checks pass. These skipped graphical tests are
+not claimed as executed locally. The PR's required Linux GUI, Windows map and
+Chromium/WebKit jobs exercise the real interfaces and Windows delivery builds.
+
+New regressions cover rejecting connection without a request or browser launch,
+opening the browser once per explicit connection, a copyable-link fallback,
+correct map identity after filtering, offline catalog discovery, paging without
+requests, actual filtered image download bytes, mobile home layout, and atomic
+bulk publication with invalid files, changed sources, preserved rights metadata,
+no-overwrite behavior and rollback. Test inputs use synthetic maps/addresses.
+The homepage's other download categories and tier allowances remain explicit
+placeholders; no rights clearance, public deployment or billing is inferred.
+
+## Earlier integration local results
 
 The implementation was checked with Python 3.12.14. Graphical checks used a
 real Tk 9.0 display under Xvfb; the browser script also ran under Node.

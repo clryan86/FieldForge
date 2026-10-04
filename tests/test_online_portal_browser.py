@@ -23,6 +23,11 @@ pytestmark = pytest.mark.skipif(
 )
 
 
+def _accept_connection(dialog):
+    assert dialog.type == "confirm" and "Connect to the internet?" in dialog.message
+    dialog.accept()
+
+
 def _connect(page):
     from playwright.sync_api import expect
 
@@ -51,6 +56,80 @@ def _assert_no_horizontal_overflow(page):
     }""")
 
 
+def test_homepage_connection_warning_can_cancel_without_any_api_request(portal_page, operated_portal):
+    from playwright.sync_api import expect
+
+    page, _context, calls = portal_page
+    page.goto(operated_portal[0], wait_until="networkidle")
+    expect(page.locator("#libraryTitle")).to_have_text("Knowledge & program packs")
+    expect(page.locator("#tiersTitle")).to_have_text("Packages for the amount you need")
+    expect(page.locator(".pack")).to_have_count(15)
+    assert not any("/api/" in url for url in calls)
+    page.remove_listener("dialog", _accept_connection)
+    warnings = []
+    def reject(dialog):
+        warnings.append(dialog.message)
+        dialog.dismiss()
+    page.on("dialog", reject)
+    page.locator("#consent").check()
+    page.locator("#connect").click()
+    expect(page.locator("#connectionStatus")).to_contain_text("Stayed offline")
+    expect(page.locator("#addressQuery")).to_be_disabled()
+    assert len(warnings) == 1 and "Connect to the internet?" in warnings[0]
+    assert not any("/api/" in url for url in calls)
+    page.remove_listener("dialog", reject)
+    page.on("dialog", _accept_connection)
+    _connect(page)
+    for width in (390, 1280):
+        page.set_viewport_size({"width": width, "height": 844})
+        _assert_no_horizontal_overflow(page)
+
+
+def test_map_filters_paging_and_correct_download_survive_disconnect(portal_page, operated_portal, tmp_path):
+    from PIL import Image
+    from playwright.sync_api import expect
+
+    from fieldforge.online.catalog import publish_map
+
+    url, _provider, source, _asset = operated_portal
+    image = tmp_path / "island.png"
+    Image.new("RGB", (8, 8), "green").save(image)
+    for number in range(25):
+        publish_map(source.parent / "published-maps", image, map_id=f"island-{number:03}",
+                    title=f"Island {number:03}", source_name="Éclair Survey",
+                    attribution="Original test fixture", license="Test fixture only",
+                    coverage="South islands", version="1")
+    page, context, calls = portal_page
+    page.goto(url, wait_until="networkidle")
+    _connect(page)
+    before = len(calls)
+    page.locator("#mapFilter").fill("south eclair")
+    page.locator("#mapKind").select_option("image")
+    page.locator("#mapOrder").select_option("smallest")
+    expect(page.locator("#mapsStatus")).to_contain_text("25 of 26")
+    expect(page.locator("#mapCatalog .map-card")).to_have_count(24)
+    page.locator("#mapNext").click()
+    expect(page.locator("#mapCatalog .map-card h3")).to_have_text("Island 024")
+    assert len(calls) == before  # All discovery is local to the loaded catalog.
+    with page.expect_download() as captured:
+        page.get_by_role("link", name="Download Island 024", exact=True).click()
+    target = tmp_path / "downloaded-map.png"
+    captured.value.save_as(target)
+    assert captured.value.suggested_filename == "island-024.png"
+    assert target.read_bytes() == image.read_bytes()
+    context.set_offline(True)
+    expect(page.locator("#connectionBadge")).to_have_text("Offline")
+    before = len(calls)
+    page.locator("#mapFilter").fill("no such region")
+    expect(page.locator("#mapsStatus")).to_contain_text("No matches")
+    expect(page.locator("#mapCatalog .map-card")).to_have_count(0)
+    page.locator("#resetMapFilters").click()
+    page.locator("#mapOrder").select_option("largest")
+    expect(page.locator("#mapCatalog .map-card h3").first).to_have_text("Synthetic test overview")
+    expect(page.locator("#mapCatalog .download-link").first).to_have_attribute("aria-disabled", "true")
+    assert len(calls) == before
+
+
 def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp_path):
     from playwright.sync_api import expect, sync_playwright
 
@@ -64,6 +143,7 @@ def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp
         browser = browser_type.launch()
         context = browser.new_context(viewport={"width": 1280, "height": 900}, accept_downloads=True)
         page = context.new_page()
+        page.on("dialog", _accept_connection)
         page.on("pageerror", lambda error: failures.append(str(error)))
         page.on("request", lambda request: calls.append(request.url))
         try:
@@ -198,6 +278,7 @@ def offline_route_download_page(operated_portal):
         browser = browser_type.launch()
         context = browser.new_context(viewport={"width": 1280, "height": 900}, accept_downloads=True)
         page = context.new_page()
+        page.on("dialog", _accept_connection)
         page.on("pageerror", lambda error: failures.append(str(error)))
         try:
             page.goto(url, wait_until="networkidle")
@@ -346,6 +427,7 @@ def portal_page(operated_portal):
         browser = browser_type.launch()
         context = browser.new_context(accept_downloads=True, viewport={"width": 1280, "height": 900})
         page = context.new_page()
+        page.on("dialog", _accept_connection)
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on("request", lambda request: calls.append(request.url))
         try:

@@ -215,6 +215,7 @@ def screen(tmp_path, monkeypatch):
     monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: True)
     monkeypatch.setattr("tkinter.messagebox.showinfo", lambda *args, **kwargs: messages.append(args))
     monkeypatch.setattr("tkinter.messagebox.showerror", lambda *args, **kwargs: messages.append(args))
+    monkeypatch.setattr("webbrowser.open", lambda *args, **kwargs: False)
     app = FieldForgeApp(tmp_path / "app.db")
     factory = PortalFactory(make_map(tmp_path / "fixture.mbtiles", zooms=(0,)))
     root_destroyed = False
@@ -1005,9 +1006,11 @@ def test_close_removes_all_owned_traces_and_destroy_releases_tk_references(scree
     selected, route = panel.selected_result, panel.current_route
     results, routes, worker = panel._results, panel._routes, panel._worker
     variables = {name: value for name, value in vars(panel).items() if isinstance(value, tk.Variable)}
-    references = {id(value): weakref.ref(value) for value in variables.values()}
     traced = {name for name, value in variables.items() if value.trace_info()}
     assert traced == {"start_lat", "start_lon", "end_lat", "end_lon", "selected_info", "map_info"}
+    variables.update({"filters." + name: value for name, value in vars(panel.catalog_filters).items()
+                      if isinstance(value, tk.Variable)})
+    references = {id(value): weakref.ref(value) for value in variables.values()}
     expected = {
         (id(variable), callback)
         for variable in variables.values()
@@ -1105,3 +1108,57 @@ def test_minimum_geometry_keeps_online_and_offline_controls_visible(screen):
             assert widget.winfo_rooty() >= panel.winfo_rooty(), widget
             assert widget.winfo_rootx() + widget.winfo_width() <= right, widget
             assert widget.winfo_rooty() + widget.winfo_height() <= bottom, widget
+
+
+def test_connection_cancel_has_no_requests_and_confirm_opens_only_on_connect(screen, monkeypatch):
+    panel = screen.panel
+    launches, prompts = [], []
+    panel.portal_url.set("https://portal.example.invalid")
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: prompts.append((args, kwargs)) or False)
+    monkeypatch.setattr("webbrowser.open", lambda url, **kwargs: launches.append(url) or False)
+    panel.connect_button.invoke()
+    assert prompts and not launches and not panel.connected
+    assert not any(client.calls for client in screen.factory.clients)
+    assert "Stayed offline" in panel.status.get()
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: True)
+    client = connect(screen)
+    assert launches == ["https://portal.example.invalid"]
+    assert "Copy portal link" in panel.status.get()
+    panel.copy_portal_link()
+    assert panel.clipboard_get() == "https://portal.example.invalid"
+    panel._complete("health", client.capabilities)
+    assert len(launches) == 1
+    panel.disconnect()
+    panel.open_portal_home()
+    assert len(launches) == 1
+
+
+def test_filters_preserve_download_identity_and_work_offline(screen):
+    client = connect(screen)
+    panel = screen.panel
+    north = dict(screen.factory.asset, id="north", title="Éclair North", coverage="North region", filename="north.mbtiles")
+    south = dict(screen.factory.asset, id="south", title="Bay South", coverage="South region", filename="south.mbtiles")
+    client.catalog = lambda **kwargs: (north, south)
+    panel.refresh_catalog()
+    wait(screen.root, panel)
+    assert panel.maps_tree.get_children() == ("1", "0")
+    panel.maps_tree.selection_set("1")
+    panel.catalog_filters.query.set("north eclair")
+    assert panel.maps_tree.get_children() == ("0",)
+    assert not panel.maps_tree.selection() and not enabled(panel.download_button)
+    panel.maps_tree.selection_set("0")
+    panel.select_map()
+    panel.download_selected()
+    wait(screen.root, panel)
+    downloaded = [call for call in client.calls if call[0] == "download"]
+    assert downloaded[0][1][0]["id"] == "north"
+    assert screen.opened[-1].name == "north.mbtiles"
+    panel.disconnect()
+    before = list(client.calls)
+    panel.catalog_filters.query.set("south")
+    assert panel.maps_tree.get_children() == ("1",)
+    assert not enabled(panel.download_button)
+    panel.catalog_filters.kind.set("Images")
+    assert not panel.maps_tree.get_children()
+    assert "no matches" in panel.catalog_filters.count.get()
+    assert client.calls == before

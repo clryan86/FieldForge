@@ -139,6 +139,8 @@ def test_desktop_fills_existing_places_opens_map_and_reuses_route_offline(
         if os.environ.get("FIELDFORGE_REQUIRE_GUI") == "1":
             pytest.fail("Online map integration requires a functioning Tk display")
         pytest.skip("Graphical portal handoff runs in the dedicated GUI jobs")
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: True)
+    monkeypatch.setattr("webbrowser.open", lambda *args, **kwargs: False)
     root.geometry("1000x700")
     errors = []
     root.report_callback_exception = lambda *args: errors.append(args)

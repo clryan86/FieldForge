@@ -11,6 +11,9 @@ from tkinter import filedialog, ttk
 
 from fieldforge.navigation.places import coordinate, coordinate_text
 from fieldforge.online.compat import Cancelled, PortalSession, address_csv, route_gpx, save_new
+from fieldforge.online.models import validate_portal_url
+from fieldforge.ui.map_catalog_filters import CatalogFilters
+from fieldforge.ui.portal_connection import confirm_connection, open_portal
 from fieldforge_gps.tk_cleanup import TkCleanupMixin
 
 
@@ -55,6 +58,9 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         self.session = None
         self.results = ()
         self.items = ()
+        self._catalog_loaded = False
+        self._confirming = False
+        self._connection_url = ""
         self.selected = None
         self.planned_route = None
         self.downloaded = None
@@ -92,6 +98,9 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         ttk.Checkbutton(connection, variable=self.consent, command=self._permission,
                         text="Send entered address searches and route coordinates to this portal and its providers.").grid(
                             row=1, column=0, columnspan=4, sticky="w", pady=10)
+        self.portal_home_button = ttk.Button(connection, text="Open portal home", command=self.open_portal_home)
+        self.portal_home_button.grid(row=2, column=1, sticky="w")
+        ttk.Button(connection, text="Copy portal link", command=self.copy_portal_link).grid(row=2, column=2, columnspan=2)
         self.tabs = ttk.Notebook(self)
         self.tabs.grid(row=2, column=0, sticky="nsew", padx=18)
         addresses, maps, routes = [ttk.Frame(self.tabs, padding=14) for _ in range(3)]
@@ -130,19 +139,21 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
             button.pack(side="left", padx=(0, 7))
         self.refresh_button = ttk.Button(maps, text="Load / refresh catalogue", command=self.catalogue)
         self.refresh_button.grid(row=0, column=0, sticky="w")
-        maps.rowconfigure(1, weight=1)
+        self.catalog_filters = CatalogFilters(maps, changed=self._render_catalog)
+        self.catalog_filters.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        maps.rowconfigure(2, weight=1)
         self.map_table = ttk.Treeview(maps, columns=("title", "coverage", "size"), show="headings", height=8)
         for key, label, width in (("title", "Map pack", 300), ("coverage", "Coverage", 300), ("size", "MiB", 100)):
             self.map_table.heading(key, text=label)
             self.map_table.column(key, width=width, minwidth=70)
-        self.map_table.grid(row=1, column=0, sticky="nsew", pady=10)
+        self.map_table.grid(row=2, column=0, sticky="nsew", pady=10)
         scroll = ttk.Scrollbar(maps, command=self.map_table.yview)
-        scroll.grid(row=1, column=1, sticky="ns", pady=10)
+        scroll.grid(row=2, column=1, sticky="ns", pady=10)
         self.map_table.configure(yscrollcommand=scroll.set)
         self.map_table.bind("<<TreeviewSelect>>", self._map_selected)
-        ttk.Label(maps, textvariable=self.map_detail, wraplength=760).grid(row=2, column=0, sticky="ew", pady=8)
+        ttk.Label(maps, textvariable=self.map_detail, wraplength=760).grid(row=3, column=0, sticky="ew", pady=8)
         map_actions = ttk.Frame(maps)
-        map_actions.grid(row=3, column=0, sticky="w")
+        map_actions.grid(row=4, column=0, sticky="w")
         self.download_button = ttk.Button(map_actions, text="Download selected map…", command=self.download)
         self.download_button.pack(side="left")
         self.open_button = ttk.Button(map_actions, text="Open downloaded map", command=self.open_download)
@@ -189,6 +200,7 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         for widget in (self.search_entry, self.search_button):
             widget.configure(state="normal" if online and caps.get("geocoding") else "disabled")
         self.plan_button.configure(state="normal" if online and caps.get("routing") else "disabled")
+        self.portal_home_button.configure(state="normal" if self._online() else "disabled")
         self.refresh_button.configure(state="normal" if online else "disabled")
         self.download_button.configure(state="normal" if online and self._map_item() else "disabled")
         self.connect_button.configure(state="disabled" if self._online() or self._busy else "normal")
@@ -213,13 +225,48 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         return True
 
     def connect(self):
-        if self._closed or self._busy or self._online():
+        if self._closed or self._busy or self._online() or self._confirming:
             return False
         if not self.consent.get():
             self.status.set("Choose to send searches to this portal before connecting.")
             return False
+        try:
+            url = validate_portal_url(self.url.get().strip())
+        except ValueError as exc:
+            self.status.set(str(exc))
+            return False
+        self._confirming = True
+        try:
+            accepted = confirm_connection(self, url)
+        finally:
+            self._confirming = False
+        if self._closed:
+            return False
+        if not accepted:
+            self.status.set("Stayed offline. No portal request was sent.")
+            return False
+        self._connection_url = url
+        self.items, self._catalog_loaded = (), False
+        self._render_catalog()
         self.session = PortalSession()
-        return self._submit("connect", _connect, self.session, self.url.get().strip())
+        return self._submit("connect", _connect, self.session, url)
+
+    def open_portal_home(self):
+        if self._closed or not self._online():
+            return
+        if not open_portal(self._connection_url):
+            self.status.set("Browser could not open. Use Copy portal link: " + self._connection_url)
+
+    def copy_portal_link(self):
+        if self._closed:
+            return
+        try:
+            url = self._connection_url if self._online() else validate_portal_url(self.url.get().strip())
+            self.clipboard_clear()
+            self.clipboard_append(url)
+            self.status.set("Portal link copied. Opening it in a browser uses your internet connection.")
+        except (ValueError, tk.TclError) as exc:
+            self.status.set(str(exc))
 
     def _permission(self):
         if not self.consent.get():
@@ -370,11 +417,26 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         selected = self.map_table.selection()
         return self.items[int(selected[0])] if selected and int(selected[0]) < len(self.items) else None
 
+    def _render_catalog(self, *, preserve_selection=True):
+        if self._closed:
+            return
+        previous = self.map_table.selection() if preserve_selection else ()
+        visible = self.catalog_filters.apply(self.items, loaded=self._catalog_loaded)
+        indexes = {item.id: index for index, item in enumerate(self.items)}
+        self.map_table.delete(*self.map_table.get_children())
+        for item in visible:
+            self.map_table.insert("", "end", iid=str(indexes[item.id]), values=(item.title, item.coverage, f"{item.size/1024**2:.1f}"))
+        if previous and self.map_table.exists(previous[0]):
+            self.map_table.selection_set(previous[0])
+        self._map_selected()
+
     def _map_selected(self, _event=None):
         item = self._map_item()
         if item:
             self.map_detail.set(f"{item.title} · {item.coverage} · {item.kind} · updated {item.updated}\n"
                                 f"{item.source} · {item.attribution}\n{item.license}")
+        else:
+            self.map_detail.set("Select a visible map to inspect coverage and download details.")
         self._buttons()
 
     def download(self):
@@ -419,6 +481,7 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
                 missing = [label for key, label in (("geocoding", "address search"), ("routing", "routes"))
                            if not self.session.capabilities.get(key)]
                 self.status.set("Connected. " + providers + (" Not configured: " + ", ".join(missing) if missing else ""))
+                self.open_portal_home()
             elif kind == "search":
                 self.table.delete(*self.table.get_children())
                 self.results = value
@@ -426,10 +489,9 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
                     self.table.insert("", "end", iid=str(index), values=(point.label, point.latitude, point.longitude))
                 self.status.set(f"{len(value)} possible matches. Select one explicitly." if value else "No matches. Try city and country.")
             elif kind == "maps":
-                self.map_table.delete(*self.map_table.get_children())
                 self.items = value
-                for index, item in enumerate(value):
-                    self.map_table.insert("", "end", iid=str(index), values=(item.title, item.coverage, f"{item.size/1024**2:.1f}"))
+                self._catalog_loaded = True
+                self._render_catalog(preserve_selection=False)
                 self.status.set(f"{len(value)} published map packs." if value else "This portal has no published maps yet.")
             elif kind == "route":
                 self.planned_route = value
@@ -448,6 +510,7 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         if self._closed:
             return
         self._closed = True
+        self.catalog_filters.close()
         for value, token in self._route_endpoint_traces:
             try:
                 value.trace_remove("write", token)

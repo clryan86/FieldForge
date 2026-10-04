@@ -8,13 +8,19 @@ saved routes do not require a portal connection.
 ## What the user does
 
 1. Open **Online Maps** from the section selector or Navigation menu.
-2. Enter the FieldForge portal URL supplied by the operator and connect.
+2. Enter the FieldForge portal URL supplied by the operator and choose **Connect**.
+   A warning asks whether to go online, names the destination and defaults to
+   **No**. On approval and a successful connection, the portal home opens in your
+   browser. Use **Copy portal link** if the browser cannot open automatically.
 3. In **Address search**, submit an address and choose the intended result.
    Results show the full location label and WGS 84 latitude/longitude. Choosing
    **Use start** or **Use destination** fills the route fields. Filling a saved
    place opens the existing editor, where **Save place** makes the record persistent.
    A selected address can also be exported as CSV for the offline GPS place catalog.
-4. In **Map downloads**, choose a pack by coverage, format, version, and size.
+4. In **Map downloads**, load the catalog, filter by name, region, source or
+   format, and sort by size to find smaller downloads. Choose a pack by coverage,
+   format, version, and size. These filters keep working on the loaded metadata
+   after disconnecting; they make no requests.
    Download it while connected, then open the completed local file.
 5. In **Routes**, request route alternatives between the chosen coordinates.
    Inspect the route and its directions, then save the selected route locally.
@@ -44,7 +50,8 @@ files remain available. The application does not reconnect automatically.
 | Search a new street address | Yes | Configured portal/geocoder |
 | Copy or use an already selected result | No | Result retained in the session |
 | Reopen a saved place | No | Existing FieldForge waypoint database |
-| Browse the current portal catalog | Yes | Operator's published catalog |
+| Load or refresh the portal catalog | Yes | Operator's published catalog |
+| Filter and sort an already loaded catalog | No | Metadata retained in the session |
 | Download a new map | Yes | Operator's immutable map file |
 | Reopen a completed map download | No | Local MBTiles or image file |
 | Request new driving-route alternatives | Yes | Configured routing server |
@@ -73,6 +80,13 @@ These files are separate from ordinary household-database backups. Back up the
 `online-maps` directory when moving the map/route collection to another device.
 Saved place coordinates continue to use the existing waypoint database and its
 normal backups. Portal URL settings do not store an account password.
+
+The browser home includes maps, route tools, and reserved sections for the
+program's knowledge/download packs. Unpublished sections and proposed tier
+allowances are labeled as drafts. See [publishing and package notes](PORTAL_ROADMAP.md).
+The browser asks for its own confirmation before API access. **Disconnect**
+stops FieldForge's online tools; it does not disable the device's network or
+close a browser that has already been opened.
 
 The existing **Navigation → Online map portal…** window also remains available.
 It supports choosing an exact destination for a map download and writes a
@@ -164,6 +178,41 @@ published file, not a promise of complete world or country coverage. Use new
 IDs for new immutable pack versions.
 The optional `--source` records the map's provider or dataset identity alongside
 its license and attribution; `--file` identifies the file to publish.
+
+### Prepare several maps from an inventory
+
+Copy `examples/map-catalog-inventory.json`, replace its example entries with
+actual local files and their rights/source information, then run:
+
+```bash
+python -m fieldforge.online.catalog build \
+  --inventory /path/to/map-catalog-inventory.json \
+  --root ./new-portal-maps
+```
+
+The installed `fieldforge-map-catalog` command provides the same `build`, `add`
+and `list` subcommands. `asset_folder` is relative to the inventory file (or an
+absolute local folder). Each `filename` must be a simple basename in that
+folder. The example is a template, not a supplied map or permission to publish.
+
+The builder validates and copies every listed map into private staging storage,
+calculates sizes and SHA-256, and checks the sources have not changed before
+publishing the shared catalog index. A bad file fails the batch without a
+partially visible catalog. Source files are not modified. The destination must
+be a **new directory**, with an existing parent; even an empty existing directory
+is refused. No other files in the asset folder are scanned or published.
+
+The inventory accepts 1–5000 maps within 8 MiB of JSON. Each map uses the same
+format limits and immutable publisher as `add`: raster MBTiles up to 16 GiB and
+supported image files up to 64 MiB, subject to decoder limits. Metadata must
+include a unique ID, title, coverage, version, source, attribution and license.
+Images remain reference images unless separately calibrated in an appropriate
+workflow; vector MBTiles are not supported by the raster viewer.
+
+Inspect the generated catalog with `list --root ./new-portal-maps`. To serve
+it, deliberately update the operator configuration's `catalog_root` and restart
+the service. The builder does not replace existing catalogs, alter server
+configuration, fetch maps or start an online session.
 
 ### Configure address and routing providers
 

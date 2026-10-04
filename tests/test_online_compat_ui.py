@@ -3,6 +3,7 @@
 import threading
 import time
 
+import pytest
 from test_gps_desktop import root as root
 from test_online_portal import map_entry as map_entry
 from test_online_portal import portal as portal
@@ -15,6 +16,12 @@ from fieldforge.ui.online_maps import OnlineMapWindow
 from fieldforge.ui.places import PlaceEditor
 from fieldforge_gps.gpx_review import parse_gpx
 from fieldforge_gps.places import read_catalog
+
+
+@pytest.fixture(autouse=True)
+def portal_handoff(monkeypatch):
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: True)
+    monkeypatch.setattr("webbrowser.open", lambda *args, **kwargs: False)
 
 
 def pump(root, predicate):
@@ -32,6 +39,35 @@ def connect(root, window, portal):
     assert window.connect()
     pump(root, lambda: not window._busy)
     assert window._online(), window.status.get()
+
+
+def test_connection_reject_and_offline_filters(root, portal, monkeypatch):
+    from dataclasses import replace
+
+    window = OnlineMapWindow(root)
+    window.url.set(portal[0])
+    window.consent.set(True)
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: False)
+    assert not window.connect() and window.session is None
+    assert not portal[2]
+    monkeypatch.setattr("tkinter.messagebox.askyesno", lambda *args, **kwargs: True)
+    connect(root, window, portal)
+    window.catalogue()
+    pump(root, lambda: not window._busy)
+    original = window.items[0]
+    window.items = (replace(original, id="north", title="North"), replace(original, id="south", title="South"))
+    window._render_catalog(preserve_selection=False)
+    window.map_table.selection_set("0")
+    window.catalog_filters.query.set("south")
+    assert window.map_table.get_children() == ("1",)
+    assert window._map_item() is None
+    window.map_table.selection_set("1")
+    assert window._map_item().id == "south"
+    window.disconnect()
+    window.catalog_filters.query.set("north")
+    assert window.map_table.get_children() == ("0",)
+    assert window.download_button.instate(["disabled"])
+    window.close()
 
 
 def search(root, window):
