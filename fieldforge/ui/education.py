@@ -473,7 +473,18 @@ class EducationTab(ttk.Frame):
         diagram = self.lesson.diagram
         kind = diagram["kind"]
         color, ink = "#2c7f99", "#18394a"
-        if kind == "fraction":
+        if kind == "bars":
+            from fieldforge.knowledge.education import bar_chart
+            canvas.create_text(width / 2, 14, text=diagram["title"], fill=ink)
+            for label, left, top, right, bottom, value in bar_chart(diagram, width):
+                canvas.create_text(left - 8, top + 7, text=label, anchor="e", fill=ink)
+                canvas.create_rectangle(left, top, right, bottom, fill=color, outline="")
+                canvas.create_text(right + 6, top + 7, text=value, anchor="w", fill=ink)
+            canvas.create_line(102, 25, 102, 103, width - 70, 103, fill=ink)
+            for x, value in ((102, 0), ((102 + width - 70) / 2, diagram["maximum"] / 2),
+                             (width - 70, diagram["maximum"])):
+                canvas.create_text(x, 121, text=f"{value:g}", fill=ink)
+        elif kind == "fraction":
             step = (width - 70) / diagram["parts"]
             for i in range(diagram["parts"]):
                 x = 35 + i * step

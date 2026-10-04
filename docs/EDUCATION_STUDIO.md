@@ -38,6 +38,27 @@ criteria and example responses, allowing more than one valid wording.
 
 ## Practice workflow
 
+**Guided: Investigate & reason** connects measurement and literacy in four lessons:
+
+1. Measurements: mean, range, consistency, reference checks and unusual readings.
+2. Fair comparisons: competing explanations, order effects and a follow-up plan.
+3. Samples: counts versus rates, percentage points, self-selection and missing users.
+4. Evidence report: combine data, method, missing records and a qualified conclusion.
+
+The 24 exercises include eight exact numeric checks, eight choice checks with
+feedback for each distractor, and eight written tasks with comparison criteria.
+Each lesson supplies a fictional dataset, worked reasoning and a labeled chart
+with a zero baseline and a text description. Charts also appear in exported
+worksheets. **Passage / model** holds the data record while you answer. The final
+report asks for a method, calculated result, limitations and a specific next step;
+it is self-reviewed, not automatically graded. The datasets illustrate reasoning
+and do not establish real product performance, causal effects or teaching outcomes.
+
+The course uses [NGSS Appendix F](https://www.nextgenscience.org/sites/default/files/resource/files/Appendix%20F%20%20Science%20and%20Engineering%20Practices%20in%20the%20NGSS%20-%20FINAL%20060513.pdf)
+and [NIST measurement terminology](https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-appendix-d1-terminology)
+as background. It is not a validated standards-aligned curriculum or a complete
+measurement-uncertainty course. All datasets, prompts and worked examples are original.
+
 Read the goal and worked examples, then select **Practice & explain**. Write an
 answer and explain your method. **Check number** accepts exact integers, decimals
 or fractions in the displayed unit, without units typed into the number field.
@@ -68,7 +89,7 @@ detect other help used, and it does not infer independent mastery.
 
 ## Content and storage boundaries
 
-The ten guided lessons add 50 exercises to the original 516 reference prompts.
+The fourteen guided lessons add 74 exercises to the original 516 reference prompts.
 They are AI-assisted teaching drafts, not independently educator-reviewed or
 validated with learner outcomes. Instructional design background is the
 [IES study guide](https://ies.ed.gov/ncee/wwc/PracticeGuide/1); this does not mean
@@ -87,6 +108,7 @@ Question content fingerprints keep revised prompts from inheriting stale check
 results. Existing versions of work remain in the database. Concurrent saves use
 revision checks, so another open window cannot silently replace an older draft.
 The literacy extension preserves all 541 previously shipped question fingerprints.
+The evidence course additionally preserves all 566 fingerprints shipped before it.
 New questions include source passages and choices in their fingerprints, so
 changed evidence or options cannot inherit a previous question's check result.
 

@@ -17,6 +17,9 @@ independently evaluated.
 lessons with diagrams and numeric practice, or **Guided: Read & write** for five
 lessons with original passages, choice feedback, worked revisions and writing
 tasks. Source text stays available beside the question tab while you answer.
+**Guided: Investigate & reason** adds four lessons on measurement records, fair
+comparisons, proportions and sampling, and writing a defensible evidence report.
+They include fictional datasets, labeled charts and 24 exercises with worked reasoning.
 All 172 original education lessons are searchable in the same workspace.
 Responses and explanations save on this device and in full database backups;
 export an offline worksheet for printing. See [Education workspace](docs/EDUCATION_STUDIO.md).

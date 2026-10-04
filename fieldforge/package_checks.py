@@ -242,7 +242,7 @@ def verify_education_workspace(root, directory: Path) -> None:
     app = FieldForgeApp(directory / "education.db")
     tab = EducationTab(root, app.db.path)
     try:
-        _require(len(tab.catalog) == 182, "Education catalogue missing from the bundle")
+        _require(len(tab.catalog) == 186, "Education catalogue missing from the bundle")
         tab.open_lesson("guide-length")
         tab.response.insert("1.0", "11")
         tab.check_button.invoke()
@@ -288,6 +288,29 @@ def verify_education_workspace(root, directory: Path) -> None:
         _require(tab.work.result == "draft" and tab.work.reflection == "needs practice",
                  "Writing must remain an explicit self-review")
         writing_question, writing_work = tab.question, tab.work
+        tab.track.set("Guided: Investigate & reason")
+        tab.refresh()
+        _require(tab.lesson.id == "evidence-measure" and "[M4]" in tab.source_text.get("1.0", "end"),
+                 "Evidence course or data record is missing")
+        tab.open_lesson("evidence-sample")
+        tab.response.insert("1.0", "8/40")
+        tab.check_button.invoke()
+        _require(tab.work.result == "retry" and "Forty combines" in tab.feedback.get("1.0", "end"),
+                 "Evidence denominator feedback is missing")
+        tab.hint_button.invoke()
+        tab.response.delete("1.0", "end")
+        tab.response.insert("1.0", "0.8")
+        tab.reasoning.insert("1.0", "Eight successes belong to the ten large-print attempts.")
+        tab.check_button.invoke()
+        _require(tab.work.result == "correct" and tab.work.hints == 1,
+                 "Evidence exact proportion check failed")
+        evidence_lesson, evidence_question, evidence_work = tab.lesson, tab.question, tab.work
+        tab.open_lesson("evidence-report")
+        tab.move_question(4)
+        tab.response.insert("1.0", "The returned sheets favor B, but four sheets have unknown outcomes.")
+        tab.reveal_button.invoke()
+        tab.review_button.invoke()
+        report_lesson, report_question, report_work = tab.lesson, tab.question, tab.work
     finally:
         tab.destroy()
     backup = create_verified_backup(app.db.path, directory / "education.ffbackup")
@@ -305,6 +328,13 @@ def verify_education_workspace(root, directory: Path) -> None:
     _require("[N5]" in literacy_output and writing_work.response in literacy_output,
              "Literacy worksheet lost its source or saved writing")
     (directory / "literacy-worksheet.html").write_text(literacy_output, encoding="utf-8")
+    _require(store.read(evidence_lesson.id, evidence_question) == evidence_work
+             and store.read(report_lesson.id, report_question) == report_work,
+             "Evidence calculation or report did not survive backup")
+    evidence_output = worksheet(report_lesson, tuple(store.read(report_lesson.id, q) for q in report_lesson.questions))
+    _require("<svg" in evidence_output and "[R2]" in evidence_output and report_work.response in evidence_output,
+             "Evidence worksheet lost its chart, records or report")
+    (directory / "evidence-worksheet.html").write_text(evidence_output, encoding="utf-8")
     reopened = EducationTab(root, recovered)
     try:
         reopened.open_lesson(lesson.id)
@@ -313,6 +343,11 @@ def verify_education_workspace(root, directory: Path) -> None:
                  "Recovered education response is not visible in the UI")
         reopened.open_lesson(literacy_lesson.id)
         _require(reopened.choice_response.get() == "B", "Recovered choice is not visible")
+        reopened.open_lesson(evidence_lesson.id)
+        _require(reopened.response.get("1.0", "end-1c") == "0.8", "Recovered evidence calculation is not visible")
+        reopened.draw_diagram()
+        _require(any(reopened.diagram.type(item) == "rectangle" for item in reopened.diagram.find_all()),
+                 "Evidence bar chart is unavailable in the packaged desktop")
     finally:
         reopened.destroy()
 
@@ -389,7 +424,7 @@ def verify_installation() -> dict[str, object]:
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
-        checks.append("Education: 182 lessons; maths and literacy feedback, hints, number/choice checks, writing self-review, saved work, backup/restore and worksheets with source passages")
+        checks.append("Education: 186 lessons; maths, literacy and evidence practice, charts, hints, number/choice feedback, writing self-review, saved work, backup/restore and worksheets with source records")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)
