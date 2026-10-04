@@ -37,6 +37,7 @@ class EducationTab(ttk.Frame):
         self.status = tk.StringVar(value="Choose a lesson. Practice is stored in this device's FieldForge database.")
         self.progress = tk.StringVar()
         self.question_choice = tk.StringVar()
+        self.choice_response = tk.StringVar()
         self.prerequisite_choice = tk.StringVar()
 
         heading = ttk.Frame(self)
@@ -44,7 +45,7 @@ class EducationTab(ttk.Frame):
         ttk.Label(heading, text="Education", style="Header.TLabel").pack(side="left")
         ttk.Button(heading, text="Export worksheet…", command=self.export).pack(side="right")
         ttk.Button(heading, text="Reload saved answer…", command=self.reload_saved).pack(side="right", padx=8)
-        self.notice = ttk.Label(self, text="Learn → try → explain → review. Five guided lessons and 172 reference lessons, available offline.")
+        self.notice = ttk.Label(self, text="Learn → try → explain → review. Guided maths and literacy courses, plus 172 reference lessons, available offline.")
         self.notice.pack(anchor="w", pady=(2, 8))
         panes = ttk.Panedwindow(self, orient="horizontal")
         panes.pack(fill="both", expand=True)
@@ -57,11 +58,11 @@ class EducationTab(ttk.Frame):
         search.pack(fill="x", pady=(2, 6))
         search.bind("<Return>", lambda _e: self.refresh())
         ttk.Button(browser, text="Search", command=self.refresh).pack(anchor="e")
-        track = ttk.Combobox(browser, textvariable=self.track, state="readonly",
-                             values=["All lessons", "Guided: Measure & plan", *sorted({
-                                 lesson.track for lesson in self.catalog if not lesson.guided})])
-        track.pack(fill="x", pady=8)
-        track.bind("<<ComboboxSelected>>", lambda _e: self.refresh())
+        self.track_picker = ttk.Combobox(browser, textvariable=self.track, state="readonly",
+                                         values=["All lessons", *sorted({lesson.track for lesson in self.catalog if lesson.guided}),
+                                                 *sorted({lesson.track for lesson in self.catalog if not lesson.guided})])
+        self.track_picker.pack(fill="x", pady=8)
+        self.track_picker.bind("<<ComboboxSelected>>", lambda _e: self.refresh())
         ttk.Button(browser, text="Resume saved practice", command=self.resume).pack(fill="x", pady=(0, 8))
         tree_frame = ttk.Frame(browser)
         tree_frame.pack(fill="both", expand=True)
@@ -114,13 +115,21 @@ class EducationTab(ttk.Frame):
         self.question_picker.bind("<<ComboboxSelected>>", self._select_question)
         self.next = ttk.Button(nav, text="Next →", command=lambda: self.move_question(1))
         self.next.pack(side="right")
-        self.prompt = ScrolledText(practice, wrap="word", height=4, padx=8, pady=8,
+        self.question_pages = ttk.Notebook(practice)
+        self.question_pages.grid(row=1, column=0, sticky="nsew", pady=6)
+        self.prompt = ScrolledText(self.question_pages, wrap="word", height=5, padx=8, pady=8,
                                   state="disabled", font=("TkDefaultFont", 11))
-        self.prompt.grid(row=1, column=0, sticky="nsew", pady=6)
+        self.source_text = ScrolledText(self.question_pages, wrap="word", height=5, padx=8, pady=8,
+                                       state="disabled", font=("TkDefaultFont", 11))
+        self.question_pages.add(self.prompt.frame, text="Question & options")
+        self.question_pages.add(self.source_text.frame, text="Passage / model")
         self.response_label = ttk.Label(practice)
         self.response_label.grid(row=2, column=0, sticky="w")
         self.response = ScrolledText(practice, wrap="word", height=2, font=("TkDefaultFont", 11), undo=True)
         self.response.grid(row=3, column=0, sticky="ew", pady=(3, 6))
+        self.choices = ttk.Frame(practice)
+        self.choices.grid(row=3, column=0, sticky="ew", pady=(3, 6))
+        self.choices.grid_remove()
         ttk.Label(practice, text="Explain your method, evidence or uncertainty").grid(row=4, column=0, sticky="w")
         self.reasoning = ScrolledText(practice, wrap="word", height=2, font=("TkDefaultFont", 11), undo=True)
         self.reasoning.grid(row=5, column=0, sticky="ew", pady=(3, 6))
@@ -232,7 +241,7 @@ class EducationTab(ttk.Frame):
             self.draw_diagram()
         else:
             self.diagram.pack_forget()
-        self.question_picker.configure(values=[f"{i+1} of {len(lesson.questions)} · {'Number' if q.kind == 'number' else 'Explain'}"
+        self.question_picker.configure(values=[f"{i+1} of {len(lesson.questions)} · {q.kind.title() if q.kind != 'reflection' else 'Explain'}"
                                                for i, q in enumerate(lesson.questions)])
         self._show_question()
         self.pages.select(self.read_page)
@@ -296,8 +305,32 @@ class EducationTab(ttk.Frame):
         self._loading = True
         q = self.question
         self.question_picker.current(self.question_index)
-        self._text(self.prompt, q.prompt)
-        self.response_label.configure(text=f"Your answer in {q.unit} — number, decimal or fraction only" if q.kind == "number" else "Your written response — compare it yourself; no automatic grading")
+        options = "\n\n" + "\n\n".join(f"{key}. {label}" for key, label in q.choices) if q.choices else ""
+        self._text(self.prompt, q.prompt + options)
+        self._text(self.source_text, q.passage)
+        if q.passage:
+            self.question_pages.add(self.source_text.frame, text="Passage / model")
+        else:
+            self.question_pages.hide(self.source_text.frame)
+        self.question_pages.select(self.prompt.frame)
+        self.prompt.yview_moveto(0)
+        self.source_text.yview_moveto(0)
+        label = (f"Your answer in {q.unit} — number, decimal or fraction only" if q.kind == "number"
+                 else "Choose an option above; explain the supporting evidence below" if q.kind == "choice"
+                 else "Your written response — compare it yourself; no automatic grading")
+        self.response_label.configure(text=label)
+        for child in self.choices.winfo_children():
+            child.destroy()
+        self.choice_response.set(self.work.response)
+        if q.kind == "choice":
+            self.response.grid_remove()
+            self.choices.grid()
+            for key, _label in q.choices:
+                ttk.Radiobutton(self.choices, text=key, value=key, variable=self.choice_response,
+                                command=self._schedule_save).pack(side="left", padx=(0, 24))
+        else:
+            self.choices.grid_remove()
+            self.response.grid()
         for widget, value in ((self.response, self.work.response), (self.reasoning, self.work.reasoning)):
             widget.delete("1.0", "end")
             widget.insert("1.0", value)
@@ -306,7 +339,8 @@ class EducationTab(ttk.Frame):
         self._loading = False
         self.previous.configure(state="normal" if self.question_index else "disabled")
         self.next.configure(state="normal" if self.question_index + 1 < len(self.lesson.questions) else "disabled")
-        self.check_button.configure(state="normal" if q.kind == "number" else "disabled")
+        self.check_button.configure(state="disabled" if q.kind == "reflection" else "normal",
+                                    text="Check choice" if q.kind == "choice" else "Check number")
         self._controls()
         self._feedback()
         self._progress()
@@ -321,9 +355,10 @@ class EducationTab(ttk.Frame):
         pieces = [message] if message else []
         if self.work.result == "correct":
             support = "with a hint/answer shown" if self.work.hints or self.work.revealed else "before hints/answer reveal"
-            pieces.append(f"Latest numeric answer matches ({support}). Your explanation is not automatically graded.")
+            label = "numeric answer" if self.question.kind == "number" else "selected option"
+            pieces.append(f"Latest {label} matches ({support}). Your explanation is not automatically graded.")
         elif self.work.result == "retry":
-            pieces.append("Latest numeric answer needs another try.")
+            pieces.append("Latest answer needs another try.")
         pieces.extend(f"Hint {i+1}: {hint}" for i, hint in enumerate(self.question.hints[:self.work.hints]))
         if self.work.revealed:
             pieces.append("WORKED ANSWER / COMPARISON CRITERIA\n" + self.question.explanation)
@@ -336,6 +371,9 @@ class EducationTab(ttk.Frame):
         if not widget.edit_modified():
             return
         widget.edit_modified(False)
+        self._schedule_save()
+
+    def _schedule_save(self):
         if self._loading or not self.lesson:
             return
         if self._timer is not None:
@@ -344,7 +382,8 @@ class EducationTab(ttk.Frame):
         self._timer = self.after(700, self.save_current)
 
     def _draft(self):
-        return revise(self.work, self.response.get("1.0", "end-1c"), self.reasoning.get("1.0", "end-1c"))
+        response = self.choice_response.get() if self.question.kind == "choice" else self.response.get("1.0", "end-1c")
+        return revise(self.work, response, self.reasoning.get("1.0", "end-1c"))
 
     def _persist(self, work):
         if self._timer is not None:
@@ -385,22 +424,24 @@ class EducationTab(ttk.Frame):
             self.progress.set(f"Progress unavailable: {exc}")
 
     def check_answer(self):
+        if not self.lesson:
+            return
         updated, feedback = check(self.question, self._draft())
         if self._persist(updated):
             self._feedback(feedback)
 
     def hint(self):
-        if self.work.hints < len(self.question.hints) and self._persist(replace(self._draft(), hints=self.work.hints + 1)):
+        if self.lesson and self.work.hints < len(self.question.hints) and self._persist(replace(self._draft(), hints=self.work.hints + 1)):
             self._controls()
             self._feedback()
 
     def reveal(self):
-        if self._persist(replace(self._draft(), revealed=True)):
+        if self.lesson and self._persist(replace(self._draft(), revealed=True)):
             self._controls()
             self._feedback()
 
     def reflect(self, value):
-        if self.work.revealed and self._persist(replace(self._draft(), reflection=value)):
+        if self.lesson and self.work.revealed and self._persist(replace(self._draft(), reflection=value)):
             self._feedback()
 
     def export(self):

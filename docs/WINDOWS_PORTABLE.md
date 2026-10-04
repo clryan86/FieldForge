@@ -32,6 +32,11 @@ Go to section → Education. Start with Guided: Measure & plan for five connecte
 lessons on fractions, measurement, area, scale drawings and a paper plan review.
 Choose Practice & explain to attempt new questions, ask for hints and compare
 worked answers. All 172 original reference lessons are searchable using All lessons.
+Choose Guided: Read & write for five lessons on notices, event sequences,
+summaries, clear instructions and practical requests. These include 15 choice
+questions, 10 writing tasks, original source passages and worked revisions.
+Question & options shows each choice in full; Passage / model keeps the source
+available while you answer. Choice feedback cites the text; prose is self-reviewed.
 No library import, internet or AI model is needed for this section.
 
 Responses and explanations save on this device automatically, when changing
