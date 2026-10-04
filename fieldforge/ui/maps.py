@@ -56,6 +56,7 @@ class MapsTab(ttk.Frame):
         self._route_geometry = None
         self._route_drawing = self._route_drawing_view = None
         self._images = []
+        self._regional_window = None
         self._disposed = False
         self._generation = 0
         self._cancel = Event()
@@ -84,6 +85,8 @@ class MapsTab(ttk.Frame):
         files.grid(row=2, column=0, sticky="ew", pady=(0, 8))
         self.open_button = ttk.Button(files, text="Open local map…", command=self.choose)
         self.open_button.pack(side="left")
+        self.regional_button = ttk.Button(files, text="Prepared regional map…", command=self.open_prepared_region)
+        self.regional_button.pack(side="left", padx=(6, 0))
         self.close_button = ttk.Button(files, text="Close map", command=self.close_map)
         self.close_button.pack(side="left", padx=6)
         self.info_button = ttk.Button(files, text="Map details / rights…", command=self.details)
@@ -327,6 +330,26 @@ class MapsTab(ttk.Frame):
         self.status.set("Reading map metadata and observed zoom levels; nothing is downloaded or copied into your database.")
         self._blank("Opening trusted map pack…")
         self._start("open", inspect_pack, path)
+
+    def open_prepared_region(self):
+        if self._disposed:
+            return
+        if self._regional_window is not None:
+            try:
+                if self._regional_window.winfo_exists():
+                    self._regional_window.lift()
+                    self._regional_window.focus_force()
+                    return
+            except tk.TclError:
+                pass
+            self._regional_window = None
+        from fieldforge.ui.regional_index import RegionalIndexWindow
+        self._regional_window = RegionalIndexWindow(self.winfo_toplevel())
+        self._regional_window.bind("<Destroy>", self._regional_window_destroyed, add=True)
+
+    def _regional_window_destroyed(self, event):
+        if self._regional_window is not None and event.widget is self._regional_window:
+            self._regional_window = None
 
     def close_map(self):
         self._stop_request()
