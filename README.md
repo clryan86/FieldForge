@@ -34,8 +34,8 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 - Go-bag and vehicle-kit readiness scoring
 
 ### Offline knowledge
-- [Bundled reference library](docs/REFERENCE_LIBRARY.md): 339 articles across 14 categories, available without downloads
-- [Education Foundations](docs/EDUCATION_FOUNDATIONS.md): 72 original lesson drafts with reading, writing, arithmetic, geometry, teaching, science, maps, practical literacy and historical-inquiry activities, exercises and answer keys
+- [Bundled reference library](docs/REFERENCE_LIBRARY.md): 355 articles across 14 categories, available without downloads
+- [Education Foundations](docs/EDUCATION_FOUNDATIONS.md): 88 original lesson drafts with reading, writing, arithmetic, geometry, teaching, science, maps, practical literacy, data literacy and historical-inquiry activities, exercises and answer keys
 - [Three AI blueprint makers](docs/BLUEPRINT_MAKERS.md): engineering designs, project guides, and software architecture using optional local models
 - Iterative AI refinement, portable project history, change comparisons and restore without deleting earlier revisions
 - User-owned acceptance limits for dimensions, schedules and components, recomputed independently of model critique

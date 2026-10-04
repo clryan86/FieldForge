@@ -248,6 +248,76 @@
       "scope": "Background on weather observations and longer-term climate patterns. The temperature records and interpretation tasks here are fictional and are not a local forecast or climate assessment.",
       "publisher": "NOAA National Ocean Service",
       "accessed_on": "2026-10-03"
+    },
+    "suffix-changes": {
+      "title": "UFLI Foundations: Suffix Spelling Changes Unit",
+      "url": "https://ufli.education.ufl.edu/foundations/toolbox/107-110/",
+      "scope": "Further resources on suffix spelling patterns. FieldForge's explanations, sequence, word activities and answers are original, not reproduced UFLI lessons or a substitute for that complete program.",
+      "publisher": "University of Florida Literacy Institute",
+      "accessed_on": "2026-10-03"
+    },
+    "apostrophes": {
+      "title": "Purdue OWL: The Apostrophe",
+      "url": "https://owl.purdue.edu/owl/general_writing/punctuation/apostrophe_introduction.html",
+      "scope": "Background on conventions in edited English. All example sentences, scenarios, exercises and answer explanations here are original; Purdue's teaching text and exercises are not reproduced.",
+      "publisher": "Purdue University Online Writing Lab",
+      "accessed_on": "2026-10-03"
+    },
+    "agreement": {
+      "title": "Purdue OWL: Making Subjects and Verbs Agree",
+      "url": "https://owl.purdue.edu/owl/general_writing/grammar/subject_verb_agreement.html",
+      "scope": "Background on conventions in edited English. All example sentences, scenarios, exercises and answer explanations here are original; Purdue's teaching text and exercises are not reproduced.",
+      "publisher": "Purdue University Online Writing Lab",
+      "accessed_on": "2026-10-03"
+    },
+    "clauses": {
+      "title": "Purdue OWL: Identifying Independent and Dependent Clauses",
+      "url": "https://owl.purdue.edu/owl/general_writing/punctuation/independent_and_dependent_clauses/index.html",
+      "scope": "Background on conventions in edited English. All example sentences, scenarios, exercises and answer explanations here are original; Purdue's teaching text and exercises are not reproduced.",
+      "publisher": "Purdue University Online Writing Lab",
+      "accessed_on": "2026-10-03"
+    },
+    "operation-order": {
+      "title": "Prealgebra 2e: Use the Language of Algebra",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/2-1-use-the-language-of-algebra",
+      "scope": "Further mathematics reference. Explanations, numerical examples, exercises and answers here are original; no textbook text or diagrams are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "factors": {
+      "title": "Prealgebra 2e: Prime Factorization and the Least Common Multiple",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/2-5-prime-factorization-and-the-least-common-multiple",
+      "scope": "Further mathematics reference. Explanations, numerical examples, exercises and answers here are original; no textbook text or diagrams are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "coordinates": {
+      "title": "Prealgebra 2e: Use the Rectangular Coordinate System",
+      "url": "https://openstax.org/books/prealgebra-2e/pages/11-1-use-the-rectangular-coordinate-system",
+      "scope": "Further mathematics reference. Explanations, numerical examples, exercises and answers here are original; no textbook text or diagrams are reproduced.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "transformations": {
+      "title": "Translations & Reflections on a Coordinate Grid",
+      "url": "https://stemtc.scimathmn.org/frameworks/732b-translations-reflections-coordinate-grid",
+      "scope": "Background on coordinate translations, reflections and preserved distances. The coordinates and paper activities here are original, not reproduced assessment items.",
+      "publisher": "Minnesota STEM Teacher Center / SciMathMN",
+      "accessed_on": "2026-10-03"
+    },
+    "sampling": {
+      "title": "Introductory Statistics 2e: Data, Sampling, and Variation in Data and Sampling",
+      "url": "https://openstax.org/books/introductory-statistics-2e/pages/1-2-data-sampling-and-variation-in-data-and-sampling",
+      "scope": "Background on sampling and limits on inference. The small survey, response counts and questions here are fictional original examples, not a real study or reproduced textbook exercise.",
+      "publisher": "OpenStax, Rice University",
+      "accessed_on": "2026-10-03"
+    },
+    "chart-scales": {
+      "title": "Data visualisation: charts",
+      "url": "https://analysisfunction.civilservice.gov.uk/policy-store/data-visualisation-charts/",
+      "scope": "Background on chart labeling and numerical axes, including zero baselines for bars. The counts, chart descriptions and exercises here are original fictional examples; no source chart is reproduced.",
+      "publisher": "UK Government Analysis Function",
+      "accessed_on": "2026-10-03"
     }
   },
   "lessons": [
@@ -3071,6 +3141,678 @@
         "missing-data",
         "trend",
         "measurement-context"
+      ]
+    },
+    {
+      "id": "73",
+      "edition": "2026-10-03",
+      "title": "Spell selected suffixes by checking the base word",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "29",
+        "43"
+      ],
+      "goal": "Recognize common spelling changes before -ing and -ed without applying a single rule to every longer word.",
+      "materials": "Cards for hop, hope, tap, bake, carry, play and their completed forms; paper for marking the base and suffix.",
+      "lesson": [
+        "A suffix attaches to the end of a base, but the visible spelling of the base sometimes changes. Compare hope + ing -> hoping with hop + ing -> hopping. In hoping, remove the final silent e before adding ing. In hopping, double the final p. Say each completed word with a proficient speaker, then connect its pronunciation and meaning to the spelling difference.",
+        "For many one-syllable bases ending in one short-vowel letter followed by one consonant letter, double that consonant before a vowel-initial ending: tap becomes tapping or tapped, and plan becomes planning or planned. Do not double final w, x or y by this pattern: fix becomes fixing, and play becomes playing. Words with other endings or more syllables need additional checks, including stress; this small set is not a complete doubling rule for English.",
+        "A final silent e commonly drops before -ing: bake becomes baking and smile becomes smiling. It is usually kept before a consonant-initial ending such as -ful: hope becomes hopeful. Exceptions exist; see becomes seeing, so deleting the last written e from every base would fail. Build a word record with the base, the added ending and the actual completed spelling rather than learning only an isolated slogan.",
+        "For a base ending in consonant + y, y often changes to i before -ed: carry becomes carried and try becomes tried. Before -ing, keep the y: carrying and trying. After vowel + y, usually keep it in these examples: play becomes played or playing. Read the whole result and check its meaning after writing. A learner who understands the base and suffix can still need explicit practice with the spelling change."
+      ],
+      "practice": [
+        "Add -ing to hop, hope and fix, explaining each spelling.",
+        "Write the -ed and -ing forms of carry.",
+        "A learner writes playying and bakeding. Give the ordinary -ing form of play and the -ed form of bake, then explain why the learner must check both the base and the requested ending."
+      ],
+      "answers": [
+        "Hopping doubles p; hoping drops final silent e; fixing does not double x.",
+        "Carried and carrying: y changes to i before -ed in this example but stays before -ing.",
+        "Playing and baked. Play keeps y without doubling it; bake already ends in e, so its regular past form adds d. Bakeding also mixes endings instead of answering the requested -ed task."
+      ],
+      "adaptation": "Teach one contrast at a time and use familiar spoken words. A reference dictionary or fluent facilitator can resolve unfamiliar examples. Avoid extending these selected patterns to all English suffixes or to another language.",
+      "references": [
+        "suffix-changes",
+        "reading"
+      ],
+      "tags": [
+        "suffix-spelling",
+        "doubling",
+        "drop-e",
+        "y-to-i",
+        "base-word"
+      ]
+    },
+    {
+      "id": "74",
+      "edition": "2026-10-03",
+      "title": "Use apostrophes for possession and contractions",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "29",
+        "31",
+        "73"
+      ],
+      "goal": "Distinguish an ordinary noun plural, a possessive noun and a contraction in short edited-English sentences.",
+      "materials": "Paper and cards showing learner, learners, learner's, learners', it is and its.",
+      "lesson": [
+        "A plural names more than one: 'Three learners arrived.' In an ordinary noun plural such as learners, the s needs no apostrophe. A possessive can express ownership or association: 'One learner's notebook is open.' Here learner's refers to one learner. Compare 'The learners' notebooks are open' when notebooks are associated with several learners. Decide the intended number and meaning before adding punctuation.",
+        "For many singular nouns, add apostrophe + s to form a possessive. For a regular plural already ending in s, add the apostrophe after that s. An irregular plural without final s commonly takes apostrophe + s, as in 'the people's meeting'. Style conventions differ for some names and special cases; this lesson focuses on clear ordinary examples rather than pretending to cover every editorial rule.",
+        "A contraction combines words with letters omitted. We are becomes we're, and they will becomes they'll. Read the full form to check meaning before replacing it with a contraction. In 'It's ready', it's means it is. In 'The box has lost its label', its is possessive and has no apostrophe. It's can also represent it has in a phrase such as 'It's been useful'; the surrounding words determine the expansion.",
+        "Proofread a short draft in two passes. First ask whether each s marks a plural or possession. Then expand each contraction aloud to check that it fits. Do not insert apostrophes merely because a word ends in s or because the writing sounds formal. Punctuation makes a chosen meaning visible; it cannot rescue a sentence whose intended owner or number remains unclear."
+      ],
+      "practice": [
+        "Write the phrase for a notebook belonging to one tutor, then notebooks belonging to several tutors.",
+        "Choose its or it's: 'The folder has ___ own label. ___ easy to find.'",
+        "Correct 'Four learner's brought notebook's' when the sentence simply means four people brought notebooks, with no possessive phrase."
+      ],
+      "answers": [
+        "One tutor's notebook; several tutors' notebooks.",
+        "Its own label; It's easy to find. The second expands to It is, while the first expresses possession.",
+        "Four learners brought notebooks. Both nouns are ordinary plurals here and need no apostrophe."
+      ],
+      "adaptation": "Let learners explain intended ownership orally before writing. Use a large visible apostrophe mark and compare minimal pairs. This is practice with common edited-English conventions, not a judgment about a person's dialect or spoken language.",
+      "references": [
+        "apostrophes"
+      ],
+      "tags": [
+        "apostrophe",
+        "possession",
+        "contractions",
+        "plurals",
+        "its-and-its"
+      ]
+    },
+    {
+      "id": "75",
+      "edition": "2026-10-03",
+      "title": "Make subjects, verbs and pronouns clear",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "31",
+        "74"
+      ],
+      "goal": "Identify the subject of a short sentence, use matching verb forms in edited English, and remove an ambiguous pronoun reference.",
+      "materials": "Paper and the short original sentences in this lesson.",
+      "lesson": [
+        "The subject tells who or what a sentence is about; the verb states an action or condition. Compare 'The tutor checks the list' with 'The tutors check the list'. In these simple present-tense examples, the singular subject takes checks and the plural takes check. Common forms of be also differ: 'The folder is ready' and 'The folders are ready'. Identify the subject before choosing a form.",
+        "A nearby plural noun does not automatically control the verb. In 'The box of cards is on the desk', box is the central subject and of cards adds information about it. Use is for this singular box. In 'The boxes of cards are on the desk', boxes is plural. Temporarily setting aside the added phrase can make the subject easier to see without changing the final sentence's information.",
+        "Pronouns replace or refer to nouns and people, but the reference must be understandable. 'Mina handed Lee the folder after they checked it' leaves open who checked the folder. If Mina did, write 'After Mina checked the folder, Mina handed it to Lee.' Singular they is useful when it is a person's pronoun or when gender is unspecified; the problem in the original is competing possible referents, not the pronoun itself.",
+        "Revise for meaning before checking endings. Read the sentence, identify the intended subject, underline the verb, then ask who each pronoun refers to. A short necessary repetition can be clearer than an ambiguous replacement. These exercises use widely taught edited-English forms; dialects and informal speech have their own systematic patterns, and a learner's home language is not evidence of poor reasoning."
+      ],
+      "practice": [
+        "Choose is or are: 'The basket of notebooks ___ full. The baskets ___ full.'",
+        "Change 'The helper labels the boxes' so that two helpers perform the action.",
+        "Rewrite 'Mina told Lee that they should bring the list' to make clear that Lee should bring it."
+      ],
+      "answers": [
+        "Is, then are. Basket is singular; baskets is plural.",
+        "The helpers label the boxes. Accept 'Two helpers label the boxes' as well.",
+        "For example: 'Mina asked Lee to bring the list.' Accept another sentence that clearly gives Lee that task without inventing a different action."
+      ],
+      "adaptation": "Use spoken examples and highlighting before terminology if helpful. Accept the learner's stated pronouns. For writing in a particular context, explain its expected conventions instead of presenting one dialect as the only meaningful English.",
+      "references": [
+        "agreement",
+        "writing"
+      ],
+      "tags": [
+        "subject-verb-agreement",
+        "pronoun-reference",
+        "sentence-clarity",
+        "grammar"
+      ]
+    },
+    {
+      "id": "76",
+      "edition": "2026-10-03",
+      "title": "Join complete ideas and explain their relationship",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "31",
+        "33",
+        "75"
+      ],
+      "goal": "Join clauses with an appropriate connecting word and revise a fragment or comma splice while preserving meaning.",
+      "materials": "Sentence cards and a writing surface; no grammar worksheet is required beyond the examples below.",
+      "lesson": [
+        "An independent clause can function as a complete statement: 'The room was full.' Another is 'The group waited outside.' Joining them can make their relationship clearer: 'The room was full, so the group waited outside.' The word so presents a result, while and would simply add information. Select the connection that the evidence and intended meaning support.",
+        "A dependent clause such as 'because the room was full' leaves the reader expecting a main statement in ordinary expository writing. Complete it: 'Because the room was full, the group waited outside.' When that because-clause follows the main statement, the sentence can read 'The group waited outside because the room was full.' The opening dependent clause is set off with a comma in the first version.",
+        "A comma by itself ordinarily does not join two independent clauses in this kind of edited prose. Revise 'The list was ready, Jo copied it' into two sentences, or use 'The list was ready, and Jo copied it.' A semicolon is another option once it has been taught. Adding a connector must not invent a cause: the fact that one event happened before another does not prove why the later event occurred.",
+        "Compare contrast and cause with original examples. 'The room was small, but every member had a seat' contrasts a possible expectation with what happened. 'Every member had a seat because extra chairs were brought' states a cause and requires support for it. Read the revised sentence aloud, check who each clause concerns, and keep the sequence or uncertainty from the source rather than making the sentence sound smoother at the expense of accuracy."
+      ],
+      "practice": [
+        "Join 'The shelf was full' and 'We used a second shelf' using so, with suitable punctuation.",
+        "Revise the fragment 'Although the meeting was short' by adding a complete main clause.",
+        "Repair 'The note arrived, we read it' without inventing why either event happened."
+      ],
+      "answers": [
+        "The shelf was full, so we used a second shelf.",
+        "For example: 'Although the meeting was short, we recorded every decision.' Accept any coherent complete sentence with an appropriate main clause; this is a writing example, not a factual report.",
+        "For example: 'The note arrived, and we read it' or 'The note arrived. We read it.' Both fix the joining problem without adding a causal claim."
+      ],
+      "adaptation": "Move paper clauses around before writing. Teach and, but and so first, then because and although. If the target is comprehension, let the learner explain the relationship orally while a facilitator handles punctuation.",
+      "references": [
+        "clauses",
+        "writing"
+      ],
+      "tags": [
+        "clauses",
+        "conjunctions",
+        "sentence-fragments",
+        "comma-splice",
+        "cause-and-contrast"
+      ]
+    },
+    {
+      "id": "77",
+      "edition": "2026-10-03",
+      "title": "Write a clear request and a useful reply",
+      "track": "practical-literacy",
+      "audience": "Adolescent and adult literacy learners; younger learners can use a fictional club-room request",
+      "prerequisites": [
+        "44",
+        "45",
+        "76"
+      ],
+      "goal": "Write a brief request with the information a recipient needs, and distinguish a request from a confirmed arrangement.",
+      "materials": "Paper and a fictional learning-room booking scenario. This exercise drafts messages; it does not send them or make a real booking.",
+      "lesson": [
+        "A useful request identifies its purpose, the requested action and the details needed to answer it. In this fictional scenario, a group wants Room B for a reading session on Tuesday 12 May, from 14:00 to 15:00, for six people. The calendar is invented for practice. A message saying only 'Can we use it then?' leaves the recipient to guess the room, time and group size.",
+        "Original model request: 'Hello room coordinator. Could our six-person learning group use Room B for a reading session on Tuesday 12 May from 14:00 to 15:00? Please confirm whether the room is available. If it is unavailable, please tell us which one-hour slots are open that afternoon. Thank you, Rowan.' The message supplies a specific request and a useful alternative without pretending an unconfirmed slot has been reserved.",
+        "Now consider the fictional reply: 'Room B is available from 15:00 to 16:00. Please reply if you want that slot; it is not yet reserved.' The reply offers an alternative and explicitly requires another response. Writing the time into the group's plan as a confirmed booking would go beyond the evidence. A draft acceptance should repeat the exact room, date and offered time and ask for confirmation of the reservation.",
+        "Before sending a real message, check the recipient, date, time convention and any details that identify the place or task. Use only information needed for the purpose; a practice request does not need private identification numbers or addresses. A respectful direct sentence is usually more useful than a long apology or unexplained shorthand. Keep a distinction between the message you drafted, the message actually sent and any confirmation received."
+      ],
+      "practice": [
+        "Name four concrete details that the original request gives the coordinator.",
+        "Does the fictional reply confirm a booking for 14:00 to 15:00, or even reserve the offered 15:00 to 16:00 slot? Explain.",
+        "Draft a short acceptance of the offered slot that repeats the relevant details and requests reservation confirmation."
+      ],
+      "answers": [
+        "Examples: Room B, Tuesday 12 May, 14:00-15:00, six people, and the reading-session purpose. Any four relevant details are acceptable.",
+        "No. It offers 15:00-16:00 and explicitly says that slot is not yet reserved; the originally requested time is not confirmed.",
+        "For example: 'Our group would like Room B on Tuesday 12 May from 15:00 to 16:00 for six people. Please confirm the reservation. Thank you, Rowan.' This is still a draft, not evidence that a booking exists."
+      ],
+      "adaptation": "Let learners dictate before writing, or use a labeled who/what/when/where card. Adapt formality to the intended audience. Use fictional details throughout and do not require contacting anyone to complete the lesson.",
+      "references": [
+        "writing",
+        "comprehension"
+      ],
+      "tags": [
+        "requests",
+        "replies",
+        "confirmation",
+        "practical-writing",
+        "adult-literacy"
+      ]
+    },
+    {
+      "id": "78",
+      "edition": "2026-10-03",
+      "title": "Keep an inventory record and explain a discrepancy",
+      "track": "practical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "13",
+        "20",
+        "31"
+      ],
+      "goal": "Record a simple stock movement, distinguish a calculated balance from an observed count, and write a factual discrepancy note.",
+      "materials": "Paper or a drawn table with date, item, received, issued, expected balance and observed count columns; use fictional notebooks.",
+      "lesson": [
+        "An inventory record tracks a defined item and unit. Begin with 18 notebooks in the fictional learning-room cupboard. On Day 2, five arrive and seven are issued, so the expected balance is 18 + 5 - 7 = 16 notebooks. Keep received and issued as separate entries; a single unexplained change of minus two hides what happened and makes later checking harder.",
+        "A physical count is a separate observation. Suppose the cupboard contains 15 notebooks after those movements. The record predicts 16, so the observed count is one fewer than expected. Write both values and the time of the count. Do not quietly alter an earlier receipt or invent a lost notebook to make the numbers match. A missing entry, counting mistake or another cause remains possible until checked.",
+        "Original discrepancy note: 'Day 2, after the recorded receipt and issue: expected 16 notebooks; counted 15 in the cupboard. Difference: one fewer. Please check the issue record and repeat the count before changing the balance.' This reports evidence, marks the unresolved question and names a next check without accusing a person. A later correction should retain the original entry with a clear correction note so the sequence remains understandable.",
+        "Record what one item means. A box of ten pencils is one box or ten pencils depending on the chosen unit; switching units without labeling can create a false discrepancy. In a classroom exercise, use paper counters and a second reader to check arithmetic and labels. A tidy record supports a checkable account, but it does not by itself prove who handled an item or why a mismatch occurred."
+      ],
+      "practice": [
+        "A starting balance of 24 folders receives eight and issues nine. What is the expected balance?",
+        "If 22 folders are counted afterward, state the expected value, observed value and difference without inventing a cause.",
+        "Why is 'received 2' ambiguous when some entries count boxes of pencils and others count individual pencils?"
+      ],
+      "answers": [
+        "24 + 8 - 9 = 23 folders.",
+        "Expected 23; observed 22; one fewer than expected. The cause is not yet established.",
+        "The unit is missing. Two boxes could contain many pencils, while two individual pencils is a different quantity. Label the unit and convert consistently before updating the balance."
+      ],
+      "adaptation": "Use counters or pictorial rows if arithmetic is still developing. Keep the report neutral and distinguish observed facts from hypotheses. These are classroom records for simple items, not a financial audit or a real accusation.",
+      "references": [
+        "writing",
+        "addition"
+      ],
+      "tags": [
+        "inventory",
+        "recordkeeping",
+        "discrepancy",
+        "expected-balance",
+        "observed-count"
+      ]
+    },
+    {
+      "id": "79",
+      "edition": "2026-10-03",
+      "title": "Read a longer account and support an inference",
+      "track": "literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "59",
+        "60",
+        "76"
+      ],
+      "goal": "Follow a longer original narrative, reconstruct its sequence, and support a cautious inference with specific details.",
+      "materials": "The original account below, paper and read-aloud support. Preview vocabulary such as register, expected, discrepancy and assumption; this is not a controlled phonics passage.",
+      "lesson": [
+        "Original fictional account, part 1: 'On Monday, Mara opened the learning room and found two sealed cartons beside the desk. A note on the first carton said Reading cards: set A. The second carton had no label. Mara wrote both cartons in the arrival register but did not guess what the second contained. The afternoon group needed set B. Before the session, Leon looked at the register and said that two cartons had arrived, so there must be enough reading cards. Mara pointed out that the register counted cartons, not sets, and that only one carton named a set.'",
+        "Original fictional account, part 2: 'With the coordinator present, they opened the unmarked carton. It contained blank folders. Mara added that description to the register and left the original arrival entry visible. Leon then checked the cupboard and found last week's set B, which had been placed on a different shelf. The group used that set during the session. Afterward, Mara made shelf labels and wrote a short note asking future helpers to record the contents of a carton only after checking them. Leon added that a count could be accurate while an assumption about the count was wrong.'",
+        "First establish what the text directly states. There are two cartons, only the first is labeled set A, and the unmarked one contains folders when checked. The needed set B comes from the cupboard rather than either new carton. Mark these details before explaining the problem. The passage supplies no reason for the missing carton label or for the earlier shelf placement; those gaps are not invitations to assign blame.",
+        "An inference such as 'Mara values records that distinguish observation from assumption' is supported by her refusal to guess and by her later note. It is still an interpretation of actions, not a direct statement of every motive. Compare another possible inference, identify the supporting details and acknowledge what remains uncertain. Summarize the sequence before debating motives so the discussion stays grounded in the account."
+      ],
+      "practice": [
+        "Where did the set B used by the group come from, and what was in the unmarked carton?",
+        "Put these events in order: set B found in the cupboard; two cartons recorded; shelf labels made; unmarked carton checked.",
+        "Give two details supporting the inference that Mara wants records to separate observed facts from assumptions. Does the account establish who left the second carton unlabeled?"
+      ],
+      "answers": [
+        "Set B came from the cupboard, where it was on a different shelf. The unmarked carton contained blank folders.",
+        "Two cartons recorded; unmarked carton checked; set B found in the cupboard; shelf labels made after the session.",
+        "She records cartons without guessing the second's contents, preserves the original entry when adding the checked description, and asks helpers to check before recording contents. Any two support the inference. No person responsible for the missing label is identified."
+      ],
+      "adaptation": "Read the account aloud if decoding would hide the learner's comprehension. Divide it into short sections, explain unfamiliar vocabulary and allow an oral timeline. Record reading support separately from the quality of the inference.",
+      "references": [
+        "comprehension",
+        "reading"
+      ],
+      "tags": [
+        "extended-reading",
+        "sequence",
+        "text-evidence",
+        "inference",
+        "observation-and-assumption"
+      ]
+    },
+    {
+      "id": "80",
+      "edition": "2026-10-03",
+      "title": "Write a comparison using consistent criteria",
+      "track": "practical-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "31",
+        "60",
+        "76"
+      ],
+      "goal": "Compare two fictional options using the same dimensions and write a conclusion that matches the stated goal.",
+      "materials": "Paper and a three-row comparison table for the fictional meeting rooms described below.",
+      "lesson": [
+        "A fair comparison describes options using the same criteria. The fictional group needs a room for eight people for one hour. Room Cedar has eight seats, is available 14:00-15:00 and has a large writing board. Room Pine has twelve seats, is available 14:00-16:00 and has a small writing board. These are all the supplied facts; no cost, access route or noise information is given.",
+        "Make a table with columns Criterion, Cedar and Pine. Its rows are Seats: 8 and 12; Available interval: 14:00-15:00 and 14:00-16:00; Board: large and small. Both rooms fit eight people for a one-hour meeting starting at 14:00. More available time does not necessarily help a group that needs only one hour, and more seats do not establish that a room is better for every purpose.",
+        "Original comparison paragraph: 'Both Cedar and Pine can seat eight people for a one-hour meeting beginning at 14:00. Pine has four extra seats and a longer available interval, while Cedar has the larger board. If board space is the group's deciding criterion, Cedar fits the stated goal; access, noise and cost would still need checking for a real booking.' Each comparative claim can be traced to a row or a stated conditional preference.",
+        "Avoid presenting an unsupported judgment as a fact. 'Pine is more comfortable' adds information not supplied by seat count, and 'Cedar is always best' drops the condition about board space. A strong conclusion names the purpose and any unresolved criterion that could change the decision. When revising, check each option against the same rows instead of listing only advantages for a favored option."
+      ],
+      "practice": [
+        "Which rooms satisfy the stated eight-person, one-hour requirement at 14:00?",
+        "Write two sentences comparing seats and writing-board space without declaring an unsupported overall winner.",
+        "What is unsupported in 'Pine is quieter because it has twelve seats', and name one missing fact that could affect a real choice."
+      ],
+      "answers": [
+        "Both Cedar and Pine, using the supplied capacities and intervals.",
+        "For example: 'Pine has twelve seats, four more than Cedar's eight. Cedar has a large writing board, while Pine's board is described as small.' Accept another accurate comparison using the same criteria.",
+        "Seat count does not establish noise level or its cause. Missing facts include actual noise, cost or an appropriate access route; any could affect suitability."
+      ],
+      "adaptation": "Let learners build the table orally or with labeled cards before writing. Use a different stated goal and discuss how a justified conclusion might change even though the room descriptions stay the same.",
+      "references": [
+        "writing",
+        "comprehension"
+      ],
+      "tags": [
+        "comparison-writing",
+        "criteria",
+        "conditional-conclusion",
+        "practical-writing"
+      ]
+    },
+    {
+      "id": "81",
+      "edition": "2026-10-03",
+      "title": "Use grouping and the order of operations",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "13",
+        "14",
+        "37",
+        "48"
+      ],
+      "goal": "Evaluate short numerical expressions using grouping, powers and equal-priority operations, and explain how parentheses change meaning.",
+      "materials": "Paper and the expressions printed below; a calculator is optional after working out the intended grouping.",
+      "lesson": [
+        "An expression records operations on numbers. Standard operation order lets readers interpret the same expression consistently. In 4 + 3 x 5, multiply 3 x 5 first, then add 4, giving 19. In (4 + 3) x 5, the parentheses group the addition, so calculate 7 x 5 = 35. The symbols encode different structures, not two competing answers to the same expression.",
+        "First evaluate inside grouping symbols, starting with the innermost group. Then evaluate powers: 3 squared, written 3^2 here, means 3 x 3 = 9, not 3 x 2. Next perform multiplication and division with equal priority, working left to right when they occur in a chain. Finally handle addition and subtraction with equal priority, also left to right. The lesson uses explicit multiplication signs and parentheses to avoid ambiguous compact notation.",
+        "For 24 divided by 6 x 2, work left to right within the multiplication/division level: 24 divided by 6 = 4, then 4 x 2 = 8. Multiplication does not automatically precede every division. Similarly, 12 - 5 + 2 gives 7 + 2 = 9; adding 5 + 2 first would change the grouping. A memory phrase must not hide these equal-priority pairs.",
+        "Write one complete equivalent expression per line. For 2 x (3 + 4)^2, first obtain 2 x 7^2, then 2 x 49, then 98. An equals sign means the quantities on both sides have the same value. Avoid a chain such as '3 + 4 = 7 x 2 = 14', because 3 + 4 is not equal to 7 x 2. Keep the full original structure visible as you simplify."
+      ],
+      "practice": [
+        "Evaluate 5 + 2 x 6 and (5 + 2) x 6, explaining the difference.",
+        "Evaluate 36 divided by 9 x 2, then 15 - 6 + 3.",
+        "Evaluate 3 x (2 + 1)^2 and explain what the exponent 2 means."
+      ],
+      "answers": [
+        "17 and 42. The first multiplies before adding; the second groups the addition first.",
+        "8 and 12. In each equal-priority chain, work left to right.",
+        "27: the group is 3, its square is 3 x 3 = 9, and 3 x 9 = 27. The exponent means two factors of the grouped value, not multiplication of that value by two."
+      ],
+      "adaptation": "Use expression cards to surround a group physically before calculating. Begin without powers if necessary, then introduce squares. When writing practical calculations, add clear parentheses even when the standard convention would already determine the order.",
+      "references": [
+        "operation-order"
+      ],
+      "tags": [
+        "order-of-operations",
+        "parentheses",
+        "exponents",
+        "equal-priority",
+        "equivalent-expressions"
+      ]
+    },
+    {
+      "id": "82",
+      "edition": "2026-10-03",
+      "title": "Solve a multi-step word problem with units and checks",
+      "track": "applied-numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "47",
+        "49",
+        "81"
+      ],
+      "goal": "Separate a problem's question from its information, plan several operations and check the result against the original situation.",
+      "materials": "Paper and the fictional card-distribution problem below; counters or a drawn table can substitute for mental calculation.",
+      "lesson": [
+        "Read this original problem: 'A group has seven packs containing six cards each, plus five loose cards. Eight teams need five cards per team. The session starts at 14:00. How many cards remain after every team receives its cards?' Identify the target first: remaining cards. The starting time is information in the story, but it is not needed for this quantity calculation.",
+        "Separate the calculation into available, required and remaining. Available cards: 7 packs x 6 cards per pack + 5 cards = 47 cards. Required cards: 8 teams x 5 cards per team = 40 cards. Remaining: 47 - 40 = 7 cards. Label the intermediate amounts so a correct multiplication cannot accidentally answer the wrong question.",
+        "Check by reversing the final step: 40 distributed + 7 remaining = 47 available. Also ask whether the distribution is possible: the available amount is at least the required amount. If the available total were smaller, report a shortage instead of saying a negative number of physical cards remains. The sign can represent a deficit mathematically, but the practical wording should explain it.",
+        "Do not choose an operation solely from a keyword such as more or each. Explain what is grouped, compared or left after an action. If a problem says 'four packs' but never states cards per pack, an exact card total cannot be recovered by guessing a common pack size. State missing information or give a conditional answer with its assumption visible. A useful solution is checkable and appropriately limited, not merely a number."
+      ],
+      "practice": [
+        "Six packs contain eight cards each, with three loose cards. Seven teams receive six cards each. How many remain?",
+        "Four packs contain six cards each, and teams need 30 cards in total. Is there enough, and by how many cards?",
+        "A note lists five packs and asks for the number of cards, but gives no pack size. What information is missing, and how could you express a conditional total?"
+      ],
+      "answers": [
+        "Available 6 x 8 + 3 = 51; required 7 x 6 = 42; remaining 9 cards. Check 42 + 9 = 51.",
+        "There are 24 cards, so the supply is short by 6 cards.",
+        "The number of cards per pack is missing. If every pack contains c cards, the total is 5c cards; do not assign a value to c without evidence."
+      ],
+      "adaptation": "Use a three-row table or physical groups before an algebraic expression. Ask the learner to explain which fact was unused and why. A partner can check units and assumptions separately from arithmetic.",
+      "references": [
+        "operation-order",
+        "multiplication",
+        "division"
+      ],
+      "tags": [
+        "multi-step-problems",
+        "units",
+        "irrelevant-information",
+        "shortage",
+        "inverse-check"
+      ]
+    },
+    {
+      "id": "83",
+      "edition": "2026-10-03",
+      "title": "Locate points on a coordinate plane",
+      "track": "geometry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "36",
+        "40",
+        "65"
+      ],
+      "goal": "Read and plot ordered pairs on labeled axes, including negative coordinates and points lying on an axis.",
+      "materials": "Squared paper or a drawn grid, a straight edge and labels for two perpendicular number lines. A raised grid or a spoken movement model may be used.",
+      "lesson": [
+        "Draw a horizontal x-axis and a vertical y-axis crossing at their zero marks. Their intersection is the origin, (0, 0). In this lesson, positive x goes right and positive y goes up, and one grid interval equals one unit on both axes. Label the scale before plotting; a blank grid does not tell a reader whether one square means one, two or ten units.",
+        "An ordered pair (x, y) gives horizontal and vertical coordinates in that order. To locate (3, 2), start at the origin, move three units right and two up, and mark the point. To locate (-2, 4), move two left and four up. The movement is a plotting aid, not a required travel route between locations. Swapping coordinates usually changes the point: (2, 3) differs from (3, 2).",
+        "The axes divide the plane into four quadrants. Quadrant I has positive x and positive y; II has negative x and positive y; III has both negative; IV has positive x and negative y. Points on the axes are not inside a quadrant. For (0, -3), no horizontal movement is needed, so the point lies on the y-axis three units below the origin.",
+        "Check a plotted point by tracing back to each labeled axis and reading its coordinate independently. A point three units left and one down is (-3, -1), not (3, 1). When a diagram represents real quantities, label units as well as scale. Geographic coordinates and different screen-coordinate conventions need their own definitions; this ordinary Cartesian classroom convention should not be assumed for every map or device."
+      ],
+      "practice": [
+        "Describe where to plot (-4, 2) and name its quadrant.",
+        "Where do (0, 5) and (3, 0) lie? Are either inside a quadrant?",
+        "With one unit per grid interval, a point is two units right and three down from the origin. Write its ordered pair and explain why (-3, 2) would be different."
+      ],
+      "answers": [
+        "Four units left and two up; Quadrant II.",
+        "(0, 5) lies on the y-axis and (3, 0) on the x-axis. Neither is inside a quadrant.",
+        "(2, -3). The first coordinate is horizontal and the second vertical; (-3, 2) would be three left and two up."
+      ],
+      "adaptation": "Begin in Quadrant I, then add negative coordinates after reviewing signed numbers. Use consistent equal scale on both axes for these geometry exercises. Allow learners to direct a partner's plotting when fine motor or visual access is a barrier.",
+      "references": [
+        "coordinates"
+      ],
+      "tags": [
+        "coordinate-plane",
+        "ordered-pairs",
+        "quadrants",
+        "x-axis",
+        "y-axis",
+        "origin"
+      ]
+    },
+    {
+      "id": "84",
+      "edition": "2026-10-03",
+      "title": "Connect a rule, a table and a straight-line graph",
+      "track": "applied-numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "37",
+        "50",
+        "81",
+        "83"
+      ],
+      "goal": "Generate ordered pairs from a simple linear rule, check whether a point fits, and distinguish a mathematical line from a model with restricted inputs.",
+      "materials": "A coordinate grid and paper for a two-column x/y table; use the rule y = 2 times x + 1.",
+      "lesson": [
+        "A rule such as y = 2 times x + 1 gives an output y for each chosen input x. For x values 0, 1, 2 and 3, the outputs are 1, 3, 5 and 7. Write the table as pairs (0, 1), (1, 3), (2, 5), (3, 7), then plot them using a labeled scale. The repeated increase of two in y for each increase of one in x is visible in both the table and the graph.",
+        "For this mathematical rule, all real-number inputs are allowed unless a restriction is stated. A half-step input works too: x = 0.5 gives y = 2. Connecting the points with a straight line represents the other solutions, not just the four table entries. Extend the line only as the stated task requires, and use additional computed points to check its placement rather than relying on a rough drawing alone.",
+        "The point (0, 1) is where this line meets the y-axis, called the y-intercept. The rise of two for a run of one gives a slope of two in the chosen coordinate units. The line is not a proportional relationship y = kx because its output is one when the input is zero. In a word problem, describe what the starting value and rate mean before interpreting the slope numerically.",
+        "A fictional card game could use the same formula for points after x completed tasks: one starting point plus two per task. If only whole completed tasks count, the meaningful inputs are nonnegative whole numbers, so plot separate applicable points rather than claiming half a completed task is permitted. To test any proposed point, substitute its x-value and compare the calculated y with the stated one. A point's appearance near a line is not a substitute for this check."
+      ],
+      "practice": [
+        "Under y = 2 times x + 1, find y when x = 4 and write the ordered pair.",
+        "Does (3, 8) satisfy the rule? Show the substitution.",
+        "What are the y-intercept and slope, and why might a completed-task model show separate points rather than every point on the mathematical line?"
+      ],
+      "answers": [
+        "y = 9, giving (4, 9).",
+        "No. With x = 3 the rule gives 2 x 3 + 1 = 7, not 8.",
+        "The y-intercept is (0, 1), and the slope is 2. Completed tasks may be restricted to nonnegative whole-number counts, while the unrestricted mathematical equation has solutions for other real inputs too."
+      ],
+      "adaptation": "Move between verbal rule, table and plotted points in small steps. Use a tactile graph or read the coordinate pairs aloud. Avoid treating a line drawn from a few observations as proof of a real-world law beyond the evidence.",
+      "references": [
+        "coordinates",
+        "equations"
+      ],
+      "tags": [
+        "linear-rule",
+        "graph",
+        "slope",
+        "y-intercept",
+        "discrete-inputs"
+      ]
+    },
+    {
+      "id": "85",
+      "edition": "2026-10-03",
+      "title": "Translate and reflect shapes on a grid",
+      "track": "geometry",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "65",
+        "66",
+        "83"
+      ],
+      "goal": "Apply the same translation to every vertex and reflect points across a labeled axis while preserving a shape's dimensions.",
+      "materials": "A square coordinate grid with equal units on both axes, paper for tracing and the triangle coordinates below.",
+      "lesson": [
+        "A translation slides every point of a shape by the same displacement. Start with a triangle whose vertices are A(1, 1), B(4, 1) and C(1, 3). Translate it two units left and one unit up: subtract two from every x-coordinate and add one to every y-coordinate. The new vertices are A'(-1, 2), B'(2, 2) and C'(-1, 4). Plot and join corresponding vertices in the same order.",
+        "A translation changes position but not side lengths, angles or area. The original horizontal side AB is three units long, and A'B' is also three. Moving only one vertex or adding two to one x-coordinate while subtracting two from another would distort the shape rather than translate it. Trace the triangle and slide the paper as a physical check, without rotating or stretching it.",
+        "A reflection across the y-axis sends (x, y) to (-x, y): the point stays at the same height and moves to the other side at the same perpendicular distance from the axis. Thus (3, 2) becomes (-3, 2). Across the x-axis, (x, y) becomes (x, -y), so (3, 2) becomes (3, -2). A point already on the reflecting axis stays in place.",
+        "Reflection preserves lengths and angles but reverses the orientation of a shape, like a mirror image. It is different from sliding every point by one shared displacement. To check a reflection, pair each vertex with its image and verify equal perpendicular distances from the named axis. A shape has reflection symmetry across a line if reflecting the whole shape in that line leaves it occupying the same set of points; not every reflection returns a shape to its original position."
+      ],
+      "practice": [
+        "Translate point (2, -1) three units right and two up.",
+        "Reflect (-4, 3) across the y-axis, then separately reflect it across the x-axis.",
+        "Why does moving only vertex A while leaving B and C fixed fail to translate the whole triangle, and what happens to a point on a reflection axis?"
+      ],
+      "answers": [
+        "(5, 1), adding three to x and two to y.",
+        "Across the y-axis: (4, 3). Across the x-axis: (-4, -3). These are separate reflections of the original point.",
+        "A translation applies the same displacement to every point; moving one vertex generally changes the shape. A point on the reflection axis stays fixed."
+      ],
+      "adaptation": "Use tracing or folded paper before coordinate formulas. Keep equal physical scale on the grid axes so visual length comparisons are meaningful. Label the reflecting axis each time; 'flip it' alone is not a complete instruction.",
+      "references": [
+        "transformations"
+      ],
+      "tags": [
+        "translation",
+        "reflection",
+        "symmetry",
+        "vertices",
+        "coordinate-transformations"
+      ]
+    },
+    {
+      "id": "86",
+      "edition": "2026-10-03",
+      "title": "Use factors, multiples and prime factorization",
+      "track": "numeracy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "14",
+        "34",
+        "49",
+        "81"
+      ],
+      "goal": "Distinguish factors from multiples, write a small number as a product of primes, and use common factors or multiples in a practical grouping task.",
+      "materials": "Counters or drawn dots, paper for factor pairs and a short multiplication list.",
+      "lesson": [
+        "A positive factor of a whole number divides it without a remainder. The factor pairs of 18 are 1 x 18, 2 x 9 and 3 x 6, so its positive factors are 1, 2, 3, 6, 9 and 18. Positive multiples of 18 include 18, 36 and 54, made by multiplying 18 by positive whole numbers. Factors describe exact divisions of a given number; multiples continue without a largest one.",
+        "A prime is a whole number greater than one with exactly two positive factors: one and itself. Seven is prime; nine is composite because it also has factor three. One is neither prime nor composite. To factor 30 into primes, write 30 = 3 x 10 = 3 x 2 x 5, or 2 x 3 x 5. Different splitting routes give the same prime factors up to their order.",
+        "Common factors divide both numbers. For 18 and 24, the greatest common factor is six. In a fictional packing task with 18 red cards and 24 blue cards, six identical groups can each receive three red and four blue cards with none left. More than six identical groups would require a larger positive common factor, which these numbers do not have.",
+        "A common multiple is a positive number appearing in both multiple lists. For 4 and 6, the least common multiple is 12: multiples of 4 begin 4, 8, 12, while multiples of 6 begin 6, 12. If two repeating marks start together at zero and recur every four and six units, the next shared positive position is 12. Always state the common starting point; without it, interval lengths alone do not determine the next coincidence."
+      ],
+      "practice": [
+        "List the positive factors of 12 and give its first three positive multiples.",
+        "Write 28 as a product of primes. Is one prime?",
+        "Find the greatest common factor of 12 and 18 and the least common multiple of 3 and 8."
+      ],
+      "answers": [
+        "Factors: 1, 2, 3, 4, 6, 12. First three positive multiples: 12, 24, 36.",
+        "28 = 2 x 2 x 7. One is not prime because it does not have exactly two positive factors.",
+        "Greatest common factor of 12 and 18: 6. Least common multiple of 3 and 8: 24."
+      ],
+      "adaptation": "Start with rectangular arrays or equal groups before factor trees. Keep repeated prime factors visible; two copies of 2 in 28 cannot be collapsed into one. Connect a common denominator back to multiples when reviewing fraction addition.",
+      "references": [
+        "factors"
+      ],
+      "tags": [
+        "factors",
+        "multiples",
+        "prime",
+        "prime-factorization",
+        "greatest-common-factor",
+        "least-common-multiple"
+      ]
+    },
+    {
+      "id": "87",
+      "edition": "2026-10-03",
+      "title": "Ask a neutral survey question and describe the sample",
+      "track": "data-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "23",
+        "51",
+        "64"
+      ],
+      "goal": "Distinguish a target group from the people who responded, improve a leading question and report a small fictional survey without overgeneralizing.",
+      "materials": "Paper and the fictional learning-club survey described below. No real participants or personal data are required.",
+      "lesson": [
+        "A population is the group a question concerns; a sample is the subset observed. Suppose a club wants to know the preferred meeting time of all 60 members. It asks 12 members who happen to attend a morning session, and nine choose mornings. Nine of 12 is 75% of these respondents, not automatically 75% of all 60 members. The way people were selected can matter as much as the calculation.",
+        "A question can push people toward an answer. 'Wouldn't you prefer our convenient morning session?' favors one choice and describes it positively. A more neutral fictional version is 'Which meeting time would work best for you: morning, afternoon, evening, or no preference?' Ask only one main thing at a time, define the time periods when needed, and allow a way to say that none of the choices works.",
+        "Asking people already present in the morning may miss members whose schedules prevent morning attendance. Choosing members randomly from the full membership list can reduce that particular selection problem, but nonresponse and unclear questions can still affect results. A larger convenience sample does not automatically remove systematic bias. State who was invited, how they were chosen, how many responded and what question they saw.",
+        "A careful report is 'Among 12 morning-session respondents, nine preferred mornings; the sample does not establish the preference of all members.' If only nine of the 12 invited people had responded, the response count and denominator would differ and should be reported explicitly. Do not fill in missing responses by guessing. The lesson illustrates basic limitations; it does not provide a statistical margin of error or certify a survey design."
+      ],
+      "practice": [
+        "In the fictional club, identify the target population and the observed sample.",
+        "Rewrite 'Don't you agree that evening meetings are inconvenient?' as a neutral single-topic question.",
+        "What does nine out of 12 show, and why can it not simply be multiplied into a claim that 45 of all 60 members prefer mornings?"
+      ],
+      "answers": [
+        "Population: all 60 club members. Sample: the 12 morning-session members who were asked and responded in the stated scenario.",
+        "For example: 'How well would an evening meeting work for you: well, poorly, or neither?' Accept another balanced question with meaningful response choices and no implied preferred answer.",
+        "It shows 75% of the 12 respondents preferred mornings. Their attendance-based selection may favor that preference, so the same fraction for all 60 members is not established."
+      ],
+      "adaptation": "Use paper character cards and invented answers instead of polling learners about private matters. A facilitator can read options aloud. Separate a lesson about counting responses from claims about what a wider community thinks.",
+      "references": [
+        "sampling"
+      ],
+      "tags": [
+        "survey",
+        "population",
+        "sample",
+        "selection-bias",
+        "neutral-question",
+        "nonresponse"
+      ]
+    },
+    {
+      "id": "88",
+      "edition": "2026-10-03",
+      "title": "Check chart scales before accepting a visual claim",
+      "track": "data-literacy",
+      "audience": "Beginning learners with a facilitator; adults may use age-respectful examples",
+      "prerequisites": [
+        "20",
+        "64",
+        "72",
+        "87"
+      ],
+      "goal": "Read a chart's labels, baseline and scale, and compare a visual impression with the underlying numerical difference and ratio.",
+      "materials": "Paper for two simple bar-chart sketches and the fictional counts below. All comparisons can also be made from a table.",
+      "lesson": [
+        "Two fictional sessions record 48 and 52 returned books. A table gives the difference directly: four books. The second count is 52/48, about 1.083 times the first, or about 8.3% higher relative to 48. Before looking at a chart, name the measure and unit: returned books per session. The counts do not by themselves explain why the sessions differed.",
+        "Draw bars from a zero baseline to heights 48 and 52 on an axis with equal intervals. Now consider a misleading bar display that starts the numerical axis at 46 and shows only the portions above that value. The visible bar lengths become 2 and 6 units, making one look three times as long. The actual counts are not in a three-to-one ratio. Because bar length encodes magnitude, a zero baseline preserves that visual comparison.",
+        "Read the entire chart frame: title, population or setting, time period, unit, baseline, interval size and any missing observations. If one tick represents ten books, three intervals mean thirty, not three. A line chart may use a clearly labeled restricted range to show variation, but that does not make a truncated bar-length comparison accurate. Never infer a numerical ratio from visual height before checking the axis.",
+        "Also check whether the quantities are comparable. One session's count over two hours and another's over one hour cannot be treated as equal-duration rates without more calculation. Missing data should be marked, not silently drawn as zero. A cautious caption can state 'Returns increased from 48 to 52 in the two recorded sessions' while leaving causation unresolved. A readable table is a useful alternative when a chart adds confusion or is inaccessible."
+      ],
+      "practice": [
+        "For the two counts 48 and 52, calculate the difference and the approximate percent increase relative to 48.",
+        "If a bar axis starts at 46, what are the two visible lengths, and why is their three-to-one ratio misleading about the original counts?",
+        "A chart compares 40 returns over two hours with 30 over one hour. Which rate is higher, assuming those durations and counts are comparable?"
+      ],
+      "answers": [
+        "Difference 4 books; relative increase 4/48 x 100%, about 8.3%.",
+        "Visible lengths 2 and 6. Their ratio describes the amounts above 46, not the full counts of 48 and 52; the original ratio is about 1.083 to 1.",
+        "40/2 = 20 returns per hour; 30/1 = 30 per hour. The second rate is higher even though its total count is lower."
+      ],
+      "adaptation": "Provide the table alongside any drawn chart and read axis labels aloud. Use equal tick spacing and explain the chosen scale. Keep the fictional data separate from any real performance comparison or claim of causation.",
+      "references": [
+        "chart-scales",
+        "sampling"
+      ],
+      "tags": [
+        "chart-scales",
+        "bar-chart",
+        "zero-baseline",
+        "misleading-graphs",
+        "rate-comparison"
       ]
     }
   ]

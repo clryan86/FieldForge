@@ -1,9 +1,9 @@
 # Bundled offline reference library
 
-FieldForge ships **339 articles across 14 categories**, including 267 archived
-Wikibooks references and 72 original [Education Foundations](EDUCATION_FOUNDATIONS.md)
-lesson drafts. Complete article bodies contain approximately 427,296 words including
-notices and attribution. The article pack is about 2.99 MB uncompressed. It is included in the wheel,
+FieldForge ships **355 articles across 14 categories**, including 267 archived
+Wikibooks references and 88 original [Education Foundations](EDUCATION_FOUNDATIONS.md)
+lesson drafts. Complete article bodies contain approximately 438,075 words including
+notices and attribution. The article pack is about 3.07 MB uncompressed. It is included in the wheel,
 so installation, browsing and search require no network, model or external service.
 An empty desktop library installs it automatically. Existing users can choose
 **Install Reference Library**, or run:
@@ -34,7 +34,7 @@ Normal pack import/export remains available for a deliberate replacement workflo
 | Computing | 24 | Operating systems, files, concurrency, Python |
 | Software | 13 | Software engineering and embedded systems |
 | Projects | 12 | Scope, schedule, cost, quality, risk and communications |
-| Education | 84 | Learning theories, literacy and writing, numeracy, algebra and geometry, teaching, science, maps, practical literacy, historical inquiry and shared decisions |
+| Education | 100 | Learning theories, literacy and writing, numeracy, algebra and geometry, teaching, science, maps, practical and data literacy, historical inquiry and shared decisions |
 
 This is a broad initial reference collection, **not complete coverage of survival
 or civilization rebuilding**. The category labels describe indexing, not a verified
@@ -63,10 +63,11 @@ but they are not a legal audit of each contribution. Preserve attribution, licen
 change notices and applicable share-alike terms when redistributing adapted content.
 Article licensing does not license FieldForge's application code.
 
-The 72 Education Foundations lessons are original AI-assisted FieldForge drafts
+The 88 Education Foundations lessons are original AI-assisted FieldForge drafts
 under CC BY-SA 4.0. They include complete activities, exercises and answer keys,
 with background references to IES/What Works Clearinghouse, OpenStax, university
-education/extension resources, NASA, USGS, NOAA and the Library of Congress. Those
+education/extension resources, Purdue OWL, NASA, USGS, NOAA, the Library of Congress,
+Minnesota STEM Teacher Center and the UK Government Analysis Function. Those
 external publications are not bundled and their authors have not endorsed these
 lessons. The catalog distinguishes original drafts from archived Wikibooks text;
 independent educator review remains outstanding and review dates remain empty.
