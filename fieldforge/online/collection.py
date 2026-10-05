@@ -13,6 +13,8 @@ import os
 import re
 import stat
 import tempfile
+import zipfile
+import zlib
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -43,6 +45,7 @@ RECEIPT_FORMAT = 'fieldforge-map-collection-preparation-v1'
 MAX_COUNT = 50_000_000_000
 MAX_DECLARED_BYTES = (1 << 53) - 1
 CHUNK_BYTES = 1024 * 1024
+MAX_REGION_RECEIPT_BYTES = 64 * 1024
 INVENTORY_FIELDS = ('id', 'title', 'filename', 'coverage', 'version',
                     'source', 'attribution', 'license')
 PACK_FIELDS = {
@@ -232,10 +235,132 @@ def _check_inputs(inputs, cancel):
         identity.check()
 
 
-def _map_record(pack, index, digest):
+def _receipt_member(member):
+    """Accept a bounded, portable regular receipt without extracting it."""
+    parts = member.filename.split('/')
+    mode = (member.external_attr >> 16) & 0xFFFF
+    if (member.is_dir() or member.orig_filename != member.filename
+            or stat.S_IFMT(mode) not in (0, stat.S_IFREG)
+            or any(not part or len(part) > 180 or safe_filename(part) != part
+                   or part in ('.', '..') or part.endswith('.') for part in parts)):
+        raise CatalogError('The region.json ZIP entry is not a safe regular file.')
+    if member.flag_bits & (1 | 64):
+        raise CatalogError('Encrypted region.json ZIP entries are not supported.')
+    if member.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED):
+        raise CatalogError('The region.json ZIP entry uses unsupported compression.')
+    if not 1 <= member.file_size <= MAX_REGION_RECEIPT_BYTES:
+        raise CatalogError('The region.json ZIP entry exceeds its 64 KiB receipt limit or is empty.')
+    if member.file_size > max(1, member.compress_size) * 1000:
+        raise CatalogError('The region.json ZIP entry exceeds its compression-ratio limit.')
+
+
+def _region_binding(raw, member, pack, index, digest):
+    """Bind a historical install wrapper to the measured index and source receipt.
+
+    The original installer used the fixed internal source basename source.osm.pbf.
+    Its wrapper retains the original filename. These fields remain declarations
+    about source bytes; reading this wrapper never verifies a raw PBF or road graph.
+    """
     meta = index.metadata
+    wrapper = object_fields(
+        decode_json(raw),
+        {'format', 'state', 'id', 'label', 'installed_utc', 'source', 'map',
+         'roads', 'files', 'license', 'notice'},
+        'Regional install receipt',
+    )
+    if (wrapper['format'] != 'fieldforge-region-install-v1' or wrapper['state'] != 'complete'
+            or wrapper['id'] != pack['region_id'] or meta['source_name'] != 'source.osm.pbf'):
+        raise CatalogError('The regional install receipt does not identify the selected source alias.')
+    if wrapper['label'] != pack['label'] or wrapper['license'] != pack['license']:
+        raise CatalogError('The regional install receipt label or license disagrees with the collection.')
+    validate_timestamp(wrapper['installed_utc'], 'Regional install receipt timestamp')
+    text(wrapper['notice'], 'Regional install receipt notice', 4000, multiline=True)
+    source = object_fields(wrapper['source'], {'name', 'provenance', 'replication_timestamp'},
+                           'Regional install source')
+    text(source['provenance'], 'Regional install source provenance', 500)
+    if source['replication_timestamp'] is not None:
+        _integer(source['replication_timestamp'], 'Regional source snapshot', 253402300799)
+    if (source['name'] != pack['source_name']
+            or source['replication_timestamp'] != pack['replication_timestamp']
+            or source['replication_timestamp'] != meta['replication_timestamp']):
+        raise CatalogError('The regional install source name or snapshot disagrees with the collection/index.')
+    mapped = object_fields(wrapper['map'], {'state', 'features', 'address_features', 'missing_node_ways'},
+                           'Regional install map')
+    if mapped['state'] != 'prepared':
+        raise CatalogError('The regional install receipt does not declare a prepared map.')
+    for field, declared in (('features', 'map_features'), ('address_features', 'address_tagged_objects'),
+                            ('missing_node_ways', 'missing_node_ways')):
+        _integer(mapped[field], 'Regional install ' + field, MAX_COUNT)
+        if mapped[field] != meta[field] or mapped[field] != pack[declared]:
+            raise CatalogError('The regional install map counts disagree with the collection/index.')
+    if wrapper['roads'] != pack['road_preparation']:
+        raise CatalogError('The regional install road declaration disagrees with the collection.')
+    files = object_fields(wrapper['files'], {'source', 'map', 'rights'}, 'Regional install files', {'roads'})
+    for name, fingerprint in files.items():
+        object_fields(fingerprint, {'bytes', 'sha256'}, 'Regional install file fingerprint')
+        _integer(fingerprint['bytes'], 'Regional install file bytes', MAX_DECLARED_BYTES, 1)
+        _digest(fingerprint['sha256'], 'Regional install file sha256')
+    measured = {'bytes': index.fingerprint[2], 'sha256': digest}
+    if files['map'] != measured:
+        raise CatalogError('The regional install receipt does not match the measured map bytes/SHA-256.')
+    if (files['source']['bytes'] != meta['source_bytes']
+            or files['source']['sha256'] != meta['source_sha256']
+            or files['source']['sha256'] != pack['source_sha256']):
+        raise CatalogError('The regional install source fingerprint disagrees with the collection/index.')
+    return {
+        'filename': member.filename, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(),
+        'format': wrapper['format'], 'region_id': wrapper['id'],
+        'verification': 'archive-member-bound-to-measured-map-and-source-receipts',
+        'map': measured,
+        'source': {'name': source['name'], 'embedded_name': meta['source_name'],
+                   'bytes': files['source']['bytes'], 'sha256': files['source']['sha256'],
+                   'replication_timestamp': source['replication_timestamp'],
+                   'verification': 'receipt-declaration-only'},
+    }
+
+
+def _archive_source_binding(stream, identity, pack, index, digest, cancel):
+    """Read one adjacent wrapper from the already hash-verified open archive."""
+    _cancelled(cancel)
+    identity.check_open(stream)
+    stream.seek(0)
+    try:
+        with zipfile.ZipFile(stream) as archive:
+            members = archive.infolist()
+            if len(members) > 1000:
+                raise CatalogError('Regional ZIP contains more than 1,000 entries.')
+
+            def named(name):
+                return [item for item in members
+                        if item.filename.replace('\\', '/').rstrip('/').rsplit('/', 1)[-1].casefold() == name]
+
+            wrappers, maps = named('region.json'), named('map.ffmap')
+            if len(wrappers) != 1 or len(maps) != 1:
+                raise CatalogError('Source filename mismatch requires one unambiguous adjacent region.json receipt.')
+            member, map_member = wrappers[0], maps[0]
+            _receipt_member(member)
+            expected = map_member.filename.rpartition('/')[0]
+            expected = (expected + '/' if expected else '') + 'region.json'
+            if member.filename != expected:
+                raise CatalogError('The source alias receipt must be region.json beside the selected map.ffmap.')
+            with archive.open(member, 'r') as packed:
+                raw = packed.read(MAX_REGION_RECEIPT_BYTES + 1)
+            if len(raw) != member.file_size or len(raw) > MAX_REGION_RECEIPT_BYTES:
+                raise CatalogError('The region.json ZIP entry expanded beyond its declared receipt size.')
+            binding = _region_binding(raw, member, pack, index, digest)
+    except (zipfile.BadZipFile, EOFError, RuntimeError, zlib.error) as exc:
+        raise CatalogError('Regional source alias receipt is damaged or unsupported.') from exc
+    _cancelled(cancel)
+    identity.check_open(stream)
+    return binding
+
+
+def _map_record(pack, index, digest, *, source_binding=None):
+    meta = index.metadata
+    if pack['source_name'] != meta['source_name'] and source_binding is None:
+        raise CatalogError(f'Prepared index receipt disagrees with collection source_name: {pack["filename"]}')
     for declared, recorded in (
-        ('source_name', 'source_name'), ('source_sha256', 'source_sha256'),
+        ('source_sha256', 'source_sha256'),
         ('replication_timestamp', 'replication_timestamp'), ('map_features', 'features'),
         ('address_tagged_objects', 'address_features'), ('missing_node_ways', 'missing_node_ways'),
         ('license', 'license'),
@@ -253,7 +378,7 @@ def _map_record(pack, index, digest):
         'id': map_id, 'title': pack['label'], 'filename': index.path.name,
         'format': 'ffmap', 'download_path': f'/api/v1/maps/{map_id}/download',
         'bytes': index.fingerprint[2], 'sha256': digest, 'coverage': meta['bounds'],
-        'version': version, 'source': meta['source_name'],
+        'version': version, 'source': pack['source_name'],
         'attribution': meta['attribution'], 'license': meta['license'],
     })
     entry = {field: asset[field] for field in INVENTORY_FIELDS}
@@ -269,6 +394,10 @@ def _map_record(pack, index, digest):
         'address_features': meta['address_features'], 'missing_node_ways': meta['missing_node_ways'],
         'declared_road_preparation': dict(pack['road_preparation']),
     }
+    if source_binding is not None:
+        record['source']['declared_name'] = pack['source_name']
+        record['source']['verification'] = 'archive-wrapper-matched-collection'
+        record['archive_receipt'] = source_binding
     return entry, record
 
 
@@ -395,7 +524,10 @@ def prepare_collection(collection, archive_folder, output, *, filenames, cancel=
                         if map_identity.pathname != index.fingerprint:
                             raise CatalogError('The imported prepared index changed before hashing.')
                         map_digest, _ = _hash_input(map_stream, map_identity, cancel)
-                    entry, record = _map_record(pack, index, map_digest)
+                    binding = None
+                    if pack['source_name'] != index.metadata['source_name']:
+                        binding = _archive_source_binding(stream, identity, pack, index, map_digest, cancel)
+                    entry, record = _map_record(pack, index, map_digest, source_binding=binding)
                 inputs.append(identity)
                 map_inputs.append(map_identity)
                 entries.append(entry)

@@ -20,6 +20,7 @@ on:
       - 'tests/test_online_*.py'
       - 'tests/test_portal*.py'
       - 'tests/test_regional*.py'
+      - 'tests/test_collection_archive_receipt.py'
       - 'tests/test_osm_source.py'
       - 'tests/test_gps_desktop.py'
       - 'tests/map_fixture.py'
@@ -45,6 +46,7 @@ on:
       - 'tests/test_online_*.py'
       - 'tests/test_portal*.py'
       - 'tests/test_regional*.py'
+      - 'tests/test_collection_archive_receipt.py'
       - 'tests/test_osm_source.py'
       - 'tests/test_gps_desktop.py'
       - 'tests/map_fixture.py'
@@ -78,7 +80,8 @@ jobs:
           FIELDFORGE_REQUIRE_GUI: '1'
         run: >-
           xvfb-run -a python -m pytest -o addopts='' -q -ra
-          tests/test_regional_collection.py tests/test_regional_file_identity.py tests/test_regional_portal.py tests/test_regional_portal_ui.py
+          tests/test_regional_collection.py tests/test_collection_archive_receipt.py tests/test_regional_collection_cli.py
+          tests/test_regional_publication.py tests/test_regional_file_identity.py tests/test_regional_portal.py tests/test_regional_portal_ui.py
           tests/test_regional_index.py tests/test_online_client.py
           tests/test_online_compat.py tests/test_online_server.py
           tests/test_online_storage.py tests/test_online_resume.py
@@ -111,7 +114,8 @@ jobs:
         # Preserve native Tcl handles across the test interpreters.
         run: >-
           python -m pytest -o addopts='' --capture=sys -q -ra
-          tests/test_regional_collection.py tests/test_regional_file_identity.py tests/test_regional_portal.py tests/test_regional_portal_ui.py
+          tests/test_regional_collection.py tests/test_collection_archive_receipt.py tests/test_regional_collection_cli.py
+          tests/test_regional_publication.py tests/test_regional_file_identity.py tests/test_regional_portal.py tests/test_regional_portal_ui.py
           tests/test_regional_index.py tests/test_online_client.py
           tests/test_online_compat.py tests/test_online_server.py
           tests/test_online_storage.py tests/test_online_resume.py

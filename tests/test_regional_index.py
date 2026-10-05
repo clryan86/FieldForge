@@ -10,6 +10,7 @@ import zipfile
 from dataclasses import replace
 from pathlib import Path
 from threading import Event
+from types import SimpleNamespace
 
 import pytest
 from test_osm_source import (
@@ -211,6 +212,9 @@ def test_bad_checksum_leaves_previous_file_and_source_unchanged(tmp_path):
 
 def test_atomic_publish_never_clobbers_racing_target(tmp_path, monkeypatch):
     real_link = os.link
+    platform = SimpleNamespace(**vars(os))
+    platform.name = 'posix'
+    monkeypatch.setattr(regional, 'os', platform)
 
     def raced(source, target):
         Path(target).write_bytes(b'OTHER-WRITER')
@@ -224,6 +228,10 @@ def test_atomic_publish_never_clobbers_racing_target(tmp_path, monkeypatch):
 
 
 def test_no_hardlink_support_is_explicit_and_cleans_up(tmp_path, monkeypatch):
+    platform = SimpleNamespace(**vars(os))
+    platform.name = 'posix'
+    monkeypatch.setattr(regional, 'os', platform)
+
     def fail(*_args):
         raise OSError('no hard links')
     monkeypatch.setattr(regional.os, 'link', fail)

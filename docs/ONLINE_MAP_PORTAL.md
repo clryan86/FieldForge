@@ -342,7 +342,14 @@ the collection's other regions are available on this device.
 Preparation checks each selected ZIP against its recorded byte count and
 SHA-256, then uses the existing regional importer to extract and validate its
 single `map.ffmap`. Source identity, snapshot, feature/address counts, missing
-ways and license must agree with the inspected index. The prepared files retain
+ways and license must agree with the inspected index. Older installed packages
+may record `source.osm.pbf` inside the index while their collection retains the
+original download name. That alias is accepted only when a bounded, adjacent
+`region.json` binds the original name, region, source fingerprint and counts
+to the exact imported map checksum. The receipt records both source names and
+the checked wrapper; a differing name without that evidence is rejected.
+
+The prepared files retain
 their exact bytes and embedded receipts. Numeric coverage comes from the index;
 it describes the indexed extent rather than promising complete coverage inside
 that rectangle. The catalog version uses the source snapshot when known, or
@@ -363,6 +370,11 @@ are preserved. Once the validated inventory is installed, publication is
 complete; an interruption or temporary-folder cleanup error after that point
 can leave the completed output. Inspect that inventory before retrying with a
 new directory.
+
+Regional preparation and ZIP import use a non-overwriting rename on Windows,
+so these steps also work on removable volumes without hard-link support. POSIX
+publication retains its no-overwrite hard-link behavior.
+
 The preparation step is local and does not start a server or a network session.
 Use the ordinary inventory builder above to create the immutable catalog, then
 review it before configuring your operated portal.

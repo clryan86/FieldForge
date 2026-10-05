@@ -178,6 +178,8 @@ For a saved regional collection, operators can use
 to verify explicitly selected ZIPs and generate a portal inventory from their
 prepared indexes. It retains source and license information, records separate
 package/map checksums, and uses the actual indexed bounds for map discovery.
+The original South Dakota package has passed the installed collection, download
+and offline-search workflow; see the [measured verification and native screenshot](docs/ONLINE_MAPS_VERIFICATION.md#historical-package-compatibility-and-windows-map-publication--2026-10-05).
 
 This repository includes the **portal server and browser interface**, with adapters
 for an operator-configured Nominatim geocoder and OSRM driving router. It does

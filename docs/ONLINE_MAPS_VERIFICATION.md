@@ -1,5 +1,103 @@
 # Online map and route preparation verification
 
+## Historical package compatibility and Windows map publication — 2026-10-05
+
+The exact original South Dakota prepared ZIP was recovered locally and checked
+against its historical collection. It exposed a real compatibility failure:
+its collection retained `south-dakota-latest.osm.pbf`, while the unchanged index
+receipt used the installer's internal `source.osm.pbf` name. Collection conversion
+now accepts that historical alias only through one bounded, adjacent
+`region.json` that binds the original name and region to the measured map hash,
+source fingerprint, snapshot, feature counts and license. Other filename
+mismatches still fail. The map bytes and embedded metadata remain unchanged;
+the preparation receipt retains both names and the wrapper fingerprint, and
+the catalog displays the checked original name.
+
+Both PBF preparation and regional ZIP import now use non-overwriting rename on
+Windows, retaining hard-link publication on POSIX. This removes their dependence
+on Windows hard-link support while preserving existing or competing files and
+cleaning up private staging files. Local platform fixtures exercise the Windows
+branch; hosted Windows tests supply actual Windows execution. No particular
+removable drive was available for hardware testing.
+
+### Exact historical package acceptance
+
+A fresh installed wheel ran the documented `python -S -m
+fieldforge.online.catalog prepare-collection` and `build` commands in separate
+processes outside the checkout. The test selected only South Dakota from the
+four-record collection; the other ZIPs were absent. It published the resulting
+inventory, served and downloaded the map over real loopback HTTP using a saved
+download list, then retried with any second file download forbidden. The retry
+verified and reused the completed map.
+
+After the test's archive copy, collection, prepared inventory and published
+catalog were removed and the server stopped, the saved map reopened and
+searched successfully with socket connections blocked. Sioux Falls and Rapid
+City each returned the bounded first 100 matches, with the limit flag set;
+these are not total city-result counts. No network connection was attempted.
+The original saved package was preserved throughout.
+
+| Verified item | Result |
+|---|---|
+| Original package | `FieldForge-USA-South-Dakota-2026-10-02.zip`, **194,212,607 bytes** |
+| Unchanged prepared index | **384,290,816 bytes** |
+| Source snapshot | **2026-10-02T20:21:34Z** |
+| Indexed features | **626,562** |
+| Address-tagged source objects | **17,522** |
+| Missing-node ways | **0** |
+| Installed CLI collection preparation | **6.159 seconds** |
+| Installed CLI catalog publication | **4.800 seconds** |
+| Verified HTTP download list | **4.764 seconds** |
+| Verified local retry without a second file transfer | **0.251 seconds** |
+| Offline reopen, integrity and city searches | **4.702 seconds** |
+
+The original archive SHA-256 is
+`66c2a7ed66ab3c37a770db097038513670254e6f73878142cb0503288c3f324e`;
+the unchanged historical index SHA-256 is
+`1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a`.
+These identify the historical package and index, separately from the later
+source-derived package documented below. Both indexes reference source PBF
+SHA-256 `43ee4e5a620dc050735a6ab224cda5dc049e83f42bded062e1539e389a81d643`.
+The conversion checks source declarations; the independent recovery check also
+hashed the actual original PBF and matched the source receipt.
+
+[Machine-readable acceptance record](verification/south-dakota-historical-collection.json)
+contains the measured fingerprints, unchanged source receipt, wrapper binding,
+result samples, stage timings and loaded-code hashes. Performance figures are
+measurements from this Linux environment. The bounds include neighboring
+geography and do not establish complete coverage or validated navigation.
+
+### Regression and native verification
+
+- **601 backend/map tests and 78 subtests passed**, with no skips, after all
+  production changes were frozen.
+- **28 actual Tk regional-portal UI cases passed**, requiring a working display.
+- The change adds **54 wrapper-receipt cases**, **28 regional publication cases**
+  and **one successful independent CLI chain**. The existing source-name mismatch,
+  input-change, no-clobber and cancellation cases remain.
+- All **161 packaged source/asset files** match the checkout and freshly
+  installed wheel. The real-data CLI acceptance used `python -S`, with pytest
+  and Pillow unavailable; all 20 loaded FieldForge modules matched the installed
+  and reviewed source bytes.
+- Repository-wide Ruff, patch whitespace, workflow YAML and referenced test
+  paths passed. Both map-platform CI jobs include the new modules.
+
+The [actual native offline view](screenshots/south-dakota-offline-map.png) shows
+Sioux Falls streets and buildings from the historical index. The window opened
+the real file, searched for Sioux Falls, centered its source city point and
+copied its recorded coordinates with network connections blocked. This is an
+application screenshot, not generated cartography. The capture used a temporary
+Tk 9.0.4 runtime with registered DejaVu fonts; production UI code was unchanged.
+At zoom 18 the view contains 250 features, including 118 highway line features,
+without reaching the viewport cap. At zoom 16 the existing 700-feature cap
+returned point features before road lines. Prioritizing road display in crowded
+views is a concrete remaining map-viewer task. Search results remain bounded at
+100 as labeled in the UI.
+
+The data remains a bounded source display/search index; it adds no offline
+routing graph, public map hosting, complete-U.S. coverage or verified
+installation on the user's device.
+
 ## Regional collection preparation — 2026-10-05
 
 `fieldforge-map-catalog prepare-collection` connects a saved

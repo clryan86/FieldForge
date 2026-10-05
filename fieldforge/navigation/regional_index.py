@@ -78,6 +78,17 @@ def _temp(parent, suffix):
     return Path(name)
 
 
+def _publish_index(temporary, target):
+    """Publish a complete index atomically without replacing an existing path."""
+    if os.name == 'nt':
+        # Windows rename refuses an existing target and also works on volumes
+        # without hard links. POSIX rename would replace a competing file.
+        os.rename(temporary, target)
+    else:
+        os.link(temporary, target)
+    temporary.unlink(missing_ok=True)  # Windows moved this private pathname.
+
+
 def _new_db(path, limits):
     con = sqlite3.connect(path)
     con.execute('PRAGMA page_size=4096')
@@ -257,10 +268,7 @@ def prepare_index(source, target, *, cancel=None, progress=None, limits=None,
             f.flush()
             os.fsync(f.fileno())
         osm._check(cancel)
-        # Atomic no-clobber publication. Unsupported hard links fail explicitly;
-        # no fallback publishes a partial copy or replaces an existing file.
-        os.link(output, target)
-        output.unlink()
+        _publish_index(output, target)
         output = None
         if progress:
             progress(100, 100)
@@ -479,8 +487,7 @@ def import_archive(archive, target, *, cancel=None, progress=None):
             raise ValueError('Regional ZIP changed during import; no index was published.')
         validated = inspect_index(temporary, cancel=cancel, progress=progress)
         osm._check(cancel)
-        os.link(temporary, target)
-        temporary.unlink()
+        _publish_index(temporary, target)
         temporary = None
         fingerprint = signature(target)
         return PreparedIndex(target.absolute(), fingerprint, validated.metadata)
