@@ -69,7 +69,7 @@ export function createMBViewer({onAddPoint,clientFactory=createMBClient}) {
     const file=id("mbFile").files[0];if(!file)return;clear("Opening your MBTiles pack locally…");const token=generation;busy=true;id("mbClose").disabled=false;
     try {
       if(token!==generation)return;
-      if(!file.size||file.size>MAX_MB_BYTES||!file.name.toLowerCase().endsWith(".mbtiles"))throw new Error("Choose a .mbtiles export no larger than 64 MiB. Larger packs belong in the desktop program.");
+      if(!file.size||file.size>MAX_MB_BYTES||!file.name.toLowerCase().endsWith(".mbtiles"))throw new Error("Choose a .mbtiles export no larger than 64 MiB. Compatible larger packs can use the desktop map viewer.");
       const read=createMBFileRead(file);fileRead=read;let bytes;
       try {bytes=await read.promise;}finally{if(fileRead===read)fileRead=null;}
       if(token!==generation)return;checkMBHeader(new Uint8Array(bytes));client=clientFactory();

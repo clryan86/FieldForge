@@ -391,10 +391,13 @@ to 128 rows, with 128-byte names and 16-KiB values. Each compressed tile is at
 most 2 MiB and each frame at most 16 MiB. Supported zoom availability is not
 a coverage, integrity, freshness or route-safety audit.
 
-Vector PBF packs, normalized/view-based layouts, WAL-mode exports and larger
-files are rejected with explanatory messages. Existing desktop readers remain
-the route for larger supported packs and vector MBTiles. The browser viewer
-does not acquire datasets, calculate routes, follow GPS or verify conditions.
+The initial raster release rejected vector MBTiles, normalized/view-based
+layouts, WAL-mode exports and larger files. The vector update below adds
+browser support for compatible PBF packs; the other exclusions remain.
+Compatible larger packs can use the desktop map viewer. Normalized or
+view-based databases and WAL-mode files need a flat, indexed, rollback-mode
+export first. The browser viewer does not acquire datasets, calculate routes,
+follow GPS or verify conditions.
 
 The original File is never written. SQLite opens an in-memory copy with
 query_only and trusted_schema restrictions. SQL uses fixed queries, bound tile
@@ -489,7 +492,7 @@ with network and browser storage access forbidden. Canvas and DOM are test
 doubles: native browser rendering/worker startup and phone QA remain
 outstanding. No real map datasets were added or claimed.
 
-Offline edition: **742105bd7fc2**, **2,062,831 bytes**. Built HTML label/ARIA
+Offline edition: **68822322cc5c**, **2,062,946 bytes**. Built HTML label/ARIA
 targets, local assets and embedded worker bytes were checked. Hosted chat,
 accounts, map hosting, geocoding, routing and world-data acquisition remain
 separate unfinished work.

@@ -2,7 +2,7 @@ export const MAX_MB_BYTES = 64 * 1024 * 1024;
 export const MAX_MB_TILE_BYTES = 2 * 1024 * 1024;
 export const MB_LAT_LIMIT = 85.0511287798066;
 export function checkMBHeader(bytes) {
-  if (!(bytes instanceof Uint8Array) || bytes.length<100 || bytes.length>MAX_MB_BYTES) throw new Error("Choose a closed MBTiles export no larger than 64 MiB. Use the desktop program for larger packs.");
+  if (!(bytes instanceof Uint8Array) || bytes.length<100 || bytes.length>MAX_MB_BYTES) throw new Error("Choose a closed MBTiles export no larger than 64 MiB. Compatible larger packs can use the desktop map viewer.");
   if (String.fromCharCode(...bytes.subarray(0,16))!=="SQLite format 3\0") throw new Error("This is not a SQLite MBTiles file.");
   if(bytes[18]!==1||bytes[19]!==1) throw new Error("WAL-mode databases are not supported. Export a closed, single-file rollback-mode copy first.");
   const raw=bytes[16]*256+bytes[17],size=raw===1 ? 65536 : raw;
