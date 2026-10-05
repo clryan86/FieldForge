@@ -51,7 +51,10 @@ The [owner console guide](COMMONS_OWNER.md)
 covers sole-owner setup, authenticator sign-in, and moderation.
 The [profile and directory guide](COMMONS_PROFILES.md) covers private profile
 editing, optional photo thumbnails with embedded metadata removed, separate
-sharing choices, member discovery, and profile export/deletion.
+sharing choices, member discovery, and profile export/deletion. Listed members
+can separately opt in to direct conversation invitations from their directory
+cards. Saved account holders can send those invitations and continue through
+the normal inbox acceptance flow; consent starts off for every existing profile.
 
 - Base camp plus twelve practical skill rooms, with independent room history.
 - Plain text messages and optional skill labels; all identities are unverified.

@@ -316,7 +316,7 @@ def test_migration_keeps_existing_accounts_messages_and_owner_utilities_do_not_d
     profile(store, alice, bio="TEST survives owner utilities")
     OwnerStore(path).reports()
     with sqlite3.connect(path) as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 7
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 8
     assert ProfileStore(path).profile_get(alice)["profile"]["bio"] == "TEST survives owner utilities"
 
 

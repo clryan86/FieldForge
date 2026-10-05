@@ -141,6 +141,7 @@ class PreviewApplication(PortalApplication):
                    "profile/delete": {"revision"}, "profile/export": set(),
                    "profile/directory": {"query", "category", "offset"},
                    "profile/block": {"profile_id"},
+                   "profile/invite": {"profile_id", "title", "request_id"},
                    "owner/login": {"username", "password", "code", "consent"},
                    "owner/dashboard": set(), "owner/reports": set(), "owner/lock": set(),
                    "owner/members": {"query", "offset"},
@@ -173,7 +174,7 @@ class PreviewApplication(PortalApplication):
                        "photo/remove": self.store.profile_photo_remove,
                        "photo/read": self.store.profile_photo_read, "delete": self.store.profile_delete,
                        "export": self.store.profile_export, "directory": self.store.profile_directory,
-                       "block": self.store.profile_block}
+                       "block": self.store.profile_block, "invite": self.store.profile_invite}
             result = methods[name.removeprefix("profile/")](token, **payload)
         elif name.startswith("account/"):
             fields = dict(payload)

@@ -212,7 +212,7 @@ Messaging is not end-to-end encrypted, and screenshot prevention is not promised
 
 ## Verification
 
-The current schema 7 export/closure checks are recorded in the
+The schema 7 export/closure checks are recorded in the
 [account lifecycle verification](COMMONS_ACCOUNTS.md#account-lifecycle-verification).
 
 For the earlier owner-console release, on 2026-10-05 the combined

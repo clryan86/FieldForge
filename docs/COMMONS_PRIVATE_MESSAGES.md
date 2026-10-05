@@ -12,6 +12,8 @@ The screenshot uses test participants. No real community activity is fabricated.
 
 ## Start a conversation
 
+### Use contact codes
+
 1. The recipient opens Private inbox and shares their contact code with you.
    Preview names are unverified; confirm the code with the intended person.
 2. Choose **New**, select a one-to-one conversation or a private group, enter a
@@ -22,6 +24,38 @@ The screenshot uses test participants. No real community activity is fabricated.
    sent since the invitation available to them.
 4. Use **Saved** for ordinary inbox messages, or select **Open once** before
    sending. Each conversation retains its own unsent draft in the current tab.
+
+### Invite someone from the member directory
+
+A saved account holder can also open **Member directory** and choose **Invite
+to chat** on another member's card when that member has separately enabled
+directory invitations. Review the recipient, enter a **Conversation subject**,
+then choose **Send invitation**. This route creates a one-to-one conversation
+using an opaque profile ID; groups continue to use contact codes in **Private
+inbox → New**. Guests can browse shared profiles but need a saved account to
+send a directory invitation.
+
+Listing a profile does not enable invitations. The additional consent starts
+off for new and existing profiles, and takes effect only while the profile is
+listed. Before creating an invitation, the server rechecks current visibility,
+consent, account availability, suspension, and blocking. A stale directory card
+cannot override a member's latest choices. See the
+[profile guide](COMMONS_PROFILES.md#your-sharing-choices) to change that consent.
+
+The recipient gets the same accept, decline, and **Decline and block sender**
+controls as a contact-code invitation. Turning off directory invitations,
+withdrawing the listing, or deleting the profile prevents new directory
+invitations. It does not cancel existing invitations or conversations, or stop
+contact-code invitations. Use the inbox's decline, leave, or block controls as
+needed.
+
+The directory and its invitation API response do not expose the recipient's
+contact code. Normal inbox participant metadata still includes participant IDs
+and contact codes for people with legitimate conversation access. This feature
+keeps contact codes out of the directory; it does not make them secret from
+conversation participants.
+
+## Membership and blocking
 
 Recipients who were never invited cannot list, read, open, post, report, or
 withdraw messages in that conversation. Every operation checks membership on
@@ -68,15 +102,18 @@ The local preview applies these separate limits:
 | 20 conversations per participant | Counts accepted conversations and pending invitations. Declined and left memberships do not count. |
 | 200 conversations per database | A conversation remains while any accepted or invited member can return to it. |
 | 20 invited recipients per sender in a rolling 24 hours | Each group recipient counts separately. An unsuccessful invitation or an unchanged retry uses no extra allowance. |
-| One new invitation to the same contact per hour | Applies across direct conversations and groups, including after a decline or a closed conversation. The other participant has their own sending allowance. |
+| One new invitation to the same participant per hour | Applies across directory invitations, contact-code direct conversations, and groups, including after a decline or a closed conversation. The other participant has their own sending allowance. |
 | 20,000 invitation retry records per database | New invitations wait for old closed records to expire if this bound is reached. Existing conversations remain accessible. |
 
-These invitation limits persist across server restarts and sign-ins. A rejected
-group invitation is atomic: no participant receives a partial invitation and
-none of the sender's allowance is consumed. Blocking in either direction stops
-new invitations regardless of the time limits. These controls apply to a
-participant identity. Creating a new guest identity can bypass that identity's
-allowance; public registration and abuse prevention remain separate work.
+Directory invitations and contact-code invitations share these capacity,
+recipient, and retry-record limits. Switching between them does not provide
+another hourly or daily allowance. The limits persist across server restarts
+and sign-ins. A rejected group invitation is atomic: no participant receives a
+partial invitation and none of the sender's allowance is consumed. Blocking in
+either direction stops new invitations regardless of the time limits. These
+controls apply to a participant identity. Creating a new guest identity can
+bypass that identity's allowance; public registration and abuse prevention
+remain separate work.
 
 Leaving preserves the conversation for its remaining participants, including a
 single remaining member who wants to keep saved history. When nobody remains,
@@ -95,6 +132,29 @@ it never recreates the conversation or sends another invitation. Reusing that
 request ID with different invitation content is rejected. After an expired
 closed receipt is removed, a submission is treated as a new invitation and must
 pass the current capacity, availability, blocking and invitation limits.
+
+An exact retry of a successful directory invitation may return that same
+original result after the recipient turns off directory invitations, hides or
+deletes the profile, or after the conversation closes. The receipt confirms the
+earlier operation; it does not create a conversation or send another invitation.
+A new directory invitation must always pass the current listing and consent
+checks, as well as the shared limits above.
+
+If a directory invitation response cannot be confirmed, chat pauses. Resume
+chat and check **Private inbox** for the conversation. In **Member directory**,
+choose **Review pending invitation** to inspect and explicitly retry the same
+request, even if that member has since withdrawn their listing. Reopening a
+still-available card also restores its pending subject. Nothing is sent
+automatically. Keeping the same recipient and subject, with whitespace
+normalized, reuses its request ID. A confirmed closed result cannot reopen the
+conversation.
+
+Closing or hiding the dialog clears its displayed fields and ignores late
+replies, although an already submitted invitation may still finish saving. The
+unconfirmed request remains only in the same tab and identity for an explicit
+retry; it does not survive a reload, sign-out, account switch, or deletion of
+the sender's profile. Replies from an older view cannot open an inbox or replace
+the next recipient's draft.
 
 ## Saved versus open-once delivery
 
@@ -170,11 +230,14 @@ Private messaging introduced schema version 2; the inbox lifecycle update added
 invitations before reclaiming fully left conversations or irrecoverable guest
 memberships. It preserves public room history, saved accounts, profiles and
 photos, owner configuration, and private history that still has an eligible
-member. The current account export/closure update uses **schema version 7**,
-adding account closure references and temporary export authorizations. Current
-preview and owner utilities preserve that version.
+member. Account export/closure introduced **schema version 7**, adding account
+closure references and temporary export authorizations. The current directory
+invitation update uses **schema version 8**, adding the profile's separate
+`allow_invitations` choice with a false default. Existing listed profiles also
+migrate with directory invitations off. Current preview and owner utilities
+preserve version 8.
 Stop the preview and keep a backup of test data before changing versions; older
-code that does not support version 7 must not operate on the upgraded database.
+code that does not support version 8 must not operate on the upgraded database.
 The preview refuses to use an unrelated application database.
 
 ## Public launch status
@@ -211,10 +274,11 @@ present and a private invitation followed by one-time delivery succeeded.
 
 ## Inbox history and lifecycle verification, 2026-10-05
 
-The current combined Commons, profile/photo, community, portal and connection
-suite passed **311 tests and six subtests**, including all **28 Chromium browser
-tests**, in 198.44 seconds. One existing native graphical portal handoff test
-was skipped because this environment has no graphical desktop.
+For the inbox history and lifecycle update, the combined Commons, profile/photo,
+community, portal and connection suite passed **311 tests and six subtests**,
+including all **28 Chromium browser tests**, in 198.44 seconds. One existing
+native graphical portal handoff test was skipped because this environment has
+no graphical desktop.
 
 This update adds 26 history/API regressions, 20 invitation lifecycle regressions,
 and six browser scenarios. They exercise more than 100 unread messages, sparse

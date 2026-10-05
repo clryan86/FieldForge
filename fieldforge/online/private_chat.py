@@ -201,36 +201,51 @@ class PrivateChatStore(ChatStore):
         with self._db() as db:
             member = self._member(db, token)
             self._expire(db)
-            previous = db.execute("SELECT thread,fingerprint,closed FROM private_invitation_receipts "
-                                  "WHERE owner=? AND request_id=?",
-                                  (member["id"], request_id)).fetchone()
-            if previous:
-                if previous["fingerprint"] != fingerprint:
-                    raise ChatError(409, "That retry ID belongs to another invitation.")
-                return {"thread": previous["thread"], "duplicate": True, "closed": previous["closed"] is not None}
-            if member["id"] in contacts:
-                raise ChatError(400, "Enter another participant's contact code.")
-            for contact in contacts:
-                if not self._contact_available(db, contact) or _blocked(db, member["id"], contact):
-                    raise ChatError(404, "A selected contact is unavailable for a private invitation.")
-            if db.execute("SELECT COUNT(*) FROM private_threads").fetchone()[0] >= MAX_THREADS:
-                raise ChatError(409, "This local preview has reached its conversation limit.")
-            for contact in [member["id"], *contacts]:
-                if db.execute("SELECT COUNT(*) FROM private_members WHERE participant=? "
-                              "AND status IN ('accepted','invited')",
-                              (contact,)).fetchone()[0] >= MAX_MEMBER_THREADS:
-                    raise ChatError(409, "A participant has reached the preview's conversation limit.")
-            now = self.clock()
-            self._invitation_limits(db, member["id"], contacts, now)
-            thread = secrets.token_hex(12)
-            db.execute("INSERT INTO private_threads VALUES(?,?,?,?,?,?,?)",
-                       (thread, title, kind, member["id"], now, request_id, fingerprint))
-            db.executemany("INSERT INTO private_members VALUES(?,?,?)",
-                           [(thread, member["id"], "accepted"), *[(thread, contact, "invited") for contact in contacts]])
-            db.execute("INSERT INTO private_invitation_receipts VALUES(?,?,?,?,?,NULL)",
-                       (thread, member["id"], request_id, fingerprint, now))
-            db.executemany("INSERT INTO private_invitation_contacts VALUES(?,?)", [(thread, contact) for contact in contacts])
-            return {"thread": thread, "duplicate": False, "closed": False}
+            return self._create_private_thread(db, member, title, kind, contacts, request_id, fingerprint)
+
+    @staticmethod
+    def _invitation_retry(db, owner, request_id, fingerprint):
+        previous = db.execute("SELECT thread,fingerprint,closed FROM private_invitation_receipts "
+                              "WHERE owner=? AND request_id=?", (owner, request_id)).fetchone()
+        if previous is None:
+            return None
+        if previous["fingerprint"] != fingerprint:
+            raise ChatError(409, "That retry ID belongs to another invitation.")
+        return {"thread": previous["thread"], "duplicate": True, "closed": previous["closed"] is not None}
+
+    def _create_private_thread(self, db, member, title, kind, contacts, request_id, fingerprint):
+        """Create a validated invitation within the caller's authenticated transaction.
+
+        Contact-code and directory invitations share receipts, participant capacity,
+        and recipient-weighted limits. Callers authenticate and expire old records
+        before entry; directory callers also resolve current consent in this same
+        transaction. An exact receipt returns its original result without writing.
+        """
+        previous = self._invitation_retry(db, member["id"], request_id, fingerprint)
+        if previous is not None:
+            return previous
+        if member["id"] in contacts:
+            raise ChatError(400, "Enter another participant's contact code.")
+        for contact in contacts:
+            if not self._contact_available(db, contact) or _blocked(db, member["id"], contact):
+                raise ChatError(404, "A selected contact is unavailable for a private invitation.")
+        if db.execute("SELECT COUNT(*) FROM private_threads").fetchone()[0] >= MAX_THREADS:
+            raise ChatError(409, "This local preview has reached its conversation limit.")
+        for contact in [member["id"], *contacts]:
+            if db.execute("SELECT COUNT(*) FROM private_members WHERE participant=? "
+                          "AND status IN ('accepted','invited')", (contact,)).fetchone()[0] >= MAX_MEMBER_THREADS:
+                raise ChatError(409, "A participant has reached the preview's conversation limit.")
+        now = self.clock()
+        self._invitation_limits(db, member["id"], contacts, now)
+        thread = secrets.token_hex(12)
+        db.execute("INSERT INTO private_threads VALUES(?,?,?,?,?,?,?)",
+                   (thread, title, kind, member["id"], now, request_id, fingerprint))
+        db.executemany("INSERT INTO private_members VALUES(?,?,?)",
+                       [(thread, member["id"], "accepted"), *[(thread, contact, "invited") for contact in contacts]])
+        db.execute("INSERT INTO private_invitation_receipts VALUES(?,?,?,?,?,NULL)",
+                   (thread, member["id"], request_id, fingerprint, now))
+        db.executemany("INSERT INTO private_invitation_contacts VALUES(?,?)", [(thread, contact) for contact in contacts])
+        return {"thread": thread, "duplicate": False, "closed": False}
 
     @staticmethod
     def _invitation_limits(db, owner, contacts, now):

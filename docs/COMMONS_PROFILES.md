@@ -1,11 +1,13 @@
 # Local Commons profiles, photos, and member directory
 
-Saved local accounts can now edit a profile, keep a private photo, and choose
-what to share in the **Member directory**. Profiles start private. Joining chat,
-creating an account, or uploading a photo does not publish a directory listing.
+Saved local accounts can edit a profile, keep a private photo, choose what to
+share in the **Member directory**, and separately allow directory invitations
+to chat. Profiles start private, with directory invitations off. Joining chat,
+creating an account, or uploading a photo does not publish a directory listing
+or enable invitations from it.
 
 This feature runs in the existing Commons preview on the same computer. The
-server binds to `127.0.0.1`; public hosting and a public membership service are
+server binds to `127.0.0.1`; public hosting and verified sign-in are
 still unfinished. Accounts belong to their local database. Names, interests,
 experience answers, and qualifications are self-reported and unverified.
 
@@ -44,6 +46,7 @@ those edits. Photo uploads and removals are separate actions described below.
 | **List my profile in the local Commons directory** is checked | Other joined participants on this server can see the profile display name, account `@username`, and bio. This includes signed-in guests browsing the directory. |
 | **Share my interests and ways to help** is checked | When the profile is listed, selected interest badges and ways to help appear with it. Private experience answers are not published. |
 | **Share my profile photo** is checked | When the profile is listed, its current normalized photo can be requested by participants allowed to view the listing. A saved photo is required to select this choice. |
+| **Allow conversation invitations from my directory profile** is checked | When the profile is listed, other saved account holders who can view it may send a one-to-one chat invitation from its card. Each invitation still requires acceptance. Guests can browse the directory but cannot send invitations through it. |
 
 Shared interest badges follow the saved selection order. Changing a private
 experience answer does not rank or reorder the public badges. Every badge
@@ -51,10 +54,11 @@ remains self-reported and grants no credential, administrative role, or other
 privilege. The profile questionnaire is separate from the optional chat account
 skill label.
 
-The directory and photo choices work together: skills and photos become visible
-only while the profile is listed. Unchecking the directory choice and choosing
-**Save profile** withdraws the listing. The other checkboxes can remain selected
-while a profile is private, so review all three choices before listing it again.
+The sharing choices work together: skills and photos become visible, and
+directory invitations become available, only while the profile is listed.
+Unchecking the directory choice and choosing **Save profile** withdraws the
+listing. The other checkboxes can remain selected while a profile is private,
+so review all four choices before listing it again.
 
 These controls govern access through the local application. Saved private
 answers and normalized photos reside in its SQLite database; someone with
@@ -127,6 +131,43 @@ Results refresh when you open the directory, search, change pages, or choose
 participants, and participants blocked in either direction. It does not expose
 contact codes, session tokens, private experience answers, or private profile
 questionnaires. A separate opaque profile ID supports directory actions.
+
+### Invite a directory member to chat
+
+Sign in to a saved account, then choose **Invite to chat** on another member's
+card when they allow directory invitations. In **Invite to a private
+conversation**, review the name and `@username`, enter a **Conversation subject**,
+then choose **Send invitation**. This creates a one-to-one private conversation;
+use **Private inbox → New** and contact codes for a private group. Guests see
+guidance to save their account before sending.
+
+The recipient receives the usual inbox invitation and can accept, decline, or
+choose **Decline and block sender**. Sending an invitation does not accept it
+for them. Directory and contact-code invitations share the same conversation
+capacity, hourly limit for inviting the same participant, and daily recipient
+allowance. See the [private-message guide](COMMONS_PRIVATE_MESSAGES.md#conversation-capacity-and-invitation-limits)
+for limits and retry behavior.
+
+The server rechecks the listing, invitation consent, both accounts' availability,
+suspension, and blocking before creating an invitation. A card left open before
+someone withdrew their listing or changed their consent does not override their
+current choice.
+
+Turning off directory invitations, making the profile private, or deleting it
+prevents new invitations through that profile. It does not cancel existing
+invitations or conversations, or prevent invitations using a contact code. Use
+the normal decline, leave, or block controls for existing contact. An exact
+retry of a previously successful invitation can still return its original
+conversation result after consent is withdrawn or the profile is deleted,
+including a closed result; it never creates a replacement conversation.
+
+Directory invitations use the opaque profile ID. The directory and the
+invitation API response do not disclose the recipient's contact code. Normal
+inbox participant metadata still includes participant IDs and contact codes
+for people with legitimate conversation access; directory invitation consent
+does not promise that those details stay hidden from conversation participants.
+
+### Block a member
 
 Choose **Block @username** on another member's card and confirm to use the
 existing chat block action. The two participants' directory listings and shared
@@ -211,18 +252,20 @@ closing it; the [account guide](COMMONS_ACCOUNTS.md) explains the full workflow.
 
 ## Database upgrade and implementation boundaries
 
-Profiles introduced Commons database schema version **5**, and the private inbox
-lifecycle introduced **version 6**. The current account export and closure update
-uses **version 7**. Opening an existing supported Commons database applies the
-missing tables while retaining accounts, sessions, room messages, private
+Profiles introduced Commons database schema version **5**, the private inbox
+lifecycle introduced **version 6**, and account export and closure introduced
+**version 7**. Directory invitation consent uses the current **version 8**.
+Opening an existing supported Commons database applies the missing schema
+changes while retaining accounts, sessions, room messages, private
 conversations, invitations, blocks, reports, and owner configuration under their
 existing retention rules. Existing accounts do not automatically receive a
-directory listing or close during the upgrade.
+directory listing or close during the upgrade. Existing profiles migrate with
+directory invitations off, including profiles already listed in the directory.
 
 Stop the server and back up the local database before upgrading. Continue using
 the same database path to retain the existing community. Use the updated code
 for both preview and owner commands; older releases that do not understand
-schema version 7 must not operate on the upgraded file. Current owner utilities
+schema version 8 must not operate on the upgraded file. Current owner utilities
 preserve the version instead of downgrading it. Keep databases and their private
 contents outside the source repository.
 
@@ -237,6 +280,11 @@ along with the credentials. A generic participant reference and a hash reserving
 the former username remain so shared records stay consistent and the name cannot
 be reclaimed. This reservation is separate from the empty revision marker used
 when deleting only a profile.
+
+Version 8 adds the profile's separate `allow_invitations` choice, defaulting to
+false. It takes effect only with a current shared directory listing. Current
+preview and owner database initializers preserve schema version 8; continue
+using the updated code for every operation on the upgraded database.
 
 Profile operations require an authenticated local session. Edits and exports
 operate only on that session's saved account. The owner console does not bypass
@@ -269,7 +317,31 @@ The implementation was checked against these primary Pillow references:
 
 ## Verification
 
-The current schema 7 export/closure checks are recorded in the
+### Directory invitation verification, 2026-10-05
+
+The combined Commons, profile/photo, community, portal, and connection suite
+passed **440 tests and six subtests**, including all **53 Chromium browser
+tests**, in 359.71 seconds. One existing graphical portal handoff test was
+skipped because this run has no native desktop display.
+
+This update adds **40 native/HTTP cases and 12 browser cases** covering an actual
+version-7 profile-table upgrade, default-off and legacy-save consent, exports,
+current privacy/block/suspension checks, owner restrictions, signed-out saved
+recipients, shared quotas/capacity, concurrent retries, and strict HTTP fields.
+Browser tests cover mobile invitation, acceptance and reply; guest upgrade
+without sending; withdrawn listings; lost replies and explicit retries;
+cancellation, hidden views, a different recipient, shared-cookie account changes,
+and closed receipts. The mobile dialog was visually inspected.
+
+Independent backend and browser-state reviews found no blocking issue.
+Repository-wide Ruff, JavaScript syntax, and whitespace checks passed. A built
+wheel installed outside the checkout was checked under `python -S`, without
+optional dependencies, for consent, invitation API, acceptance, saved delivery,
+account export, opt-out, closed retries, schema 8, and restart. All 31 packaged
+online code/asset files matched the tested source bytes. These checks do not
+constitute a public-launch security review.
+
+The schema version 7 export/closure checks are recorded in the
 [account lifecycle verification](COMMONS_ACCOUNTS.md#account-lifecycle-verification).
 
 Before the schema version 7 account-lifecycle update, on 2026-10-05 UTC, the

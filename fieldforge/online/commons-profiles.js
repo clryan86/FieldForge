@@ -1,11 +1,13 @@
 "use strict";
 window.CommonsProfile = class {
-  constructor({request, notice, failed, refresh}) {
-    Object.assign(this, {request, notice, failed, refresh});
+  constructor({request, notice, failed, refresh, openConversation}) {
+    Object.assign(this, {request, notice, failed, refresh, openConversation});
     this.el = id => document.getElementById(id);
     this.joined = false; this.active = false; this.viewer = null; this.identity = null;
     this.mode = null; this.epoch = 0; this.busy = false; this.revision = null;
     this.requests = new Set(); this.downloads = new Set();
+    this.invitationRequests = new Map(); this.invitationRetry = null;
+    this.inviteTarget = null; this.inviteEpoch = 0; this.inviteBusy = false; this.inviteController = null;
     this.categories = []; this.contributionTypes = []; this.experienceLevels = [];
     this.photoAssetId = null; this.saved = false; this.photoUploads = false; this.conflict = false;
     this.directory = {query: "", category: "", offset: 0, total: 0, limit: 12};
@@ -36,6 +38,27 @@ window.CommonsProfile = class {
     this.el("directoryRefresh").addEventListener("click", () => this.searchDirectory());
     this.el("directoryPrevious").addEventListener("click", () => this.loadDirectory(Math.max(0, this.directory.offset - 12)));
     this.el("directoryNext").addEventListener("click", () => this.loadDirectory(this.directory.offset + 12));
+    this.el("directoryInviteForm").addEventListener("submit", event => { event.preventDefault(); this.sendInvitation(); });
+    this.el("directoryInviteSubject").addEventListener("input", () => {
+      const previous = this.invitationRequests.get(this.invitationSignature(this.inviteTarget, this.invitationSubject()));
+      this.invitationStatus(previous?.closed
+        ? "That invitation was already sent and the conversation has since closed. No new invitation was created."
+        : previous?.unconfirmed ? "Your earlier invitation could not be confirmed. Send again to check the same request."
+          : "The recipient chooses whether to accept. No message is sent yet.");
+      this.controls();
+    });
+    this.el("directoryInviteCancel").addEventListener("click", () => this.closeInvitation());
+    this.el("directoryInviteDialog").addEventListener("cancel", event => { event.preventDefault(); this.closeInvitation(); });
+    this.el("directoryInviteDialog").addEventListener("close", () => {
+      if (this.inviteTarget && !this.el("directoryInviteDialog").open) this.closeInvitation();
+    });
+    this.el("directoryInviteSaveAccount").addEventListener("click", () => {
+      if (!this.available()) return;
+      this.close(); this.el("accountManage").click();
+    });
+    this.el("directoryInviteReview").addEventListener("click", () => {
+      if (this.invitationRetry?.identity === this.identity) this.openInvitation(this.invitationRetry.target, this.invitationRetry);
+    });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) this.close();
       this.controls();
@@ -55,6 +78,7 @@ window.CommonsProfile = class {
   current(epoch, mode = this.mode) { return epoch === this.epoch && this.mode === mode && this.available(); }
   setSession(joined, active, viewer) {
     const identity = joined && viewer ? `${viewer.id}:${Boolean(viewer.account)}` : null;
+    if (!joined || identity !== this.identity) this.clearInvitationMemory();
     if (!joined || !active || identity !== this.identity) this.close();
     this.joined = joined; this.active = active; this.viewer = viewer; this.identity = identity;
     this.controls();
@@ -69,6 +93,7 @@ window.CommonsProfile = class {
     root.replaceChildren();
   }
   close() {
+    this.closeInvitation();
     this.cancelRequests(); this.mode = null; this.busy = false;
     for (const id of ["profileDialog", "directoryDialog"]) if (this.el(id).open) this.el(id).close();
     this.el("profileForm").reset(); this.el("profileForm").hidden = true;
@@ -114,12 +139,26 @@ window.CommonsProfile = class {
     } else {
       const skills = this.el("profileShareSkills").checked ? "Your interests and ways to help will be included." : "Your interests and ways to help stay private.";
       const photo = this.el("profileSharePhoto").checked && this.photoAssetId ? "Your photo will be included." : "Your photo stays private.";
-      this.el("profileSharingSummary").textContent = `When saved, your profile name, @username, and bio will be listed. ${skills} ${photo}`;
+      const invitations = this.el("profileAllowInvitations").checked ? "Saved-account members may invite you to a private conversation; you choose whether to accept." : "Directory invitations are off.";
+      this.el("profileSharingSummary").textContent = `When saved, your profile name, @username, and bio will be listed. ${skills} ${photo} ${invitations}`;
     }
-    for (const element of this.el("directoryDialog").querySelectorAll("input, select, button")) element.disabled = !available || this.busy;
+    const directoryBusy = this.busy || Boolean(this.inviteTarget);
+    for (const element of this.el("directoryDialog").querySelectorAll("input, select, button")) element.disabled = !available || directoryBusy;
     this.el("closeDirectory").disabled = false;
-    this.el("directoryPrevious").disabled = !available || this.busy || this.directory.offset === 0;
-    this.el("directoryNext").disabled = !available || this.busy || this.directory.offset + 12 >= this.directory.total;
+    this.el("directoryPrevious").disabled = !available || directoryBusy || this.directory.offset === 0;
+    this.el("directoryNext").disabled = !available || directoryBusy || this.directory.offset + 12 >= this.directory.total;
+    const retry = this.invitationRetry?.identity === this.identity && this.viewer?.account ? this.invitationRetry : null;
+    const showRetry = this.mode === "directory" && retry;
+    this.el("directoryInviteRetry").hidden = !showRetry;
+    this.el("directoryInviteRetryText").textContent = showRetry ? `An invitation to @${retry.target.username} could not be confirmed. Review it and send again to check the same request without creating a duplicate.` : "";
+    const canInvite = available && this.mode === "directory" && this.inviteTarget && this.viewer?.account;
+    const subject = this.invitationSubject();
+    const previous = this.invitationRequests.get(this.invitationSignature(this.inviteTarget, subject));
+    this.el("directoryInviteSubject").disabled = !canInvite || this.inviteBusy;
+    this.el("directoryInviteSend").disabled = !canInvite || this.inviteBusy || !subject || Array.from(subject).length > 100 || previous?.closed === true;
+    this.el("directoryInviteSend").textContent = this.inviteBusy ? "Sending invitation…" : "Send invitation";
+    this.el("directoryInviteSaveAccount").disabled = !available || this.inviteBusy;
+    this.el("directoryInviteDialog").setAttribute("aria-busy", String(this.inviteBusy));
     this.el("profileDialog").setAttribute("aria-busy", String(this.mode === "profile" && this.busy));
     this.el("directoryDialog").setAttribute("aria-busy", String(this.mode === "directory" && this.busy));
   }
@@ -137,7 +176,7 @@ window.CommonsProfile = class {
     } finally { this.requests.delete(controller); }
   }
   async run(mode, operation) {
-    if (this.mode !== mode || !this.available() || this.busy) return;
+    if (this.mode !== mode || !this.available() || this.busy || this.inviteTarget) return;
     this.cancelRequests(); const epoch = this.epoch;
     this.busy = true; this.controls();
     try { await operation(epoch); }
@@ -191,6 +230,7 @@ window.CommonsProfile = class {
     this.el("profileVisibility").checked = profile.visibility === "commons";
     this.el("profileShareSkills").checked = profile.share_skills === true;
     this.el("profileSharePhoto").checked = Boolean(profile.share_photo && this.photoAssetId);
+    this.el("profileAllowInvitations").checked = profile.allow_invitations === true;
     this.el("profilePhotoFile").value = "";
     this.el("profilePhotoUploadFields").hidden = !this.photoUploads;
     this.el("profilePhotoUnavailable").hidden = this.photoUploads;
@@ -238,6 +278,7 @@ window.CommonsProfile = class {
     return {display_name: this.el("profileDisplayName").value, bio: this.el("profileBio").value,
       visibility: this.el("profileVisibility").checked ? "commons" : "private",
       share_skills: this.el("profileShareSkills").checked, share_photo: Boolean(this.photoAssetId && this.el("profileSharePhoto").checked),
+      allow_invitations: this.el("profileAllowInvitations").checked,
       assessment: {interests, experience, contributions: Array.from(this.el("profileContributions").querySelectorAll("input:checked"), input => input.value)}};
   }
   save() {
@@ -291,6 +332,7 @@ window.CommonsProfile = class {
   deleteProfile() {
     if (this.conflict || !confirm("Delete your profile and its photo from this server? Your account, inbox, contact code, and messages will stay. You can create a new private profile later.")) return;
     const revision = this.revision;
+    this.clearInvitationMemory();
     this.run("profile", async epoch => {
       const data = await this.call("delete", {revision}, epoch); this.renderProfile(data);
       this.tell("Profile and photo deleted. Your account, inbox, and messages are still available.");
@@ -370,7 +412,13 @@ window.CommonsProfile = class {
       const labels = {hands_on: "Hands-on help", teach: "Teaching", coordinate: "Coordinating", research: "Research", remote: "Remote help"};
       card.append(this.node("p", "Ways to help: " + profile.contributions.map(value => labels[value] || value).join(", "), "directory-contributions"));
     }
-    if (profile.username.toLowerCase() !== (this.viewer.username || this.viewer.name).toLowerCase()) {
+    if (profile.own !== true) {
+      const actions = this.node("div", undefined, "directory-card-actions");
+      if (profile.accepts_invitations === true) {
+        const invite = this.node("button", "Invite to chat"); invite.type = "button";
+        invite.addEventListener("click", () => this.openInvitation(profile));
+        actions.append(invite);
+      }
       const button = this.node("button", "Block @" + profile.username, "secondary"); button.type = "button";
       button.addEventListener("click", () => {
         if (!confirm(`Block @${profile.username}? Their profile and messages will be hidden from your session. You can unblock them from Community rooms.`)) return;
@@ -380,8 +428,103 @@ window.CommonsProfile = class {
           if (this.current(epoch, "directory")) { this.tell("Participant blocked. Their profile is hidden."); await this.refresh(); }
         });
       });
-      card.append(button);
+      actions.append(button); card.append(actions);
     } else card.append(this.node("span", "Your shared profile", "hint"));
     return {card, photo};
+  }
+  clearInvitationMemory() {
+    this.invitationRequests.clear(); this.invitationRetry = null;
+  }
+  nextInvitationRetry() {
+    this.invitationRetry = Array.from(this.invitationRequests.values()).reverse().find(attempt => attempt.identity === this.identity && attempt.unconfirmed) || null;
+  }
+  invitationSignature(target, title) {
+    return JSON.stringify([this.identity, target?.profile_id || null, title]);
+  }
+  invitationSubject() {
+    return this.el("directoryInviteSubject").value.replace(/\s+/g, " ").trim();
+  }
+  closeInvitation() {
+    this.inviteEpoch++; this.inviteTarget = null; this.inviteBusy = false;
+    this.inviteController?.abort(); this.inviteController = null;
+    if (this.el("directoryInviteDialog").open) this.el("directoryInviteDialog").close();
+    this.el("directoryInviteForm").reset();
+    for (const id of ["directoryInviteName", "directoryInviteUsername", "directoryInviteSender", "directoryInviteStatus"]) this.el(id).textContent = "";
+    this.el("directoryInviteGuest").hidden = true;
+    this.el("directoryInviteFields").hidden = true;
+    this.el("directoryInviteSend").hidden = true;
+    this.controls();
+  }
+  currentInvitation(epoch, identity) {
+    return epoch === this.inviteEpoch && identity === this.identity && this.available() && this.mode === "directory" && this.inviteTarget && this.el("directoryInviteDialog").open;
+  }
+  openInvitation(profile, retry = null) {
+    if (!this.available() || this.mode !== "directory" || this.busy) return;
+    if (!profile?.profile_id || (!retry && (!profile.accepts_invitations || profile.own))) return;
+    this.closeInvitation();
+    this.inviteTarget = {profile_id: profile.profile_id, display_name: profile.display_name, username: profile.username};
+    this.el("directoryInviteName").textContent = profile.display_name;
+    this.el("directoryInviteUsername").textContent = "@" + profile.username;
+    const saved = Boolean(this.viewer?.account);
+    this.el("directoryInviteSender").textContent = saved ? `Sending as @${this.viewer.username || this.viewer.name}.` : "";
+    this.el("directoryInviteGuest").hidden = saved;
+    this.el("directoryInviteFields").hidden = !saved;
+    this.el("directoryInviteSend").hidden = !saved;
+    const previous = retry || Array.from(this.invitationRequests.values()).reverse().find(attempt => attempt.identity === this.identity && attempt.target.profile_id === profile.profile_id && attempt.unconfirmed);
+    if (saved && previous?.identity === this.identity) {
+      this.el("directoryInviteSubject").value = previous.title;
+      this.invitationStatus(previous.closed
+        ? "That invitation was already sent and the conversation has since closed. No new invitation was created."
+        : "Your earlier invitation could not be confirmed. Send again to check the same request. Nothing is sent until you choose Send invitation.");
+    } else this.invitationStatus(saved ? "The recipient chooses whether to accept. No message is sent yet." : "Save your account before inviting someone from the directory.");
+    this.el("directoryInviteDialog").showModal(); this.controls();
+    if (saved) this.el("directoryInviteSubject").focus();
+  }
+  invitationStatus(text, error = false) {
+    this.el("directoryInviteStatus").textContent = text;
+    this.el("directoryInviteStatus").classList.toggle("error", error);
+  }
+  async sendInvitation() {
+    const identity = this.identity, epoch = this.inviteEpoch, title = this.invitationSubject();
+    if (!this.currentInvitation(epoch, identity) || !this.viewer?.account || this.inviteBusy || !title || Array.from(title).length > 100) return;
+    const signature = this.invitationSignature(this.inviteTarget, title);
+    let attempt = this.invitationRequests.get(signature);
+    if (attempt?.closed) return;
+    if (!attempt) {
+      attempt = {identity, target: {...this.inviteTarget}, title, id: crypto.randomUUID(), unconfirmed: true, closed: false};
+      this.invitationRequests.set(signature, attempt);
+    }
+    // Keep the original request even if the view closes after the server saves it.
+    // It belongs only to this identity, and is never sent automatically.
+    attempt.unconfirmed = true; this.invitationRetry = attempt;
+    this.inviteBusy = true; const controller = new AbortController(); this.inviteController = controller;
+    this.invitationStatus("Sending invitation…"); this.controls();
+    try {
+      const result = await this.request("profile/invite", {profile_id: attempt.target.profile_id, title, request_id: attempt.id}, controller.signal);
+      if (!this.currentInvitation(epoch, identity)) return;
+      attempt.unconfirmed = false;
+      if (this.invitationRetry === attempt) this.nextInvitationRetry();
+      if (result.closed) {
+        attempt.closed = true;
+        this.invitationStatus("That invitation was already sent and the conversation has since closed. No new invitation was created.");
+        return;
+      }
+      this.invitationRequests.delete(signature);
+      this.close();
+      this.notice(result.duplicate ? "That invitation was already sent. Opening the existing conversation." : "Invitation sent. The recipient must accept before reading messages.");
+      this.openConversation(result.thread);
+    } catch (error) {
+      if (!this.currentInvitation(epoch, identity) || error.name === "AbortError") return;
+      if (!error.status || error.status === 401 || error.status >= 500) {
+        this.failed(error);
+        if (this.identity === identity && this.joined) this.notice("The invitation could not be confirmed. Chat is paused and the dialog was cleared. Resume chat, open Member directory, and choose Review pending invitation to retry the same request.", true);
+      } else {
+        attempt.unconfirmed = false; this.invitationRequests.delete(signature);
+        if (this.invitationRetry === attempt) this.nextInvitationRetry();
+        this.invitationStatus(error.message || "This invitation could not be sent.", true);
+      }
+    } finally {
+      if (this.currentInvitation(epoch, identity)) { this.inviteBusy = false; this.inviteController = null; this.controls(); }
+    }
   }
 };

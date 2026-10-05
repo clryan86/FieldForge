@@ -237,7 +237,10 @@ or an expired/revoked session to avoid carrying them into another identity.
 
 Accounts introduced schema version 3; the owner console adds version 4,
 profiles add version 5, the [inbox lifecycle update](COMMONS_PRIVATE_MESSAGES.md)
-adds version 6, and account export/closure adds **version 7**. These upgrades
+adds version 6, and account export/closure adds version 7. The current
+**version 8** adds separate, default-off consent for
+[invitations from directory profiles](COMMONS_PROFILES.md#invite-a-directory-member-to-chat).
+These upgrades
 preserve saved-account data. Version 3 adds accounts and rate-limit counters
 to version 1/2 databases.
 Saved accounts keep their inbox across expired or revoked sessions. Version 6
@@ -245,6 +248,10 @@ retires irrecoverable guest memberships and reclaims conversations only after
 their last eligible member leaves; it retains bounded invitation retry records.
 Version 7 adds the closed-account references and session-bound export grants;
 upgrading does not close existing accounts or issue export authorizations.
+Version 8 keeps existing profiles unavailable for directory invitations until
+their owners explicitly save that sharing choice. Profile and account exports
+include the saved invitation choice; deleting the profile or closing the account
+removes it.
 Stop the server and back up the database before changing versions. Old binaries
 that do not understand the current schema must not be used against the upgraded database.
 Restoring a backup may also restore credentials/sessions that had since been

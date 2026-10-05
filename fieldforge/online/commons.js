@@ -185,7 +185,12 @@
       clearIdentity(); return true;
     }
   });
-  if (window.CommonsProfile) profileUI = new window.CommonsProfile({request, notice, failed, refresh});
+  if (window.CommonsProfile) profileUI = new window.CommonsProfile({request, notice, failed, refresh,
+    openConversation: thread => {
+      if (!joined || !active || document.hidden) return;
+      privateChat.choose(thread); privateChat.show(true);
+    }
+  });
   el("joinForm").addEventListener("submit", async event => {
     event.preventDefault(); if (!el("consent").checked) return;
     el("joinButton").disabled = true;

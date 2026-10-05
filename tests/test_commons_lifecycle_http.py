@@ -16,7 +16,8 @@ preview_server = test_commons_chat.preview_server
 PASSWORD = "TEST lifecycle only: silver river trail"
 OTHER_PASSWORD = "TEST lifecycle only: another long phrase"
 SECTIONS = ("public_messages", "private_messages", "public_reports", "private_reports")
-PROFILE_FIELDS = {"display_name", "bio", "visibility", "share_skills", "share_photo", "assessment"}
+PROFILE_FIELDS = {"display_name", "bio", "visibility", "share_skills", "share_photo", "assessment",
+                  "allow_invitations"}
 PNG = base64.b64decode(
     "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGNgYGgAAACEAIHJde6SAAAAAElFTkSuQmCC"
 )

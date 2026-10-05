@@ -119,7 +119,8 @@ button.account-danger.secondary:hover{background:#f7ece5}
 .directory-skills .tag{font-size:.61rem;padding:.2rem .4rem;max-width:100%}
 .directory-card .hint{font-size:.65rem;line-height:1.55}
 .directory-contributions{font-size:.72rem;color:var(--muted);margin-top:.3rem}
-.directory-card>button{align-self:flex-start;margin-top:auto;font-size:.7rem;padding:.4rem .6rem}
+.directory-card-actions{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:auto;padding-top:.4rem}
+.directory-card-actions button{font-size:.7rem;padding:.5rem .6rem;max-width:100%;overflow-wrap:anywhere}
 .directory-card>span.hint{margin-top:auto}
 .directory-empty{grid-column:1/-1;padding:2.5rem 1rem;text-align:center;background:var(--tint);border:1px dashed #c5d0bd;border-radius:10px}
 .directory-empty h3{font-size:1rem;margin-bottom:.45rem}
@@ -127,6 +128,20 @@ button.account-danger.secondary:hover{background:#f7ece5}
 .directory-pages{display:flex;gap:.7rem;justify-content:space-between;align-items:center;margin:1rem 0}
 .directory-pages span{text-align:center}
 .people-dialog>.directory-privacy{border-top:1px solid var(--line);padding-top:1rem;margin:0;font-size:.73rem}
+.directory-invite-retry{display:flex;align-items:center;gap:1rem;justify-content:space-between;background:var(--tint);border:1px solid var(--line);border-radius:9px;padding:.85rem;margin:0 0 1rem}
+.directory-invite-retry p{margin:0;font-size:.76rem;overflow-wrap:anywhere}
+.directory-invite-retry button{flex:none;font-size:.75rem}
+.directory-invite-dialog{width:min(510px,calc(100vw - 2rem));max-width:510px;max-height:90vh;overflow:auto;overscroll-behavior:contain}
+.directory-invite-dialog h2{font-size:1.35rem;line-height:1.3}
+.directory-invite-person{padding:1rem;margin:1rem 0;background:var(--tint);border:1px solid var(--line);border-radius:9px;overflow-wrap:anywhere}
+.directory-invite-person h3{font-size:1.08rem;margin-bottom:.3rem}
+.directory-invite-person p:last-child{margin:0}
+.directory-invite-dialog .hint{font-size:.75rem}
+.directory-invite-dialog .dialog-actions{flex-wrap:wrap}
+.directory-invite-dialog .dialog-actions button{font-size:.78rem}
+.directory-invite-guest{padding:1rem 0}
+.directory-invite-guest button{font-size:.8rem}
+#directoryInviteSubjectHint{margin:.45rem 0 .9rem}
 @media(max-width:760px){
   .profile-interests,.directory-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
   .profile-data-actions{flex-direction:column}
@@ -157,5 +172,9 @@ button.account-danger.secondary:hover{background:#f7ece5}
   .directory-toolbar p{font-size:.67rem}
   .directory-toolbar button{font-size:.7rem;padding:.5rem}
   .directory-pages button{font-size:.72rem;padding:.6rem}
+  .directory-invite-retry{align-items:flex-start;flex-direction:column;gap:.65rem}
+  .directory-invite-dialog{width:calc(100vw - 1.2rem);max-height:92vh;padding:1.1rem}
+  .directory-invite-dialog h2{font-size:1.2rem}
+  .directory-invite-dialog .dialog-actions button{flex:1;min-width:100px}
 }
-@media print{#profileDialog,#directoryDialog{display:none!important}}
+@media print{#profileDialog,#directoryDialog,#directoryInviteDialog{display:none!important}}

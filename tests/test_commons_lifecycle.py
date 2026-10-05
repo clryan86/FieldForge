@@ -640,7 +640,7 @@ def test_export_pages_all_retained_records_including_more_than_1000_and_left_thr
         assert db.execute("PRAGMA foreign_key_check").fetchall() == []
 
 
-def test_schema_six_migration_preserves_accounts_history_profiles_and_schema_seven(store):
+def test_schema_six_migration_preserves_accounts_history_profiles_and_schema_eight(store):
     alice, bob = account(store), account(store, "TEST_Bob")
     own_public = public_message(store, alice, "TEST retained from schema six")
     thread = invite(store, alice, [bob])
@@ -663,7 +663,7 @@ def test_schema_six_migration_preserves_accounts_history_profiles_and_schema_sev
     for constructor in (ChatStore, PrivateChatStore, AccountStore, OwnerStore, ProfileStore, AccountLifecycleStore):
         constructor(store.path, clock=store.clock)
         with sqlite3.connect(store.path) as db:
-            assert db.execute("PRAGMA user_version").fetchone()[0] == 7
+            assert db.execute("PRAGMA user_version").fetchone()[0] == 8
             assert db.execute("SELECT COUNT(*) FROM closed_accounts").fetchone()[0] == 1
             assert db.execute("PRAGMA foreign_key_check").fetchall() == []
     assert reopened.account_resume(bob["token"])["viewer"]["id"] == bob["id"]

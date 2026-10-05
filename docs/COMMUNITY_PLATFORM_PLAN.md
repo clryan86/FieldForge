@@ -141,9 +141,15 @@ and a stored username hash permanently reserves the former username. The owner
 console identifies and counts closed records separately and cannot restore their
 access. Previously viewed copies, downloads, and backups cannot be recalled.
 
-The current Commons schema is **version 7**. The profile additions in version
+The current Commons schema is **version 8**. The profile additions in version
 **5** and invitation lifecycle in version **6** remain part of the supported
-upgrade path. Existing accounts and owner configuration are preserved; closure
+upgrade path, along with account export/closure in version **7**. Version **8**
+adds a separate invitation choice to profiles, off by default. Saved members
+can invite opted-in directory members to direct conversations using their opaque
+profile IDs, followed by the normal inbox acceptance flow. Directory and
+contact-code invitations share recipient limits, blocking, capacity, and retry
+records. The server rechecks current profile visibility and consent when creating
+an invitation. Existing accounts and owner configuration are preserved; closure
 occurs only through its explicit authenticated action. See the
 [account guide](COMMONS_ACCOUNTS.md) for the full scope and migration details.
 
