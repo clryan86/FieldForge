@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FieldForge Commons · Local chat preview</title>
+  <link rel="stylesheet" href="/commons.css">
+  <script src="/commons.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="FieldForge portal"><span class="mark">F</span> FieldForge <span class="brand-detail">/ Commons</span></a>
+    <nav aria-label="FieldForge areas"><a href="/">Download portal</a><a href="/#libraryTitle">Knowledge library</a><span class="tag">Local preview</span></nav>
+  </header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">Practical skills. Shared knowledge.</p><h1>Find your people.<br>Build what comes next.</h1><p class="intro">A place to compare notes, ask questions, and help each other prepare.</p></div><div class="connection"><span id="connectionLabel" class="tag">Not joined</span><p>Messages stay on this computer's preview server.</p></div></div>
+    <section class="join-card" id="joinPanel" aria-labelledby="joinTitle">
+      <div><p class="eyebrow">Try the conversation</p><h2 id="joinTitle">Enter local Commons</h2><p>Use a regular and a private browser window to try two participants. Preview names are unverified; no account or password is created.</p></div>
+      <form id="joinForm">
+        <div class="join-fields"><div><label for="displayName">Preview name</label><input id="displayName" required maxlength="40" autocomplete="off" placeholder="How should we call you?"></div><div><label for="skill">Optional skill label</label><select id="skill"><option value="">No label</option><!-- SKILL_OPTIONS --></select></div></div>
+        <label class="consent"><input id="consent" type="checkbox" required> I understand that messages are shared with participants and saved on this local server.</label>
+        <button id="joinButton" type="submit">Join local chat <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+    <p id="status" class="status" role="status">Join when you're ready. Chat makes no API requests before you join.</p>
+    <section class="workspace" aria-label="Commons chat workspace">
+      <aside class="rooms-panel"><p class="eyebrow">Conversation rooms</p><nav id="rooms" aria-label="Chat rooms"><button type="button" disabled aria-current="page">Base camp</button><button type="button" disabled>Maps &amp; navigation</button><button type="button" disabled>Food &amp; farming</button><button type="button" disabled>Construction &amp; repair</button></nav><div class="room-note"><span class="tag">People helping people</span><p>Skill labels describe a member's own interests or experience. They are not verified qualifications.</p></div></aside>
+      <div class="conversation">
+        <div class="room-heading"><div><p class="eyebrow">Commons / <span id="roomBadge">COMMONS</span></p><h2 id="roomTitle">Base camp</h2></div><span class="tag" id="sessionName">Preview</span></div>
+        <div class="message-scroll" id="messageScroll">
+          <div id="emptyState" class="empty-state"><span class="empty-mark" aria-hidden="true">+</span><h3>A conversation starts with one hello.</h3><p>No sample conversations or automated replies.<br>Join and send the first message.</p></div>
+          <div id="messages" role="log" aria-label="Room messages" aria-live="polite" aria-relevant="additions text"></div>
+        </div>
+        <form id="composeForm" class="composer"><label for="message">Your message</label><textarea id="message" rows="3" maxlength="1000" disabled placeholder="Share a question, a useful reference, or a little experience…"></textarea><div class="compose-actions"><span id="messageCount" class="hint">0 / 1,000 characters</span><button id="sendButton" disabled type="submit">Send message <span aria-hidden="true">↑</span></button></div></form>
+      </div>
+      <aside class="details-panel">
+        <p class="eyebrow">Your session</p><h3>Stay in control</h3><p class="small">The latest 100 visible messages appear in each room. Drafts stay in this tab until you close it.</p>
+        <div class="session-actions"><button id="pauseButton" class="secondary" type="button" disabled>Pause chat</button><button id="exportButton" class="secondary" type="button" disabled>Export my messages</button><button id="leaveButton" class="secondary" type="button" disabled>Leave chat</button></div>
+        <details><summary>Blocked participants <span id="blockedCount">(0)</span></summary><div id="blockedList"><p class="hint">No participants blocked.</p></div></details>
+        <div class="privacy-note"><h3>About this preview</h3><p>Chat runs only on this computer. Messages are stored in a local database and are not end-to-end encrypted.</p><p>Reports are saved for the local operator to review. No staffed moderation or emergency response is provided.</p><p>Public accounts, social sign-in, profile photos, and private messages are still under development.</p></div>
+      </aside>
+    </section>
+    <footer><span>FieldForge Commons</span><span>Prepare together. Keep your offline tools close.</span></footer>
+  </main>
+  <dialog id="reportDialog" aria-labelledby="reportTitle"><form id="reportForm"><h2 id="reportTitle">Report a message</h2><p>This report will be saved on the local server for operator review. It does not automatically hide or remove the message.</p><label for="reportReason">Reason</label><select id="reportReason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="unsafe">Unsafe content</option><option value="other">Other concern</option></select><div class="dialog-actions"><button type="button" id="cancelReport" class="secondary">Cancel</button><button type="submit">Save report</button></div></form></dialog>
+</body>
+</html>
