@@ -129,7 +129,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     # Add actual browser-local tools without changing the desktop server portal.
     assets = Path(__file__).resolve().parent / "portal_preview"
     portal = replace_once(portal, '<section class="preview-banner"', (assets / "desk.html").read_text(encoding="utf-8") + '<section class="preview-banner"')
-    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><link rel="stylesheet" href="route-explorer.css"><script type="module" src="desk.mjs"></script></head>')
+    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><link rel="stylesheet" href="route-explorer.css"><link rel="stylesheet" href="image-viewer.css"><script type="module" src="desk.mjs"></script></head>')
     css = re.search(r'<style>(.*?)</style>', portal, flags=re.S).group(1)
     screens = [
         ("rooms", "Community rooms", "commons-chat-preview.png", "Public rooms organized around practical skills, with pause, export, block and report controls."),
@@ -151,7 +151,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     <nav class="portal-nav" aria-label="Preview screens">{''.join(f'<a href="#{key}">{title}</a>' for key,title,_,_ in screens)}</nav>
     <section class="preview-gallery" aria-label="Development screenshots">{''.join(gallery)}</section>
     <section class="card maps-section"><h2>Current status</h2><table class="status-table"><thead><tr><th scope="col">Area</th><th scope="col">Available now</th><th scope="col">Still to connect</th></tr></thead><tbody>
-    <tr><th scope="row">Website</th><td>Map source planner, download estimates, saved plans, local GPX inspection, waypoint CSV export and these screens</td><td>Hosted application services and a public community launch</td></tr>
+    <tr><th scope="row">Website</th><td>Map source planner, download estimates, saved plans, local GPX and map-image inspection, coordinate CSV export and these screens</td><td>Hosted application services and a public community launch</td></tr>
     <tr><th scope="row">Maps &amp; routes</th><td>Links to regional PBF sources, NOAA charts and paid dataset providers</td><td>Hosted map files, address provider and route provider; world MBTiles collection not acquired</td></tr>
     <tr><th scope="row">Commons</th><td>Local rooms, inbox, accounts, profiles, search and owner controls</td><td>Online account services, email/social providers and production operations</td></tr>
     <tr><th scope="row">Library &amp; tiers</th><td>Subject areas and draft plans</td><td>Published knowledge packages, final prices and billing</td></tr>
@@ -162,7 +162,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "commons.html").write_text(commons, encoding="utf-8")
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
-    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs"):
+    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css"):
         shutil.copyfile(assets / name, output / name)
     print(f"Exported portal and Commons gallery from {revision} to {output}")
 

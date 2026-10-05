@@ -1,4 +1,5 @@
 import {MAX_GPX_BYTES, PLAN_KIND, downloadEstimate, validatePlan, parseGPX, projectTrace, waypointCSV} from "./desk-core.mjs";
+import {createImageViewer} from "./image-viewer.mjs";
 import {createRouteExplorer} from "./route-explorer.mjs";
 
 const id = key => document.getElementById(key);
@@ -73,6 +74,9 @@ const routeExplorer = createRouteExplorer({onExportPoint:point => {
   download(waypointCSV([point]), "text/csv;charset=utf-8", "fieldforge-selected-place.csv");
   id("deskTraceStatus").textContent = "Selected point CSV saved. Import it into FieldForge’s local place catalog. The coordinate comes from your file and has not been independently verified.";
 }});
+const imageViewer = createImageViewer({download, onExportPoint:point => {
+  download(waypointCSV([point], "User-supplied image bounds and projection; pixel center; exported by FieldForge preparation desk; WGS 84; not independently verified"), "text/csv;charset=utf-8", "fieldforge-image-point.csv");
+}});
 function applyPlan(data) {
   const checked = validatePlan(data, regionIds); // Atomic: reject first, then change UI.
   selection = new Set(checked.region_ids); id("deskBudget").value = checked.budget_gb; id("deskSpeed").value = checked.speed_mbps;
@@ -108,12 +112,14 @@ try {
 } catch { announcePlan("A saved device plan could not be restored. Open a saved plan file or start a new selection."); }
 
 function selectTool(kind) {
-  const packs = kind === "packs";
-  id("packPanel").hidden = !packs; id("tracePanel").hidden = packs;
-  id("packTab").setAttribute("aria-pressed", String(packs)); id("traceTab").setAttribute("aria-pressed", String(!packs));
+  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"]]) {
+    id(panel).hidden = kind !== tool; id(tab).setAttribute("aria-pressed", String(kind === tool));
+  }
+  if (kind === "image") imageViewer.refresh();
 }
 id("packTab").addEventListener("click", () => selectTool("packs"));
 id("traceTab").addEventListener("click", () => selectTool("trace"));
+id("imageTab").addEventListener("click", () => selectTool("image"));
 const svgNS = "http://www.w3.org/2000/svg";
 function svg(tag, attrs) { const element = document.createElementNS(svgNS, tag); for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value); return element; }
 function clearTrace(message = "File cleared from this page. Nothing was uploaded or saved.") {

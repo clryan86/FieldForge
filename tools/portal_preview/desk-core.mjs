@@ -155,7 +155,8 @@ export function clampView(zoom, x, y) {
   return {zoom:level, x:cx, y:cy, width, height, box:[cx - width / 2, cy - height / 2, width, height]};
 }
 
-export function waypointCSV(waypoints) {
+export function waypointCSV(waypoints, source = "User-supplied GPX; exported by FieldForge preparation desk; WGS 84; not independently verified") {
+  if (typeof source !== "string" || !source.trim() || source.length > 512 || /^[=+@-]/.test(source.trim()) || /[\u0000-\u001f\u007f]/.test(source)) throw new Error("Invalid coordinate source description.");
   if (!waypoints.length || waypoints.length > MAX_WAYPOINTS) throw new Error("No exportable waypoints.");
   const quote = value => '"' + String(value).replace(/"/g, '""') + '"';
   // Protect a spreadsheet opening the exported CSV from formulas in GPX names.
@@ -164,5 +165,5 @@ export function waypointCSV(waypoints) {
     if (/^[=+@-]/.test(name)) name = "'" + name;
     return [...name].slice(0, 160).join("");
   };
-  return "name,latitude,longitude,source\r\n" + waypoints.map((p, index) => [safeName(p.name, index), p.lat.toFixed(7).replace(/\.?0+$/, ""), p.lon.toFixed(7).replace(/\.?0+$/, ""), "User-supplied GPX; exported by FieldForge preparation desk; WGS 84; not independently verified"].map(quote).join(",")).join("\r\n") + "\r\n";
+  return "name,latitude,longitude,source\r\n" + waypoints.map((p, index) => [safeName(p.name, index), p.lat.toFixed(7).replace(/\.?0+$/, ""), p.lon.toFixed(7).replace(/\.?0+$/, ""), source].map(quote).join(",")).join("\r\n") + "\r\n";
 }

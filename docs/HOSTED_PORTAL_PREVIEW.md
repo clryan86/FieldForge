@@ -120,3 +120,48 @@ Module syntax, imports, HTML control IDs and local links/anchors were also check
 These are calculation and structure checks, not a claim of browser visual QA.
 Live chat, sign-in and hosted route/map providers remain unchanged and unavailable
 on this private preview.
+
+
+## Local map-image viewer — October 5, 2026
+
+The hosted preparation desk now has a third tool, **Open a map image**:
+
+- PNG, JPEG and still WebP images are read and decoded in the browser. Files
+  are limited to 32 MiB, 24 megapixels and 32,768 pixels per side. Signature,
+  dimension and container checks run before native image decoding; animated
+  PNG/WebP files are rejected. No files or coordinates are uploaded.
+- Fit, bounded 1–16× zoom, directional pan, click selection and keyboard pixel
+  selection work without geographic calibration.
+- Optional full-image, north-up bounds support a latitude/longitude grid
+  (EPSG:4326) or Web Mercator (EPSG:3857), including date-line crossing. Bounds
+  must cover the full displayed, browser-oriented image. Pixel-center WGS 84
+  coordinates can be exported as a place-catalog CSV with image provenance.
+- Editing the bounds immediately disables coordinate calculations until Apply
+  bounds. Bounds are user supplied, not independently verified. Borders,
+  legends, rotated maps and other projections invalidate this simple method.
+- A separate image-bounds JSON file can be explicitly saved and reopened. SHA-256
+  of the original image bytes and the displayed dimensions must match; a
+  mismatched file is rejected without replacing existing valid bounds.
+- Images and bounds remain in tab memory only. Closing/clearing discards them;
+  stale reads and decodes cannot repopulate cleared state. Decoded bitmaps are
+  closed and image reads/decodes serialized to limit memory allocation.
+
+This tool does not read TIFF/GeoTIFF, SVG, PDF, GIF, BMP or MBTiles, extract
+georeferencing/GPS tags, fetch a basemap, or supply routing. No map dataset was
+acquired or bundled. Canvas and ImageBitmap support are required; saved bounds
+also require secure SHA-256 support. The page is not installed/cached for later
+offline reopening. Live chat, sign-in and application hosting remain separate
+unfinished deployment work.
+
+Validation: `node --test tools/portal_preview/*.test.mjs` passes **29 tests**.
+New coverage exercises format metadata, limits, date-line and Mercator transforms,
+screen/pixel transforms, calibration identity, CSV provenance, and UI clear,
+reopen and superseded async reads with DOM/decoder doubles. Generated HTML
+labels/IDs/links, module syntax/imports and local assets were checked. Native
+browser decoding and visual/device QA have **not** been run for this addition.
+
+Technical references: [PNG header](https://www.w3.org/TR/png-3/#11IHDR),
+[WebP container](https://developers.google.com/speed/webp/docs/riff_container),
+[WebP lossless dimensions](https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification),
+[ImageBitmap orientation](https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap),
+[Web Mercator transform](https://proj.org/en/stable/operations/projections/webmerc.html).
