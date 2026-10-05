@@ -14,8 +14,8 @@ import re
 from pathlib import Path
 
 FILENAME = "fieldforge-offline.html"
-MODULES = ("desk-core.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "desk.mjs", "offline.mjs")
-STYLES = ("desk.css", "route-explorer.css", "image-viewer.css", "offline.css")
+MODULES = ("desk-core.mjs", "places-core.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "desk.mjs", "offline.mjs")
+STYLES = ("desk.css", "route-explorer.css", "image-viewer.css", "places.css", "offline.css")
 
 
 def replace_once(text: str, old: str, new: str) -> str:
@@ -83,7 +83,7 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
     desk = replace_once(desk, 'Less time online.<br>More prepared offline.', 'Your preparation desk.<br>Ready to travel.')
     desk = replace_once(desk, '<a class="desk-commons" href="commons.html">Explore Commons <span>Chat &amp; owner screen gallery</span></a>', '<a class="desk-commons" href="#offlineHelp">Using your offline copy <span>How to reopen, save and update</span></a>')
     desk = replace_once(desk, '<a class="desk-offline" href="fieldforge-offline.html" download="FieldForge-Offline-Desk.html">Download offline tools <span>One HTML file · no installation</span></a>', '')
-    desk = replace_once(desk, '<a href="#libraryTitle">04 <span>Knowledge library</span></a>', '<a href="#offlineHelp">04 <span>Save &amp; reopen</span></a>')
+    desk = replace_once(desk, '<a href="#libraryTitle">05 <span>Knowledge library</span></a>', '<a href="#offlineHelp">05 <span>Save &amp; reopen</span></a>')
     desk = replace_once(desk, '<a href="#mapAcquisitionTitle">Worldwide, MBTiles &amp; imagery sources</a>', '<a href="#offlineConnection">Use the online portal for map downloads</a>')
     desk = replace_once(desk, '<label class="remember-plan">', '<label class="remember-plan" hidden>')
     desk = replace_once(desk, '<input id="deskRemember" type="checkbox">', '<input id="deskRemember" type="checkbox" disabled>')
@@ -103,7 +103,7 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
 <meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="{html.escape(policy, quote=True)}">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer">
 <title>FieldForge · Offline preparation desk</title>
-<meta name="description" content="A standalone offline source planner, GPX inspector and local map-image viewer.">
+<meta name="description" content="A standalone offline source planner, GPX inspector, local map-image viewer and saved places.">
 {favicon}<style>{style}</style></head><body>{shell}<script>{script}</script></body></html>
 '''
     data = document.encode("utf-8")

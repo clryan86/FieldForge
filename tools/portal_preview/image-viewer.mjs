@@ -1,7 +1,7 @@
 import {MAX_IMAGE_BYTES, BOUNDS_KIND, checkDimensions, imageHeader, validateBounds, pixelCoordinate, validateBoundsFile, imageViewport, pixelAtScreen} from "./image-core.mjs";
 
 // Files are decoded locally. No images, coordinates or bounds enter browser storage.
-export function createImageViewer({onExportPoint, download}) {
+export function createImageViewer({onExportPoint, onAddPoint, download}) {
   const id = key => document.getElementById(key), canvas = id("imageCanvas"), ctx = canvas.getContext("2d");
   let current = null, selected = null, bounds = null, view = null;
   let zoom = 1, cx = 0, cy = 0, generation = 0, boundsGeneration = 0, jobs = Promise.resolve();
@@ -13,7 +13,7 @@ export function createImageViewer({onExportPoint, download}) {
     const point = current && selected && bounds ? pixelCoordinate(selected.column, selected.row, current.width, current.height, bounds) : null;
     id("imageSelectedPixel").textContent = selected ? `${selected.column}, ${selected.row}` : "—";
     id("imageSelectedCoords").textContent = point ? `${point.lat.toFixed(7)}, ${point.lon.toFixed(7)}` : bounds ? "Select a pixel" : "Add map bounds below";
-    id("imageSavePoint").disabled = !point;
+    id("imageSavePoint").disabled = !point; id("imageAddPlace").disabled = !point;
     id("imageSaveBounds").disabled = !bounds || !current?.sha256;
     id("imageRemoveBounds").disabled = !bounds;
     id("imageOpenBounds").disabled = !current?.sha256;
@@ -132,6 +132,11 @@ export function createImageViewer({onExportPoint, download}) {
     const point = pixelCoordinate(selected.column, selected.row, current.width, current.height, bounds);
     onExportPoint({...point, name:`Image pixel ${selected.column}, ${selected.row}`});
     status("Point CSV saved. It uses your supplied image bounds and projection; the coordinates are not independently verified.");
+  });
+  id("imageAddPlace").addEventListener("click", () => {
+    if (!current || !selected || !bounds) return;
+    const point = pixelCoordinate(selected.column, selected.row, current.width, current.height, bounds);
+    onAddPoint?.({...point, name:`Image pixel ${selected.column}, ${selected.row}`});
   });
   id("imageSaveBounds").addEventListener("click", () => {
     if (!bounds || !current?.sha256) return;

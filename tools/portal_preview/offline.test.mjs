@@ -44,6 +44,7 @@ function boot() {
     elements.set(match[3],new Element(match[1],attrs));
   }
   const id = key => { assert.ok(elements.has(key),`Missing DOM id ${key}`); return elements.get(key); };
+  id("placesForm").reset = () => { for (const key of ["placesName","placesLatitude","placesLongitude","placesSource"]) id(key).value = ""; };
   const rows = [...source.matchAll(/<li><a data-source-url="([^"]+)"[^>]*>([^<]+)<\/a>\s*<span[^>]*>\(~([\d.]+) (GB|MB)\)<\/span><\/li>/g)].map(([,url,name,size,unit]) => {
     const row = new Element("li"),link = new Element("a"); link.dataset.sourceUrl = url; link.textContent = name;
     row._text = `(~${size} ${unit})`; row.append(link); return row;
@@ -52,7 +53,7 @@ function boot() {
   const document = {getElementById:id,documentElement:{dataset:{edition:"offline",sourcesEnabled:"false"}},body:new Element("body"),createElement,createElementNS:(_,tag) => createElement(tag),createDocumentFragment:() => new Element("#fragment"),querySelectorAll:query => { assert.equal(query,"#usSourceLinks li"); return rows; }};
   class LocalURL extends URL { static createObjectURL(blob) { blobs.push(blob); return `blob:local-${blobs.length}`; } static revokeObjectURL() {} }
   const forbidden = () => { requests++; throw Error("Network access is forbidden"); };
-  const sandbox = {document,window:{devicePixelRatio:1,addEventListener() {},confirm:() => confirmation,open:(...args) => opened.push(args)},URL:LocalURL,Blob,setTimeout() {},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,navigator:{sendBeacon:forbidden}};
+  const sandbox = {document,window:{devicePixelRatio:1,addEventListener() {},confirm:() => confirmation,open:(...args) => opened.push(args)},URL:LocalURL,Blob,TextEncoder,TextDecoder,setTimeout() {},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,navigator:{sendBeacon:forbidden}};
   Object.defineProperty(sandbox,"localStorage",{get() { storageTouches++; throw Error("Storage unavailable for local file"); }});
   vm.runInNewContext(script,sandbox,{timeout:1000,filename:"fieldforge-offline.html"});
   return {id,opened,blobs,downloads,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
@@ -85,4 +86,42 @@ test("opening the portal requires confirmation and uses a fixed URL without loca
   assert.equal(app.id("offlinePortalLink").href,app.opened[0][0]); assert.equal(app.id("offlinePortalFallback").hidden,false);
   app.confirm(false); app.id("offlineOpenPortal").fire("click"); assert.equal(app.opened.length,1); assert.equal(app.id("offlinePortalLink").href,undefined);
   assert.equal(app.requests,0); assert.equal(app.storageTouches,0);
+});
+
+function addManual(app,name,lat = "0",lon = "0",source = "") {
+  for (const [key,value] of Object.entries({placesName:name,placesLatitude:lat,placesLongitude:lon,placesSource:source})) app.id(key).value = value;
+  app.id("placesForm").fire("submit");
+}
+function collectionFile(name,text) { const bytes = new TextEncoder().encode(text); return {name,size:bytes.length,arrayBuffer:async () => bytes.buffer}; }
+test("offline places support edit, removal undo, filtered export and full-collection backup", async () => {
+  const app = boot(); app.id("placesTab").fire("click"); assert.equal(app.id("placesPanel").hidden,false);
+  addManual(app,"Café","0","180","Field notes"); addManual(app,"Other","1","2","GPX");
+  assert.match(app.id("placesCount").textContent,/2 matching \/ 2 total/);
+  app.id("placesRows").children[0].children[3].children[0].fire("click");
+  app.id("placesName").value = "Café renamed"; app.id("placesForm").fire("submit");
+  assert.match(app.id("placesRows").textContent,/Café renamed/);
+  app.id("placesRows").children[0].children[3].children[1].fire("click"); assert.match(app.id("placesCount").textContent,/1 total/);
+  app.id("placesUndo").fire("click"); assert.match(app.id("placesRows").textContent,/Café renamed/);
+  app.id("placesSearch").value = "cafe"; app.id("placesSearch").fire("input");
+  app.id("placesSaveCSV").fire("click"); const csv = await app.blobs.at(-1).text(); assert.ok(csv.includes("Café renamed")); assert.ok(!csv.includes("Other"));
+  app.id("placesSaveGPX").fire("click"); assert.match(await app.blobs.at(-1).text(),/lon="-180"/);
+  app.id("placesSaveJSON").fire("click"); const saved = await app.blobs.at(-1).text(); assert.equal(JSON.parse(saved).places.length,2);
+  app.confirm(true); app.id("placesClear").fire("click"); assert.equal(app.id("placesUndo").disabled,true); assert.equal(app.id("placesSaveJSON").disabled,true);
+  app.id("placesFile").files = [collectionFile("collection.json",saved)]; await app.id("placesFile").fire("change"); assert.match(app.id("placesCount").textContent,/2 total/);
+  app.id("placesFile").files = [collectionFile("collection.json",saved)]; await app.id("placesFile").fire("change"); assert.match(app.id("placesStatus").textContent,/0 added; 2 exact duplicates/);
+  assert.equal(app.storageTouches,0); assert.equal(app.requests,0);
+});
+test("offline places reject a whole invalid import and discard reads after cancellation or edits", async () => {
+  const app = boot(); addManual(app,"Existing");
+  app.id("placesFile").files = [collectionFile("bad.csv","name,latitude,longitude\nGood,1,2\nBad,91,2")]; await app.id("placesFile").fire("change");
+  assert.match(app.id("placesStatus").textContent,/Existing places were kept/); assert.match(app.id("placesCount").textContent,/1 total/);
+  const delayed = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise,resolve}; };
+  const bytes = new TextEncoder().encode("name,latitude,longitude\nLate,1,2").buffer;
+  for (const action of [() => app.id("placesCancelRead").fire("click"),() => addManual(app,"New during read")]) {
+    const job = delayed(); app.id("placesFile").files = [{name:"slow.csv",size:100,arrayBuffer:() => job.promise}];
+    const reading = app.id("placesFile").fire("change"); action(); job.resolve(bytes); await reading;
+    assert.ok(!app.id("placesRows").textContent.includes("Late"));
+  }
+  assert.match(app.id("placesCount").textContent,/2 total/); assert.equal(app.id("placesCancelRead").disabled,true);
+  assert.equal(app.storageTouches,0); assert.equal(app.requests,0);
 });

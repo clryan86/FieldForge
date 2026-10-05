@@ -25,22 +25,23 @@ test("image UI rejects mismatched calibration and discards cancelled or supersed
   let decode = async () => ({width:2,height:2,closed:false,close() { this.closed = true; }});
   const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise,resolve}; };
   const settle = () => new Promise(resolve => setImmediate(resolve));
-  const exports = [], downloads = [];
+  const exports = [], downloads = [], collected = [];
   const png = Buffer.from("89504e470d0a1a0a0000000d4948445200000002000000020806000000000000000000000049454e4400000000", "hex");
   const bytes = png.buffer.slice(png.byteOffset,png.byteOffset+png.byteLength);
   const file = name => ({name,size:png.length,arrayBuffer:async () => bytes});
   const globals = {document:{getElementById:el},window:{devicePixelRatio:1,addEventListener() {}},crypto:{subtle:{digest:async (algorithm, buffer) => createHash("sha256").update(new Uint8Array(buffer)).digest()}},createImageBitmap:(...args) => decode(...args),ResizeObserver:undefined};
   try {
     for (const [key,value] of Object.entries(globals)) Object.defineProperty(globalThis,key,{value,configurable:true,writable:true});
-    const viewer = createImageViewer({onExportPoint:point => exports.push(point),download:(text,mime,name) => downloads.push({text,mime,name})});
+    const viewer = createImageViewer({onAddPoint:point => collected.push(point),onExportPoint:point => exports.push(point),download:(text,mime,name) => downloads.push({text,mime,name})});
     assert.equal(el("imageSavePoint").disabled,true); assert.equal(el("imageViewControls").disabled,true);
     el("imageFile").files = [file("first.png")]; await el("imageFile").fire("change"); await settle();
     assert.equal(el("imageName").textContent,"first.png"); assert.equal(el("imageViewControls").disabled,false); assert.equal(draws.length,1);
-    assert.equal(el("imageSavePoint").disabled,true); // A decoded image alone is not georeferenced.
+    assert.equal(el("imageSavePoint").disabled,true); assert.equal(el("imageAddPlace").disabled,true); // A decoded image alone is not georeferenced.
     for (const [key,value] of Object.entries({imageProjection:"geographic",imageWest:"-1",imageEast:"1",imageNorth:"1",imageSouth:"-1"})) el(key).value = value;
     el("imageBoundsChecked").checked = true; await el("imageBoundsForm").fire("submit");
     assert.equal(el("imageSavePoint").disabled,false); await el("imageSavePoint").fire("click");
     assert.deepEqual(exports[0],{lat:-.5,lon:.5,name:"Image pixel 1, 1"});
+    assert.equal(el("imageAddPlace").disabled,false); await el("imageAddPlace").fire("click"); assert.deepEqual(collected,[exports[0]]);
     await el("imageSaveBounds").fire("click"); const calibration = JSON.parse(downloads[0].text);
     assert.equal(calibration.image_sha256,createHash("sha256").update(png).digest("hex")); assert.equal(calibration.width,2);
     const boundsFile = data => ({size:JSON.stringify(data).length,text:async () => JSON.stringify(data)});

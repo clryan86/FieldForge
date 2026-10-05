@@ -1,6 +1,6 @@
 import {elevationProfile, projectElevation, nearestDistanceSample, nearestPlotSample, clampView} from "./desk-core.mjs";
 
-export function createRouteExplorer({onExportPoint}) {
+export function createRouteExplorer({onExportPoint, onAddPoint}) {
   const id = key => document.getElementById(key), ns = "http://www.w3.org/2000/svg";
   const svg = (tag, attrs) => { const node = document.createElementNS(ns, tag); for (const [key,value] of Object.entries(attrs)) node.setAttribute(key,value); return node; };
   let data = null, projected = null, profile = null, positions = [], profilePositions = [], selected = null, marker = null, view = clampView(1,400,190);
@@ -41,7 +41,7 @@ export function createRouteExplorer({onExportPoint}) {
     id("deskSelectedCoords").textContent = point.lat.toFixed(7) + ", " + point.lon.toFixed(7);
     id("deskSelectedDistance").textContent = isTrack ? distance(sample.distance) : "Not part of track";
     id("deskSelectedElevation").textContent = point.invalidElevation ? "Invalid value" : height(Number.isFinite(point.ele) ? point.ele : null);
-    id("deskSavePoint").disabled = false;
+    id("deskAddPoint").disabled = id("deskSavePoint").disabled = false;
     id("deskWaypointPicker").value = isTrack ? "" : String(selected.index);
     if (isTrack) {
       id("deskPointSlider").value = selected.index;
@@ -87,7 +87,7 @@ export function createRouteExplorer({onExportPoint}) {
   function clear() {
     data = null; projected = null; profile = null; positions = []; profilePositions = []; selected = null;
     marker?.remove(); marker = null;
-    id("deskExplorePanel").hidden = true; id("deskViewControls").disabled = true; id("deskSavePoint").disabled = true;
+    id("deskExplorePanel").hidden = true; id("deskViewControls").disabled = true; id("deskAddPoint").disabled = id("deskSavePoint").disabled = true;
     id("deskPointSlider").disabled = true; id("deskPointSlider").value = 0; id("deskPointSlider").max = 0; id("deskPointSlider").removeAttribute("aria-valuetext");
     for (const key of ["deskSelectedName", "deskSelectedCoords", "deskSelectedDistance", "deskSelectedElevation"]) id(key).textContent = "—";
     id("deskSelectedLabel").textContent = "Selected point";
@@ -139,6 +139,7 @@ export function createRouteExplorer({onExportPoint}) {
   id("deskNextPoint").addEventListener("click", () => select("track",selected?.kind === "track" ? selected.index+1 : 0));
   id("deskUnits").addEventListener("change", () => { updateLabels(); updateSelected(); });
   id("deskSavePoint").addEventListener("click", () => { const point=selectedPoint(); if (point) onExportPoint({...point,name:point.name || `${selected.kind === "track" ? "Route point" : "Waypoint"} ${selected.index+1}`}); });
+  id("deskAddPoint").addEventListener("click", () => { const point=selectedPoint(); if (point) onAddPoint?.({...point,name:point.name || `${selected.kind === "track" ? "Route point" : "Waypoint"} ${selected.index+1}`}); });
   id("deskZoomIn").addEventListener("click", () => { if(data) { const center=selectedPosition() || [view.x,view.y]; setView(view.zoom*1.5,center[0],center[1]); } });
   id("deskZoomOut").addEventListener("click", () => { if(data) setView(view.zoom/1.5,view.x,view.y); });
   id("deskFitTrace").addEventListener("click", () => setView(1,400,190));

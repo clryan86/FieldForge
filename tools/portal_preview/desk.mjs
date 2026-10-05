@@ -1,4 +1,6 @@
 import {MAX_GPX_BYTES, PLAN_KIND, downloadEstimate, validatePlan, parseGPX, projectTrace, waypointCSV} from "./desk-core.mjs";
+import {createPlaces} from "./places.mjs";
+import {GPX_SOURCE, IMAGE_SOURCE} from "./places-core.mjs";
 import {createImageViewer} from "./image-viewer.mjs";
 import {createRouteExplorer} from "./route-explorer.mjs";
 
@@ -73,11 +75,18 @@ function download(text, mime, filename) {
   link.href = url; link.download = filename; document.body.append(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
-const routeExplorer = createRouteExplorer({onExportPoint:point => {
+const savedPlaces = createPlaces({download});
+function collectPlaces(points, source, label, statusId) {
+  try {
+    const entries = points.map((point,index) => ({name:point.name || `Waypoint ${index+1}`,lat:point.lat,lon:point.lon,source}));
+    id(statusId).textContent = savedPlaces.add(entries,label); selectTool("places");
+  } catch (error) { id(statusId).textContent = error.message; }
+}
+const routeExplorer = createRouteExplorer({onAddPoint:point => collectPlaces([point],GPX_SOURCE,"GPX point","deskTraceStatus"), onExportPoint:point => {
   download(waypointCSV([point]), "text/csv;charset=utf-8", "fieldforge-selected-place.csv");
   id("deskTraceStatus").textContent = "Selected point CSV saved. Import it into FieldForge’s local place catalog. The coordinate comes from your file and has not been independently verified.";
 }});
-const imageViewer = createImageViewer({download, onExportPoint:point => {
+const imageViewer = createImageViewer({download, onAddPoint:point => collectPlaces([point],IMAGE_SOURCE,"Image point","imageStatus"), onExportPoint:point => {
   download(waypointCSV([point], "User-supplied image bounds and projection; pixel center; exported by FieldForge preparation desk; WGS 84; not independently verified"), "text/csv;charset=utf-8", "fieldforge-image-point.csv");
 }});
 function applyPlan(data) {
@@ -116,7 +125,7 @@ if (!offlineEdition) try {
 } catch { announcePlan("A saved device plan could not be restored. Open a saved plan file or start a new selection."); }
 
 function selectTool(kind) {
-  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"]]) {
+  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"]]) {
     id(panel).hidden = kind !== tool; id(tab).setAttribute("aria-pressed", String(kind === tool));
   }
   if (kind === "image") imageViewer.refresh();
@@ -124,6 +133,7 @@ function selectTool(kind) {
 id("packTab").addEventListener("click", () => selectTool("packs"));
 id("traceTab").addEventListener("click", () => selectTool("trace"));
 id("imageTab").addEventListener("click", () => selectTool("image"));
+id("placesTab").addEventListener("click", () => selectTool("places"));
 const svgNS = "http://www.w3.org/2000/svg";
 function svg(tag, attrs) { const element = document.createElementNS(svgNS, tag); for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value); return element; }
 function clearTrace(message = "File cleared from this page. Nothing was uploaded or saved.") {
@@ -133,7 +143,7 @@ function clearTrace(message = "File cleared from this page. Nothing was uploaded
   id("deskFileName").textContent = "Coordinate trace";
   for (const key of ["deskDistance", "deskPointCount", "deskSegments", "deskWaypoints"]) id(key).textContent = "—";
   id("deskPlaces").replaceChildren(); id("deskPlacesPanel").hidden = true;
-  id("deskClearTrace").disabled = true; id("deskExportPlaces").disabled = true;
+  id("deskClearTrace").disabled = true; id("deskExportPlaces").disabled = true; id("deskCollectWaypoints").disabled = true;
   id("deskTraceStatus").textContent = message; id("deskTraceStatus").classList.remove("error");
 }
 function renderTrace(data, filename) {
@@ -158,7 +168,7 @@ function renderTrace(data, filename) {
   }
   id("deskPlaces").replaceChildren(rows); id("deskPlacesPanel").hidden = !data.waypoints.length;
   id("deskPlacesNote").textContent = `Showing ${Math.min(100, data.waypoints.length)} of ${data.waypoints.length} waypoints. CSV exports all waypoints, rounded to 7 decimal places.`;
-  id("deskClearTrace").disabled = false; id("deskExportPlaces").disabled = !data.waypoints.length;
+  id("deskClearTrace").disabled = false; id("deskExportPlaces").disabled = !data.waypoints.length; id("deskCollectWaypoints").disabled = !data.waypoints.length;
   routeExplorer.load(data, projected);
 }
 async function readGPX(file) {
@@ -177,6 +187,7 @@ async function readGPX(file) {
 id("deskGpx").addEventListener("change", () => readGPX(id("deskGpx").files[0]));
 id("deskClearTrace").addEventListener("click", () => clearTrace());
 id("deskExportPlaces").addEventListener("click", () => { if (trace) { download(waypointCSV(trace.waypoints), "text/csv;charset=utf-8", "fieldforge-gpx-places.csv"); id("deskTraceStatus").textContent = "Waypoint CSV saved. Import it into FieldForge’s local place catalog; verify the file’s coordinates before use."; } });
+id("deskCollectWaypoints").addEventListener("click", () => { if (trace?.waypoints.length) collectPlaces(trace.waypoints,GPX_SOURCE,"GPX waypoints","deskTraceStatus"); });
 const drop = id("deskDrop");
 for (const name of ["dragenter", "dragover"]) drop.addEventListener(name, event => { event.preventDefault(); drop.classList.add("dragging"); });
 for (const name of ["dragleave", "drop"]) drop.addEventListener(name, event => { event.preventDefault(); drop.classList.remove("dragging"); });

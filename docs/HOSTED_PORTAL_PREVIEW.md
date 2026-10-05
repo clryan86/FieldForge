@@ -220,3 +220,54 @@ python tools/test_offline_desk.py
 References: [local module restrictions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules),
 [script hashes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src),
 [meta CSP](https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CSP).
+
+
+## Saved places and desktop exchange — October 5, 2026
+
+The website and downloadable offline edition now include **04 Saved places**.
+The collection holds up to 1,000 named WGS 84 coordinates and source notes. Add or
+edit manually, collect a selected GPX point, collect all explicit GPX waypoints,
+or collect a map-image pixel after applying geographic bounds. Copying a point
+does not verify its geographic accuracy. Clearing the GPX/image does not remove
+points explicitly copied into this separate collection.
+
+The tool supports name/source search, 50-row pages, removal, one-step undo and
+confirmed clear. It runs in tab memory without uploads, account synchronization
+or browser storage. **Save collection JSON** keeps all original numbers and
+labels for reopening. There is no automatic save.
+
+JSON/CSV imports are bounded to 4 MiB and 1,000 places with strict UTF-8 decoding.
+CSV supports only name, latitude, longitude and optional source. Imports append
+validated records and skip exact name/coordinate/source duplicates; any invalid
+record rejects the whole file. Cancelling a read or changing the collection
+discards late import results. Strings are rendered as text, not executable markup.
+
+CSV and GPX export every search match across pages; collection JSON exports all
+records. CSV targets the GPS place catalog. Waypoint-only GPX 1.1 targets the
+desktop Places importer, with at most 200 matching records, source notes in
+descriptions, escaped text and +180 normalized to -180 after seven-decimal
+rounding. GPX checks duplicate names; the desktop can still report existing-name
+or Unicode comparison conflicts. CSV protects formula-like names and sources.
+Labels already at maximum length must be shortened by one character for this
+protection or exported as JSON/GPX. Exports are plain, unencrypted files.
+
+GPX tracks, elevation and other metadata are not retained by the collection;
+keep original input files. Source labels are user-supplied and not independently
+verified. Search is local to the collection, not address lookup or route planning.
+
+Verification: **42 Node tests + 4 Python tests passed**. Added checks cover limits,
+precise JSON/coordinate editing, CSV quoting and malformed rows, atomic capacity
+rejection, duplicates, source retention, XML escaping/date-line boundaries, search,
+edit/undo, filtered versus complete export, import cancellation and offline
+execution with network/storage APIs forbidden. Generated HTML IDs/labels/links,
+module imports, script syntax and the standalone CSP also passed.
+
+Generated CSV and GPX fixtures were accepted by the actual repository readers
+`fieldforge_gps.places.parse_catalog` and `fieldforge.navigation.gpx.parse_gpx`
+from source `1a596c257beb0d6616369462bfff2d219a80f858`. Four records exercised
+zero, date-line normalization, Unicode and escaped source descriptions. Native
+browser rendering, desktop UI execution and mobile behavior were not tested.
+The downloadable HTML is now approximately 150 KB.
+
+Reference: [GPX 1.1 schema](https://www.topografix.com/GPX/1/1/). Field names and
+record limits were checked against the project's current importer sources.
