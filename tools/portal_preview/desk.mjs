@@ -4,10 +4,11 @@ import {createRouteExplorer} from "./route-explorer.mjs";
 
 const id = key => document.getElementById(key);
 const node = (tag, text, className) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; };
+const offlineEdition = document.documentElement.dataset.edition === "offline";
 const STORAGE_KEY = "fieldforge-source-plan-v1";
 const regions = [...document.querySelectorAll("#usSourceLinks li")].map(row => {
   const link = row.querySelector("a"), size = row.textContent.match(/~([\d.]+)\s*(GB|MB)/);
-  const url = new URL(link.href), key = url.pathname.split("/").pop().replace(/-latest\.osm\.pbf$/, "");
+  const url = new URL(link.dataset.sourceUrl || link.href), key = url.pathname.split("/").pop().replace(/-latest\.osm\.pbf$/, "");
   if (url.origin !== "https://download.geofabrik.de" || !size || !/^[a-z-]+$/.test(key)) throw new Error("Invalid source directory entry.");
   return {id:key, name:link.textContent.trim(), url:url.href, bytes:Number(size[1]) * (size[2] === "GB" ? 1e9 : 1e6)};
 });
@@ -18,7 +19,7 @@ function formatTime(seconds) { if (!seconds) return "—"; const minutes = Math.
 function plan() { return validatePlan({kind:PLAN_KIND, schema_version:1, region_ids:[...selection].sort(), budget_gb:Number(id("deskBudget").value), speed_mbps:Number(id("deskSpeed").value)}, regionIds); }
 function announcePlan(text) { id("deskPlanStatus").textContent = text; }
 function storePlan() {
-  if (!id("deskRemember").checked) return;
+  if (offlineEdition || !id("deskRemember").checked) return;
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(plan())); }
   catch (error) { announcePlan("Could not save this plan on your device. Check the values and use Save source plan to keep a file."); }
 }
@@ -56,10 +57,12 @@ function renderRegions() {
       updateBrief();
     });
     name.append(node("small", "~" + formatSize(region.bytes) + " · PBF source")); label.append(check, name);
-    const link = node("a", "Source file", "region-source"); link.href = region.url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.dataset.sourceLink = "";
-    const paused = document.documentElement.dataset.sourcesEnabled !== "true";
+    const link = node("a", offlineEdition ? "Use portal" : "Source file", "region-source");
+    if (offlineEdition) { link.href = "#offlineConnection"; }
+    else { link.href = region.url; link.target = "_blank"; link.rel = "noopener noreferrer"; link.dataset.sourceLink = ""; }
+    const paused = !offlineEdition && document.documentElement.dataset.sourcesEnabled !== "true";
     link.setAttribute("aria-disabled", String(paused)); link.classList.toggle("source-disabled", paused);
-    link.setAttribute("aria-label", "Open " + region.name + " source download at Geofabrik");
+    link.setAttribute("aria-label", offlineEdition ? "Go to the online portal controls to download " + region.name : "Open " + region.name + " source download at Geofabrik");
     row.append(label, link); fragment.append(row);
   }
   if (!shown.length) fragment.append(node("p", "No regions match. Change your search or turn off Show selected only.", "desk-fine"));
@@ -103,10 +106,11 @@ id("deskPlanFile").addEventListener("change", async () => {
   finally { if (generation === planGeneration) id("deskPlanFile").value = ""; }
 });
 id("deskRemember").addEventListener("change", () => {
+  if (offlineEdition) return;
   if (id("deskRemember").checked) { storePlan(); }
   else { try { localStorage.removeItem(STORAGE_KEY); announcePlan("Saved device preference removed. This tab still holds your selection."); } catch { announcePlan("Could not remove the saved plan. Clear this website’s browser storage to remove it."); } }
 });
-try {
+if (!offlineEdition) try {
   const remembered = localStorage.getItem(STORAGE_KEY);
   if (remembered) { const checked = validatePlan(JSON.parse(remembered), regionIds); id("deskRemember").checked = true; applyPlan(checked); announcePlan("Restored the source plan you chose to remember on this device. Route files are never stored."); }
 } catch { announcePlan("A saved device plan could not be restored. Open a saved plan file or start a new selection."); }

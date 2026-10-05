@@ -11,6 +11,8 @@ import re
 import shutil
 from pathlib import Path
 
+from build_offline_desk import export_offline
+
 ROOT = Path(__file__).resolve().parents[1]
 FAVICON = '<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%23176445%22/%3E%3Cpath d=%22M10 7h15v5H15v4h8v5h-8v8h-5z%22 fill=%22white%22/%3E%3C/svg%3E">'
 STYLE = '''
@@ -164,6 +166,8 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
     for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css"):
         shutil.copyfile(assets / name, output / name)
+    offline = export_offline(assets, output, (source_root / "fieldforge/online/portal.html").read_text(encoding="utf-8"), revision, FAVICON)
+    print(f"Offline desk: {offline['bytes']:,} bytes, edition {offline['edition_id']}")
     print(f"Exported portal and Commons gallery from {revision} to {output}")
 
 if __name__ == "__main__":

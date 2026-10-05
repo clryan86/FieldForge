@@ -165,3 +165,58 @@ Technical references: [PNG header](https://www.w3.org/TR/png-3/#11IHDR),
 [WebP lossless dimensions](https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification),
 [ImageBitmap orientation](https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap),
 [Web Mercator transform](https://proj.org/en/stable/operations/projections/webmerc.html).
+
+
+## Downloadable offline tools — October 5, 2026
+
+**Download offline tools** in the preparation-desk header now offers a standalone
+HTML copy (approximately 122 KB) containing the source planner, GPX inspector and
+local map-image viewer. Save the file and reopen it in a current desktop browser.
+Keep original maps/GPX files and explicitly exported plans, bounds and CSVs
+separately; downloading the tools does not embed open files or current selections.
+
+The one-file copy has inline styles, scripts, favicon and region metadata. It
+requires no external modules, stylesheets, fonts or images, no local web server
+and no service worker. It does not access browser storage, call providers, check
+for updates or upload user data. The website itself is still not an installed
+offline app. Local image limits, georeferencing limitations and secure-SHA-256
+requirements remain unchanged. Phone/tablet file previews may not execute local
+HTML; browser/device testing remains pending.
+
+The source planner's provider actions lead to an online-portal panel. Its button
+asks for confirmation before opening the fixed FieldForge website URL in a new
+tab using noopener/noreferrer, without local files or coordinates. A fallback
+link is revealed after confirmation for browsers blocking the new tab. The
+original local tab and unsaved work remain open.
+
+This download contains tools only: no map datasets, knowledge packs, accounts,
+chat service or complete desktop application. Driving-route calculation, live
+sign-in and chat hosting remain unfinished. Saved plans and image calibration
+files remain separate from the desktop's verified map-download manifest.
+
+Implementation:
+- `tools/build_offline_desk.py` is invoked by the normal hosted exporter.
+- It bundles the fixed shared named-export module graph into classic script,
+  rejecting unsupported/unresolved imports instead of leaving local module loads.
+- A Content Security Policy pins the emitted inline script/style hashes and
+  denies background connections, external resources and form submissions.
+- `offline-download.json` records the exact download byte size, SHA-256,
+  content-derived edition ID and original portal snapshot. This is build metadata,
+  not a digital signature.
+
+Validation: **31 Node tests and 4 Python tests passed**. The new checks build
+temporary copies directly from source; execute the emitted script with DOM
+doubles and blocked network/storage APIs; verify source-plan save/reopen, tool
+tabs, confirmation/fallback, local links, content hashes, CSP and import rejection.
+Generated hosted-page labels/IDs/links and script syntax also passed. Native
+local-file browser rendering and decoding were not tested.
+
+Run from the repository root:
+```sh
+node --test tools/portal_preview/*.test.mjs
+python tools/test_offline_desk.py
+```
+
+References: [local module restrictions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules),
+[script hashes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src),
+[meta CSP](https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CSP).
