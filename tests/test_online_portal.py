@@ -363,6 +363,31 @@ def test_new_file_write_preserves_existing_destination(tmp_path):
 def test_portal_assets_are_local_with_restrictive_csp(portal):
     status, headers, body = invoke(portal[1], "/")
     assert status.startswith("200") and b"Address" in body
+    assert b"Worldwide map sources and purchase holds" in body
+    assert b"MapTiler On-prem Standard" in body and b"excludes B2C/B2B" in body
+    assert b"basic offline preview style" in body and b"bounded labels for named points, roads, and areas" in body
+    assert b"four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota" in body
+    assert b"Prepared regional map" in body and b"Import package ZIP" in body
+    assert b"portal does not host these files yet" in body
+    assert body.count(b'href="https://download.geofabrik.de/north-america/us/') == 53
+    assert b"Download a regional PBF (53 areas)" in body
+    assert b"U.S. Virgin Islands" in body and b"district-of-columbia-latest.osm.pbf" in body
+    assert b"not a routing graph or driving directions" in body
+    assert b"choose a country or smaller area before downloading" in body
+    assert b"not ready-to-open MBTiles or route graphs" in body
+    for region in (b"africa.html", b"antarctica.html", b"asia.html",
+                   b"australia-oceania.html", b"central-america.html",
+                   b"europe.html", b"north-america.html", b"south-america.html"):
+        assert b"https://download.geofabrik.de/" + region in body
+    external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)
+    allowed_hosts = (b"download.geofabrik.de", b"operations.osmfoundation.org",
+                     b"www.maptiler.com", b"distribution.charts.noaa.gov", b"www.redcross.org",
+                     b"www.ready.gov", b"www.dla.mil", b"www.gsa.gov", b"www.usa.gov")
+    assert len(external_links) == 76
+    for link in external_links:
+        assert any(host in link for host in allowed_hosts)
+        element = re.search(rb'<a href="' + re.escape(link) + rb'"[^>]*>', body).group(0)
+        assert b'target="_blank"' in element and b'rel="noopener noreferrer"' in element
     policy = headers["Content-Security-Policy"]
     assert "default-src 'none'" in policy and "connect-src 'self'" in policy
     assert "'unsafe-inline'" not in policy and "'unsafe-eval'" not in policy
@@ -373,7 +398,7 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
             assert f"'sha256-{digest}'" in policy
     else:
         assert "script-src 'self'" in policy
-    assert b"https://" not in body and b"cdn" not in body
+    assert b"cdn" not in body
     assert invoke(portal[1], "/api/v1/maps/../../file")[0].startswith("404")
 
 

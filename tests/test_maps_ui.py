@@ -76,6 +76,34 @@ def test_initial_screen_never_opens_map_or_reads_private_places(screen, monkeypa
     assert not called and not panel.canvas.find_withtag('private-marker')
 
 
+def test_prepared_regional_map_window_reuses_single_open_instance(screen, monkeypatch):
+    _, panel, _, _ = screen
+    from fieldforge.ui import regional_index
+
+    opened = []
+
+    class Window:
+        def __init__(self, parent):
+            self.parent = parent
+            self._disposed = False
+            self.lifted = 0
+            opened.append(self)
+
+        def lift(self):
+            self.lifted += 1
+
+    monkeypatch.setattr(regional_index, 'RegionalIndexWindow', Window)
+    panel.regional_button.invoke()
+    first = panel._regional_window
+    panel.regional_button.invoke()
+    assert first.parent is panel
+    assert panel._regional_window is first and first.lifted == 1 and len(opened) == 1
+
+    first._disposed = True
+    panel.regional_button.invoke()
+    assert panel._regional_window is not first and len(opened) == 2
+
+
 def test_file_picker_requires_trust_confirmation_before_opening(screen, monkeypatch):
     root, panel, _, path = screen
     monkeypatch.setattr('fieldforge.ui.maps.filedialog.askopenfilename', lambda **kwargs: str(path))

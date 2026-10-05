@@ -1,4 +1,4 @@
-"""Publish explicitly supplied, licensed raster maps into a FieldForge portal.
+"""Publish explicitly supplied, licensed MBTiles and map images into a portal.
 
 Example (the operator must have permission to redistribute the source file)::
 
@@ -13,7 +13,7 @@ installs a content-addressed object. Published IDs cannot be reassigned to new
 content. Use a new ID for an updated version. The index never contains source
 paths, and the HTTP service exposes only the public metadata, never storage paths.
 
-Image signatures and a bounded raster-MBTiles preflight catch mislabeled files;
+Image signatures and bounded raster/vector-MBTiles preflights catch mislabeled files;
 they are not a full cartographic, license, or hostile-file audit. Only publish
 trusted, complete map exports. This module never downloads or scrapes map tiles.
 """
@@ -100,7 +100,7 @@ def _asset(value, *, legacy=False):
         raise CatalogError("Map filename must be a safe ASCII basename.")
     kind = value.get("format")
     if not isinstance(kind, str) or kind not in MIME_TYPES or FORMATS.get(Path(filename).suffix.lower()) != kind:
-        raise CatalogError("Map filename/format must identify a supported raster map.")
+        raise CatalogError("Map filename/format must identify a supported MBTiles file or raster image.")
     size, digest = value.get("bytes"), value.get("sha256")
     maximum = MAX_MBTILES_BYTES if kind == "mbtiles" else MAX_IMAGE_BYTES
     if type(size) is not int or not 0 < size <= maximum:
@@ -155,7 +155,7 @@ def inspect_raster(path: Path, kind: str) -> None:
             raise CatalogError(str(exc)) from None
         return
     if not header.startswith(b"SQLite format 3\x00") or header[18:20] != b"\x01\x01":
-        raise CatalogError("Use a closed, rollback-mode raster MBTiles database.")
+        raise CatalogError("Use a closed, rollback-mode MBTiles database.")
     from fieldforge.navigation.mbtiles import inspect_pack
     from fieldforge_gps.mbtiles import inspect_pack as inspect_gps_pack
 
@@ -177,7 +177,7 @@ def inspect_raster(path: Path, kind: str) -> None:
             "SELECT name,type FROM sqlite_master WHERE name IN ('metadata','tiles')"
         ))
         if objects != {"metadata": "table", "tiles": "table"}:
-            raise CatalogError("Publish indexed raster MBTiles with ordinary metadata and tiles tables.")
+            raise CatalogError("Publish indexed MBTiles with ordinary metadata and tiles tables.")
         for table, fields in (("metadata", {"name", "value"}),
                               ("tiles", {"zoom_level", "tile_column", "tile_row", "tile_data"})):
             schema = db.execute("SELECT sql FROM sqlite_master WHERE name=?", (table,)).fetchone()[0]
@@ -197,10 +197,10 @@ def inspect_raster(path: Path, kind: str) -> None:
             raise CatalogError("MBTiles metadata contains duplicate names.")
         tile_format = metadata.get("format", "").lower()
         tile_format = "jpeg" if tile_format == "jpg" else tile_format
-        if tile_format not in {"png", "jpeg", "webp"}:
-            raise CatalogError("Only PNG, JPEG and WebP raster MBTiles are supported; vector packs are not.")
+        if tile_format not in {"png", "jpeg", "webp", "pbf"}:
+            raise CatalogError("Use PNG, JPEG, WebP raster MBTiles or Mapbox Vector Tile PBF MBTiles.")
         if metadata.get("scheme", "tms").lower() != "tms":
-            raise CatalogError("Raster MBTiles must use the TMS row scheme.")
+            raise CatalogError("MBTiles must use the TMS row scheme.")
         unique_index = False
         for row in db.execute("PRAGMA index_list(tiles)").fetchmany(129):
             if row[2] and not row[4]:
@@ -210,7 +210,7 @@ def inspect_raster(path: Path, kind: str) -> None:
                     unique_index = True
                     break
         if not unique_index:
-            raise CatalogError("Raster MBTiles needs a unique zoom/column/row index.")
+            raise CatalogError("MBTiles needs a unique zoom/column/row index.")
         samples = db.execute(
             "SELECT zoom_level,tile_column,tile_row,typeof(tile_data),length(tile_data),"
             "substr(tile_data,1,100) FROM tiles LIMIT 64"
@@ -221,8 +221,17 @@ def inspect_raster(path: Path, kind: str) -> None:
             if (type(z) is not int or not 0 <= z <= 22 or type(x) is not int
                     or type(y) is not int or not 0 <= x < 2**z or not 0 <= y < 2**z
                     or storage_type != "blob" or not 1 <= length <= 2 * 1024**2
-                    or _image_format(tile_header) != tile_format):
-                raise CatalogError("An MBTiles sample has invalid coordinates or non-raster tile contents.")
+                    or (tile_format == "pbf" and tile_header[:2] != b"\x1f\x8b")
+                    or (tile_format != "pbf" and _image_format(tile_header) != tile_format)):
+                raise CatalogError("An MBTiles sample has invalid coordinates or does not match its declared tile format.")
+        if tile_format == "pbf":
+            sample = db.execute("SELECT tile_data FROM tiles LIMIT 1").fetchone()[0]
+            try:
+                from fieldforge.navigation.vector_tiles import render_vector_tile
+
+                render_vector_tile(sample)
+            except (ImportError, ValueError) as exc:
+                raise CatalogError("The vector MBTiles sample is not a readable Mapbox Vector Tile.") from exc
     except sqlite3.Error as exc:
         raise CatalogError("Unreadable MBTiles or database inspection work limit reached.") from exc
     finally:
@@ -507,7 +516,7 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    add = subparsers.add_parser("add", help="Publish a licensed local raster map.")
+    add = subparsers.add_parser("add", help="Publish a licensed local MBTiles pack or map image.")
     for flag in ("root", "file", "id", "title", "attribution", "license", "coverage", "version"):
         add.add_argument("--" + flag, required=True)
     add.add_argument("--source", dest="source_name", help="Actual source or provider reference for this map.")

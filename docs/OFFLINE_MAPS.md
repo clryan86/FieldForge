@@ -1,7 +1,7 @@
-# Offline raster maps — local MBTiles
+# Offline maps — local raster/vector MBTiles
 
 The desktop **Maps** section opens an already-local map pack, renders its raster
-tiles, and provides pan, zoom, coordinate centering and an optional saved-place
+tiles or a basic styled preview from vector tiles, and provides pan, zoom, coordinate centering and an optional saved-place
 overlay. It has no network client, tile-server setting, GPS/location request,
 geocoding, road routing, travel-time estimate or current-hazard data. No map data
 is automatically downloaded, purchased or installed. A displayed map and a saved
@@ -23,6 +23,12 @@ specific MBTiles subset:
   metadata. Up to 128 metadata entries and 16 KiB per UTF-8 value are supported.
   The reader never builds an index
   or changes the supplied pack to make it compatible.
+- Gzip-compressed Mapbox Vector Tile data declared as `format=pbf`, decoded from
+  ordinary `metadata` and `tiles` tables through the same indexed read-only path.
+  FieldForge draws common land, water, building, road, boundary, rail and point
+  geometries with a built-in preview palette. It places a limited set of labels
+  from names embedded in point, line, and area features. It does not apply publisher MapLibre
+  styles, filters, sprites, font glyphs, or publisher symbol-placement rules.
 - Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
   256-screen-pixel logical footprint. There is no extra detail invented from a
   lower zoom, no resampling fallback from another level and no remote fallback.
@@ -30,9 +36,9 @@ specific MBTiles subset:
   the tiles table, not just claimed by metadata. A level's presence does NOT
   establish that every part of the viewport or declared region is covered.
 
-PBF/vector tiles, animated tiles and normalized/view-based MBTiles layouts are
-**not supported**. Those can be valid MBTiles formats; rejection means this reader
-cannot display them, not that their files are corrupt. GPX, PDF maps and ordinary
+Animated tiles and normalized/view-based MBTiles layouts are **not supported**.
+Those can be valid MBTiles formats; rejection means this reader cannot display
+them, not that their files are corrupt. GPX, PDF maps and ordinary
 image files are not MBTiles. The app does not convert these formats automatically.
 Open ordinary map images through **Navigation → Open map image…**; see
 [image formats and limits](GPS_WORKSPACE.md#mbtiles-and-image-files). Source users
@@ -132,6 +138,25 @@ There is no mid-read database write to wait for when closing the application.
 Existing guards still protect unrelated unsaved editors and active write jobs.
 
 ## Verification and practice pack
+
+### Prepared regional `.ffmap` indexes
+
+The Maps tab also has a separate **Prepared regional map…** viewer for FieldForge
+`.ffmap` SQLite indexes. These are not MBTiles. Choose **Import package ZIP…**
+to validate a regional ZIP and copy only its single `map.ffmap` index; the
+archive and bundled source PBF remain unchanged. You may also extract the archive
+yourself and open `map.ffmap` directly. **Prepare PBF…** builds a new index from
+a local OSM PBF snapshot without replacing the source. The viewer searches
+indexed names and features locally and limits how many features it loads for a
+viewport; zoom in when it reports that the view is limited. The available Wave
+5 indexes cover Kansas, Nebraska, North Dakota, and South Dakota only, not all
+U.S. states. ZIPs over 2 GiB and indexes over 4 GiB are rejected.
+
+These indexes are for display and local feature search. They do not contain a
+prepared routing graph, support turn-by-turn navigation, or verify road access,
+freshness, safety, or completeness. The current portal does not distribute
+`.ffmap` indexes or extract ZIP packages. See the [regional data
+plan](GLOBAL_MAP_DATA_PLAN.md) for provenance and acquisition gaps.
 
 Tests cover independent projection examples and round trips, TMS row reversal,
 date-line wrapping, polar exclusion, no lower-zoom substitution, source metadata,

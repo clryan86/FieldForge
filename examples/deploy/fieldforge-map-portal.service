@@ -1,0 +1,30 @@
+[Unit]
+Description=FieldForge online map preparation portal
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=fieldforge
+Group=fieldforge
+WorkingDirectory=/opt/fieldforge
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/env /opt/fieldforge/.venv/bin/python -m fieldforge.online.server --config /etc/fieldforge/map-portal.json
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

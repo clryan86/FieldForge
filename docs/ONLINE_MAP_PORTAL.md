@@ -196,12 +196,16 @@ as planned route geometry; it does not fabricate receiver fixes or trip times.
 Supported portal map formats are raster MBTiles, PNG, JPEG, WebP, TIFF, GIF,
 BMP, ICO, PPM/PGM/PBM/PNM, TGA, JPEG 2000, and AVIF. The additional image families
 use the existing optional image decoder and require the appropriate installed codec.
-Raster MBTiles use the existing map reader's supported schema and
-image formats. The existing viewer limits are 16 GiB for a raster MBTiles pack
-and 64 MiB for a map image, with at most 32 million pixels and a 32,768-pixel side.
-Publication and desktop installation apply the same image preflight.
-Vector MBTiles, PMTiles, raw OSM PBF, and archive extraction are
-not implemented in this portal client. Opening many image formats uses the
+Raster MBTiles use the existing map reader's supported schema and image formats.
+Gzip-compressed Mapbox Vector Tile MBTiles (`format=pbf`) can be published after
+a real vector tile is rendered during preflight; the desktop then draws common
+feature geometries with a basic built-in style and limited labels from names
+embedded in point, line, and area features, with basic overlap suppression. Publisher styles, fonts, sprites and advanced label-placement
+rules are not applied. The existing viewer limits are 16 GiB for an MBTiles
+pack and 64 MiB for a map image, with at most 32 million pixels and a
+32,768-pixel side. Publication and desktop installation apply the same image
+preflight. PMTiles, raw OSM PBF, and archive extraction are not implemented in
+this portal client. Opening many image formats uses the
 existing optional Pillow dependency (`pip install ".[maps]"`). An ordinary
 image remains an image reference; downloading it does not calibrate it.
 
@@ -303,7 +307,8 @@ detail/zoom levels in the title or accompanying documentation; do not infer them
 from the extent. This metadata does not georeference an image or verify that all
 tiles inside the extent exist.
 Images remain reference images unless separately calibrated in an appropriate
-workflow; vector MBTiles are not supported by the raster viewer.
+workflow; vector MBTiles use FieldForge's basic geometry preview, without their
+publisher's style, fonts, sprites, or labels.
 
 Inspect the generated catalog with `list --root ./new-portal-maps`. To serve
 it, deliberately update the operator configuration's `catalog_root` and restart
