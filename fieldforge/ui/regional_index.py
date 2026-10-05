@@ -10,8 +10,8 @@ from fieldforge.navigation.map_view import Viewport
 from fieldforge.navigation.osm_source import StreetSource
 from fieldforge.navigation.regional_index import (
     NOTICE,
-    import_archive,
     feature_coordinate,
+    import_archive,
     inspect_index,
     prepare_index,
     search_index,
