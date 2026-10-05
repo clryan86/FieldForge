@@ -373,7 +373,7 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
     assert b"Download a regional PBF (53 areas)" in body
     assert b"U.S. Virgin Islands" in body and b"district-of-columbia-latest.osm.pbf" in body
     assert b"not a routing graph or driving directions" in body
-    assert b"Choose a country or smaller area before downloading" in body
+    assert b"choose a country or smaller region before downloading" in body
     assert b"not ready-to-open MBTiles or route graphs" in body
     for region in (b"africa.html", b"antarctica.html", b"asia.html",
                    b"australia-oceania.html", b"central-america.html",
