@@ -91,7 +91,7 @@ def test_homepage_connection_warning_can_cancel_without_any_api_request(portal_p
         "Offline entertainment & pocket library",
     ):
         expect(page.get_by_role("heading", name=title)).to_be_visible()
-    expect(page.locator("section[aria-labelledby='mapAcquisitionTitle'] .pack")).to_have_count(4)
+    expect(page.locator("section[aria-labelledby='mapAcquisitionTitle'] .pack")).to_have_count(5)
     expect(page.get_by_text("Purchase hold: do not buy MapTiler On-prem Standard for FieldForge distribution.")).to_be_visible()
     assert not any("/api/" in url for url in calls)
     page.remove_listener("dialog", _accept_connection)
