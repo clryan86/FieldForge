@@ -47,3 +47,23 @@ No purchase, vendor inquiry, account creation, or third-party message has been m
 - [MapTiler On-prem pricing and license limits](https://www.maptiler.com/data/pricing/)
 - [NOAA regional nautical MBTiles](https://distribution.charts.noaa.gov/ncds/index.html)
 - [MBTiles specification](https://github.com/mapbox/mbtiles-spec)
+
+## Offline routing engine evaluation (not yet implemented)
+
+Do not turn the prepared `.ffmap` visual/search index or the MBTiles display renderer into a route graph. The first engine to evaluate is **Valhalla**: its upstream project describes regional, tiled graph data designed for offline routing and uses the MIT license. This is a candidate, not an approved or integrated dependency. Valhalla is C++ based, so Windows packaging, update size, and memory use on ordinary FieldForge computers still need a working prototype. 
+
+Keep the alternative comparison recorded:
+
+- **Valhalla — first spike.** Test OSM PBF import, regional graph tiles, offline route calculation, turn restrictions, one-way roads, access rules, route instructions, and native Windows packaging. Upstream: https://github.com/valhalla/valhalla and https://github.com/valhalla/valhalla/blob/master/COPYING
+- **OSRM — alternate.** BSD-2-Clause code and a complete preprocessing pipeline, but its normal deployment is a C++ routing service with separately prepared graph files. Confirm its offline desktop and Windows distribution fit before choosing it. Upstream: https://github.com/Project-OSRM/osrm-backend
+- **GraphHopper — alternate.** Apache-2.0 Java engine with documented turn restriction support. Its current project documentation says offline Android routing is no longer officially supported, so test the exact FieldForge target rather than relying on old demos. Upstream: https://github.com/graphhopper/graphhopper and https://github.com/graphhopper/graphhopper/blob/master/docs/core/turn-restrictions.md
+
+### Prototype acceptance checks
+
+1. Build from a small, licensed OSM PBF fixture and one state-sized extract. Keep the PBF, graph, and visual map separate; include engine/version, data timestamp, region bounds, source checksum, ODbL attribution, and package size in a manifest.
+2. Prove locally, with no network access, that routes respect one-way, mode-specific access, simple turn restrictions, and supported via-way restrictions. Unsupported or conditional restrictions must be handled by the engine or cause a clearly reported build limitation; never silently drop them.
+3. Test impossible routes, disconnected road segments, incomplete extracts, border edges, and map/graph date mismatch. A displayed route is a calculated candidate, not a guarantee of legal access, open roads, current conditions, or safety.
+4. Verify graph construction and route calculation on Windows and the existing supported Python versions, with bounded memory/disk, cancellation, integrity checks, and a repeatable install/uninstall path.
+5. Review the engine's full dependency license inventory and the ODbL obligations for each graph package before offering customer downloads. No engine binaries or routing graph data are being purchased or redistributed by this plan.
+
+Only after that spike passes should the desktop Maps/GPS UI expose **Calculate offline route**. Until then, existing online-planned routes remain saved geometry with directions; the app does not recalculate them offline.
