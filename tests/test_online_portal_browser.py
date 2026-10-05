@@ -63,7 +63,7 @@ def test_homepage_connection_warning_can_cancel_without_any_api_request(portal_p
     page.goto(operated_portal[0], wait_until="networkidle")
     expect(page.locator("#libraryTitle")).to_have_text("Knowledge & program packs")
     expect(page.locator("#tiersTitle")).to_have_text("Choose a draft package tier")
-    expect(page.locator("section[aria-labelledby='mapAcquisitionTitle'] .pack")).to_have_count(4)
+    expect(page.locator("section[aria-labelledby='mapAcquisitionTitle'] .pack")).to_have_count(5)
     expect(page.locator("section[aria-labelledby='libraryTitle'] .pack")).to_have_count(13)
     expect(page.locator("section[aria-labelledby='tiersTitle'] .pack")).to_have_count(3)
     expect(page.locator("section[aria-labelledby='commonsTitle'] .pack")).to_have_count(3)
