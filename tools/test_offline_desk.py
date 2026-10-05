@@ -85,6 +85,7 @@ class OfflineDeskTests(unittest.TestCase):
             digest = base64.b64encode(hashlib.sha256(value.encode()).digest()).decode()
             self.assertIn(f"{kind}-src 'sha256-{digest}'", policy)
         self.assertIn("connect-src 'none'", policy)
+        self.assertIn("worker-src blob:", policy)
         self.assertNotIn("unsafe-inline", policy)
         self.assertNotIn("unsafe-eval", policy)
 
@@ -96,7 +97,7 @@ class OfflineDeskTests(unittest.TestCase):
         self.assertFalse(metadata["contains_user_data"])
         self.assertFalse(metadata["includes_map_datasets"])
         self.assertIn(metadata["edition_id"], self.text)
-        self.assertLess(len(self.raw), 200 * 1024)
+        self.assertLess(len(self.raw), 3 * 1024 * 1024)  # Includes pinned offline SQLite worker.
         self.assertIn('download="FieldForge-Offline-Desk.html"', (ROOT / "portal_preview/desk.html").read_text())
 
     def test_build_uses_current_shared_sources_and_rejects_unknown_imports(self):

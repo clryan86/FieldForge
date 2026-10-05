@@ -5,7 +5,9 @@ import {tmpdir} from "node:os";
 import {join, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 import {execFileSync} from "node:child_process";
+import {webcrypto} from "node:crypto";
 import vm from "node:vm";
+import {imageHeader} from "./image-core.mjs";
 
 // Execute the actual downloadable script with a DOM double and forbidden network
 // and storage APIs. This is an integration check, not native browser/device QA.
@@ -36,8 +38,8 @@ class Element {
   getBoundingClientRect() { return {width:800,height:500,left:0,top:0}; }
   getContext() { return {setTransform() {},clearRect() {}}; }
 }
-function boot() {
-  const elements = new Map(), opened = [], blobs = [], downloads = [];
+function boot({mbtiles=false}={}) {
+  const elements = new Map(), opened = [], blobs = [], downloads = [], workers=[], bitmaps=[], draws=[];
   let storageTouches = 0, requests = 0, confirmation = false;
   for (const match of source.matchAll(/<([a-zA-Z][\w-]*)\b([^>]*\bid="([^"]+)"[^>]*)>/g)) {
     const attrs = Object.fromEntries([...match[2].matchAll(/([\w-]+)(?:="([^"]*)")?/g)].map(([_,key,value]) => [key,value ?? ""]));
@@ -54,9 +56,32 @@ function boot() {
   class LocalURL extends URL { static createObjectURL(blob) { blobs.push(blob); return `blob:local-${blobs.length}`; } static revokeObjectURL() {} }
   const forbidden = () => { requests++; throw Error("Network access is forbidden"); };
   const sandbox = {document,window:{devicePixelRatio:1,addEventListener() {},confirm:() => confirmation,open:(...args) => opened.push(args)},URL:LocalURL,Blob,TextEncoder,TextDecoder,setTimeout() {},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,navigator:{sendBeacon:forbidden}};
+  if(mbtiles) {
+    id("mbWorkerPayload").textContent=source.match(/<div id="mbWorkerPayload" hidden>([A-Za-z0-9+/=]+)<\/div>/)[1];
+    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){}});
+    class Reader {
+      readAsArrayBuffer(file){this.readyState=1;file.arrayBuffer().then(bytes=>{if(this.readyState!==1)return;this.readyState=2;this.result=bytes;this.onload?.();},()=>{this.readyState=2;this.onerror?.();});}
+      abort(){this.readyState=2;this.onabort?.();}
+    }
+    class EmbeddedWorker {
+      constructor(url) {
+        workers.push(this);this.terminated=false;
+        this.ready=blobs[Number(url.split("-").at(-1))-1].text().then(code=> {
+          const worker={self:{postMessage:(value,transfer=[])=>{const data=structuredClone(value,{transfer});queueMicrotask(()=>{if(!this.terminated)this.onmessage?.({data});});}},Uint8Array,ArrayBuffer,crypto:webcrypto,TextEncoder,TextDecoder,setTimeout,clearTimeout,fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,console:{log(){},warn(){},error(){}}};
+          vm.createContext(worker,{codeGeneration:{strings:false,wasm:false}});vm.runInContext(code,worker,{timeout:5000});return worker;
+        });
+      }
+      postMessage(value,transfer){const data=structuredClone(value,{transfer});this.ready.then(worker=>{if(!this.terminated)return worker.self.onmessage({data});}).catch(error=>{if(!this.terminated)this.onerror?.(error);});}
+      terminate(){this.terminated=true;}
+    }
+    Object.assign(sandbox,{FileReader:Reader,Worker:EmbeddedWorker,atob,Uint8Array,ArrayBuffer,setTimeout:(fn,ms)=>ms===30000 ? undefined : setTimeout(fn,ms),clearTimeout,createImageBitmap:async blob=> {
+      const header=imageHeader(new Uint8Array(await blob.arrayBuffer()));
+      const bitmap={width:header.width,height:header.height,closed:false,close(){this.closed=true;}};bitmaps.push(bitmap);return bitmap;
+    }});
+  }
   Object.defineProperty(sandbox,"localStorage",{get() { storageTouches++; throw Error("Storage unavailable for local file"); }});
   vm.runInNewContext(script,sandbox,{timeout:1000,filename:"fieldforge-offline.html"});
-  return {id,opened,blobs,downloads,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
+  return {id,opened,blobs,downloads,workers,bitmaps,draws,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
 }
 
 test("downloaded desk boots without storage or network and can save/reopen a source plan", async () => {
@@ -93,6 +118,20 @@ function addManual(app,name,lat = "0",lon = "0",source = "") {
   app.id("placesForm").fire("submit");
 }
 function collectionFile(name,text) { const bytes = new TextEncoder().encode(text); return {name,size:bytes.length,arrayBuffer:async () => bytes.buffer}; }
+test("offline download opens a pack through its embedded SQLite worker and exports a selected map coordinate",{timeout:5000},async()=> {
+  const app=boot({mbtiles:true});
+  const raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py")]);
+  try {
+    app.id("mbTab").fire("click");assert.equal(app.id("mbPanel").hidden,false);assert.equal(app.id("packPanel").hidden,true);
+    app.id("mbFile").files=[{name:"offline-fixture.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");
+    assert.equal(app.id("mbControls").disabled,false,app.id("mbStatus").textContent);assert.ok(app.draws.length);assert.equal(app.id("mbAttribution").textContent,"<b>Fixture credit</b>");
+    app.id("mbAddPlace").fire("click");assert.equal(app.id("placesPanel").hidden,false);assert.match(app.id("placesCount").textContent,/1 total/);
+    app.id("placesSaveJSON").fire("click");const place=JSON.parse(await app.blobs.at(-1).text()).places[0];assert.ok(place.lat<0&&place.lon<0);assert.match(place.source,/offline-fixture\.mbtiles/);
+    app.id("mbClose").fire("click");assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.draws.length,0);assert.ok(app.bitmaps.every(bitmap=>bitmap.closed));assert.ok(app.workers.every(worker=>worker.terminated));
+    assert.match(app.id("placesCount").textContent,/1 total/);assert.equal(app.storageTouches,0);assert.equal(app.requests,0);assert.deepEqual(app.opened,[]);
+  }finally{app.id("mbClose").fire("click");}
+});
+
 test("offline vector layers draw polygon holes, inspect vertices and collect selected coordinates",async()=> {
   const app=boot(), shape={type:"Feature",properties:{name:"Area <b>text</b>",note:"<img src=x>"},geometry:{type:"Polygon",coordinates:[[[0,0],[4,0],[4,4],[0,4],[0,0]],[[1,1],[2,1],[2,2],[1,2],[1,1]]]}};
   app.id("vectorTab").fire("click"); assert.equal(app.id("vectorPanel").hidden,false); assert.equal(app.id("packPanel").hidden,true);

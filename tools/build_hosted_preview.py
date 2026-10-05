@@ -12,6 +12,7 @@ import shutil
 from pathlib import Path
 
 from build_offline_desk import export_offline
+from build_mbtiles_worker import insert_mbtiles_worker
 
 ROOT = Path(__file__).resolve().parents[1]
 FAVICON = '<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%227%22 fill=%22%23176445%22/%3E%3Cpath d=%22M10 7h15v5H15v4h8v5h-8v8h-5z%22 fill=%22white%22/%3E%3C/svg%3E">'
@@ -131,7 +132,8 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     # Add actual browser-local tools without changing the desktop server portal.
     assets = Path(__file__).resolve().parent / "portal_preview"
     portal = replace_once(portal, '<section class="preview-banner"', (assets / "desk.html").read_text(encoding="utf-8") + '<section class="preview-banner"')
-    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><link rel="stylesheet" href="route-explorer.css"><link rel="stylesheet" href="image-viewer.css"><link rel="stylesheet" href="places.css"><link rel="stylesheet" href="vector-viewer.css"><script type="module" src="desk.mjs"></script></head>')
+    portal = insert_mbtiles_worker(portal, assets)
+    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><link rel="stylesheet" href="route-explorer.css"><link rel="stylesheet" href="image-viewer.css"><link rel="stylesheet" href="places.css"><link rel="stylesheet" href="vector-viewer.css"><link rel="stylesheet" href="mbtiles-viewer.css"><script type="module" src="desk.mjs"></script></head>')
     css = re.search(r'<style>(.*?)</style>', portal, flags=re.S).group(1)
     screens = [
         ("rooms", "Community rooms", "commons-chat-preview.png", "Public rooms organized around practical skills, with pause, export, block and report controls."),
@@ -164,7 +166,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "commons.html").write_text(commons, encoding="utf-8")
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
-    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css", "field-sheet-core.mjs", "field-sheet.mjs", "vector-core.mjs", "vector-viewer.mjs", "vector-viewer.css"):
+    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css", "field-sheet-core.mjs", "field-sheet.mjs", "vector-core.mjs", "vector-viewer.mjs", "vector-viewer.css", "mbtiles-core.mjs", "mbtiles-client.mjs", "mbtiles-viewer.mjs", "mbtiles-viewer.css"):
         shutil.copyfile(assets / name, output / name)
     offline = export_offline(assets, output, (source_root / "fieldforge/online/portal.html").read_text(encoding="utf-8"), revision, FAVICON)
     print(f"Offline desk: {offline['bytes']:,} bytes, edition {offline['edition_id']}")

@@ -12,10 +12,11 @@ import html
 import json
 import re
 from pathlib import Path
+from build_mbtiles_worker import insert_mbtiles_worker
 
 FILENAME = "fieldforge-offline.html"
-MODULES = ("desk-core.mjs", "places-core.mjs", "field-sheet-core.mjs", "field-sheet.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "vector-core.mjs", "vector-viewer.mjs", "desk.mjs", "offline.mjs")
-STYLES = ("desk.css", "route-explorer.css", "image-viewer.css", "places.css", "vector-viewer.css", "offline.css")
+MODULES = ("desk-core.mjs", "places-core.mjs", "field-sheet-core.mjs", "field-sheet.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "vector-core.mjs", "vector-viewer.mjs", "mbtiles-core.mjs", "mbtiles-client.mjs", "mbtiles-viewer.mjs", "desk.mjs", "offline.mjs")
+STYLES = ("desk.css", "route-explorer.css", "image-viewer.css", "places.css", "vector-viewer.css", "mbtiles-viewer.css", "offline.css")
 
 
 def replace_once(text: str, old: str, new: str) -> str:
@@ -83,12 +84,13 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
     desk = replace_once(desk, 'Less time online.<br>More prepared offline.', 'Your preparation desk.<br>Ready to travel.')
     desk = replace_once(desk, '<a class="desk-commons" href="commons.html">Explore Commons <span>Chat &amp; owner screen gallery</span></a>', '<a class="desk-commons" href="#offlineHelp">Using your offline copy <span>How to reopen, save and update</span></a>')
     desk = replace_once(desk, '<a class="desk-offline" href="fieldforge-offline.html" download="FieldForge-Offline-Desk.html">Download offline tools <span>One HTML file · no installation</span></a>', '')
-    desk = replace_once(desk, '<a href="#libraryTitle">06 <span>Knowledge library</span></a>', '<a href="#offlineHelp">06 <span>Save &amp; reopen</span></a>')
+    desk = replace_once(desk, '<a href="#libraryTitle">07 <span>Knowledge library</span></a>', '<a href="#offlineHelp">07 <span>Save &amp; reopen</span></a>')
     desk = replace_once(desk, '<a href="#mapAcquisitionTitle">Worldwide, MBTiles &amp; imagery sources</a>', '<a href="#offlineConnection">Use the online portal for map downloads</a>')
     desk = replace_once(desk, '<label class="remember-plan">', '<label class="remember-plan" hidden>')
     desk = replace_once(desk, '<input id="deskRemember" type="checkbox">', '<input id="deskRemember" type="checkbox" disabled>')
     desk = replace_once(desk, 'Selections stay in this tab unless you save them.', 'Save a source plan file to keep your selection; this offline edition does not use browser storage.')
     desk = replace_once(desk, '<a href="commons.html#owner">Owner progress</a><a href="#mapsTitle">Map catalog status</a>', '<a href="#offlineConnection">Online portal</a><a href="#offlineHelp">Save your work</a>')
+    desk = insert_mbtiles_worker(desk, assets)
     style = css_match.group(1) + "\n" + "\n".join((assets / name).read_text(encoding="utf-8") for name in STYLES)
     script = bundle_modules(assets)
     shell = (assets / "offline-shell.html").read_text(encoding="utf-8")
@@ -97,7 +99,7 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
     fingerprint = hashlib.sha256((shell + style + script).encode()).hexdigest()[:12]
     shell = replace_once(shell, "OFFLINE_EDITION_ID", fingerprint)
     digest = lambda value: base64.b64encode(hashlib.sha256(value.encode("utf-8")).digest()).decode("ascii")
-    policy = f"default-src 'none'; script-src 'sha256-{digest(script)}'; style-src 'sha256-{digest(style)}'; img-src data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    policy = f"default-src 'none'; script-src 'sha256-{digest(script)}'; style-src 'sha256-{digest(style)}'; img-src data: blob:; connect-src 'none'; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'"
     document = f'''<!doctype html>
 <html lang="en" data-edition="offline" data-sources-enabled="false"><head>
 <meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="{html.escape(policy, quote=True)}">

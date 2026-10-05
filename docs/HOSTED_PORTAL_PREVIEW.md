@@ -371,3 +371,68 @@ browser MBTiles/vector-tile decoding, shapefile/KML/GeoTIFF support, map dataset
 routing, hosted chat or accounts.
 
 Format reference: [IETF RFC 7946](https://www.rfc-editor.org/rfc/rfc7946.html).
+
+## Local raster MBTiles viewer (October 5, 2026)
+
+The website and standalone offline desk now include **MBTiles maps**. Users
+choose a local pack, browse stored zoom levels, pan or enter a coordinate,
+inspect attribution as plain text, select a displayed pixel and add that
+coordinate to Saved places. The first view uses an actually stored tile rather
+than assuming worldwide coverage or trusting declared centre metadata.
+Coordinates are calculated from Web Mercator pixel centres; missing or
+undecodable tiles cannot supply a selected point.
+
+This release supports a bounded subset consistent with the desktop reader:
+closed rollback-mode SQLite files up to 64 MiB; ordinary metadata and tiles
+tables with the expected columns; a unique non-partial BINARY index on
+zoom_level, tile_column, tile_row; MBTiles/TMS rows; integer zoom levels 0–22;
+and square 256/512-pixel PNG, JPEG or still WebP raster tiles. Metadata is limited
+to 128 rows, with 128-byte names and 16-KiB values. Each compressed tile is at
+most 2 MiB and each frame at most 16 MiB. Supported zoom availability is not
+a coverage, integrity, freshness or route-safety audit.
+
+Vector PBF packs, normalized/view-based layouts, WAL-mode exports and larger
+files are rejected with explanatory messages. Existing desktop readers remain
+the route for larger supported packs and vector MBTiles. The browser viewer
+does not acquire datasets, calculate routes, follow GPS or verify conditions.
+
+The original File is never written. SQLite opens an in-memory copy with
+query_only and trusted_schema restrictions. SQL uses fixed queries, bound tile
+coordinates and quoted index identifiers. All database work runs in a disposable
+worker; a 15-second request deadline or Close / cancel terminates it. New files
+and frames clear selected coordinates and release old bitmaps. FileReader operations are abortable, have their own 15-second deadline, and
+are generation-checked. Replacement opens do not wait on canceled reads or
+native decodes; stale results are discarded and eventual bitmaps released.
+Native image decoding is preceded by format, dimension and byte-size checks.
+A labelled blank tile reports missing, unsupported or out-of-projection data.
+
+SQL.js **1.14.2**, MIT licensed, is vendored from the verified npm release with
+its licence and provenance. The package tarball's SHA-512 integrity and
+vendored file SHA-256 are recorded and checked; the build rejects a changed
+reader checksum. No CDN or runtime download is needed. The reader is embedded
+as inert base64 and instantiated only on opening a pack. The offline CSP allows
+local blob workers while retaining connect-src 'none', hashed scripts/styles
+and no unsafe-eval or unsafe-inline. Dependency licence text is included in
+both website and offline file.
+
+Validation: **68 Node tests and 4 Python tests pass**. Independent Python SQLite
+fixtures verify flat/indexed reads, actual stored zooms, TMS orientation, byte
+preservation, read-only SQL, oversized blobs, malformed metadata, unsupported
+schemas and Mercator/date-line math. The built worker runs with network, dynamic
+evaluation and WebAssembly compilation disabled. DOM/bitmap doubles test
+selection, stale decoding, replacement, cancellation and resource disposal;
+client doubles test byte transfer, ignored late replies and worker termination.
+The complete downloaded HTML also opens a synthetic pack through its embedded
+reader and exports a selected coordinate, using a worker bridge with actual
+structured-clone transfers, real SQLite and DOM/bitmap doubles.
+Built HTML label/ARIA targets, local module assets and exact embedded worker
+bytes were checked. Native browser worker startup, Canvas/image decoding,
+phone behavior and physical printing remain untested in this environment.
+Test fixtures are synthetic; no new real map datasets are claimed or shipped.
+
+The updated offline edition is **0bccb4e66240**, 2,044,099 bytes. The size increase
+is the self-contained SQLite reader. The offline size-budget test now allows
+3 MiB to accommodate it; network and CSP checks remain in place.
+
+References: [MBTiles 1.3 specification](https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md),
+[SQL.js](https://github.com/sql-js/sql.js).

@@ -1,4 +1,5 @@
 import {MAX_GPX_BYTES, PLAN_KIND, downloadEstimate, validatePlan, parseGPX, projectTrace, waypointCSV} from "./desk-core.mjs";
+import {createMBViewer} from "./mbtiles-viewer.mjs";
 import {createVectorViewer} from "./vector-viewer.mjs";
 import {createPlaces} from "./places.mjs";
 import {GPX_SOURCE, IMAGE_SOURCE} from "./places-core.mjs";
@@ -77,6 +78,7 @@ function download(text, mime, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 const savedPlaces = createPlaces({download});
+createMBViewer({onAddPoint:point => { id("mbStatus").textContent = savedPlaces.add([point],"MBTiles pixel"); selectTool("places"); }});
 createVectorViewer({download, onAddPoint:point => { id("vectorStatus").textContent = savedPlaces.add([point],"GeoJSON vertex"); selectTool("places"); }});
 function collectPlaces(points, source, label, statusId) {
   try {
@@ -127,7 +129,7 @@ if (!offlineEdition) try {
 } catch { announcePlan("A saved device plan could not be restored. Open a saved plan file or start a new selection."); }
 
 function selectTool(kind) {
-  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"], ["vector", "vectorTab", "vectorPanel"]]) {
+  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"], ["vector", "vectorTab", "vectorPanel"], ["mbtiles", "mbTab", "mbPanel"]]) {
     id(panel).hidden = kind !== tool; id(tab).setAttribute("aria-pressed", String(kind === tool));
   }
   if (kind === "image") imageViewer.refresh();
@@ -135,6 +137,7 @@ function selectTool(kind) {
 id("packTab").addEventListener("click", () => selectTool("packs"));
 id("traceTab").addEventListener("click", () => selectTool("trace"));
 id("imageTab").addEventListener("click", () => selectTool("image"));
+id("mbTab").addEventListener("click", () => selectTool("mbtiles"));
 id("vectorTab").addEventListener("click", () => selectTool("vector"));
 id("placesTab").addEventListener("click", () => selectTool("places"));
 const svgNS = "http://www.w3.org/2000/svg";
