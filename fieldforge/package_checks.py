@@ -242,7 +242,7 @@ def verify_education_workspace(root, directory: Path) -> None:
     app = FieldForgeApp(directory / "education.db")
     tab = EducationTab(root, app.db.path)
     try:
-        _require(len(tab.catalog) == 192, "Education catalogue missing from the bundle")
+        _require(len(tab.catalog) == 196, "Education catalogue missing from the bundle")
         _require(tab.lesson.id == "number-count", "Number foundations are not the default starting course")
         tab.diagram_next.invoke()
         _require(tab.diagram_index == 1 and len(tab.diagram.find_withtag("one")) == 7,
@@ -266,6 +266,37 @@ def verify_education_workspace(root, directory: Path) -> None:
         tab.reveal_button.invoke()
         tab.review_button.invoke()
         division_lesson, division_question, division_work = tab.lesson, tab.question, tab.work
+        tab.open_lesson("fraction-combine")
+        tab.diagram_next.invoke()
+        _require(len(tab.diagram.find_withtag("filled")) == 6 and tab.diagram_index == 1,
+                 "Fraction strips or stepped examples are missing")
+        tab.pages.select(tab.fraction_lab)
+        lab = tab.fraction_lab
+        for variable, value in zip(lab.values, (2, 3, 3, 4)):
+            variable.set(str(value))
+        lab.inputs[3].event_generate("<<ComboboxSelected>>")
+        _require("A = 8/12; B = 9/12" in lab.comparison.get("1.0", "end"), "Fraction lab comparison is unavailable")
+        _require(len(lab.canvas.find_withtag("fraction_point")) == 2, "Fraction number lines are missing")
+        tab.pages.select(tab.practice_page)
+        tab.response.insert("1.0", "2/9")
+        tab.check_button.invoke()
+        _require(tab.work.result == "retry" and "Adding denominators" in tab.feedback.get("1.0", "end"),
+                 "Fraction misconception feedback is missing")
+        tab.hint_button.invoke()
+        tab.response.delete("1.0", "end")
+        tab.response.insert("1.0", "3/6")
+        tab.reasoning.insert("1.0", "Two sixths plus one sixth makes three sixths.")
+        tab.check_button.invoke()
+        _require(tab.work.result == "correct", "Equivalent fraction answer was rejected")
+        fraction_lesson, fraction_question, fraction_work = tab.lesson, tab.question, tab.work
+        lab.reset_button.invoke()
+        _require(tab.work == fraction_work, "Exploring the lab changed saved practice")
+        tab.open_lesson("fraction-quantity")
+        tab.move_question(5)
+        tab.response.insert("1.0", "For 54 cards, five sixths is 45; the remaining nine restores 54.")
+        tab.reveal_button.invoke()
+        tab.review_button.invoke()
+        quantity_lesson, quantity_question, quantity_work = tab.lesson, tab.question, tab.work
         tab.open_lesson("guide-length")
         tab.response.insert("1.0", "11")
         tab.check_button.invoke()
@@ -339,6 +370,13 @@ def verify_education_workspace(root, directory: Path) -> None:
     backup = create_verified_backup(app.db.path, directory / "education.ffbackup")
     recovered = restore_verified_copy(backup, directory / "education-restored.db", active_database=app.db.path)
     store = StudyStore(recovered)
+    _require(store.read(fraction_lesson.id, fraction_question) == fraction_work
+             and store.read(quantity_lesson.id, quantity_question) == quantity_work,
+             "Fraction calculation or writing did not survive backup and restore")
+    fraction_output = worksheet(fraction_lesson, tuple(store.read(fraction_lesson.id, q) for q in fraction_lesson.questions))
+    _require(fraction_output.count("<svg") == 3 and "[C4]" in fraction_output and fraction_work.reasoning in fraction_output,
+             "Fraction worksheet lost a diagram, practice card or saved explanation")
+    (directory / "fractions-worksheet.html").write_text(fraction_output, encoding="utf-8")
     _require(store.read(number_lesson.id, number_question) == number_work
              and store.read(division_lesson.id, division_question) == division_work,
              "Number foundations work did not survive backup and restore")
@@ -367,6 +405,9 @@ def verify_education_workspace(root, directory: Path) -> None:
     (directory / "evidence-worksheet.html").write_text(evidence_output, encoding="utf-8")
     reopened = EducationTab(root, recovered)
     try:
+        reopened.open_lesson(fraction_lesson.id)
+        _require(reopened.work == fraction_work and reopened.response.get("1.0", "end-1c") == "3/6",
+                 "Recovered fraction response is not visible")
         reopened.open_lesson(number_lesson.id)
         reopened.move_question(1)
         _require(reopened.response.get("1.0", "end-1c") == "43" and reopened.work.hints == 1,
@@ -458,7 +499,7 @@ def verify_installation() -> dict[str, object]:
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
-        checks.append("Education: 192 lessons; number foundations with stepped diagrams, measurement, literacy and evidence, hints, feedback, writing self-review, backup/restore and worksheets with all diagram steps")
+        checks.append("Education: 196 lessons; interactive fraction lab, stepped strips and number lines, numbers, measurement, literacy and evidence; feedback, self-review, backup/restore and worksheets with all diagram steps")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

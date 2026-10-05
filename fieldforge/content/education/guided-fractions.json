@@ -1,0 +1,838 @@
+{
+  "edition": "guided-fractions-2026-10-04",
+  "license": "CC BY-SA 4.0",
+  "authorship": "Original AI-assisted FieldForge teaching drafts, not independently educator-reviewed.",
+  "references": [
+    "Instructional background: IES / What Works Clearinghouse, Developing Effective Fractions Instruction for Kindergarten Through 8th Grade (2010). Connected representations and explanations inform these original activities; the guide did not evaluate FieldForge. Accessed 2026-10-04.\nhttps://ies.ed.gov/ncee/wwc/practiceguide/15",
+    "Mathematical background: OpenStax, Prealgebra 2e, Chapter 4 and section 4.5. All examples, practice cards, feedback and diagrams here are original, not copied textbook activities. Accessed 2026-10-04.\nhttps://openstax.org/books/prealgebra-2e/pages/4-5-add-and-subtract-fractions-with-different-denominators"
+  ],
+  "lessons": [
+    {
+      "id": "fraction-whole",
+      "title": "1 · Name the whole and its equal parts",
+      "goal": "Describe a fraction as a number, identify its unit whole, and connect equal parts to distance from zero.",
+      "track": "Guided: Fractions & quantities",
+      "materials": "Paper and pencil; draw equal strips and mark a 0–1 number line. A helper may read or type your explanation. No tools, food or physical cutting are needed.",
+      "prerequisites": [
+        "number-divide"
+      ],
+      "paragraphs": [
+        "START WITH A UNIT\nDraw one strip. Call the entire strip one whole and label its ends 0 and 1. Divide it into four equal lengths. One length is one quarter, written 1/4. The denominator, 4, tells how many equal parts make this whole; the numerator, 1, counts how many of those parts we name.",
+        "WORKED EXAMPLE · COUNT DISTANCES, NOT TICK MARKS\nShade three of the four parts: 3/4. On the number line, start at 0 and travel three equal quarter-lengths: 1/4, 2/4, 3/4. Four intervals require five boundary marks including 0 and 1. Do not count the starting mark as a distance traveled. Four quarters reach 1; zero quarters stay at 0.",
+        "EQUAL IS ESSENTIAL\nA strip split into one short piece and one long piece has two pieces, but they are not both halves. Fractions of a length use equal lengths. For a fraction of an area, use equal areas; pieces need not have the same shape. Always say what quantity is being divided.",
+        "SAME NUMBER, DIFFERENT PHYSICAL AMOUNT\nOne half is the number halfway from 0 to 1. Half of an 8 cm strip is 4 cm; half of a 12 cm strip is 6 cm. The fraction is the same, but the physical wholes differ. Equal-looking fraction diagrams support comparisons of amounts only when their wholes represent the same amount.",
+        "TRY THE FRACTION LAB\nOpen Fraction lab. Predict where A = 1/4 will end, then select it. Keep four equal parts and change the selected parts from 1 to 3. Describe what stays fixed and what moves. The lab explores numbers from 0 to 1; fractions above one and negative fractions are outside this introductory model.",
+        "EXPLAIN, THEN REVISIT\nUse the new practice card. Draw a matching strip and number line for one answer. Later, choose a different denominator, mark every interval and explain why the final point is still 1. Numeric checks accept equivalent values; they do not judge the quality of your drawing.",
+        "PRACTICE CARD\nPARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "What fraction of the whole is shaded in F1?",
+          "answer": "5/6",
+          "unit": "of the whole",
+          "explanation": "The unit is one complete strip. Five of its six equal lengths are shaded, so the amount is 5/6.",
+          "hints": [
+            "Count equal parts in the entire strip, including unshaded parts.",
+            "Use shaded parts over all equal parts: 5 over 6."
+          ],
+          "mistakes": [
+            [
+              "6/5",
+              "The denominator names all six equal parts of the whole; it is not the shaded count."
+            ],
+            [
+              "1/6",
+              "One sixth is the unshaded part. The question asks for the shaded amount."
+            ]
+          ],
+          "id": "q1",
+          "passage": "PARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+        },
+        {
+          "kind": "number",
+          "prompt": "What number is the point's position in F2?",
+          "answer": "3/8",
+          "unit": "of the unit interval",
+          "explanation": "Each interval has length 1/8. Three intervals from zero reach 3/8; the starting tick represents zero distance.",
+          "hints": [
+            "Count traveled intervals, not boundary marks.",
+            "Each step is 1/8 and there are three steps."
+          ],
+          "mistakes": [
+            [
+              "4/8",
+              "This counts the starting boundary as a step. Travel three intervals from zero."
+            ],
+            [
+              "3/7",
+              "The card specifies eight equal intervals, so each step is 1/8."
+            ]
+          ],
+          "id": "q2",
+          "passage": "PARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+        },
+        {
+          "kind": "number",
+          "prompt": "What number describes the shaded amount in F3?",
+          "answer": "1",
+          "unit": "whole",
+          "explanation": "All six sixths make one whole: 6/6 = 1. There is no unshaded part left.",
+          "hints": [
+            "Every part of the one strip is shaded.",
+            "Six equal sixths make one complete whole."
+          ],
+          "mistakes": [
+            [
+              "6",
+              "There are six small parts, but only one complete strip. The requested unit is a whole."
+            ],
+            [
+              "0",
+              "Zero would mean none of the parts are shaded."
+            ]
+          ],
+          "id": "q3",
+          "passage": "PARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which statement about F4 is justified?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Both shaded lengths are equal because both fractions are one half."
+            ],
+            [
+              "B",
+              "The fractions are equal, but the shaded lengths are 4 cm and 6 cm."
+            ],
+            [
+              "C",
+              "The 8 cm strip has more shaded because its whole is smaller."
+            ]
+          ],
+          "explanation": "Half of 8 is 4; half of 12 is 6. Equal fractions of different-sized wholes need not represent equal lengths.",
+          "hints": [
+            "Identify each complete length before finding its half.",
+            "Divide 8 and 12 by two separately."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Equal fraction numbers do not make different wholes equal in length."
+            ],
+            [
+              "C",
+              "A half of the smaller whole is a smaller length here: 4 cm versus 6 cm."
+            ]
+          ],
+          "id": "q4",
+          "passage": "PARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Can both pieces in F5 be called halves of the strip's length? Explain and propose a corrected drawing.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: two unequal lengths are not both halves; redraw with a midpoint so both lengths are equal. Example: 'Two pieces alone do not guarantee halves. I would mark the midpoint, creating two equal distances that together make the original length.'",
+          "hints": [
+            "What condition must the parts meet?",
+            "Describe where the dividing mark belongs."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "PARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Describe a strip and a number line that both represent F1. Include the whole, the intervals and the position of the endpoint.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: a complete unit strip, six equal parts, five shaded parts, a 0–1 line with six equal intervals and a point at the fifth interval endpoint, 5/6. The line has seven boundary marks. A correct model distinguishes marks from intervals.",
+          "hints": [
+            "Give the strip and line the same unit whole.",
+            "Count five steps of 1/6 from zero, leaving one to reach 1."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "PARTS CARD — ORIGINAL PAPER PRACTICE\n[F1] One strip is one whole. It has six equal-length parts; five are shaded.\n[F2] A 0–1 number line is divided into eight equal intervals. A point lies three intervals to the right of 0.\n[F3] All six equal parts of the F1 strip are now shaded.\n[F4] An 8 cm strip and a 12 cm strip each have half their length shaded.\n[F5] Another strip is split into two unequal lengths."
+        }
+      ],
+      "diagram": {
+        "kind": "fraction_steps",
+        "description": "Every full strip represents the same unit whole. Equal cells show the denominator; shaded cells show the numerator. The point below each strip locates that fraction on a 0–1 number line. All steps appear in the worksheet.",
+        "steps": [
+          {
+            "title": "Choose one equal part",
+            "caption": "One whole is divided into four equal lengths. One selected part is 1/4.",
+            "rows": [
+              {
+                "label": "One quarter",
+                "selected": 1,
+                "parts": 4
+              }
+            ]
+          },
+          {
+            "title": "Name three equal parts",
+            "caption": "Count three quarter-length intervals from zero. The point is at 3/4.",
+            "rows": [
+              {
+                "label": "Three quarters",
+                "selected": 3,
+                "parts": 4
+              }
+            ]
+          },
+          {
+            "title": "Reach the complete whole",
+            "caption": "Four quarters reach one whole; selecting no parts represents zero.",
+            "rows": [
+              {
+                "label": "All parts",
+                "selected": 4,
+                "parts": 4
+              },
+              {
+                "label": "No parts",
+                "selected": 0,
+                "parts": 4
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "fraction-equivalent",
+      "title": "2 · Rename and compare the same amount",
+      "goal": "Build equivalent fractions by repartitioning, compare on the same whole, and challenge whole-number reasoning.",
+      "track": "Guided: Fractions & quantities",
+      "materials": "Paper and pencil; draw equal strips and mark a 0–1 number line. A helper may read or type your explanation. No tools, food or physical cutting are needed.",
+      "prerequisites": [
+        "fraction-whole"
+      ],
+      "paragraphs": [
+        "KEEP THE AMOUNT; CHANGE THE PART SIZE\nShade two thirds of a strip. Split every third, shaded and unshaded, into two equal pieces. The whole now has six equal parts, of which four are shaded: 2/3 = 4/6. The endpoint did not move. Multiply both numerator and denominator by the same positive whole number to name finer equal pieces.",
+        "WORKED EXAMPLE · A COMMON UNIT\nCompare 2/3 and 3/4 of the same whole. Split each third into four pieces and each quarter into three. Both strips now use twelfths: 2/3 = 8/12 and 3/4 = 9/12. Nine twelfths is greater than eight twelfths, so 3/4 is greater. The number-line endpoint for 3/4 is farther right.",
+        "WHY THE BIGGER DENOMINATOR CAN MEAN A SMALLER PIECE\nWith one whole fixed, six equal pieces are smaller than three equal pieces: 1/6 < 1/3. A denominator is not a score where bigger always means more. When numerators also change, neither denominator alone nor numerator alone settles the comparison.",
+        "REDUCE WITHOUT CHANGING THE ENDPOINT\nGrouping the four shaded sixths into pairs gives two shaded thirds. Dividing numerator and denominator by the same common factor preserves the value: 4/6 = 2/3. Dividing only one number changes the amount. A numeric check here accepts either equivalent form; explain the regrouping yourself.",
+        "PREDICT IN THE LAB\nStart A at 1/2 and B at 2/4. Change B to 3/6 by changing both controls. The endpoint should return to the same place. Then hold the numerator at one while changing the denominator. Predict each movement before changing a control, and use the displayed common pieces to explain it.",
+        "TRY, EXPLAIN, REVISIT\nUse a fresh equal-parts drawing for the card. After practice, make your own unequal-denominator pair between zero and one. Compare it on a common unit and test whether reversing the order reverses the comparison.",
+        "PRACTICE CARD\nEQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many of the twelve smaller parts are shaded in E1?",
+          "answer": "9",
+          "unit": "small parts",
+          "explanation": "Each of the three shaded quarters becomes three shaded twelfths: 3 × 3 = 9. The same amount is 9/12.",
+          "hints": [
+            "Every shaded quarter is split into three.",
+            "Multiply the shaded count by the same factor used on all parts."
+          ],
+          "mistakes": [
+            [
+              "3",
+              "The shading stays in place, but each shaded part is now split into three smaller parts."
+            ],
+            [
+              "12",
+              "Twelve counts all small parts; the originally unshaded quarter stays unshaded."
+            ]
+          ],
+          "id": "q1",
+          "passage": "EQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the greater fraction in E2? Enter its value.",
+          "answer": "5/6",
+          "unit": "of the whole",
+          "explanation": "5/6 = 10/12, which exceeds 7/12. A common denominator gives comparable piece sizes.",
+          "hints": [
+            "Rename sixths as twelfths.",
+            "5/6 becomes 10/12. Compare ten equal pieces with seven."
+          ],
+          "mistakes": [
+            [
+              "7/12",
+              "Seven is the larger original numerator, but its pieces are smaller. Five sixths is ten twelfths."
+            ],
+            [
+              "1/4",
+              "One quarter is the gap between the fractions, not the greater fraction itself."
+            ]
+          ],
+          "id": "q2",
+          "passage": "EQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+        },
+        {
+          "kind": "number",
+          "prompt": "What fraction in quarters has the same value as 6/8 in E3?",
+          "answer": "3/4",
+          "unit": "of the whole",
+          "explanation": "Group eighths in pairs. Six selected eighths make three quarters; eight total eighths make four quarters. Equivalent values are accepted, but explain why the quarter form is 3/4.",
+          "hints": [
+            "How many eighths make one quarter?",
+            "Divide both six and eight by two."
+          ],
+          "mistakes": [
+            [
+              "6/4",
+              "You changed only the denominator, so you doubled the value. Regroup the shaded pieces too."
+            ],
+            [
+              "3/8",
+              "You changed only the numerator, so you halved the shaded amount."
+            ]
+          ],
+          "id": "q3",
+          "passage": "EQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which reasoning correctly compares the fractions in E4?",
+          "answer": "C",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "1/5 is greater because five is greater than three."
+            ],
+            [
+              "B",
+              "They are equal because both numerators are one."
+            ],
+            [
+              "C",
+              "1/3 is greater because splitting one whole into fewer equal parts makes each part larger."
+            ]
+          ],
+          "explanation": "Both fractions name one piece of the same whole. A third is larger than a fifth. Equivalently, 1/3 = 5/15 and 1/5 = 3/15.",
+          "hints": [
+            "Keep the whole the same size.",
+            "Compare the size of one part when the whole is divided into three or five."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "More equal pieces of the same whole means each piece is smaller."
+            ],
+            [
+              "B",
+              "One piece can have different sizes; the denominator names that size."
+            ]
+          ],
+          "id": "q4",
+          "passage": "EQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Explain why E1 changes both fraction numbers while leaving the shaded amount unchanged.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: each old part is split into three, so shaded parts and all parts are both tripled; 3/4 becomes 9/12 without adding or removing shaded length. Mention the same unit whole and unchanged number-line endpoint.",
+          "hints": [
+            "Account for unshaded pieces as well as shaded pieces.",
+            "Explain what would go wrong if only the denominator changed."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "EQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "A learner says 7/12 must exceed 5/6 because 7 is greater than 5. Use E2 to correct the reasoning.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: numerators count different-sized parts; rename 5/6 as 10/12; compare 10 and 7 pieces of the same size. Example: 'Five sixths is ten twelfths, so it is farther right than seven twelfths. Numerators alone do not compare different units.'",
+          "hints": [
+            "Identify the piece size in each fraction.",
+            "Give both amounts the same denominator before comparing counts."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "EQUIVALENCE CARD — ORIGINAL PAPER PRACTICE\n[E1] A strip has 3 of 4 equal parts shaded. Each part is split into three equal smaller parts, leaving 12 parts total.\n[E2] Compare 5/6 and 7/12 of the same unit whole.\n[E3] The fraction 6/8 is to be renamed in quarters.\n[E4] Compare one fifth and one third of the same whole."
+        }
+      ],
+      "diagram": {
+        "kind": "fraction_steps",
+        "description": "Every full strip represents the same unit whole. Equal cells show the denominator; shaded cells show the numerator. The point below each strip locates that fraction on a 0–1 number line. All steps appear in the worksheet.",
+        "steps": [
+          {
+            "title": "Split each third into two",
+            "caption": "Two thirds and four sixths have the same shaded endpoint; both numerator and denominator doubled.",
+            "rows": [
+              {
+                "label": "Thirds",
+                "selected": 2,
+                "parts": 3
+              },
+              {
+                "label": "Sixths",
+                "selected": 4,
+                "parts": 6
+              }
+            ]
+          },
+          {
+            "title": "Compare different pieces",
+            "caption": "Two thirds and three quarters use different-sized pieces. Keep the unit whole fixed.",
+            "rows": [
+              {
+                "label": "First amount",
+                "selected": 2,
+                "parts": 3
+              },
+              {
+                "label": "Second amount",
+                "selected": 3,
+                "parts": 4
+              }
+            ]
+          },
+          {
+            "title": "Compare equal twelfths",
+            "caption": "Two thirds is 8/12; three quarters is 9/12. Nine twelfths is greater by one twelfth.",
+            "rows": [
+              {
+                "label": "Same first amount",
+                "selected": 8,
+                "parts": 12
+              },
+              {
+                "label": "Same second amount",
+                "selected": 9,
+                "parts": 12
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "fraction-combine",
+      "title": "3 · Add and subtract equal-sized parts",
+      "goal": "Use a common fraction unit to add or subtract, estimate the result, and explain why denominators are not added.",
+      "track": "Guided: Fractions & quantities",
+      "materials": "Paper and pencil; draw equal strips and mark a 0–1 number line. A helper may read or type your explanation. No tools, food or physical cutting are needed.",
+      "prerequisites": [
+        "fraction-equivalent"
+      ],
+      "paragraphs": [
+        "COUNT THE SAME KIND OF PIECE\nTwo eighths plus three eighths make five eighths: 2/8 + 3/8 = 5/8. The pieces are still eighths. Adding denominators would rename their size and would not describe the combined length.",
+        "WORKED EXAMPLE · RENAME BEFORE ADDING\nTo combine 1/4 and 1/2 of the same unit length, rename the half as two quarters. Now 1/4 + 2/4 = 3/4. Think of traveling one quarter from zero and then two more quarters. The original whole remains the unit; laying pieces together does not redefine it.",
+        "WORKED EXAMPLE · FIND THE GAP\nSubtract the half again: 3/4 − 1/2 = 3/4 − 2/4 = 1/4. On a number line, the distance from 1/2 to 3/4 is 1/4. Check by addition: 1/4 + 1/2 returns 3/4. Add and subtract the counts only after their piece sizes match.",
+        "ESTIMATE BEFORE CALCULATING\nA positive amount added to 1/2 must give more than 1/2. Subtracting a positive amount must give less than the starting amount. If a result violates that check, inspect the fraction units. These practice sums stay between zero and one; the same equal-unit reasoning also extends beyond one.",
+        "COMPARE BEFORE COMBINING\nUse Fraction lab to see that 1/2 and 2/4 end at the same point. The lab compares two amounts; it does not add its strips. Use paper to place the fractional lengths end to end, or follow the worked diagram steps, to model addition.",
+        "TRY, EXPLAIN, REVISIT\nFor each practice sum, state a common denominator, rename both fractions, calculate and check the size of the answer. A least common denominator is convenient but another common multiple also works. Later, check a subtraction by reversing it with addition.",
+        "PRACTICE CARD\nCOMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "What is the combined fraction in C1?",
+          "answer": "1/2",
+          "unit": "of the whole",
+          "explanation": "Rename 1/3 as 2/6. Then 2/6 + 1/6 = 3/6 = 1/2. The combined amount is larger than either positive part.",
+          "hints": [
+            "Thirds can be split into sixths.",
+            "Add two sixths and one sixth; keep the pieces as sixths."
+          ],
+          "mistakes": [
+            [
+              "2/9",
+              "Adding denominators invents ninths. Rename both amounts as sixths before adding their counts."
+            ],
+            [
+              "1/6",
+              "This is only one of the two parts, not their combined amount."
+            ]
+          ],
+          "id": "q1",
+          "passage": "COMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+        },
+        {
+          "kind": "number",
+          "prompt": "How large is the gap in C2?",
+          "answer": "3/8",
+          "unit": "of the unit interval",
+          "explanation": "1/4 = 2/8. The gap is 5/8 − 2/8 = 3/8. Adding the gap back to 1/4 reaches 5/8.",
+          "hints": [
+            "Rename one quarter as eighths.",
+            "Subtract two eighths from five eighths."
+          ],
+          "mistakes": [
+            [
+              "1",
+              "Subtracting denominators does not measure this gap. Both amounts need eighths."
+            ],
+            [
+              "7/8",
+              "Seven eighths adds the endpoints; the gap requires subtraction."
+            ]
+          ],
+          "id": "q2",
+          "passage": "COMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+        },
+        {
+          "kind": "number",
+          "prompt": "What is the total in C3?",
+          "answer": "1/2",
+          "unit": "of the whole",
+          "explanation": "2/5 = 4/10, so 4/10 + 1/10 = 5/10 = 1/2. Both numerator and denominator of 2/5 are doubled when renaming it.",
+          "hints": [
+            "Use tenths as the common piece size.",
+            "Two fifths is four tenths, then add one tenth."
+          ],
+          "mistakes": [
+            [
+              "1/5",
+              "This is the value of 3/15, the result of incorrectly adding denominators."
+            ],
+            [
+              "3/10",
+              "When fifths become tenths, the numerator must double too: 2/5 = 4/10."
+            ]
+          ],
+          "id": "q3",
+          "passage": "COMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which explanation corrects C4?",
+          "answer": "A",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "Rename 1/3 as 2/6, then add equal sixths to get 3/6."
+            ],
+            [
+              "B",
+              "Keep thirds and add the two numerators to get 2/3."
+            ],
+            [
+              "C",
+              "Use ninths because the denominator always grows when adding."
+            ]
+          ],
+          "explanation": "A common denominator names a common piece size. Two sixths plus one sixth is three sixths. Neither keeping unmatched pieces nor adding denominators is valid.",
+          "hints": [
+            "Which option gives both addends the same piece size?",
+            "A sixth is half the length of a third."
+          ],
+          "mistakes": [
+            [
+              "B",
+              "The second addend is one sixth, not one third. It cannot be counted as a third unchanged."
+            ],
+            [
+              "C",
+              "Addition does not automatically change the size of the units being counted."
+            ]
+          ],
+          "id": "q4",
+          "passage": "COMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Use a number line or strip to explain C1 and why 2/9 is an implausible result before doing exact arithmetic.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: the positive sum must exceed 1/3; 2/9 is less than 1/3 = 3/9. A correct model travels two sixths then one sixth to reach 3/6. The explanation links the estimate to equal-sized intervals.",
+          "hints": [
+            "Adding a positive amount should move right from one third.",
+            "Compare 2/9 with 1/3 renamed as 3/9."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "COMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Check the subtraction in C2 by addition. Explain what the endpoints and the gap each represent.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: starting point 1/4 = 2/8, gap 3/8, ending point 5/8; 2/8 + 3/8 = 5/8. The gap is a distance between endpoints, not the sum of their positions.",
+          "hints": [
+            "Start at one quarter and travel the gap.",
+            "State an addition equation that ends at five eighths."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "COMBINING CARD — ORIGINAL PAPER PRACTICE\n[C1] Combine 1/3 and 1/6 of one unit strip.\n[C2] Find the gap from 1/4 to 5/8 on the same 0–1 line.\n[C3] Add 2/5 and 1/10 of the same whole.\n[C4] Someone writes 1/3 + 1/6 = 2/9 by adding both top numbers and both bottom numbers."
+        }
+      ],
+      "diagram": {
+        "kind": "fraction_steps",
+        "description": "Every full strip represents the same unit whole. Equal cells show the denominator; shaded cells show the numerator. The point below each strip locates that fraction on a 0–1 number line. All steps appear in the worksheet.",
+        "steps": [
+          {
+            "title": "Name the two lengths",
+            "caption": "The addends are a quarter and a half of the same unit length.",
+            "rows": [
+              {
+                "label": "First addend",
+                "selected": 1,
+                "parts": 4
+              },
+              {
+                "label": "Second addend",
+                "selected": 1,
+                "parts": 2
+              }
+            ]
+          },
+          {
+            "title": "Use quarters throughout",
+            "caption": "One half is two quarters. One quarter plus two quarters makes three quarters.",
+            "rows": [
+              {
+                "label": "First addend",
+                "selected": 1,
+                "parts": 4
+              },
+              {
+                "label": "Renamed second",
+                "selected": 2,
+                "parts": 4
+              },
+              {
+                "label": "Combined amount",
+                "selected": 3,
+                "parts": 4
+              }
+            ]
+          },
+          {
+            "title": "Reverse with subtraction",
+            "caption": "The gap from two quarters to three quarters is one quarter; adding it back checks the subtraction.",
+            "rows": [
+              {
+                "label": "Starting amount",
+                "selected": 3,
+                "parts": 4
+              },
+              {
+                "label": "Amount removed",
+                "selected": 2,
+                "parts": 4
+              },
+              {
+                "label": "Amount remaining",
+                "selected": 1,
+                "parts": 4
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "fraction-quantity",
+      "title": "4 · Find a fraction of a stated quantity",
+      "goal": "Find a unit fraction, scale to several shares, recover a whole from one share, and keep the answer's unit.",
+      "track": "Guided: Fractions & quantities",
+      "materials": "Paper and pencil; draw equal strips and mark a 0–1 number line. A helper may read or type your explanation. No tools, food or physical cutting are needed.",
+      "prerequisites": [
+        "fraction-combine",
+        "number-multiply"
+      ],
+      "paragraphs": [
+        "WHAT DOES 'OF' REFER TO?\nIn '3/4 of 20 cards', the whole collection contains 20 cards. Split the collection into four equal groups: each has 20 ÷ 4 = 5 cards. Three groups contain 3 × 5 = 15 cards. The fraction is 3/4; the requested count is 15 cards. Do not report 3/4 cards as the count.",
+        "WORKED EXAMPLE · SHARE FIRST, THEN SCALE\nFind 3/5 of 30 cards. One fifth of the collection is 30 ÷ 5 = 6 cards; three fifths is 3 × 6 = 18 cards. The strip diagram represents the whole collection by one unit strip. Each fifth means six cards, not one card. The two unselected fifths contain 12 cards, so 18 + 12 checks the original 30.",
+        "WORK BACK TO THE WHOLE\nIf one fifth is six cards, five such groups contain 30 cards. If two fifths is twelve cards, first find one fifth: 12 ÷ 2 = 6. Then multiply by five. State what fraction the given number represents before multiplying or dividing.",
+        "SIZE AND UNITS CHECK\nFor a positive whole, taking a fraction strictly between zero and one gives less than the whole. Taking zero gives none, and taking one gives the entire amount. Fractions of lengths may be non-whole numbers of centimetres. A task involving indivisible objects may need a different interpretation when equal sharing is impossible; the card counts here share exactly.",
+        "USE THE REPRESENTATION CAREFULLY\nIn Fraction lab, A = 3/5 locates a fraction of one unit. To interpret it as cards, separately state what the whole is worth. Changing a whole from 30 cards to 50 cards leaves the fraction's point fixed but changes three fifths from 18 cards to 30 cards.",
+        "TRY, EXPLAIN, TRANSFER\nAfter the card, invent a whole count divisible by six and find five sixths of it. Explain a unit share, the selected shares, the remaining share and a total check. Return to Measure & plan to connect fractions to physical lengths and drawing dimensions.",
+        "PRACTICE CARD\nQUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+      ],
+      "questions": [
+        {
+          "kind": "number",
+          "prompt": "How many cards are 3/4 of the collection in Q1?",
+          "answer": "21",
+          "unit": "cards",
+          "explanation": "One quarter is 28 ÷ 4 = 7 cards. Three quarters is 3 × 7 = 21 cards. The remaining seven bring the total back to 28.",
+          "hints": [
+            "First find how many cards are in one of four equal groups.",
+            "Multiply seven cards per quarter by three quarters."
+          ],
+          "mistakes": [
+            [
+              "7",
+              "Seven is one quarter. The question asks for three quarters."
+            ],
+            [
+              "3/4",
+              "Three quarters names the fraction; the answer needs the number of cards."
+            ]
+          ],
+          "id": "q1",
+          "passage": "QUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+        },
+        {
+          "kind": "number",
+          "prompt": "What length is 2/3 of the line in Q2?",
+          "answer": "12",
+          "unit": "cm",
+          "explanation": "One third of 18 cm is 6 cm. Two thirds is 12 cm, leaving 6 cm. Together they recover the full 18 cm.",
+          "hints": [
+            "Divide the 18 cm whole into three equal lengths.",
+            "Take two lengths of 6 cm each."
+          ],
+          "mistakes": [
+            [
+              "6",
+              "Six centimetres is one third, not two thirds."
+            ],
+            [
+              "27",
+              "Dividing by two then multiplying by three reverses the roles. Two thirds of a positive length must be smaller than the whole."
+            ]
+          ],
+          "id": "q2",
+          "passage": "QUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+        },
+        {
+          "kind": "number",
+          "prompt": "How many cards are in the whole collection in Q3?",
+          "answer": "35",
+          "unit": "cards",
+          "explanation": "Seven cards is one fifth. The whole has five such equal groups: 5 × 7 = 35 cards. Checking one fifth of 35 returns seven.",
+          "hints": [
+            "The seven cards are a share, not the entire collection.",
+            "How many one-fifth shares make the whole?"
+          ],
+          "mistakes": [
+            [
+              "7/5",
+              "Dividing seven by five treats it as the whole. Seven is already one fifth."
+            ],
+            [
+              "12",
+              "Add five equal groups of seven, not the numbers five and seven."
+            ]
+          ],
+          "id": "q3",
+          "passage": "QUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+        },
+        {
+          "kind": "choice",
+          "prompt": "Which critique correctly addresses Q4?",
+          "answer": "B",
+          "unit": "",
+          "choices": [
+            [
+              "A",
+              "64 must be right because the calculation used both 3 and 8."
+            ],
+            [
+              "B",
+              "The result must be below 24; one eighth is 3 cards, so three eighths is 9 cards."
+            ],
+            [
+              "C",
+              "3/8 always means three cards, regardless of the collection size."
+            ]
+          ],
+          "explanation": "Split 24 into eight equal groups to get three cards per group, then take three groups to get nine. The estimate below 24 rejects 64 before exact calculation.",
+          "hints": [
+            "Is three eighths less than one whole?",
+            "Divide by the number of equal shares, then take three shares."
+          ],
+          "mistakes": [
+            [
+              "A",
+              "Using the numbers is not enough: the denominator sets eight equal groups and the numerator selects three."
+            ],
+            [
+              "C",
+              "The numerator counts shares, not individual cards. Each share contains three cards here."
+            ]
+          ],
+          "id": "q4",
+          "passage": "QUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Explain Q1 with a labeled strip. Say what one whole, one part, three parts and the unselected part each mean.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: whole 28 cards, four equal groups, seven cards per group, three selected groups totaling 21 and one unselected group of seven. The diagram's fraction labels should not be confused with the counts in cards.",
+          "hints": [
+            "Label the value of the complete strip before its parts.",
+            "Use selected plus unselected cards as a total check."
+          ],
+          "mistakes": [],
+          "id": "q5",
+          "passage": "QUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+        },
+        {
+          "kind": "reflection",
+          "prompt": "Invent a collection divisible by six. Find five sixths, show a unit-share calculation, and verify with the remaining sixth.",
+          "answer": "Compare your representation and explanation",
+          "unit": "",
+          "explanation": "Compare for: a positive whole count divisible by six, equal one-sixth groups, five selected shares and one remaining share that together recover the whole. Example: 'For 42 cards, each sixth is 7; five sixths is 35; the remaining 7 gives 35 + 7 = 42.' Other valid counts and explanations are welcome.",
+          "hints": [
+            "Choose a multiple of six, such as six equal groups of a count you know.",
+            "Check that five groups plus one group recover the starting collection."
+          ],
+          "mistakes": [],
+          "id": "q6",
+          "passage": "QUANTITY CARD — ORIGINAL PAPER PRACTICE\n[Q1] A collection has 28 cards. Find 3/4 of the collection.\n[Q2] A paper line is 18 cm long. Find 2/3 of its length.\n[Q3] One fifth of another collection is 7 cards. Find the whole collection.\n[Q4] Another collection has 24 cards. Someone claims 3/8 of it is 64 cards after calculating 24 ÷ 3 × 8."
+        }
+      ],
+      "diagram": {
+        "kind": "fraction_steps",
+        "description": "Every full strip represents the same unit whole. Equal cells show the denominator; shaded cells show the numerator. The point below each strip locates that fraction on a 0–1 number line. All steps appear in the worksheet.",
+        "steps": [
+          {
+            "title": "One whole means 30 cards",
+            "caption": "The entire unit strip stands for 30 cards divided into five equal groups.",
+            "rows": [
+              {
+                "label": "All 30 cards",
+                "selected": 5,
+                "parts": 5
+              }
+            ]
+          },
+          {
+            "title": "Find one fifth",
+            "caption": "One fifth is one of five equal groups: 30 divided by 5 gives 6 cards.",
+            "rows": [
+              {
+                "label": "One group: 6 cards",
+                "selected": 1,
+                "parts": 5
+              }
+            ]
+          },
+          {
+            "title": "Take three fifths",
+            "caption": "Three selected groups contain 18 cards; the other two contain 12. Their total is 30 cards.",
+            "rows": [
+              {
+                "label": "Selected: 18 cards",
+                "selected": 3,
+                "parts": 5
+              },
+              {
+                "label": "Remaining: 12",
+                "selected": 2,
+                "parts": 5
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

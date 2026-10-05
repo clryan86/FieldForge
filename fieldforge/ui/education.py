@@ -17,6 +17,7 @@ from fieldforge.knowledge.education import (
     revise,
     worksheet,
 )
+from fieldforge.ui.fraction_lab import FractionLab, draw_fraction
 from fieldforge.ui.lifecycle import release_tk_references
 
 
@@ -46,7 +47,7 @@ class EducationTab(ttk.Frame):
         ttk.Label(heading, text="Education", style="Header.TLabel").pack(side="left")
         ttk.Button(heading, text="Export worksheet…", command=self.export).pack(side="right")
         ttk.Button(heading, text="Reload saved answer…", command=self.reload_saved).pack(side="right", padx=8)
-        self.notice = ttk.Label(self, text="Learn → try → explain → review. Start with numbers, or choose measurement, literacy, evidence and reference courses below.")
+        self.notice = ttk.Label(self, text="Learn → try → explain → review. Choose numbers, fractions, measurement, literacy, evidence or reference courses below.")
         self.notice.pack(anchor="w", pady=(2, 8))
         panes = ttk.Panedwindow(self, orient="horizontal")
         panes.pack(fill="both", expand=True)
@@ -94,6 +95,9 @@ class EducationTab(ttk.Frame):
         self.practice_page = ttk.Frame(self.pages, padding=8)
         self.pages.add(self.read_page, text="Learn & worked examples")
         self.pages.add(self.practice_page, text="Practice & explain")
+        self.fraction_lab = FractionLab(self.pages)
+        self.pages.add(self.fraction_lab, text="Fraction lab")
+        self.pages.hide(self.fraction_lab)
         self.reading = ScrolledText(self.read_page, wrap="word", height=12, padx=14, pady=12,
                                    font=("TkDefaultFont", 11), state="disabled")
         self.reading.pack(fill="both", expand=True)
@@ -251,7 +255,10 @@ class EducationTab(ttk.Frame):
         if lesson.diagram:
             sections.append("DIAGRAM DESCRIPTION\n" + lesson.diagram["description"])
             for index, step in enumerate(lesson.diagram.get("steps", []), 1):
-                groups = "; ".join(f"{g['label']}: {g['tens']} tens and {g['ones']} ones" for g in step["groups"])
+                if lesson.diagram["kind"] == "fraction_steps":
+                    groups = "; ".join(f"{r['label']}: {r['selected']}/{r['parts']} of one whole" for r in step["rows"])
+                else:
+                    groups = "; ".join(f"{g['label']}: {g['tens']} tens and {g['ones']} ones" for g in step["groups"])
                 sections.append(f"DIAGRAM STEP {index} · {step['title']}\n{step['caption']}\n{groups}")
         sections.extend(["ABOUT THESE MATERIALS\n" + NOTICE,
                          "BACKGROUND REFERENCES\n" + "\n\n".join(lesson.references)])
@@ -266,10 +273,10 @@ class EducationTab(ttk.Frame):
         self.reading.yview_moveto(0)
         if lesson.diagram:
             self.diagram_frame.pack(fill="x", before=self.reading)
-            if lesson.diagram["kind"] == "counters":
+            if lesson.diagram["kind"] in {"counters", "fraction_steps"}:
                 self.diagram_controls.pack(fill="x", before=self.diagram)
                 self.diagram_caption.pack(fill="x", pady=(2, 5))
-                self.diagram.configure(height=174)
+                self.diagram.configure(height=208 if lesson.diagram["kind"] == "fraction_steps" else 174)
             else:
                 self.diagram_controls.pack_forget()
                 self.diagram_caption.pack_forget()
@@ -277,6 +284,10 @@ class EducationTab(ttk.Frame):
             self.draw_diagram()
         else:
             self.diagram_frame.pack_forget()
+        if lesson.id.startswith("fraction-") or lesson.id == "guide-fractions":
+            self.pages.add(self.fraction_lab, text="Fraction lab")
+        else:
+            self.pages.hide(self.fraction_lab)
         self.question_picker.configure(values=[f"{i+1} of {len(lesson.questions)} · {q.kind.title() if q.kind != 'reflection' else 'Explain'}"
                                                for i, q in enumerate(lesson.questions)])
         self._show_question()
@@ -499,7 +510,7 @@ class EducationTab(ttk.Frame):
             messagebox.showerror("Worksheet was not exported", str(exc), parent=self)
 
     def move_diagram(self, offset):
-        if not self.lesson or not self.lesson.diagram or self.lesson.diagram["kind"] != "counters":
+        if not self.lesson or not self.lesson.diagram or self.lesson.diagram["kind"] not in {"counters", "fraction_steps"}:
             return
         self.diagram_index = max(0, min(len(self.lesson.diagram["steps"]) - 1, self.diagram_index + offset))
         self.draw_diagram()
@@ -513,13 +524,16 @@ class EducationTab(ttk.Frame):
         diagram = self.lesson.diagram
         kind = diagram["kind"]
         color, ink = "#2c7f99", "#18394a"
-        if kind == "counters":
-            from fieldforge.knowledge.education_visuals import counter_scene
+        if kind in {"counters", "fraction_steps"}:
             step = diagram["steps"][self.diagram_index]
             self.diagram_step.configure(text=f"{self.diagram_index + 1}/{len(diagram['steps'])} · {step['title']}")
             self.diagram_caption.configure(text=step["caption"], wraplength=max(250, width - 12))
             self.diagram_previous.configure(state="disabled" if self.diagram_index == 0 else "normal")
             self.diagram_next.configure(state="disabled" if self.diagram_index == len(diagram["steps"]) - 1 else "normal")
+        if kind == "fraction_steps":
+            draw_fraction(canvas, diagram, self.diagram_index)
+        elif kind == "counters":
+            from fieldforge.knowledge.education_visuals import counter_scene
             for mark in counter_scene(diagram, self.diagram_index, width):
                 if mark.kind == "text":
                     canvas.create_text(*mark.coords, text=mark.text, fill=ink, font=("TkDefaultFont", 9))

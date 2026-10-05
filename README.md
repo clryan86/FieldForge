@@ -17,7 +17,11 @@ independently evaluated.
 six lessons covering counting, place value, addition, subtraction, multiplication
 and division. Step through worked counting diagrams, then try 36 exercises with
 targeted feedback and self-reviewed explanations. Returning learners can use
-**Resume saved practice**. Choose **Guided: Measure & plan** for five
+**Resume saved practice**. **Guided: Fractions & quantities** adds four lessons,
+24 exercises and 12 worked steps connecting strips to number lines. Open
+**Fraction lab** to change the selected and total equal parts, compare exact
+amounts and explore equivalence. Lab exploration is separate from saved practice.
+Choose **Guided: Measure & plan** for five
 lessons with diagrams and numeric practice, or **Guided: Read & write** for five
 lessons with original passages, choice feedback, worked revisions and writing
 tasks. Source text stays available beside the question tab while you answer.

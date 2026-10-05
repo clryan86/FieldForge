@@ -29,7 +29,45 @@ The examples and diagrams are original, AI-assisted drafts; these sources did
 not evaluate or endorse the course. Returning learners can use **Resume saved
 practice** to reopen their existing work in any course.
 
-Next, **Guided: Measure & plan** contains five original lessons:
+Next, **Guided: Fractions & quantities** supplies four connected lessons:
+
+1. Name the whole: equal parts, fraction numbers, intervals versus boundary marks,
+   and the difference between the fraction and the physical amount.
+2. Equivalence and comparison: repartition without changing the endpoint, compare
+   common units and explain why numerators or denominators alone are insufficient.
+3. Addition and subtraction: rename to equal units, combine or find a gap, estimate
+   and check by reversing the operation.
+4. Fractions of quantities: find one share, take several shares, recover a whole
+   from one share and keep the answer's unit.
+
+There are 24 exercises: twelve numeric checks, four choices with feedback for
+each wrong option, and eight self-reviewed explanations. Twelve worked diagram
+steps connect shaded strips with positions on number lines. The worked examples
+and practice cards use different values. Every diagram step has text and is
+included in the worksheet. All 626 earlier question identities are preserved.
+
+Open **Fraction lab** while viewing this course or the earlier measurement
+fractions lesson. Select an example, predict a change, then adjust **Selected
+parts** (numerator) and **Total equal parts** (denominator) for A and B. The strips
+always use the same unit whole. Exact comparison text names equivalent fractions
+with a common denominator. Keyboard navigation works with the selectors; you
+do not need to drag or distinguish color alone. **Reset example** restores the
+chosen example. Decreasing total parts below selected parts also decreases
+selected parts to stay within one whole, with an explicit explanation.
+
+The lab supports 0–1 with 1–12 equal parts. It compares amounts, not sums, and
+does not cover improper or negative fractions. Its state is temporary, is not
+exported and does not change a saved practice answer. Use **Practice & explain**
+to save reasoning. Fractions above one, general fraction multiplication/division,
+ratios and percentages are not fully taught by this introductory sequence.
+
+Instructional background includes the
+[IES fractions guide](https://ies.ed.gov/ncee/wwc/practiceguide/15) and
+[OpenStax fraction operations](https://openstax.org/books/prealgebra-2e/pages/4-5-add-and-subtract-fractions-with-different-denominators).
+These sources did not evaluate or endorse FieldForge. Content and activities are
+original AI-assisted drafts, not copied textbook lessons or a validated curriculum.
+
+Then, **Guided: Measure & plan** contains five original lessons:
 
 1. Fractions: equal parts, equivalent amounts and a fraction of a length.
 2. Length: nonzero ruler starts, metric units and reverse checks.
@@ -114,7 +152,7 @@ detect other help used, and it does not infer independent mastery.
 
 ## Content and storage boundaries
 
-The twenty guided lessons add 110 exercises to the original 516 reference prompts.
+The twenty-four guided lessons add 134 exercises to the original 516 reference prompts.
 They are AI-assisted teaching drafts, not independently educator-reviewed or
 validated with learner outcomes. Instructional design background is the
 [IES study guide](https://ies.ed.gov/ncee/wwc/PracticeGuide/1); this does not mean
@@ -135,6 +173,8 @@ revision checks, so another open window cannot silently replace an older draft.
 The literacy extension preserves all 541 previously shipped question fingerprints.
 The evidence course additionally preserves all 566 fingerprints shipped before it.
 The number foundations course preserves all 590 question identities shipped before it.
+The fraction course preserves all 626 identities shipped before it. The measurement
+fractions lesson now links to the fuller fraction course through its prerequisite.
 New questions include source passages and choices in their fingerprints, so
 changed evidence or options cannot inherit a previous question's check result.
 

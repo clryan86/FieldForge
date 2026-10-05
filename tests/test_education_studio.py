@@ -17,8 +17,8 @@ def test_every_numeric_key_and_misconception_is_exact_and_offline(monkeypatch):
         raise AssertionError("Education must work without a network")
     monkeypatch.setattr(socket, "socket", forbidden)
     guided = [lesson for lesson in lessons() if lesson.track == "Guided: Measure & plan"]
-    assert len(guided) == 5 and len(lessons()) == 192
-    assert sum(len(lesson.questions) for lesson in lessons()) == 626
+    assert len(guided) == 5 and len(lessons()) == 196
+    assert sum(len(lesson.questions) for lesson in lessons()) == 650
     for lesson in guided:
         assert lesson.diagram["description"] and len(lesson.paragraphs) >= 6
         for q in lesson.questions:
