@@ -56,3 +56,36 @@ Validation performed for this publication: exporter success, JavaScript syntax,
 all local page/image links and fragment targets, unique element IDs, absence of
 application API handlers, image inspection, and successful hosted deployment.
 Live provider calls and multi-user messaging were not tested on this static Site.
+
+## Preparation desk update — October 5, 2026
+
+The portal now opens on two working, browser-local tools:
+
+- **Plan map downloads:** select among 53 U.S. PBF source regions, search or show
+  selected regions, compare estimated size to a decimal-GB budget, and estimate
+  transfer time from an entered Mbps speed. Save/reopen a source-plan JSON file,
+  or explicitly opt into device storage. A source plan is not a desktop map
+  download manifest and contains no map bytes. Provider size estimates are the
+  original October 4 snapshot; preparation requires extra disk space.
+- **Inspect a GPX file:** choose or drop a file, draw its coordinate trace, count
+  segments/points/waypoints, measure segment-aware great-circle length, and
+  export explicit waypoints using the desktop place CSV columns. Files never
+  upload and their coordinates are never put in browser storage. Limits: 2 MiB,
+  25,000 total points and 1,000 waypoints. The preview table shows the first 100;
+  CSV exports every waypoint, rounded to seven decimal places. Track geometry
+  is not a basemap, driving route or route-safety assessment.
+
+`tools/portal_preview/` contains the desk HTML, CSS, ES modules and regression
+checks. The exporter now needs this sibling directory. To verify the logic:
+
+```sh
+node --test tools/portal_preview/desk-core.test.mjs
+```
+
+Ten focused checks passed for estimates, plan validation, coordinate limits,
+segment boundaries, date-line crossings, polar/single-point plots, safe CSV
+output, XML entity rejection, namespace traversal and point limits. XML traversal
+checks use injected DOM fixtures; they do not claim browser rendering coverage.
+The export was also checked for JavaScript syntax, valid local links/anchors,
+matching control IDs, all 53 source regions and absence of network calls in the
+preparation modules. No additional live chat or sign-in was enabled by this update.

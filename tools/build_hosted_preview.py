@@ -30,14 +30,14 @@ SCRIPT = '''"use strict";
 (() => {
   const id = value => document.getElementById(value);
   let enabled = false;
-  const sourceLinks = [...document.querySelectorAll("[data-source-link]")];
   function setConnection(value) {
     enabled = value;
+    document.documentElement.dataset.sourcesEnabled = String(value);
     id("connectionBadge").textContent = value ? "Source links enabled" : "Source links paused";
     id("connectionBadge").classList.toggle("offline", !value);
     id("connect").disabled = value;
     id("disconnect").disabled = !value;
-    for (const link of sourceLinks) {
+    for (const link of document.querySelectorAll("[data-source-link]")) {
       link.setAttribute("aria-disabled", String(!value));
       link.classList.toggle("source-disabled", !value);
     }
@@ -54,9 +54,10 @@ SCRIPT = '''"use strict";
   });
   id("disconnect").addEventListener("click", () => setConnection(false));
   id("consent").addEventListener("change", () => { if (!id("consent").checked) setConnection(false); });
-  for (const link of sourceLinks) {
-    for (const eventName of ["click", "auxclick"]) link.addEventListener(eventName, event => {
-      if (enabled) return;
+  for (const eventName of ["click", "auxclick"]) {
+    document.addEventListener(eventName, event => {
+      const link = event.target.closest?.("[data-source-link]");
+      if (!link || enabled) return;
       event.preventDefault();
       id("connectionStatus").textContent = "Enable source links first to open an external provider.";
       id("connectionTitle").scrollIntoView({block:"center"});
@@ -102,8 +103,8 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     base = f"https://github.com/clryan86/FieldForge/tree/{revision}"
     portal = replace_once(portal, "</head>", FAVICON + '<meta name="description" content="Explore the current FieldForge download portal and see the Commons chat, account and owner-console development screens."><link rel="stylesheet" href="preview.css"></head>')
     portal = replace_once(portal, "<main>", '''<main>
-    <section class="preview-banner" aria-labelledby="previewTitle"><h2 id="previewTitle">Your FieldForge website preview</h2>
-    <p>Browse the portal layout, map source directory, library plan and package tiers. Commons has working local development screens; live accounts and messaging are not hosted on this website yet.</p>
+    <section class="preview-banner" aria-labelledby="previewTitle"><h2 id="previewTitle">Private development preview</h2>
+    <p>The preparation desk works in your browser. Map hosting, online address lookup, routing, live accounts and messaging are not connected here yet. The sections below show the rest of the portal and its current progress.</p>
     <div class="actions"><a class="button" href="commons.html">See chat &amp; owner screens</a><a class="button" href="#mapAcquisitionTitle">Explore map sources</a></div></section>''')
     portal = replace_once(portal, 'Send my entered searches and route coordinates to this portal and its configured providers.', 'Allow me to open external map and resource providers from this preview.')
     portal = replace_once(portal, 'This page is already open in your browser. Connect asks permission before enabling its online services. Disconnect stops those services; it does not switch off your device\'s internet. Download what you need before leaving.', 'This website is already online. Connect asks before enabling external source links; Go offline pauses those links. These controls do not switch your device’s internet on or off. This preview does not run background provider requests.')
@@ -125,6 +126,10 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     # proxying of their files and no implied ownership of world map collections.
     portal = portal.replace('<a href="https://', '<a data-source-link href="https://')
     portal = replace_once(portal, '</footer>', f' <a href="commons.html">Development progress</a> · <a href="{base}" target="_blank" rel="noopener noreferrer">Source snapshot {revision[:7]}</a></footer>')
+    # Add actual browser-local tools without changing the desktop server portal.
+    assets = Path(__file__).resolve().parent / "portal_preview"
+    portal = replace_once(portal, '<section class="preview-banner"', (assets / "desk.html").read_text(encoding="utf-8") + '<section class="preview-banner"')
+    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><script type="module" src="desk.mjs"></script></head>')
     css = re.search(r'<style>(.*?)</style>', portal, flags=re.S).group(1)
     screens = [
         ("rooms", "Community rooms", "commons-chat-preview.png", "Public rooms organized around practical skills, with pause, export, block and report controls."),
@@ -146,7 +151,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     <nav class="portal-nav" aria-label="Preview screens">{''.join(f'<a href="#{key}">{title}</a>' for key,title,_,_ in screens)}</nav>
     <section class="preview-gallery" aria-label="Development screenshots">{''.join(gallery)}</section>
     <section class="card maps-section"><h2>Current status</h2><table class="status-table"><thead><tr><th scope="col">Area</th><th scope="col">Available now</th><th scope="col">Still to connect</th></tr></thead><tbody>
-    <tr><th scope="row">Website</th><td>Portal layout, external source directory, skill-label preview and these screens</td><td>Hosted application services and a public community launch</td></tr>
+    <tr><th scope="row">Website</th><td>Map source planner, download estimates, saved plans, local GPX inspection, waypoint CSV export and these screens</td><td>Hosted application services and a public community launch</td></tr>
     <tr><th scope="row">Maps &amp; routes</th><td>Links to regional PBF sources, NOAA charts and paid dataset providers</td><td>Hosted map files, address provider and route provider; world MBTiles collection not acquired</td></tr>
     <tr><th scope="row">Commons</th><td>Local rooms, inbox, accounts, profiles, search and owner controls</td><td>Online account services, email/social providers and production operations</td></tr>
     <tr><th scope="row">Library &amp; tiers</th><td>Subject areas and draft plans</td><td>Published knowledge packages, final prices and billing</td></tr>
@@ -157,6 +162,8 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "commons.html").write_text(commons, encoding="utf-8")
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
+    for name in ("desk.css", "desk.mjs", "desk-core.mjs"):
+        shutil.copyfile(assets / name, output / name)
     print(f"Exported portal and Commons gallery from {revision} to {output}")
 
 if __name__ == "__main__":
