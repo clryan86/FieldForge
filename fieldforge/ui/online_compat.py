@@ -434,8 +434,10 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
     def _map_selected(self, _event=None):
         item = self._map_item()
         if item:
-            self.map_detail.set(f"{item.title} · {item.coverage} · {item.kind} · updated {item.updated}\n"
-                                f"{item.source} · {item.attribution}\n{item.license}")
+            kind = "Prepared regional map (.ffmap)" if item.kind == "regional" else item.kind
+            self.map_detail.set(f"{item.title} · {item.coverage} · {kind} · updated {item.updated}\n"
+                                f"{item.source} · {item.attribution}\n{item.license}" +
+                                ("\nLocal display and search; not a routing graph." if item.kind == "regional" else ""))
         else:
             self.map_detail.set("Select a visible map to inspect coverage and download details.")
         self._buttons()
@@ -457,11 +459,17 @@ class OnlineMapWindow(TkCleanupMixin, tk.Toplevel):
         return self._submit("download", session.download, item, path)
 
     def open_download(self):
+        if self._closed or self._choosing_file or self._saving:
+            return False
         if self.downloaded and self.open_asset:
             try:
-                self.open_asset(*self.downloaded)
+                if self.open_asset(*self.downloaded) is False:
+                    self.status.set("The selected map was not opened. Finish the current viewer task and try again.")
+                    return False
+                return True
             except (ValueError, OSError, tk.TclError) as exc:
                 self.status.set(str(exc))
+        return False
 
     def _poll(self):
         if self._closed:

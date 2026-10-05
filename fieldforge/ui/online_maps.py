@@ -27,7 +27,7 @@ from fieldforge.online.download_list import (
     make_download_list,
     save_download_list,
 )
-from fieldforge.online.models import validate_portal_url
+from fieldforge.online.models import format_family, validate_portal_url
 from fieldforge.online.partial_download import discard_partials
 from fieldforge.online.storage import PortalLibrary
 from fieldforge.ui.map_catalog_filters import CatalogFilters
@@ -85,6 +85,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self.dialog = None
         self._map_windows = []
         self._fallback_map = None
+        self._regional_window = None
         self._disposed = False
         self._generation = 0
         self._cancel = Event()
@@ -268,7 +269,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         box, self.maps_tree = self._tree(panel, {
             "title": "Portal map", "size": "Download size", "format": "Format",
             "version": "Version", "license": "License",
-        }, (310, 105, 85, 125, 180), height=4)
+        }, (310, 105, 235, 125, 180), height=4)
         self.map_tree = self.maps_tree
         box.grid(row=2, column=0, sticky="nsew")
         self.maps_tree.bind("<<TreeviewSelect>>", self.select_map)
@@ -862,8 +863,9 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         indexes = {item["id"]: index for index, item in enumerate(self._catalog)}
         self.maps_tree.delete(*self.maps_tree.get_children())
         for item in visible:
+            kind = "Prepared regional map (.ffmap)" if format_family(item["format"]) == "regional" else item["format"]
             self.maps_tree.insert("", "end", iid=str(indexes[item["id"]]), values=(
-                item["title"], _size(item["bytes"]), item["format"], item["version"], item["license"]))
+                item["title"], _size(item["bytes"]), kind, item["version"], item["license"]))
         if previous and self.maps_tree.exists(previous[0]):
             self.maps_tree.selection_set(previous[0])
         self.select_map()
@@ -875,7 +877,9 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             if not isinstance(coverage, str):
                 coverage = json.dumps(coverage, ensure_ascii=False)
             self.map_info.set(f"{item['title']} · {_size(item['bytes'])} · version {item['version']}\n"
-                              f"Coverage: {coverage}\n{item['attribution']} · License: {item['license']}")
+                              f"Coverage: {coverage}\n{item['attribution']} · License: {item['license']}" +
+                              ("\nPrepared regional map (.ffmap): local display and search; not a routing graph."
+                               if format_family(item["format"]) == "regional" else ""))
         else:
             self.map_info.set("Select a visible map to inspect coverage and download details.")
         self._buttons()
@@ -1079,11 +1083,28 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         self._open_map_path(path)
 
     def _open_map_path(self, path):
+        if self._disposed:
+            return False
         window = None
         try:
+            path = Path(path)
             if self.on_open_map is not None:
-                self.on_open_map(path)
-                return
+                return self.on_open_map(path)
+            if path.suffix.lower() == ".ffmap":
+                from fieldforge.ui.regional_index import RegionalIndexWindow
+
+                regional = self._regional_window
+                if regional is None or regional._disposed:
+                    regional = window = RegionalIndexWindow(self)
+                    self._regional_window = regional
+                    self._map_windows.append(regional)
+                if regional.busy or regional._closing:
+                    raise ValueError("Finish or cancel the current prepared regional map task before opening another map.")
+                regional.deiconify()
+                regional.lift()
+                if regional.open_path(path) is False:
+                    raise ValueError("The prepared regional map viewer is busy, closing, or unavailable.")
+                return True
             window = tk.Toplevel(self)
             window.title("FieldForge · Downloaded map")
             window.geometry("1080x740")
@@ -1106,6 +1127,7 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
             if window is not None and window.winfo_exists():
                 window.destroy()
             self.status.set("Could not open the downloaded map: " + str(exc))
+            return False
 
     def request_route(self):
         if self._disposed or self.busy or not self._available("routing"):
@@ -1256,11 +1278,24 @@ class OnlineMapsTab(TkCleanupMixin, ttk.Frame):
         if self.busy and self._operation in _WRITES:
             self.status.set("Finish the local file save, import or export before closing.")
             return False
+        regional = self._regional_window
+        if regional is not None and not regional._disposed and (regional.busy or regional._closing):
+            regional.close()
+            if not regional._disposed:
+                self.status.set("Waiting for the prepared regional map task to finish cancelling before closing.")
+                return False
         return True
 
     def close(self):
         if self._disposed:
             return
+        regional = self._regional_window
+        if regional is not None and not regional._disposed:
+            regional.close()
+            if not regional._disposed:
+                self.status.set("Waiting for the prepared regional map task to finish cancelling before closing.")
+                return False
+        self._regional_window = None
         self._disposed = True
         if self._download_list_window is not None:
             self._download_list_window.destroy()

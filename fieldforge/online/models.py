@@ -21,6 +21,7 @@ MAX_JSON_BYTES = 8 * 1024**2
 MAX_ROUTE_JSON_BYTES = MAX_JSON_BYTES - 512
 MAX_DOWNLOAD_BYTES = 64 * 1024**3
 MAX_MBTILES_BYTES = 16 * 1024**3
+MAX_REGIONAL_BYTES = 4 * 1024**3
 MAX_IMAGE_BYTES = 64 * 1024**2
 MAX_MAPS = 5000
 MAX_RESULTS = 20
@@ -32,6 +33,7 @@ MAX_DURATION_S = 366 * 24 * 60 * 60
 LEGACY_LICENSE = "Not supplied by legacy portal"
 FORMATS = {
     "mbtiles": (".mbtiles",),
+    "ffmap": (".ffmap",),
     "png": (".png",),
     "jpeg": (".jpg", ".jpeg"),
     "webp": (".webp",),
@@ -53,6 +55,19 @@ _TIME = re.compile(
 
 class ValidationError(ValueError):
     """An untrusted record is outside the supported schema or work budget."""
+
+
+def format_family(declared_format: str) -> str:
+    """Return a supported format's explicit catalog/filter family."""
+    if not isinstance(declared_format, str) or declared_format not in FORMATS:
+        raise ValidationError("Map format is unsupported; choose MBTiles, a prepared regional map or a map image.")
+    return {"mbtiles": "mbtiles", "ffmap": "regional"}.get(declared_format, "image")
+
+
+def format_byte_limit(declared_format: str) -> int:
+    """Keep publication, download metadata and compatibility limits aligned."""
+    return {"mbtiles": MAX_MBTILES_BYTES, "regional": MAX_REGIONAL_BYTES,
+            "image": MAX_IMAGE_BYTES}[format_family(declared_format)]
 
 
 def text(value, name: str, maximum: int, *, multiline: bool = False) -> str:
@@ -261,12 +276,11 @@ def validate_asset(value) -> dict:
     )
     asset_id = validate_id(value["id"])
     declared_format = value["format"]
-    if not isinstance(declared_format, str) or declared_format not in FORMATS:
-        raise ValidationError("Map format is unsupported; choose MBTiles or a raster map image.")
+    family = format_family(declared_format)
     filename = validate_filename(value["filename"], declared_format)
     if value["download_path"] != f"/api/v1/maps/{asset_id}/download":
         raise ValidationError("Map downloads must use the catalog entry's same-origin path.")
-    maximum = MAX_MBTILES_BYTES if declared_format == "mbtiles" else MAX_IMAGE_BYTES
+    maximum = format_byte_limit(declared_format)
     if type(value["bytes"]) is not int or not 1 <= value["bytes"] <= min(maximum, MAX_DOWNLOAD_BYTES):
         raise ValidationError("Map size is invalid or exceeds the supported format's limit.")
     digest = value["sha256"]
@@ -285,8 +299,7 @@ def validate_asset(value) -> dict:
         coverage = [west, south, east, north]
     else:
         raise ValidationError("Map coverage must be a label or [west,south,east,north] bounds.")
-    expected_kind = "mbtiles" if declared_format == "mbtiles" else "image"
-    if "kind" in value and value["kind"] != expected_kind:
+    if "kind" in value and value["kind"] != family:
         raise ValidationError("Legacy map kind conflicts with its format.")
     if "size" in value and (type(value["size"]) is not int or value["size"] != value["bytes"]):
         raise ValidationError("Legacy map size conflicts with its byte count.")
@@ -380,7 +393,7 @@ def normalize_legacy_asset(value) -> dict:
     filename = text(value["filename"], "Map filename", 180)
     suffix = PurePosixPath(filename).suffix.lower()
     declared_format = next((kind for kind, extensions in FORMATS.items() if suffix in extensions), None)
-    if declared_format is None or value["kind"] != ("mbtiles" if declared_format == "mbtiles" else "image"):
+    if declared_format is None or value["kind"] != format_family(declared_format):
         raise ValidationError("Legacy map filename and format disagree.")
     return validate_asset({
         "id": value["id"], "title": value["title"], "filename": filename, "format": declared_format,

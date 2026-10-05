@@ -31,7 +31,7 @@ USER_AGENT = "FieldForge/0.1 (+https://github.com/clryan86/FieldForge)"
 MAX_JSON = models.MAX_JSON_BYTES
 MAX_MAP = models.MAX_MBTILES_BYTES
 IMAGE_SUFFIXES = {suffix for kind, suffixes in models.FORMATS.items()
-                  if kind != "mbtiles" for suffix in suffixes}
+                  if models.format_family(kind) == "image" for suffix in suffixes}
 OnlineError = PortalError
 Cancelled = PortalCancelled
 
@@ -142,10 +142,10 @@ class MapItem:
                                                     *(f"LPT{i}" for i in range(10))}):
             raise OnlineError("Unsupported map filename.")
         suffix = Path(filename).suffix.lower()
-        if not ((fields["kind"] == "mbtiles" and suffix == ".mbtiles")
-                or (fields["kind"] == "image" and suffix in IMAGE_SUFFIXES)):
+        declared_format = next((kind for kind, suffixes in models.FORMATS.items() if suffix in suffixes), None)
+        if declared_format is None or fields["kind"] != models.format_family(declared_format):
             raise OnlineError("This catalogue item is not a supported map format.")
-        maximum = MAX_MAP if fields["kind"] == "mbtiles" else 64 * 1024**2
+        maximum = models.format_byte_limit(declared_format)
         if type(fields["size"]) is not int or not 1 <= fields["size"] <= maximum:
             raise OnlineError("Map size exceeds the supported limit.")
         if not re.fullmatch("[0-9a-f]{64}", fields["sha256"]):
@@ -235,7 +235,7 @@ def save_new(destination, data: bytes):
 def _map_item(asset: dict, portal: str) -> MapItem:
     return MapItem.parse({
         "id": asset["id"], "title": asset["title"], "filename": asset["filename"],
-        "kind": "mbtiles" if asset["format"] == "mbtiles" else "image",
+        "kind": models.format_family(asset["format"]),
         "size": asset["bytes"], "sha256": asset["sha256"], "coverage":
             asset["coverage"] if isinstance(asset["coverage"], str) else json.dumps(asset["coverage"]),
         "updated": asset["version"], "source": asset.get("source", "Served by " + portal),

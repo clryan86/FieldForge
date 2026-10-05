@@ -552,6 +552,17 @@ def _verify_map_file(path: Path, asset: dict, cancel, *, decode_image=False) -> 
     """Preflight actual bytes before a checksum-verified map becomes available."""
     if cancel.is_set():
         raise PortalCancelled("Map download cancelled before verification.")
+    if asset["format"] == "ffmap":
+        from fieldforge.navigation.mbtiles import MapCancelled
+        from fieldforge.online.map_validation import validate_regional_map
+
+        try:
+            validate_regional_map(path, cancel=cancel)
+        except MapCancelled as exc:
+            raise PortalCancelled("Map verification cancelled.") from exc
+        except (ValueError, TimeoutError, sqlite3.Error) as exc:
+            raise PortalError("Downloaded prepared regional map is not supported: " + str(exc)) from exc
+        return
     if asset["format"] == "mbtiles":
         from fieldforge.navigation.mbtiles import MapCancelled, inspect_pack
         from fieldforge_gps.mbtiles import MapReadCancelled

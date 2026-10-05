@@ -6,6 +6,22 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 > FieldForge is a preparedness and reference tool. It does not replace emergency services, licensed medical care, official evacuation orders, or professional advice.
 
+## Try Commons chat locally
+
+A working local chat preview now supports shared rooms, saved messages, optional
+skill labels, blocking, reports, and author deletion. A private inbox adds
+invitation-only direct/group conversations and open-once messages. Run it in two separate
+browser profiles on one computer. Search saved private messages and open a result
+in its original conversation. [Start the chat preview](docs/COMMONS_CHAT_PREVIEW.md).
+The [local account guide](docs/COMMONS_ACCOUNTS.md) covers saved accounts, password
+sign-in, guest upgrades, and recovery codes. Public accounts and internet hosting
+are not enabled by this preview. The [owner console](docs/COMMONS_OWNER.md) adds
+local sole-owner setup, authenticator verification, report review, access controls,
+and announcements shared with connected members.
+The [profile guide](docs/COMMONS_PROFILES.md) covers editable private profiles,
+optional photos, self-selected interests, and the opt-in local member directory.
+Members can export or delete their profile without deleting their account or inbox.
+
 ## Design principles
 
 - **Offline first:** core features require no network connection.
@@ -43,6 +59,7 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 ### Navigation and mapping
 - Coordinates, distance, bearing, and waypoint tools
 - Local raster MBTiles and image-map viewers
+- Prepared regional `.ffmap` maps with offline feature search
 - Optional online address lookup to fill saved places and route endpoints
 - A configurable map portal with verified map downloads and saved route alternatives
 - Offline route directions, planned-route overlays, and GPX export
@@ -147,10 +164,22 @@ The application starts disconnected and does not submit addresses while typing.
 - **Map downloads:** browse the portal's actual catalog, review coverage, format,
   size and attribution, and download a selected map. Completed files are checked
   against the catalog's byte count and SHA-256 checksum before installation.
+  Prepared regional `.ffmap` indexes can be published and downloaded alongside
+  MBTiles and images, including in resumable download lists. Choose **Prepared
+  regional maps** in the format filter; completed indexes open in the regional
+  viewer for local display and feature search.
 - **Routes:** request driving-route alternatives, inspect the directions, and save
   a selected route locally. Reopen saved directions, show the planned route over
   a local MBTiles map, or export its geometry as GPX after disconnecting.
   Routes downloaded from the browser portal can also be imported while offline.
+
+For a saved regional collection, operators can use
+[`prepare-collection`](docs/ONLINE_MAP_PORTAL.md#prepare-a-saved-regional-collection)
+to verify explicitly selected ZIPs and generate a portal inventory from their
+prepared indexes. It retains source and license information, records separate
+package/map checksums, and uses the actual indexed bounds for map discovery.
+The original South Dakota package has passed the installed collection, download
+and offline-search workflow; see the [measured verification and native screenshot](docs/ONLINE_MAPS_VERIFICATION.md#historical-package-compatibility-and-windows-map-publication--2026-10-05).
 
 This repository includes the **portal server and browser interface**, with adapters
 for an operator-configured Nominatim geocoder and OSRM driving router. It does

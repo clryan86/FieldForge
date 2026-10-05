@@ -1,0 +1,10 @@
+{
+  "package": "sql.js",
+  "version": "1.14.2",
+  "source": "https://github.com/sql-js/sql.js",
+  "tarball": "https://registry.npmjs.org/sql.js/-/sql.js-1.14.2.tgz",
+  "integrity": "sha512-3ZGPovObMFrdw79zrUHbfdE/DLIsy8jdNdssmMSQuRAymedU6q84asPt0kgiqrdMYlPegDItiIMfmIXzZnYFcw==",
+  "license": "MIT",
+  "file": "sql-asm-1.14.2.js",
+  "sha256": "82344159a161e30e1c012587a59567adc02f537cd5f376270eff88c564eed0fd"
+}

@@ -77,6 +77,7 @@ from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_ope
 
 from fieldforge.online.catalog import MIME_TYPES, Catalog, CatalogError, LegacyCatalog
 from fieldforge.online.models import (
+    format_family,
     text,
     validate_asset,
     validate_coordinates,
@@ -494,12 +495,12 @@ def _check_request(config, port, path, hosts, origins=(), *, fetch_site=None, tr
         raise PortalError(400, "invalid_request", "Use the portal API paths without URL queries.")
 
 
-def _request_body(stream, lengths, types):
+def _request_body(stream, lengths, types, *, maximum=MAX_BODY_BYTES):
     if len(lengths) != 1 or not lengths[0].isdecimal() or len(lengths[0]) > 12:
         raise PortalError(411, "length_required", "A single Content-Length is required.")
     size = int(lengths[0])
-    if not 1 <= size <= MAX_BODY_BYTES:
-        raise PortalError(413, "request_limit", "Request body must be between 1 byte and 4 KiB.")
+    if not 1 <= size <= maximum:
+        raise PortalError(413, "request_limit", f"Request body must be between 1 and {maximum:,} bytes.")
     if len(types) != 1 or types[0].split(";", 1)[0].strip().lower() != "application/json":
         raise PortalError(415, "json_required", "Send an application/json request body.")
     try:
@@ -668,7 +669,7 @@ class PortalApplication:
     @staticmethod
     def wire_asset(value):
         result = validate_asset(value)
-        result.update(kind="mbtiles" if result["format"] == "mbtiles" else "image",
+        result.update(kind=format_family(result["format"]),
                       size=result["bytes"], updated=result["version"])
         result.setdefault("source", "Source not supplied; served by FieldForge")
         validate_asset(result)
