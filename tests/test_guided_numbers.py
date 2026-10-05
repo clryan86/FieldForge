@@ -20,11 +20,11 @@ def course():
 
 def test_all_590_preexisting_question_identities_are_unchanged():
     original = [(lesson.id, q.id, q.fingerprint) for lesson in lessons()
-                if not lesson.id.startswith("number-") for q in lesson.questions]
+                if lesson.id.startswith(("guide-", "read-", "write-", "evidence-", "library-")) for q in lesson.questions]
     assert len(original) == 590
     assert hashlib.sha256(json.dumps(original, separators=(",", ":")).encode()).hexdigest() == (
         "2040cbca616861b9f29d09b8722a6622501210afb105364ae566c88197b6302c")
-    assert next(lesson for lesson in lessons() if lesson.id == "guide-fractions").prerequisites == ("number-divide",)
+    assert next(lesson for lesson in lessons() if lesson.id == "guide-fractions").prerequisites == ("fraction-quantity",)
 
 
 def test_arithmetic_keys_and_choice_meanings_match_the_authored_stories():
@@ -185,9 +185,9 @@ def test_gui_default_course_all_steps_legacy_diagrams_and_preserved_practice(roo
     tab.open_lesson("guide-fractions")
     tab.open_prerequisite()
     root.update()
-    assert tab.lesson.id == "number-divide"
-    assert tab.track.get() == "Guided: Numbers & operations"
-    assert tab.tree.selection() == ("number-divide",)
+    assert tab.lesson.id == "fraction-quantity"
+    assert tab.track.get() == "Guided: Fractions & quantities"
+    assert tab.tree.selection() == ("fraction-quantity",)
     assert tab.can_close()
     tab.destroy()
     reopened = EducationTab(root, tmp_path / "study.db")

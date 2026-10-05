@@ -118,7 +118,7 @@
         "description": "Diagram: a single strip is split into eight equal cells. The first three are shaded and marked X. Selected amount: 3/8 of this whole."
       },
       "prerequisites": [
-        "number-divide"
+        "fraction-quantity"
       ]
     },
     {

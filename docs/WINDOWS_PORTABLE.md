@@ -33,6 +33,13 @@ counting, place value, addition, subtraction, multiplication and division. Its
 six lessons include 36 exercises and worked diagrams with Previous step / Next
 step controls. Worksheets include all 18 steps. A helper may read the text aloud;
 this is not an audio course. Resume saved practice reopens earlier work.
+Choose Guided: Fractions & quantities for four lessons, 24 exercises and 12
+worked steps: equal parts, equivalence and comparison, addition/subtraction and
+fractions of quantities. Open Fraction lab to change selected parts and total
+equal parts with keyboard-operable selectors. Compare exact amounts on equal
+unit strips and 0–1 number lines. The lab explores zero to one with 1–12 equal
+parts; its changes are not saved and do not change your practice responses.
+Worksheets include every worked strip and number line, not the lab's current state.
 Choose Guided: Measure & plan for five connected
 lessons on fractions, measurement, area, scale drawings and a paper plan review.
 Choose Practice & explain to attempt new questions, ask for hints and compare
