@@ -78,8 +78,9 @@ function download(text, mime, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 const savedPlaces = createPlaces({download,onViewMap:point=>{selectTool("mbtiles");const result=mbViewer.viewPlace(point);id("mbPanel").scrollIntoView({block:"start"});return result;}});
-const mbViewer = createMBViewer({onAddPoint:point => { id("mbStatus").textContent = savedPlaces.add([point],"MBTiles pixel"); selectTool("places"); }});
+const mbViewer = createMBViewer({onAddPoint:(point,label="MBTiles pixel") => { id("mbStatus").textContent = savedPlaces.add([point],label); selectTool("places"); }});
 id("mbBackPlaces").addEventListener("click",()=>{selectTool("places");id("placesTab").focus();});
+id("mbRouteBack").addEventListener("click",()=>{selectTool("trace");id("traceTab").focus();});
 createVectorViewer({download, onAddPoint:point => { id("vectorStatus").textContent = savedPlaces.add([point],"GeoJSON vertex"); selectTool("places"); }});
 function collectPlaces(points, source, label, statusId) {
   try {
@@ -144,6 +145,7 @@ id("placesTab").addEventListener("click", () => selectTool("places"));
 const svgNS = "http://www.w3.org/2000/svg";
 function svg(tag, attrs) { const element = document.createElementNS(svgNS, tag); for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value); return element; }
 function clearTrace(message = "File cleared from this page. Nothing was uploaded or saved.") {
+  mbViewer.clearRoute();id("deskViewMap").disabled=true;
   routeExplorer.clear();
   readGeneration++; trace = null; id("deskGpx").value = ""; id("deskTraceDrawing").replaceChildren(); id("deskTraceEmpty").hidden = false;
   id("deskTraceEmpty").removeAttribute("display"); id("deskSvgDesc").textContent = "Load a file to inspect its points. No basemap or directions.";
@@ -177,6 +179,7 @@ function renderTrace(data, filename) {
   id("deskPlacesNote").textContent = `Showing ${Math.min(100, data.waypoints.length)} of ${data.waypoints.length} waypoints. CSV exports all waypoints, rounded to 7 decimal places.`;
   id("deskClearTrace").disabled = false; id("deskExportPlaces").disabled = !data.waypoints.length; id("deskCollectWaypoints").disabled = !data.waypoints.length;
   routeExplorer.load(data, projected);
+  id("deskViewMap").disabled=false;
 }
 async function readGPX(file) {
   if (!file) return;
@@ -193,6 +196,7 @@ async function readGPX(file) {
 }
 id("deskGpx").addEventListener("change", () => readGPX(id("deskGpx").files[0]));
 id("deskClearTrace").addEventListener("click", () => clearTrace());
+id("deskViewMap").addEventListener("click",()=>{if(!trace)return;selectTool("mbtiles");const result=mbViewer.viewGPX(trace,id("deskFileName").textContent);id("mbPanel").scrollIntoView({block:"start"});return result;});
 id("deskExportPlaces").addEventListener("click", () => { if (trace) { download(waypointCSV(trace.waypoints), "text/csv;charset=utf-8", "fieldforge-gpx-places.csv"); id("deskTraceStatus").textContent = "Waypoint CSV saved. Import it into FieldForge’s local place catalog; verify the file’s coordinates before use."; } });
 id("deskCollectWaypoints").addEventListener("click", () => { if (trace?.waypoints.length) collectPlaces(trace.waypoints,GPX_SOURCE,"GPX waypoints","deskTraceStatus"); });
 const drop = id("deskDrop");

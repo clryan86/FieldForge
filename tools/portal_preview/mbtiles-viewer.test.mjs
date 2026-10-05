@@ -22,10 +22,10 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
     readAsArrayBuffer(file){this.readyState=1;file.arrayBuffer().then(result=>{if(this.readyState!==1)return;this.result=result;this.readyState=2;this.onload?.();},()=>{if(this.readyState!==1)return;this.readyState=2;this.onerror?.();});}
     abort(){this.aborted=true;this.readyState=2;this.onabort?.();}
   }
-  const make=()=>({children:[],handlers:new Map(),_value:"",get value(){return this._value;},set value(v){this._value=String(v);},textContent:"",disabled:false,files:[],classList:{toggle(){}},append(...items){this.children.push(...items);},replaceChildren(...items){this.children=[...items];},addEventListener(type,fn){this.handlers.set(type,fn);},fire(type,extra={}){return this.handlers.get(type)?.({preventDefault(){},...extra});}});
+  const make=()=>({children:[],handlers:new Map(),attrs:{},setAttribute(key,value){this.attrs[key]=String(value);},_value:"",get value(){return this._value;},set value(v){this._value=String(v);},textContent:"",disabled:false,files:[],classList:{toggle(){}},append(...items){this.children.push(...items);},replaceChildren(...items){this.children=[...items];},addEventListener(type,fn){this.handlers.set(type,fn);},fire(type,extra={}){return this.handlers.get(type)?.({preventDefault(){},...extra});}});
   for(const [,key] of readFileSync(new URL("./desk.html",import.meta.url),"utf8").matchAll(/id="(mb\w+)"/g))elements.set(key,make());
   const el=key=>{assert.ok(elements.has(key),key);return elements.get(key);};
-  const ctx={clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){}};
+  const ctx={clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){},save(){},restore(){},rect(){},clip(){},fill(){}};
   el("mbCanvas").getContext=()=>ctx;el("mbCanvas").getBoundingClientRect=()=>({width:768,height:512,left:0,top:0});
   const bitmap=()=>{const b={width:256,height:256,closed:false,close(){this.closed=true;}};bitmaps.push(b);return b;};
   let decode=async blob=>{assert.equal(imageHeader(new Uint8Array(await blob.arrayBuffer())).width,256);return bitmap();};
@@ -33,7 +33,7 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
   const factory=()=>{let pack;const c={closed:false,async request(kind,data){if(kind==="open"){pack=inspectMBDatabase(SQL,new Uint8Array(data.bytes));return pack.info;}if(kind==="coverage"){const report=readMBCoverage(pack,data.zoom);if(coverageDelay)await coverageDelay;return report;}return readMBFrame(pack,data.lat,data.lon,data.zoom);},close(){pack?.db.close();this.closed=true;}};clients.push(c);return c;};
   const open=name=>{el("mbFile").files=[{name,size:bytes.byteLength,arrayBuffer:async()=>bytes.slice(0)}];return el("mbFile").fire("change");};
   try {
-    Object.defineProperty(globalThis,"document",{value:{getElementById:el,createElement:make},configurable:true});
+    Object.defineProperty(globalThis,"document",{value:{getElementById:el,createElement:make,createElementNS:()=>make()},configurable:true});
     Object.defineProperty(globalThis,"createImageBitmap",{value:(...args)=>decode(...args),configurable:true});
     Object.defineProperty(globalThis,"FileReader",{value:Reader,configurable:true});
     const viewer=createMBViewer({clientFactory:factory,onAddPoint:p=>collected.push(p)});
@@ -62,6 +62,10 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
       assert.equal(el("mbCoverageResult").hidden,true);assert.equal(el("mbCoverageDrawing").children.length,0);assert.equal(el("mbCoverageOpen").disabled,true);assert.equal(el("mbControls").disabled,!replace);
       assert.equal(el("mbTargetCard").hidden,!replace);if(replace)assert.equal(el("mbTargetName").textContent,"Retained place");
     }
+    const route={segments:[[{lat:20,lon:-90},{lat:21,lon:-90}]],waypoints:[]};
+    await viewer.viewGPX(route,"current.gpx");const scanWait=deferred();coverageDelay=scanWait.promise;const pendingScan=el("mbCoverageScan").fire("click");
+    assert.equal(viewer.viewGPX(route,"late.gpx"),false);assert.equal(el("mbRouteName").textContent,"current.gpx");
+    viewer.clearRoute();assert.equal(el("mbRouteCard").hidden,true);scanWait.resolve();await pendingScan;coverageDelay=null;assert.equal(el("mbRouteCard").hidden,true);assert.equal(el("mbControls").disabled,false);
     await el("mbClose").fire("click");assert.ok(bitmaps.every(b=>b.closed));
   } finally {for(const c of clients)if(!c.closed)c.close();for(const [key,value] of saved){if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}}
 });

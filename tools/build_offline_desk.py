@@ -15,7 +15,7 @@ from pathlib import Path
 from build_mbtiles_worker import insert_mbtiles_worker
 
 FILENAME = "fieldforge-offline.html"
-MODULES = ("desk-core.mjs", "places-core.mjs", "field-sheet-core.mjs", "field-sheet.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "vector-core.mjs", "vector-viewer.mjs", "mbtiles-core.mjs", "mbtiles-client.mjs", "mvt-renderer.mjs", "mbtiles-coverage.mjs", "mbtiles-viewer.mjs", "desk.mjs", "offline.mjs")
+MODULES = ("desk-core.mjs", "places-core.mjs", "field-sheet-core.mjs", "field-sheet.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "vector-core.mjs", "vector-viewer.mjs", "mbtiles-core.mjs", "mbtiles-client.mjs", "mvt-renderer.mjs", "mbtiles-coverage.mjs", "mbtiles-route-core.mjs", "mbtiles-route.mjs", "mbtiles-viewer.mjs", "desk.mjs", "offline.mjs")
 STYLES = ("desk.css", "route-explorer.css", "image-viewer.css", "places.css", "vector-viewer.css", "mbtiles-viewer.css", "offline.css")
 
 

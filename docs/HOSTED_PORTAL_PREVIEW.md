@@ -589,3 +589,56 @@ integration checks use DOM/Canvas doubles.
 
 Offline edition: **fb5817ebd9b7**, **2,080,235 bytes**. No new map datasets,
 hosted chat/account services, geocoding or routing are included.
+
+
+## GPX overlays on local MBTiles maps (October 5, 2026)
+
+The GPX inspector now offers **View GPX on map**. It copies the inspected
+track/route segments and waypoints into the local MBTiles viewer. Open a pack
+first or choose one after selecting the overlay. Raster and vector packs use
+the same overlay controls. No map or route is downloaded or uploaded.
+
+Pink lines join recorded points within each original segment; isolated segment
+points and independent waypoints appear as dots. Segments are never connected
+to one another. Date-line crossings follow the shorter longitude span.
+Ambiguous 180-degree longitude edges are omitted and counted explicitly.
+Edges are clipped to the viewport before drawing, and low zooms repeat the
+geometry consistently across displayed world copies. This is straight-line
+file geometry in Web Mercator, not inferred roads or directions.
+
+Users can show/hide the overlay, move through its original points with a slider
+or Previous/Next, centre on the selected point and add that exact coordinate to
+Saved places. A white ring identifies the selected GPX point. Names, segment
+positions, decimal coordinates and file provenance are retained without
+rounding. Saved-place notes identify the source as GPX, including when there
+is no readable basemap tile at the point.
+
+Coverage feedback applies only to the selected point; it does not audit the
+whole path. Lines and markers may appear over absent or unreadable tiles.
+Drawing does not establish safe passage, route access, current conditions or
+map accuracy. The existing GPX input limits remain 2 MiB, 25,000 total points
+and 1,000 waypoints. Every overlay point must fit Web Mercator latitude limits;
+the independent GPX inspector can still show polar files.
+
+The overlay is a copied snapshot. Switching map packs preserves it and its
+selected point. Removing the overlay leaves the inspector's GPX intact.
+Clearing/replacing the inspected GPX also clears its map overlay; closing the
+MBTiles pack clears overlays but leaves the inspector file available. New
+overlay requests are refused while a map operation is busy. A cleared overlay
+cannot reappear when an older coverage request completes.
+
+Validation: **89 Node tests and 4 Python tests pass**. Geometry tests verify
+segment gaps, isolated points, waypoints, short date-line edges, ambiguous-edge
+omission, viewport clipping through zoom 22, maximum point counts, original
+coordinate preservation and Canvas drawing commands. The actual offline HTML
+runs GPX inspection, overlay selection, raster/vector map opening, point
+navigation and coordinate export with network and browser storage forbidden.
+XML fixtures are parsed independently with Python and adapted to a DOM test
+double; SQLite and the embedded worker execute normally through a test bridge.
+Native browser XML/Canvas rendering, worker startup and phone QA remain
+outstanding. HTML IDs, label/ARIA targets, local module imports and the embedded
+worker payload were checked.
+
+Offline edition: **2b61b291f44d**, **2,092,431 bytes**. This adds a local viewing
+workflow; route calculation, geocoding, hosted map downloads and live Commons
+remain separate unfinished work. No real map datasets were added.

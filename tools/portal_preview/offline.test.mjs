@@ -38,8 +38,8 @@ class Element {
   getBoundingClientRect() { return {width:800,height:500,left:0,top:0}; }
   getContext() { return {setTransform() {},clearRect() {}}; }
 }
-function boot({mbtiles=false}={}) {
-  const elements = new Map(), opened = [], blobs = [], downloads = [], workers=[], bitmaps=[], draws=[], markers=[];
+function boot({mbtiles=false,gpxParser=null}={}) {
+  const elements = new Map(), opened = [], blobs = [], downloads = [], workers=[], bitmaps=[], draws=[], markers=[], overlays=[];
   let storageTouches = 0, requests = 0, confirmation = false;
   for (const match of source.matchAll(/<([a-zA-Z][\w-]*)\b([^>]*\bid="([^"]+)"[^>]*)>/g)) {
     const attrs = Object.fromEntries([...match[2].matchAll(/([\w-]+)(?:="([^"]*)")?/g)].map(([_,key,value]) => [key,value ?? ""]));
@@ -56,9 +56,10 @@ function boot({mbtiles=false}={}) {
   class LocalURL extends URL { static createObjectURL(blob) { blobs.push(blob); return `blob:local-${blobs.length}`; } static revokeObjectURL() {} }
   const forbidden = () => { requests++; throw Error("Network access is forbidden"); };
   const sandbox = {document,window:{devicePixelRatio:1,addEventListener() {},confirm:() => confirmation,open:(...args) => opened.push(args)},URL:LocalURL,Blob,TextEncoder,TextDecoder,setTimeout() {},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,navigator:{sendBeacon:forbidden}};
+  if(gpxParser)sandbox.DOMParser=gpxParser;
   if(mbtiles) {
     id("mbWorkerPayload").textContent=source.match(/<div id="mbWorkerPayload" hidden>([A-Za-z0-9+/=]+)<\/div>/)[1];
-    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;markers.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(x,y){this.lastMove=[x,y];},lineTo(){},stroke(){if(this.strokeStyle==="#7fe3ff")markers.push(this.lastMove);},save(){},restore(){},rect(){},clip(){},translate(){},closePath(){},fill(rule){draws.push({vector:true,rule});},setLineDash(){},measureText:text=>({width:text.length*6}),strokeText(){}});
+    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;markers.length=0;overlays.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){this.path=[];},arc(){},moveTo(x,y){this.lastMove=[x,y];this.path.push(["move",x,y]);},lineTo(x,y){this.path.push(["line",x,y]);},stroke(){if(this.strokeStyle==="#7fe3ff")markers.push(this.lastMove);if(this.strokeStyle==="#f7a5dd")overlays.push(this.path.slice());},save(){},restore(){},rect(){},clip(){},translate(){},closePath(){},fill(rule){draws.push({vector:true,rule});},setLineDash(){},measureText:text=>({width:text.length*6}),strokeText(){}});
     class Reader {
       readAsArrayBuffer(file){this.readyState=1;file.arrayBuffer().then(bytes=>{if(this.readyState!==1)return;this.readyState=2;this.result=bytes;this.onload?.();},()=>{this.readyState=2;this.onerror?.();});}
       abort(){this.readyState=2;this.onabort?.();}
@@ -81,7 +82,7 @@ function boot({mbtiles=false}={}) {
   }
   Object.defineProperty(sandbox,"localStorage",{get() { storageTouches++; throw Error("Storage unavailable for local file"); }});
   vm.runInNewContext(script,sandbox,{timeout:1000,filename:"fieldforge-offline.html"});
-  return {id,opened,blobs,downloads,workers,bitmaps,draws,markers,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
+  return {id,opened,blobs,downloads,workers,bitmaps,draws,markers,overlays,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
 }
 
 test("downloaded desk boots without storage or network and can save/reopen a source plan", async () => {
@@ -118,6 +119,35 @@ function addManual(app,name,lat = "0",lon = "0",source = "") {
   app.id("placesForm").fire("submit");
 }
 function collectionFile(name,text) { const bytes = new TextEncoder().encode(text); return {name,size:bytes.length,arrayBuffer:async () => bytes.buffer}; }
+// Independent XML parsing via Python, adapted to the DOM shape the production
+// GPX reader uses. This does not test a native browser DOMParser.
+class FixtureXMLParser {
+  parseFromString(text){
+    const python="import json,sys,xml.etree.ElementTree as E\ndef item(e):\n tag=e.tag; ns=tag[1:].split('}')[0] if tag.startswith('{') else ''; name=tag.split('}')[-1]\n return dict(localName=name,namespaceURI=ns,attributes=e.attrib,textContent=''.join(e.itertext()),children=[item(c) for c in e])\nprint(json.dumps(item(E.fromstring(sys.stdin.read()))))";
+    const raw=JSON.parse(execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",["-c",python],{input:text,encoding:"utf8"}));
+    const node=item=>({...item,children:item.children.map(node),getAttribute:key=>item.attributes[key]??null});return {documentElement:node(raw),getElementsByTagName:()=>[]};
+  }
+}
+const overlayGPX='<gpx xmlns="http://www.topografix.com/GPX/1/1"><wpt lat="0" lon="100"><name>Camp &lt;b&gt;name&lt;/b&gt;</name></wpt><trk><trkseg><trkpt lat="38.12345678901234" lon="-90.12345678901234"/><trkpt lat="38.2" lon="-90"/></trkseg><trkseg><trkpt lat="-38" lon="-90"/><trkpt lat="-38.1" lon="-89.9"/></trkseg></trk></gpx>';
+for(const mode of ["valid","vector"])test(`offline GPX overlays connect the inspector to ${mode} MBTiles while preserving gaps and original point coordinates`,{timeout:5000},async()=>{
+  const app=boot({mbtiles:true,gpxParser:FixtureXMLParser}),raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),mode]);
+  const loadGPX=async(text=overlayGPX)=>{app.id("deskGpx").files=[{name:"track.gpx",size:text.length,text:async()=>text}];await app.id("deskGpx").fire("change");};
+  const open=async()=>{app.id("mbFile").files=[{name:"map.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");};
+  try{
+    await loadGPX();assert.equal(app.id("deskViewMap").disabled,false);await app.id("deskViewMap").fire("click");assert.equal(app.id("mbPanel").hidden,false);assert.match(app.id("mbRouteSummary").textContent,/5 original points · 2 separate segments · 1 waypoints/);assert.equal(app.workers.length,0);
+    await open();assert.equal(app.id("mbLatitude").value,"38.12345678901234");assert.equal(app.id("mbRouteCoordinates").textContent,"38.12345678901234, -90.12345678901234");assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.overlays[0].filter(c=>c[0]==="line").length,2);assert.equal(app.overlays[0].filter(c=>c[0]==="move").length,2);
+    app.id("mbRouteShow").checked=false;app.id("mbRouteShow").fire("change");assert.equal(app.overlays.length,0);app.id("mbRouteShow").checked=true;app.id("mbRouteShow").fire("change");assert.ok(app.overlays.length);
+    app.id("mbRouteNext").fire("click");assert.match(app.id("mbRouteSelected").textContent,/Segment 1 · point 2/);app.id("mbRouteNext").fire("click");assert.match(app.id("mbRouteSelected").textContent,/Segment 2 · point 1/);
+    app.id("mbRoutePoint").value="4";app.id("mbRoutePoint").fire("input");await app.id("mbRouteCentre").fire("click");assert.equal(app.id("mbLatitude").value,"0");assert.equal(app.id("mbLongitude").value,"100");assert.match(app.id("mbRouteState").textContent,/No decoded tile/);assert.equal(app.id("mbAddPlace").disabled,true);
+    app.id("mbRouteAdd").fire("click");assert.equal(app.id("placesPanel").hidden,false);app.id("placesSaveJSON").fire("click");const point=JSON.parse(await app.blobs.at(-1).text()).places[0];assert.equal(point.name,"Camp <b>name</b>");assert.equal(point.lat,0);assert.equal(point.lon,100);assert.match(point.source,/GPX overlay; Waypoint 1/);
+    await open();assert.equal(app.id("mbRouteCoordinates").textContent,"0, 100");assert.equal(app.id("mbRouteCard").hidden,false);
+    app.id("mbRouteBack").fire("click");assert.equal(app.id("tracePanel").hidden,false);app.id("deskClearTrace").fire("click");assert.equal(app.id("mbRouteCard").hidden,true);assert.equal(app.overlays.length,0);assert.equal(app.id("mbControls").disabled,false);
+    await loadGPX('<gpx><wpt lat="90" lon="0"/></gpx>');await app.id("deskViewMap").fire("click");assert.match(app.id("mbStatus").textContent,/Every overlay point needs Web Mercator/);assert.equal(app.id("mbRouteCard").hidden,true);
+    await loadGPX();await app.id("deskViewMap").fire("click");app.id("mbRouteClear").fire("click");assert.equal(app.id("mbRouteCard").hidden,true);assert.equal(app.id("deskViewMap").disabled,false);
+    await app.id("deskViewMap").fire("click");app.id("mbClose").fire("click");assert.equal(app.id("mbRouteCard").hidden,true);await open();assert.equal(app.id("mbRouteCard").hidden,true);
+    assert.equal(app.requests,0);assert.equal(app.storageTouches,0);assert.deepEqual(app.opened,[]);
+  }finally{app.id("mbClose").fire("click");}
+});
 for(const mode of ["valid","vector-mixed"])test(`offline download opens ${mode} MBTiles through its embedded worker and exports a selected coordinate`,{timeout:5000},async()=> {
   const app=boot({mbtiles:true});
   const raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),mode]);
