@@ -3,6 +3,7 @@
   const el = id => document.getElementById(id);
   let joined = false, active = false, room = "general", timer = null, reader = null;
   let revision = 0, sending = false, reportMessage = null;
+  let privateChat;
   const drafts = new Map();
   const notice = (text, error = false) => { el("status").textContent = text; el("status").classList.toggle("error", error); };
   const node = (tag, text, className) => { const result = document.createElement(tag); if (text !== undefined) result.textContent = text; if (className) result.className = className; return result; };
@@ -26,6 +27,7 @@
     el("joinPanel").hidden = joined;
     for (const button of el("rooms").querySelectorAll("button")) button.disabled = !enabled || sending;
     for (const button of document.querySelectorAll(".message-actions button, #blockedList button")) button.disabled = !enabled;
+    privateChat?.setSession(joined, active, sending);
   }
   function stop() {
     active = false; revision++; clearTimeout(timer); reader?.abort(); reader = null; controls();
@@ -120,9 +122,11 @@
     try {
       const data = await request("read", {room}, reader.signal);
       if (!active || ownRevision !== revision) return;
-      render(data); timer = setTimeout(refresh, 2000);
+      render(data); await privateChat.poll(reader.signal);
+      if (active && ownRevision === revision) timer = setTimeout(refresh, 2000);
     } catch (error) { if (ownRevision === revision) failed(error); }
   }
+  privateChat = new window.CommonsPrivate({request, notice, failed, refresh});
   el("joinForm").addEventListener("submit", async event => {
     event.preventDefault(); if (!el("consent").checked) return;
     el("joinButton").disabled = true;

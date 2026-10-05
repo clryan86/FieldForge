@@ -9,11 +9,13 @@ from __future__ import annotations
 import argparse
 import json
 import sqlite3
+import time
 from http.cookies import CookieError, SimpleCookie
 from pathlib import Path
 
-from fieldforge.online.chat_store import SESSION_SECONDS, ChatError, ChatStore
+from fieldforge.online.chat_store import SESSION_SECONDS, ChatError
 from fieldforge.online.community import CATEGORIES
+from fieldforge.online.private_chat import PrivateChatStore
 from fieldforge.online.server import (
     PortalApplication,
     PortalConfig,
@@ -76,6 +78,7 @@ class PreviewApplication(PortalApplication):
             ("/commons", "commons.html", "text/html; charset=utf-8"),
             ("/commons.js", "commons.js", "text/javascript; charset=utf-8"),
             ("/commons.css", "commons.css", "text/css; charset=utf-8"),
+            ("/commons-private.js", "commons-private.js", "text/javascript; charset=utf-8"),
         ):
             self.assets[path] = ((root / filename).read_bytes(), mime)
         data, mime = self.assets["/commons"]
@@ -98,14 +101,27 @@ class PreviewApplication(PortalApplication):
         schemas = {"join": {"name", "skill", "consent"}, "read": {"room"},
                    "send": {"room", "body", "request_id"}, "delete": {"message"},
                    "block": {"target", "blocked"}, "report": {"message", "reason"},
-                   "export": set(), "leave": set()}
+                   "export": set(), "leave": set(), "private/inbox": set(),
+                   "private/create": {"title", "kind", "contacts", "request_id"},
+                   "private/accept": {"thread"}, "private/read": {"thread"},
+                   "private/send": {"thread", "body", "lifetime", "request_id"},
+                   "private/open": {"thread", "message"}, "private/delete": {"thread", "message"},
+                   "private/leave": {"thread"}, "private/export": set(),
+                   "private/report": {"thread", "message", "reason"}}
         if name not in schemas:
             raise ChatError(404, "Chat endpoint not found.")
         if set(payload) != schemas[name]:
             raise ChatError(400, "Unsupported chat request fields.")
         result = {"ok": True}
         cookie = None
-        if name == "join":
+        if name.startswith("private/"):
+            methods = {"inbox": self.store.private_inbox, "create": self.store.private_create,
+                       "accept": self.store.private_accept, "read": self.store.private_read,
+                       "send": self.store.private_send, "open": self.store.private_open_once,
+                       "delete": self.store.private_delete, "leave": self.store.private_leave,
+                       "export": self.store.private_export, "report": self.store.private_report}
+            result = methods[name.split("/")[1]](token, **payload) or {"ok": True}
+        elif name == "join":
             if payload["consent"] is not True:
                 raise ChatError(400, "Confirm local message storage before joining.")
             token, viewer = self.store.join(payload["name"], payload["skill"], token)
@@ -132,8 +148,21 @@ class PreviewApplication(PortalApplication):
         return response
 
 
+class CommonsPreviewServer(PortalHTTPServer):
+    _last_expiry = 0.0
+
+    def service_actions(self):
+        # Expire unclaimed bodies even when nobody is polling a room.
+        if time.monotonic() - self._last_expiry >= 60:
+            try:
+                self.app.store.expire_private_messages()
+            except (OSError, sqlite3.Error):
+                return  # Requests also check expiry; retry this sweep on the next loop.
+            self._last_expiry = time.monotonic()
+
+
 def make_preview_server(database, port=8765):
-    server = PortalHTTPServer(("127.0.0.1", port), PreviewApplication(ChatStore(database)))
+    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(PrivateChatStore(database)))
     server.RequestHandlerClass = PreviewHandler
     return server
 
@@ -150,7 +179,7 @@ def main(argv=None):
         if args.review_reports:
             if not args.db.is_file():
                 raise ValueError("Choose an existing Commons preview database to review reports.")
-            print(json.dumps(ChatStore(args.db).reports(), ensure_ascii=False, indent=2))
+            print(json.dumps(PrivateChatStore(args.db).reports(), ensure_ascii=False, indent=2))
             return 0
         server = make_preview_server(args.db, args.port)
     except (OSError, ValueError, sqlite3.Error) as exc:

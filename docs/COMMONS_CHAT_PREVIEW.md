@@ -41,6 +41,10 @@ Keep the terminal open while testing; press Ctrl+C to stop the server.
 
 ## Working now
 
+The [private inbox and disappearing-message guide](COMMONS_PRIVATE_MESSAGES.md)
+covers direct conversations, invite-only groups, and open-once delivery, including
+the limits of browser clearing and screenshots.
+
 - Base camp plus twelve practical skill rooms, with independent room history.
 - Plain text messages and optional skill labels; all identities are unverified.
 - Persistent storage, timestamps, newest 100 visible messages per room.
@@ -105,8 +109,9 @@ remove the database only with an understanding of the local data it contains.
 Verified accounts and recovery, sole-owner administration with MFA, social
 sign-in configuration, profile picture handling, reviewed moderation and abuse
 controls, HTTPS hosting, operations/backup restoration, privacy/terms, and a
-security review are still required. This preview does not implement private
-messaging, encryption between members, notifications, payments, or public hosting.
+security review are still required. Private messaging is available only within
+this local preview; encryption between members, notifications, payments, and
+public hosting are not implemented.
 
 ## Verification
 
@@ -119,7 +124,7 @@ Browser checks use Playwright, separately installed for development. Set
 `FIELDFORGE_BROWSER_EXECUTABLE` may point to an installed Chromium test executable.
 Tests use temporary databases and explicitly named test participants.
 
-### Verified in this development environment, 2026-10-05
+### Initial public-room checks, 2026-10-05
 
 - Combined chat/profile/portal/connection suite: **92 passed, 1 skipped**, plus
   six passing subtests. The skipped test needs the native Tk graphical display;

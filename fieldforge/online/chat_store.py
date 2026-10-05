@@ -88,7 +88,7 @@ class ChatStore:
             if ((version == 0 and (identity != 0 or tables))
                     or (version != 0 and identity != APPLICATION_ID)):
                 raise ValueError("Choose a separate Commons preview database, not an existing app database.")
-            if version not in (0, 1):
+            if version not in (0, 1, 2):
                 raise ValueError("Unsupported Commons preview database version.")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS participants (
@@ -114,15 +114,16 @@ class ChatStore:
                     reason TEXT NOT NULL, created REAL NOT NULL,
                     PRIMARY KEY(reporter, message)
                 );
-                PRAGMA user_version=1;
                 PRAGMA application_id=1179009872;
             """)
+            db.execute(f"PRAGMA user_version={max(1, version)}")
 
     @contextmanager
     def _db(self):
         db = sqlite3.connect(self.path, timeout=5)
         db.row_factory = sqlite3.Row
         db.execute("PRAGMA foreign_keys=ON")
+        db.execute("PRAGMA secure_delete=ON")
         try:
             # Serialize checks and mutations, including rate limits and revocation.
             db.execute("BEGIN IMMEDIATE")
