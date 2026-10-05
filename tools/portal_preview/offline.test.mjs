@@ -93,6 +93,42 @@ function addManual(app,name,lat = "0",lon = "0",source = "") {
   app.id("placesForm").fire("submit");
 }
 function collectionFile(name,text) { const bytes = new TextEncoder().encode(text); return {name,size:bytes.length,arrayBuffer:async () => bytes.buffer}; }
+test("offline field sheets include all filtered matches, selected estimates and chosen source notes", async () => {
+  const app = boot();
+  addManual(app,"Camp west","0","179","PRIVATE_WEST"); addManual(app,"Camp east","0","-179","PRIVATE_EAST"); addManual(app,"Excluded site","1","2");
+  app.id("placesSearch").value = "Camp"; app.id("placesSearch").fire("input");
+  assert.equal(app.id("sheetFrom").children.length,3);
+  app.id("sheetFrom").value = "0"; app.id("sheetFrom").fire("change"); app.id("sheetTo").value = "1"; app.id("sheetTo").fire("change");
+  app.id("sheetCalculate").fire("click"); assert.match(app.id("sheetComparison").textContent,/90\.0° true/);
+  app.id("sheetUnits").value = "imperial"; app.id("sheetUnits").fire("change"); assert.match(app.id("sheetComparison").textContent,/138\.19 mi/);
+  app.id("sheetIncludeComparison").checked = true; app.id("sheetIncludeComparison").fire("change");
+  app.id("sheetSources").checked = false; app.id("sheetSources").fire("change");
+  app.id("sheetPrepare").fire("click"); assert.equal(app.id("sheetDownload").disabled,false);
+  assert.ok(!app.id("sheetPreview").textContent.includes("PRIVATE_")); assert.ok(!app.id("sheetPreview").textContent.includes("Excluded"));
+  app.id("sheetDownload").fire("click"); const html = await app.blobs.at(-1).text();
+  assert.equal(app.downloads.at(-1).name,"fieldforge-place-sheet.html"); assert.match(html,/2 places/); assert.match(html,/138\.19 mi/);
+  assert.ok(!html.includes("PRIVATE_")); assert.ok(!html.includes("Excluded"));
+  app.id("sheetSwap").fire("click"); assert.equal(app.id("sheetDownload").disabled,true); assert.equal(app.id("sheetPreview").hidden,true);
+  app.id("sheetCalculate").fire("click"); assert.match(app.id("sheetComparison").textContent,/270\.0° true/);
+  assert.equal(app.storageTouches,0); assert.equal(app.requests,0); assert.deepEqual(app.opened,[]);
+});
+test("prepared sheets survive pagination but are cleared after edits, options or changed matches", async () => {
+  const app = boot(), places = Array.from({length:101},(_,i) => ({name:`Point ${i}`,lat:0,lon:i,source:"Test fixture"}));
+  app.id("placesFile").files = [collectionFile("places.json",JSON.stringify({kind:"fieldforge-place-collection",schema_version:1,places}))];
+  await app.id("placesFile").fire("change"); assert.equal(app.id("sheetPrepare").disabled,true); assert.match(app.id("sheetScope").textContent,/101 matches/);
+  app.id("placesRows").children[0].children[3].children[1].fire("click"); assert.equal(app.id("sheetPrepare").disabled,false);
+  app.id("sheetPrepare").fire("click"); assert.match(app.id("sheetStatus").textContent,/100 matching/);
+  app.id("placesNext").fire("click"); assert.equal(app.id("sheetDownload").disabled,false);
+  app.id("sheetDownload").fire("click"); const html = await app.blobs.at(-1).text(); assert.equal((html.match(/<article>/g)||[]).length,100);
+  const invalidates = action => { app.id("sheetPrepare").fire("click"); assert.equal(app.id("sheetDownload").disabled,false); action(); assert.equal(app.id("sheetDownload").disabled,true); assert.equal(app.id("sheetPreview").textContent,""); const count = app.blobs.length; app.id("sheetDownload").fire("click"); assert.equal(app.blobs.length,count); };
+  invalidates(() => { app.id("sheetTitle").value = "Updated title"; app.id("sheetTitle").fire("input"); });
+  invalidates(() => { app.id("sheetSources").checked = false; app.id("sheetSources").fire("change"); });
+  invalidates(() => { app.id("placesRows").children[0].children[3].children[0].fire("click"); app.id("placesLatitude").value = "5"; app.id("placesForm").fire("submit"); });
+  invalidates(() => { app.id("placesSearch").value = "Point 99"; app.id("placesSearch").fire("input"); });
+  app.id("sheetPrepare").fire("click"); assert.match(app.id("sheetStatus").textContent,/1 matching/);
+  app.confirm(true); app.id("placesClear").fire("click"); assert.equal(app.id("sheetDownload").disabled,true); assert.equal(app.id("sheetPrepare").disabled,true);
+  assert.equal(app.storageTouches,0); assert.equal(app.requests,0);
+});
 test("offline places support edit, removal undo, filtered export and full-collection backup", async () => {
   const app = boot(); app.id("placesTab").fire("click"); assert.equal(app.id("placesPanel").hidden,false);
   addManual(app,"Café","0","180","Field notes"); addManual(app,"Other","1","2","GPX");

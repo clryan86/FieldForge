@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 FILENAME = "fieldforge-offline.html"
-MODULES = ("desk-core.mjs", "places-core.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "desk.mjs", "offline.mjs")
+MODULES = ("desk-core.mjs", "places-core.mjs", "field-sheet-core.mjs", "field-sheet.mjs", "places.mjs", "image-core.mjs", "image-viewer.mjs", "route-explorer.mjs", "desk.mjs", "offline.mjs")
 STYLES = ("desk.css", "route-explorer.css", "image-viewer.css", "places.css", "offline.css")
 
 

@@ -1,9 +1,11 @@
 import {MAX_PLACE_BYTES, placeCoordinateText, manualPlace, mergePlaces, matchingPlaces, parsePlacesJSON, parsePlacesCSV, placesJSON, placesCSV, placesGPX} from "./places-core.mjs";
+import {createFieldSheet} from "./field-sheet.mjs";
 
 export function createPlaces({download}) {
   const id = key => document.getElementById(key);
   const node = (tag,text) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; return element; };
   let records = [], editing = null, page = 0, generation = 0, undo = null;
+  const fieldSheet = createFieldSheet({download});
   const pageSize = 50;
   const announce = (message,error = false) => { id("placesStatus").textContent = message; id("placesStatus").classList.toggle("error",error); };
   const filtered = () => matchingPlaces(records,id("placesSearch").value);
@@ -31,6 +33,7 @@ export function createPlaces({download}) {
     }
     if (!matches.length) { const row = node("tr"), cell = node("td",records.length ? "No places match this search." : "Add a place, import a collection, or collect points from the GPX and image tools."); cell.colSpan = 4; row.append(cell); body.append(row); }
     id("placesRows").replaceChildren(...body.children);
+    fieldSheet.update(matches);
   }
   function add(points, label = "Places") {
     const result = mergePlaces(records,points);

@@ -164,7 +164,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "commons.html").write_text(commons, encoding="utf-8")
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
-    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css"):
+    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css", "field-sheet-core.mjs", "field-sheet.mjs"):
         shutil.copyfile(assets / name, output / name)
     offline = export_offline(assets, output, (source_root / "fieldforge/online/portal.html").read_text(encoding="utf-8"), revision, FAVICON)
     print(f"Offline desk: {offline['bytes']:,} bytes, edition {offline['edition_id']}")

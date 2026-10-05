@@ -271,3 +271,49 @@ The downloadable HTML is now approximately 150 KB.
 
 Reference: [GPX 1.1 schema](https://www.topografix.com/GPX/1/1/). Field names and
 record limits were checked against the project's current importer sources.
+
+## Printable place sheets and point-to-point estimates (October 5, 2026)
+
+**Saved places → Prepare your field sheet** now creates a separate, printable
+HTML file from all current search matches across list pages. The limit is 100
+places per sheet; larger selections must be narrowed and are never silently
+truncated. Users choose a title and whether to include source notes, inspect a
+preview, then download and open the file to use their browser's Print / Save as
+PDF command. The generated file uses system fonts, print styles and no scripts
+or external resources. It is a fixed snapshot, not an editable collection or map.
+
+An optional pair of selected places produces approximate great-circle distance
+and initial **true** bearing, in metric or imperial distance units. The model
+matches the desktop Places spherical calculation (radius 6,371,008.8 metres).
+Coincident/extremely close, near-antipodal and polar-start cases suppress a
+meaningless or unstable bearing. No magnetic declination, roads, travel time,
+terrain, obstacles or access assessment is supplied. Both endpoints must appear
+among the places on the sheet.
+
+Relevant collection, search-result, endpoint or option changes clear the
+prepared preview and disable its download until prepared again. Pagination
+alone preserves it. Capture validates and copies the records; user labels are
+rendered as text / escaped HTML. Omitting source notes removes their contents
+from both the preview and downloaded HTML, including comparison output.
+Exports contain precise coordinates in plain text, rounded to seven decimal
+places. Save collection JSON separately for full numeric precision and editing.
+Already downloaded files cannot be updated by subsequent collection edits.
+
+The website and standalone offline download include the same feature. The new
+offline edition is **67e72fc29180**, 171,038 bytes, and retains the existing
+no-network/no-storage behavior. It contains tools, not users' data or map datasets.
+
+Validation: **50 Node tests and 4 Python tests pass**. New checks cover cardinal
+directions, date-line crossings, degenerate bearings, unit formatting, frozen
+captures, endpoint membership, output escaping, optional-note omission, filtered
+exports, the 100-place limit, pagination and stale-preview invalidation. The
+actual bundled offline script is exercised with a DOM double and forbidden
+network/storage APIs. Eight coordinate pairs also matched distance and bearing
+from the actual desktop `fieldforge.navigation.places.estimate_leg` source at
+`1a596c257beb0d6616369462bfff2d219a80f858`. Built HTML IDs, label targets and
+local script/style assets were checked. Native browser rendering, physical
+printing/PDF pagination, desktop UI and phone behavior have not been tested.
+
+This addition does not activate hosted accounts, live messaging, address search,
+routing, billing or map-data hosting. Existing source links and other portal
+sections retain their stated status.
