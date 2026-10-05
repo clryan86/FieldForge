@@ -146,7 +146,7 @@ class FixtureXMLParser {
   }
 }
 const overlayGPX='<gpx xmlns="http://www.topografix.com/GPX/1/1"><wpt lat="0" lon="100"><name>Camp &lt;b&gt;name&lt;/b&gt;</name></wpt><trk><trkseg><trkpt lat="38.12345678901234" lon="-90.12345678901234"/><trkpt lat="38.2" lon="-90"/></trkseg><trkseg><trkpt lat="-38" lon="-90"/><trkpt lat="-38.1" lon="-89.9"/></trkseg></trk></gpx>';
-for(const mode of ["valid","vector"])test(`offline GPX overlays connect the inspector to ${mode} MBTiles while preserving gaps and original point coordinates`,{timeout:5000},async()=>{
+for(const mode of ["valid","vector","vector-mixed"])test(`offline GPX overlays connect the inspector to ${mode} MBTiles while preserving gaps and original point coordinates`,{timeout:5000},async()=>{
   const app=boot({mbtiles:true,gpxParser:FixtureXMLParser}),raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),mode]);
   const loadGPX=async(text=overlayGPX)=>{app.id("deskGpx").files=[{name:"track.gpx",size:text.length,text:async()=>text}];await app.id("deskGpx").fire("change");};
   const open=async()=>{app.id("mbFile").files=[{name:"map.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");};
@@ -154,8 +154,11 @@ for(const mode of ["valid","vector"])test(`offline GPX overlays connect the insp
     await loadGPX();assert.equal(app.id("deskViewMap").disabled,false);await app.id("deskViewMap").fire("click");assert.equal(app.id("mbPanel").hidden,false);assert.match(app.id("mbRouteSummary").textContent,/5 original points · 2 separate segments · 1 waypoints/);assert.equal(app.workers.length,0);
     await open();assert.equal(app.id("mbLatitude").value,"38.12345678901234");assert.equal(app.id("mbRouteCoordinates").textContent,"38.12345678901234, -90.12345678901234");assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.overlays[0].filter(c=>c[0]==="line").length,2);assert.equal(app.overlays[0].filter(c=>c[0]==="move").length,2);
     await app.id("mbRouteCheckRun").fire("click");assert.match(app.id("mbRouteCheckState").textContent,/4 tiles checked · 2 present · 2 missing · 0 unsupported/);assert.equal(app.id("mbRouteCheckResult").hidden,false);
-    app.id("mbRouteReportSave").fire("click");const report=JSON.parse(await app.blobs.at(-1).text());assert.equal(report.kind,"fieldforge-gpx-tile-check");assert.equal(report.gpx_file,"track.gpx");assert.equal(report.map_file,"map.mbtiles");assert.equal(report.map_format,mode==="valid"?"png":"pbf");assert.equal(report.zoom,1);assert.equal(report.tiles.length,4);assert.match(report.scope,/not decoded/);assert.equal(app.downloads.at(-1).name,"FieldForge-GPX-Tile-Check.json");assert.deepEqual(report.tiles.filter(t=>t.status==="missing").map(t=>[t.x,t.y,t.tms]),[[1,0,1],[1,1,0]]);
+    app.id("mbRouteReportSave").fire("click");const report=JSON.parse(await app.blobs.at(-1).text());assert.equal(report.kind,"fieldforge-gpx-tile-check");assert.equal(report.gpx_file,"track.gpx");assert.equal(report.map_file,"map.mbtiles");assert.equal(report.map_format,mode==="valid"?"png":"pbf");assert.equal(report.zoom,1);assert.equal(report.tiles.length,4);assert.match(report.scope,/content_check/);assert.equal(report.schema_version,2);assert.equal(report.content_check.state,"not-started");assert.equal(report.content_check.remaining,2);assert.equal(app.downloads.at(-1).name,"FieldForge-GPX-Tile-Check.json");assert.deepEqual(report.tiles.filter(t=>t.status==="missing").map(t=>[t.x,t.y,t.tms]),[[1,0,1],[1,1,0]]);
     await app.id("mbRouteGapOpen").fire("click");assert.equal(app.id("mbLongitude").value,"90");assert.ok(Number(app.id("mbLatitude").value)>0);assert.equal(app.id("mbRouteCheckResult").hidden,false);assert.match(app.id("mbRouteCheckState").textContent,/Zoom 1/);
+    await app.id("mbRouteVerify").fire("click");assert.equal(app.id("mbRouteVerify").disabled,true);assert.equal(app.id("mbRouteVerifyPause").hidden,true);assert.equal(Number(app.id("mbRouteDecodeProgress").value),2);
+    app.id("mbRouteReportSave").fire("click");const verified=JSON.parse(await app.blobs.at(-1).text());assert.equal(verified.content_check.state,"complete");assert.equal(verified.content_check.remaining,0);assert.equal(verified.content_check.decoded,mode==="vector-mixed"?1:2);assert.equal(verified.content_check.unreadable,mode==="vector-mixed"?1:0);assert.ok(verified.tiles.every(tile=>!tile.data));assert.equal(app.id("mbRouteGaps").children.length,mode==="vector-mixed"?3:2);
+    if(mode==="vector-mixed"){assert.match(verified.tiles.find(t=>t.decode_status==="unreadable").decode_issue,/Truncated protobuf/);assert.match(app.id("mbRouteDecodeState").textContent,/1 unreadable/);}
     app.id("mbRouteCheckZoom").value="2";app.id("mbRouteCheckZoom").fire("change");assert.equal(app.id("mbRouteReportSave").disabled,true);assert.equal(app.id("mbRouteCheckResult").hidden,true);
     await app.id("mbRouteCheckRun").fire("click");assert.match(app.id("mbRouteCheckState").textContent,/Zoom 2/);assert.match(app.id("mbRouteCheckState").textContent,/missing/);
     app.id("mbRouteShow").checked=false;app.id("mbRouteShow").fire("change");assert.equal(app.overlays.length,0);app.id("mbRouteShow").checked=true;app.id("mbRouteShow").fire("change");assert.ok(app.overlays.length);
@@ -352,4 +355,18 @@ test("offline path reports keep every gap while limiting the on-screen list and 
     app.id("deskClearTrace").fire("click");assert.equal(app.id("mbRouteReportSave").disabled,true);assert.equal(app.id("mbRouteCheckResult").hidden,true);const saved=app.downloads.length;app.id("mbRouteReportSave").fire("click");assert.equal(app.downloads.length,saved);
     assert.equal(app.requests,0);assert.equal(app.storageTouches,0);
   }finally{app.id("mbClose").fire("click");}
+});
+
+test("offline content checks stop at the batch limit and resume only unchecked tiles",{timeout:5000},async()=>{
+  const app=boot({mbtiles:true,gpxParser:FixtureXMLParser}),raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),"route-batch"]);
+  const points=[.5,128.5].map(x=>mbUnproject(x*256,10.5*256,9)),gpx=`<gpx><trk><trkseg>${points.map(p=>`<trkpt lat="${p.lat}" lon="${p.lon}"/>`).join("")}</trkseg></trk></gpx>`;
+  try{
+    app.id("deskGpx").files=[{name:"129-tiles.gpx",size:gpx.length,text:async()=>gpx}];await app.id("deskGpx").fire("change");await app.id("deskViewMap").fire("click");
+    app.id("mbFile").files=[{name:"batch.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");
+    await app.id("mbRouteCheckRun").fire("click");assert.match(app.id("mbRouteCheckState").textContent,/129 tiles checked · 129 present/);
+    await app.id("mbRouteVerify").fire("click");assert.match(app.id("mbRouteDecodeState").textContent,/128 decoded · 0 unreadable · 1 unchecked/);assert.equal(app.id("mbRouteVerify").disabled,false);
+    app.id("mbRouteReportSave").fire("click");const partial=JSON.parse(await app.blobs.at(-1).text());assert.equal(partial.content_check.state,"partial");assert.equal(partial.tiles.filter(t=>t.decode_status==="not-checked").length,1);
+    const bitmaps=app.bitmaps.length;await app.id("mbRouteVerify").fire("click");assert.equal(app.bitmaps.length-bitmaps,1);assert.equal(app.id("mbRouteVerify").disabled,true);app.id("mbRouteReportSave").fire("click");const complete=JSON.parse(await app.blobs.at(-1).text());assert.equal(complete.content_check.state,"complete");assert.equal(complete.content_check.decoded,129);assert.equal(complete.content_check.remaining,0);
+    assert.equal(app.requests,0);assert.equal(app.storageTouches,0);
+  }finally{app.id("mbClose").fire("click");assert.ok(app.bitmaps.every(bitmap=>bitmap.closed));}
 });

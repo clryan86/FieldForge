@@ -3,10 +3,10 @@ import {mbScreenPoint} from "./mbtiles-core.mjs";
 import {createMBRouteCheck} from "./mbtiles-route-check.mjs";
 import {placeCoordinateText} from "./places-core.mjs";
 
-export function createMBRoute({onCentre,onAddPoint,onRedraw,onCheck,onOpen,download}) {
+export function createMBRoute({onCentre,onAddPoint,onRedraw,onCheck,onVerify,onOpen,download}) {
   const id=key=>document.getElementById(key);let route=null,index=0,busy=false,hasPack=false,frame=null,decodedAt=()=>false;
   const anchor=()=>route?.points[index]||null;
-  const check=createMBRouteCheck({getRoute:()=>route,onCheck,onOpen,download});
+  const check=createMBRouteCheck({getRoute:()=>route,onCheck,onVerify,onOpen,download});
   const pointLabel=p=>p.kind==="waypoint"?`Waypoint ${p.index+1}`:`Segment ${p.segment+1} · point ${p.index+1}`;
   function sync(){
     check.setBusy(busy,hasPack);

@@ -6,7 +6,7 @@ import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {createHash,webcrypto} from "node:crypto";
 import vm from "node:vm";
-import {inspectMBDatabase,readMBFrame,readMBCoverage,readMBRouteTiles,mbFrame,mbUnproject,mbScreenPoint,checkMBHeader} from "./mbtiles-core.mjs";
+import {inspectMBDatabase,readMBFrame,readMBCoverage,readMBRouteTiles,readMBTileContent,mbFrame,mbUnproject,mbScreenPoint,checkMBHeader} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 const require=createRequire(import.meta.url),SQL=await require("./vendor/sql-asm-1.14.2.js")();
 const fixture=mode=>new Uint8Array(execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[fileURLToPath(new URL("./mbtiles-fixture.py",import.meta.url)),mode||"valid"],{maxBuffer:4*1024*1024}));
@@ -83,10 +83,14 @@ test("built SQLite worker starts and reads a pack with network, eval and WebAsse
   const send=data=>new Promise(resolve=>{reply=resolve;sandbox.self.onmessage({data});});
   const data=fixture(),opened=await send({id:1,kind:"open",bytes:data.buffer});assert.equal(opened.error,undefined);assert.equal(opened.result.name,"Synthetic test fixture");
   const frame=await send({id:2,kind:"frame",lat:opened.result.initial.lat,lon:-90,zoom:1});assert.equal(frame.error,undefined);assert.ok(frame.result.tiles.some(tile=>tile.data));assert.equal(requests,0);
+  const rasterContent=await send({id:10,kind:"tile-content",zoom:1,x:0,y:0});assert.equal(rasterContent.error,undefined);assert.equal(imageHeader(new Uint8Array(rasterContent.result.data)).width,256);
+  const absentContent=await send({id:11,kind:"tile-content",zoom:1,x:1,y:0});assert.equal(absentContent.result.decode_status,"unreadable");assert.equal(absentContent.result.data,undefined);
   const coverage=await send({id:5,kind:"coverage",zoom:1});assert.equal(coverage.error,undefined);assert.equal(coverage.result.valid,2);assert.equal(coverage.result.cells.length,2);
   const path=await send({id:6,kind:"route-tiles",zoom:1,tiles:[{x:0,y:0},{x:0,y:1},{x:1,y:1}]});assert.equal(path.error,undefined);assert.equal(path.result.present,2);assert.equal(path.result.missing,1);assert.ok(path.result.tiles.every(t=>!t.data));
   const vector=await send({id:3,kind:"open",bytes:fixture("vector-mixed").buffer});assert.equal(vector.result.format,"pbf");
   const vectorFrame=await send({id:4,kind:"frame",lat:vector.result.initial.lat,lon:-90,zoom:1});assert.equal(vectorFrame.error,undefined);assert.ok(vectorFrame.result.tiles.some(tile=>tile.vector?.features.length===3));assert.ok(vectorFrame.result.tiles.some(tile=>tile.issue?.includes("Truncated protobuf")));assert.ok(vectorFrame.result.tiles.every(tile=>!tile.data));assert.equal(requests,0);
+  const vectorContent=await send({id:12,kind:"tile-content",zoom:1,x:0,y:1});assert.equal(vectorContent.result.decode_status,"decoded");assert.equal(vectorContent.result.vector_features,3);assert.equal(vectorContent.result.data,undefined);assert.equal(vectorContent.result.vector,undefined);
+  const corruptContent=await send({id:13,kind:"tile-content",zoom:1,x:0,y:0});assert.equal(corruptContent.result.decode_status,"unreadable");assert.match(corruptContent.result.decode_issue,/Truncated protobuf/);assert.equal(corruptContent.result.data,undefined);assert.equal(requests,0);
   const provenance=JSON.parse(readFileSync(new URL("./vendor/sql.js-provenance.json",import.meta.url)));assert.equal(createHash("sha256").update(readFileSync(new URL("./vendor/sql-asm-1.14.2.js",import.meta.url))).digest("hex"),provenance.sha256);
 });
 
@@ -105,4 +109,14 @@ test("path records distinguish present, missing and unsupported without retrievi
       assert.throws(()=>pack.db.run("DELETE FROM tiles"),/readonly/);
     }finally{pack.db.close();}
   }
+});
+
+test("single-tile content reads validate coordinates and sizes before copying bounded bytes",()=>{
+  for(const mode of ["valid","oversize-tile"]){const pack=inspectMBDatabase(SQL,fixture(mode));try{
+    const queries=[],prepare=pack.db.prepare.bind(pack.db);pack.db.prepare=(sql,...args)=>{queries.push(sql);return prepare(sql,...args);};
+    const content=readMBTileContent(pack,1,0,1);
+    if(mode==="valid"){assert.equal(imageHeader(content.data).width,256);assert.equal(content.data.length,content.bytes);}
+    else{assert.equal(content.decode_status,"unreadable");assert.equal(content.data,undefined);assert.ok(queries.every(q=>!q.startsWith("SELECT tile_data")));}
+    assert.throws(()=>readMBTileContent(pack,1,-1,0),/coordinate/);assert.throws(()=>readMBTileContent(pack,1,0,2),/coordinate/);assert.throws(()=>readMBTileContent(pack,22,0,0),/stored zoom/);
+  }finally{pack.db.close();}}
 });

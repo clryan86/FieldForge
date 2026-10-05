@@ -117,3 +117,11 @@ export function readMBRouteTiles(pack,zoom,tiles) {
   }}finally{stmt.free();}
   return report;
 }
+
+export function readMBTileContent(pack,zoom,x,y) {
+  const tile=readMBRouteTiles(pack,zoom,[{x,y}]).tiles[0];
+  if(tile.status!=="present")return {...tile,decode_status:"unreadable",decode_issue:"Tile is missing or its size/type is unsupported."};
+  const data=mbRows(pack.db,`SELECT tile_data FROM ${pack.table} WHERE zoom_level=? AND tile_column=? AND tile_row=? LIMIT 1`,[zoom,x,tile.tms],1)[0]?.[0];
+  if(!(data instanceof Uint8Array)||data.length!==tile.bytes)return {...tile,decode_status:"unreadable",decode_issue:"Tile bytes could not be read."};
+  return {...tile,data};
+}

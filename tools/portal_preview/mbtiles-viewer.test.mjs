@@ -5,7 +5,7 @@ import {execFileSync} from "node:child_process";
 import {createRequire} from "node:module";
 import {fileURLToPath} from "node:url";
 import {createMBViewer} from "./mbtiles-viewer.mjs";
-import {inspectMBDatabase,readMBFrame,readMBCoverage,readMBRouteTiles} from "./mbtiles-core.mjs";
+import {inspectMBDatabase,readMBFrame,readMBCoverage,readMBRouteTiles,readMBTileContent} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 import {createMBClient, createMBFileRead} from "./mbtiles-client.mjs";
 const require=createRequire(import.meta.url),SQL=await require("./vendor/sql-asm-1.14.2.js")();
@@ -29,14 +29,14 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
   el("mbCanvas").getContext=()=>ctx;el("mbCanvas").getBoundingClientRect=()=>({width:768,height:512,left:0,top:0});
   const bitmap=()=>{const b={width:256,height:256,closed:false,close(){this.closed=true;}};bitmaps.push(b);return b;};
   let decode=async blob=>{assert.equal(imageHeader(new Uint8Array(await blob.arrayBuffer())).width,256);return bitmap();};
-  let coverageDelay=null,routeDelay=null;
-  const factory=()=>{let pack;const c={closed:false,async request(kind,data){if(kind==="open"){pack=inspectMBDatabase(SQL,new Uint8Array(data.bytes));return pack.info;}if(kind==="coverage"){const report=readMBCoverage(pack,data.zoom);if(coverageDelay)await coverageDelay;return report;}if(kind==="route-tiles"){const report=readMBRouteTiles(pack,data.zoom,data.tiles);if(routeDelay)await routeDelay;return report;}return readMBFrame(pack,data.lat,data.lon,data.zoom);},close(){pack?.db.close();this.closed=true;}};clients.push(c);return c;};
+  let coverageDelay=null,routeDelay=null,contentDelays=[],contentCalls=0,onContent=()=>{};
+  const factory=()=>{let pack;const c={closed:false,async request(kind,data){if(kind==="open"){pack=inspectMBDatabase(SQL,new Uint8Array(data.bytes));return pack.info;}if(kind==="coverage"){const report=readMBCoverage(pack,data.zoom);if(coverageDelay)await coverageDelay;return report;}if(kind==="route-tiles"){const report=readMBRouteTiles(pack,data.zoom,data.tiles);if(routeDelay)await routeDelay;return report;}if(kind==="tile-content"){contentCalls++;onContent();const result=readMBTileContent(pack,data.zoom,data.x,data.y),delay=contentDelays.shift();if(delay)await delay;return result;}return readMBFrame(pack,data.lat,data.lon,data.zoom);},close(){pack?.db.close();this.closed=true;}};clients.push(c);return c;};
   const open=name=>{el("mbFile").files=[{name,size:bytes.byteLength,arrayBuffer:async()=>bytes.slice(0)}];return el("mbFile").fire("change");};
   try {
     Object.defineProperty(globalThis,"document",{value:{getElementById:el,createElement:make,createElementNS:()=>make()},configurable:true});
     Object.defineProperty(globalThis,"createImageBitmap",{value:(...args)=>decode(...args),configurable:true});
     Object.defineProperty(globalThis,"FileReader",{value:Reader,configurable:true});
-    const viewer=createMBViewer({clientFactory:factory,onAddPoint:p=>collected.push(p)});
+    const exports=[],viewer=createMBViewer({clientFactory:factory,onAddPoint:p=>collected.push(p),download:text=>exports.push(JSON.parse(text))});
     assert.equal(el("mbAddPlace").disabled,true);await open("test.mbtiles");assert.equal(el("mbControls").disabled,false);assert.ok(draws.length);assert.equal(el("mbAttribution").textContent,"<b>Fixture credit</b>");
     await el("mbAddPlace").fire("click");assert.equal(collected.length,1);assert.ok(collected[0].lat<0&&collected[0].lon<0);assert.match(collected[0].source,/test.mbtiles/);
     el("mbColumn").value="767";el("mbRow").value="256";await el("mbPixelForm").fire("submit");assert.equal(el("mbAddPlace").disabled,true);assert.match(el("mbSelected").textContent,/No decoded tile/);
@@ -77,6 +77,24 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
     }
     await open("preserved.mbtiles");await viewer.viewGPX({segments:[[{lat:0,lon:0},{lat:0,lon:180}]],waypoints:[]},"ambiguous.gpx");
     await el("mbRouteCheckRun").fire("click");assert.match(el("mbRouteCheckState").textContent,/ambiguous/);assert.equal(el("mbControls").disabled,false);assert.equal(el("mbRouteCheckResult").hidden,true);assert.equal(el("mbRouteCard").hidden,false);
+    const both={segments:[[{lat:20,lon:-90},{lat:-20,lon:-90}]],waypoints:[]};
+    await viewer.viewGPX(both,"both.gpx");await el("mbRouteCheckRun").fire("click");
+    const pauseGate=deferred();contentDelays=[null,pauseGate.promise];const verifying=el("mbRouteVerify").fire("click");await settle();
+    assert.match(el("mbRouteDecodeState").textContent,/1 decoded.*1 unchecked/);el("mbRouteVerifyPause").fire("click");assert.equal(el("mbRouteVerifyPause").disabled,true);pauseGate.resolve();await verifying;
+    el("mbRouteReportSave").fire("click");assert.equal(exports.at(-1).content_check.state,"partial");assert.equal(exports.at(-1).content_check.remaining,1);assert.equal(el("mbRouteVerify").disabled,false);
+    const before=contentCalls;await el("mbRouteVerify").fire("click");assert.equal(contentCalls-before,1);el("mbRouteReportSave").fire("click");assert.equal(exports.at(-1).content_check.state,"complete");assert.equal(exports.at(-1).content_check.decoded,2);
+    await el("mbRouteCheckRun").fire("click");const realNow=Date.now;let clock=1000;
+    try{Date.now=()=>clock;onContent=()=>{clock+=31000;};await el("mbRouteVerify").fire("click");}
+    finally{Date.now=realNow;onContent=()=>{};}
+    el("mbRouteReportSave").fire("click");assert.equal(exports.at(-1).content_check.attempted,1);assert.equal(exports.at(-1).content_check.remaining,1);assert.equal(exports.at(-1).content_check.state,"partial");await el("mbRouteVerify").fire("click");assert.match(el("mbRouteDecodeState").textContent,/2 decoded.*0 unchecked/);
+    for(const action of ["clear","replace","close"]){
+      await open("verify.mbtiles");await viewer.viewGPX(both,"verify.gpx");await el("mbRouteCheckRun").fire("click");const gate=deferred();contentDelays=[gate.promise];const task=el("mbRouteVerify").fire("click");await settle();
+      assert.equal(el("mbControls").disabled,true);assert.equal(viewer.viewGPX(both,"blocked.gpx"),false);
+      if(action==="clear")viewer.clearRoute();else if(action==="replace")await open("new-verify.mbtiles");else el("mbClose").fire("click");
+      gate.resolve();await task;assert.equal(el("mbRouteCheckResult").hidden,true);assert.equal(el("mbRouteReportSave").disabled,true);assert.equal(el("mbRouteVerifyPause").hidden,true);assert.equal(el("mbControls").disabled,action==="close");
+    }
+    await open("bitmap-cancel.mbtiles");await viewer.viewGPX(both,"bitmap.gpx");await el("mbRouteCheckRun").fire("click");
+    const bitmapGate=deferred(),orphan=bitmap();decode=()=>bitmapGate.promise;const bitmapTask=el("mbRouteVerify").fire("click");await settle();el("mbClose").fire("click");await bitmapTask;bitmapGate.resolve(orphan);await settle();assert.equal(orphan.closed,true);assert.equal(el("mbRouteCheckResult").hidden,true);
     await el("mbClose").fire("click");assert.ok(bitmaps.every(b=>b.closed));
   } finally {for(const c of clients)if(!c.closed)c.close();for(const [key,value] of saved){if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}}
 });

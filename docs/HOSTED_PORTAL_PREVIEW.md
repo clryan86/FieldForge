@@ -766,3 +766,59 @@ services remain unfinished.
 Integrated verification: **105 Node tests and 7 Python checks passed**, retaining the newer complete-GPX-path tile checks. The offline edition is **56f8a61109c7**, **2,106,026 bytes**, SHA-256 `8f9075135eb5332e0476f7143e9edec6bb313367f208038694e4914f05ae511c`.
 
 This address update was published with Site source commit `379d73596d6b101d2a35dbecbbbd9c4bc213a9f4`, preserving the GPX path tile checks from `dda68e18f68ae370995573097682e4c48e996eaa`.
+
+
+## GPX tile-content verification (October 5, 2026)
+
+After **Check path tiles**, users can now choose **Verify tile contents** in
+both the website and standalone offline desk. This is separate from the fast
+presence/size check. The report retains the original missing/unsupported
+counts and tracks each eligible tile as not-checked, decoded or unreadable.
+Unsuccessful decodes join the gap list with a short reason and can be opened
+at their map location.
+
+Raster verification uses the same native ImageBitmap path as map viewing,
+requiring the declared PNG/JPEG/WebP format, square 256/512 dimensions and
+matching decoded dimensions. Images are closed after checking. Vector checks
+use the existing bounded raw/gzip MVT parser inside the SQLite worker and
+return only a decoding summary, without geometry or tile bytes in the report.
+The 2 MiB stored-tile limit and existing vector expansion/feature/position
+limits remain. Unreadable includes unsupported content, decoder failures and
+limits in the current browser; it is not necessarily proof of a damaged file.
+
+Each run handles at most 128 eligible tiles and starts no further tile after
+30 seconds. The current operation may finish later, subject to the existing
+15-second worker deadline and a new 15-second raster-decoding deadline.
+Progress shows decoded, unreadable and unchecked counts. **Pause verification**
+waits for the current operation and retains completed results. **Continue
+verifying tile contents** processes only the remaining unchecked tiles.
+Users can save partial results; completion means every eligible tile has a
+decoding result, including failures. Missing/unsupported records remain gaps.
+A new path check resets decoding results, allowing a deliberate retry.
+
+**Close / cancel** closes the worker and clears the report immediately.
+Native bitmap decoding cannot itself be aborted: canceled/timed-out jobs
+settle promptly and close any bitmap that arrives later. Clearing/replacing
+GPX or MBTiles inputs invalidates pending results. The same bitmap lifecycle
+also protects ordinary raster map viewing.
+
+Tile-check JSON is now schema version 2 with a `content_check` summary and
+per-tile `decode_status`; absent/unsupported records use `not-applicable`.
+The report explicitly identifies incomplete work. Decoding does not verify
+complete cartographic rendering, source accuracy, access, current conditions,
+off-path data, other zooms or route safety. No map datasets were added.
+The recently added online address lookup and offline collection handoff are
+preserved; the downloadable desk still makes no network requests.
+
+Validation: **110 Node tests and 7 Python checks pass**. New checks exercise
+bounded SQLite reads, real raw/gzip vector decoding and malformed vectors,
+raster decoder failures/dimension disagreement, timeout/cancellation cleanup,
+late results after replacement, pausing/resuming, elapsed-time limits and a
+129-tile offline batch across two runs. Actual offline HTML exports complete
+and partial reports with network and browser storage forbidden. Hosted/offline
+builds, module dependencies, label/ARIA targets and worker payloads were
+checked. Native browser/phone QA remains pending; bitmap and DOM/Canvas tests
+use doubles while SQLite, vector parsing and the embedded worker code execute.
+
+Offline edition: **9119404f6123**, **2,115,519 bytes**. SHA-256:
+`dec7ff54d379e295a7c333af7bd3567eb3efb82f1b33584408ce2a5c7b4c440d`.

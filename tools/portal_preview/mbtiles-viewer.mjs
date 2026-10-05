@@ -1,6 +1,6 @@
 import {MAX_MB_BYTES, MB_LAT_LIMIT, checkMBHeader, mbFrame, mbUnproject, mbScreenPoint} from "./mbtiles-core.mjs";
 import {createMBClient, createMBFileRead} from "./mbtiles-client.mjs";
-import {imageHeader} from "./image-core.mjs";
+import {createMBRasterDecode} from "./mbtiles-raster.mjs";
 import {vectorLabel} from "./vector-core.mjs";
 import {drawVectorTiles} from "./mvt-renderer.mjs";
 import {createMBCoverage} from "./mbtiles-coverage.mjs";
@@ -9,7 +9,7 @@ import {createMBRoute} from "./mbtiles-route.mjs";
 
 export function createMBViewer({onAddPoint,download,clientFactory=createMBClient}) {
   const id=key=>document.getElementById(key),canvas=id("mbCanvas"),ctx=canvas.getContext("2d");
-  let client=null,fileRead=null,info=null,frame=null,selected=null,bitmaps=[],vectors=[],generation=0,busy=false,filename="",coverage=null,target=null,route=null;
+  let client=null,fileRead=null,rasterRead=null,info=null,frame=null,selected=null,bitmaps=[],vectors=[],generation=0,busy=false,filename="",coverage=null,target=null,route=null;
   const status=(text,error=false)=>{id("mbStatus").textContent=text;id("mbStatus").classList.toggle("error",error);};
   const node=(tag,text)=>{const element=document.createElement(tag);if(text!==undefined)element.textContent=text;return element;};
   const decodedAt=(x,y)=>[...bitmaps.map(item=>item.tile),...vectors].find(tile=>x>=tile.left&&x<tile.left+256&&y>=tile.top&&y<tile.top+256);
@@ -23,13 +23,13 @@ export function createMBViewer({onAddPoint,download,clientFactory=createMBClient
   function controls() {id("mbControls").disabled=!info||busy;id("mbAddPlace").disabled=!selected||busy;id("mbPixelControls").disabled=!frame||busy;coverage?.setBusy(busy);updateTarget();route?.update(frame,decodedAt,busy,!!info);}
   function dispose() {for(const item of bitmaps)item.bitmap.close();bitmaps=[];vectors=[];frame=null;selected=null;id("mbSelected").textContent="No tile pixel selected";id("mbTileSummary").textContent="No frame loaded";id("mbIssues").textContent="";ctx?.clearRect(0,0,768,512);controls();}
   function clear(message="Map pack closed. Collected places and your original file are unchanged.",{keepOverlays=false}={}) {
-    generation++;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";if(!keepOverlays){target=null;route?.clear();}coverage?.reset();route?.setPack(null);dispose();
+    generation++;rasterRead?.cancel();rasterRead=null;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";if(!keepOverlays){target=null;route?.clear();}coverage?.reset();route?.setPack(null);dispose();
     id("mbFile").value="";id("mbClose").disabled=true;id("mbName").textContent="Local MBTiles map";id("mbAttribution").textContent="Attribution will appear here from your map pack.";
     id("mbDescription").textContent="";id("mbZoom").replaceChildren();id("mbLatitude").value="";id("mbLongitude").value="";id("mbColumn").value="384";id("mbRow").value="256";
     id("mbVectorNote").hidden=true;id("mbPointNames").checked=true;status(message);
   }
   if(!ctx) {id("mbFile").disabled=true;const unavailable=()=>{status("This browser cannot draw the local map canvas.",true);return false;};unavailable();return {viewPlace:unavailable,viewGPX:unavailable,clearRoute(){}};}
-  route=createMBRoute({onCentre:p=>show(p.lat,p.lon,frame?.zoom??info.initial.zoom,false),onAddPoint,onRedraw:()=>{draw();controls();},download,onOpen:(lat,lon,zoom)=>show(lat,lon,zoom,false),onCheck:async(zoom,tiles)=>{
+  route=createMBRoute({onCentre:p=>show(p.lat,p.lon,frame?.zoom??info.initial.zoom,false),onAddPoint,onRedraw:()=>{draw();controls();},download,onVerify:verifyContents,onOpen:(lat,lon,zoom)=>show(lat,lon,zoom,false),onCheck:async(zoom,tiles)=>{
     if(!client||!info||busy)return null;
     const token=generation;busy=true;controls();
     try{
@@ -46,6 +46,26 @@ export function createMBViewer({onAddPoint,download,clientFactory=createMBClient
     catch(error){if(token===generation){clear();status(error.message||"Could not inspect the tile index.",true);}}
     finally{if(token===generation){busy=false;controls();}}
   }});
+  async function verifyContents(zoom,tiles,onTile,shouldStop) {
+    if(!client||!info||busy)return;
+    if(!Array.isArray(tiles)||tiles.length>128)throw new Error("Verify up to 128 tiles per batch.");
+    const token=generation,deadline=Date.now()+30000;busy=true;controls();
+    try{
+      for(const {x,y} of tiles){
+        if(token!==generation||shouldStop()||Date.now()>=deadline)break;
+        const result=await client.request("tile-content",{zoom,x,y});if(token!==generation||shouldStop())break;
+        if(result.data){
+          const job=createMBRasterDecode(result.data,info.format);rasterRead=job;
+          try{const bitmap=await job.promise;bitmap.close();result.decode_status="decoded";}
+          catch(error){result.decode_status="unreadable";result.decode_issue=error.message||"Raster tile could not be decoded.";}
+          finally{delete result.data;if(rasterRead===job)rasterRead=null;}
+        }
+        if(token!==generation||shouldStop())break;
+        onTile(result);
+      }
+    }catch(error){if(token===generation){clear();status(error.message||"Tile verification stopped. Reopen the map pack.",true);}}
+    finally{if(token===generation){busy=false;controls();}}
+  }
   function draw() {
     ctx.clearRect(0,0,768,512);if(!frame)return;
     ctx.fillStyle="#102c23";ctx.fillRect(0,0,768,512);ctx.font="13px system-ui";ctx.textAlign="center";
@@ -76,11 +96,9 @@ export function createMBViewer({onAddPoint,download,clientFactory=createMBClient
         if(!tile.data)continue;
         let bitmap=null;
         try {
-          const header=imageHeader(tile.data),expected=info.format==="png" ? "PNG" : info.format==="webp" ? "WebP" : "JPEG";
-          if(header.format!==expected||header.width!==header.height||![256,512].includes(header.width))throw new Error("Unsupported tile encoding/dimensions");
-          bitmap=await createImageBitmap(new Blob([tile.data],{type:header.mime}),{imageOrientation:"none"});
+          const job=createMBRasterDecode(tile.data,info.format);rasterRead=job;
+          try{bitmap=await job.promise;}finally{if(rasterRead===job)rasterRead=null;}
           if(token!==generation){bitmap.close();return;}
-          if(bitmap.width!==header.width||bitmap.height!==header.height)throw new Error("Tile dimensions disagree");
           loaded.push({bitmap,tile});bitmap=null;
         } catch(error) {bitmap?.close();tile.issue="Unreadable / unsupported tile";}
         delete tile.data;
