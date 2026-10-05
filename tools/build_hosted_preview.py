@@ -129,7 +129,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     # Add actual browser-local tools without changing the desktop server portal.
     assets = Path(__file__).resolve().parent / "portal_preview"
     portal = replace_once(portal, '<section class="preview-banner"', (assets / "desk.html").read_text(encoding="utf-8") + '<section class="preview-banner"')
-    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><script type="module" src="desk.mjs"></script></head>')
+    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><link rel="stylesheet" href="route-explorer.css"><script type="module" src="desk.mjs"></script></head>')
     css = re.search(r'<style>(.*?)</style>', portal, flags=re.S).group(1)
     screens = [
         ("rooms", "Community rooms", "commons-chat-preview.png", "Public rooms organized around practical skills, with pause, export, block and report controls."),
@@ -162,7 +162,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "commons.html").write_text(commons, encoding="utf-8")
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
-    for name in ("desk.css", "desk.mjs", "desk-core.mjs"):
+    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs"):
         shutil.copyfile(assets / name, output / name)
     print(f"Exported portal and Commons gallery from {revision} to {output}")
 

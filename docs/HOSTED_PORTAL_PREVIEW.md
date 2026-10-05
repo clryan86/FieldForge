@@ -89,3 +89,34 @@ checks use injected DOM fixtures; they do not claim browser rendering coverage.
 The export was also checked for JavaScript syntax, valid local links/anchors,
 matching control IDs, all 53 source regions and absence of network calls in the
 preparation modules. No additional live chat or sign-in was enabled by this update.
+
+## Route exploration update — October 5, 2026
+
+The GPX inspector now supports bounded 1–8× zoom and pan, point selection from
+the coordinate plot, a keyboard-operable point slider and previous/next buttons.
+An all-waypoint picker reaches every waypoint even when the table is limited to
+its first 100 rows. A selected point can be exported as the existing FieldForge
+place CSV format. Metric/imperial display changes do not change coordinates.
+
+Optional GPX elevation is read from the file only. A linked profile shows recorded
+heights against cumulative segment-aware distance. Missing, malformed or duplicate
+elevation records remain missing; no provider fills them in. Separate track
+segments and missing-height runs are never joined. Raw ascent/descent sum only
+adjacent valid heights within the same segment and are not corrected for GPS
+noise. A lone valid height is plotted but cannot supply an ascent/descent estimate.
+No terrain safety, driving route or reliable vertical accuracy is asserted.
+
+Selecting a profile point updates the coordinate marker and readout. Repeated
+route distances are resolved by the clicked chart position when possible; the
+slider remains available for every route point. The chart labels use HTML text
+to stay readable at narrow widths. Clearing or replacing a file removes the
+profile, selected coordinates, waypoint options, geometry and export state.
+No GPX coordinates or elevations are persisted or uploaded.
+
+The focused Node suite now passes **17 checks**. New coverage includes genuine
+zero elevation, malformed and missing heights, segment/gap boundaries, flat and
+stationary profiles, repeated distances, chart point selection and bounded zoom.
+Module syntax, imports, HTML control IDs and local links/anchors were also checked.
+These are calculation and structure checks, not a claim of browser visual QA.
+Live chat, sign-in and hosted route/map providers remain unchanged and unavailable
+on this private preview.

@@ -28,9 +28,16 @@ export function coordinate(raw, limit) {
 }
 
 function children(element, name) { return [...element.children].filter(node => node.localName === name && node.namespaceURI === element.namespaceURI); }
+export function readElevation(raw) {
+  if (typeof raw !== "string" || raw.length > 80 || !/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw.trim())) return null;
+  const value = Number(raw);
+  return Number.isFinite(value) && Math.abs(value) <= 1e6 ? value : null;
+}
 function readPoint(element) {
   const name = children(element, "name")[0]?.textContent?.trim() || "";
-  return {lat: coordinate(element.getAttribute("lat"), 90), lon: coordinate(element.getAttribute("lon"), 180), name: [...name].slice(0, 160).join("")};
+  const elevationNodes = children(element, "ele"), raw = elevationNodes.length === 1 ? elevationNodes[0].textContent : null;
+  const ele = readElevation(raw);
+  return {lat: coordinate(element.getAttribute("lat"), 90), lon: coordinate(element.getAttribute("lon"), 180), name: [...name].slice(0, 160).join(""), ele, invalidElevation: elevationNodes.length > 0 && ele === null};
 }
 
 export function parseGPX(text, Parser = globalThis.DOMParser) {
@@ -89,6 +96,63 @@ export function projectTrace(data) {
   const scale = Math.min(700 / Math.max(maxX - minX, 1e-9), 270 / Math.max(maxY - minY, 1e-9));
   const project = ([x, y]) => [400 + (x * xFactor - (minX + maxX) / 2) * scale, 190 + (-y - (minY + maxY) / 2) * scale];
   return {parts: parts.map(part => part.map(project)), places: places.map(project)};
+}
+
+export function elevationProfile(data) {
+  const samples = [], runs = [];
+  let meters = 0, ascent = 0, descent = 0, knownMeters = 0, knownPairs = 0, validCount = 0, invalidCount = 0;
+  for (const [segmentIndex, part] of data.segments.entries()) {
+    let previous = null, run = [];
+    for (const [pointIndex, point] of part.entries()) {
+      const leg = previous ? pointDistance(previous.point, point) : 0;
+      meters += leg;
+      const ele = typeof point.ele === "number" && Number.isFinite(point.ele) && Math.abs(point.ele) <= 1e6 ? point.ele : null;
+      const sample = {point, segmentIndex, pointIndex, index:samples.length, distance:meters, ele};
+      samples.push(sample);
+      if (point.invalidElevation) invalidCount++;
+      if (ele !== null) {
+        validCount++; run.push(sample);
+        if (previous?.ele !== null && previous?.ele !== undefined) {
+          const delta = ele - previous.ele;
+          ascent += Math.max(0, delta); descent += Math.max(0, -delta); knownMeters += leg; knownPairs++;
+        }
+      } else if (run.length) { runs.push(run); run = []; }
+      previous = sample;
+    }
+    if (run.length) runs.push(run); // A new track segment always starts a new line.
+  }
+  const elevations = samples.filter(p => p.ele !== null).map(p => p.ele);
+  return {samples, runs, meters, ascent, descent, knownMeters, knownPairs, validCount, invalidCount, min:elevations.length ? Math.min(...elevations) : null, max:elevations.length ? Math.max(...elevations) : null};
+}
+
+export function projectElevation(profile) {
+  const x = distance => profile.meters ? 50 + 700 * distance / profile.meters : 400;
+  const y = ele => profile.max === profile.min ? 95 : 25 + 140 * (profile.max - ele) / (profile.max - profile.min);
+  return profile.runs.map(run => run.map(sample => ({...sample, x:x(sample.distance), y:y(sample.ele)})));
+}
+
+export function nearestDistanceSample(samples, target) {
+  if (!samples.length || !Number.isFinite(target)) return -1;
+  let left = 0, right = samples.length;
+  while (left < right) { const mid = Math.floor((left + right) / 2); if (samples[mid].distance < target) left = mid + 1; else right = mid; }
+  if (left === 0) return 0;
+  if (left === samples.length) return left - 1;
+  return target - samples[left - 1].distance < samples[left].distance - target ? left - 1 : left;
+}
+
+export function nearestPlotSample(points, x, y, radius) {
+  if (![x,y,radius].every(Number.isFinite) || radius < 0) return -1;
+  let best = radius * radius, index = -1;
+  for (const point of points) { const squared = (point.x-x)**2 + (point.y-y)**2; if (squared <= best) { best=squared; index=point.index; } }
+  return index;
+}
+
+export function clampView(zoom, x, y) {
+  const level = Math.max(1, Math.min(8, Number.isFinite(zoom) ? zoom : 1));
+  const width = 800 / level, height = 380 / level;
+  const cx = Math.max(width / 2, Math.min(800 - width / 2, Number.isFinite(x) ? x : 400));
+  const cy = Math.max(height / 2, Math.min(380 - height / 2, Number.isFinite(y) ? y : 190));
+  return {zoom:level, x:cx, y:cy, width, height, box:[cx - width / 2, cy - height / 2, width, height]};
 }
 
 export function waypointCSV(waypoints) {

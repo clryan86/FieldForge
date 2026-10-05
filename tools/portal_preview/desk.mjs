@@ -1,4 +1,5 @@
 import {MAX_GPX_BYTES, PLAN_KIND, downloadEstimate, validatePlan, parseGPX, projectTrace, waypointCSV} from "./desk-core.mjs";
+import {createRouteExplorer} from "./route-explorer.mjs";
 
 const id = key => document.getElementById(key);
 const node = (tag, text, className) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; };
@@ -68,6 +69,10 @@ function download(text, mime, filename) {
   link.href = url; link.download = filename; document.body.append(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
+const routeExplorer = createRouteExplorer({onExportPoint:point => {
+  download(waypointCSV([point]), "text/csv;charset=utf-8", "fieldforge-selected-place.csv");
+  id("deskTraceStatus").textContent = "Selected point CSV saved. Import it into FieldForge’s local place catalog. The coordinate comes from your file and has not been independently verified.";
+}});
 function applyPlan(data) {
   const checked = validatePlan(data, regionIds); // Atomic: reject first, then change UI.
   selection = new Set(checked.region_ids); id("deskBudget").value = checked.budget_gb; id("deskSpeed").value = checked.speed_mbps;
@@ -112,6 +117,7 @@ id("traceTab").addEventListener("click", () => selectTool("trace"));
 const svgNS = "http://www.w3.org/2000/svg";
 function svg(tag, attrs) { const element = document.createElementNS(svgNS, tag); for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value); return element; }
 function clearTrace(message = "File cleared from this page. Nothing was uploaded or saved.") {
+  routeExplorer.clear();
   readGeneration++; trace = null; id("deskGpx").value = ""; id("deskTraceDrawing").replaceChildren(); id("deskTraceEmpty").hidden = false;
   id("deskTraceEmpty").removeAttribute("display"); id("deskSvgDesc").textContent = "Load a file to inspect its points. No basemap or directions.";
   id("deskFileName").textContent = "Coordinate trace";
@@ -135,10 +141,15 @@ function renderTrace(data, filename) {
   id("deskPointCount").textContent = data.geometryPoints.toLocaleString(); id("deskSegments").textContent = data.segments.length.toLocaleString(); id("deskWaypoints").textContent = data.waypoints.length.toLocaleString();
   id("deskSvgDesc").textContent = `GPX coordinate plot with ${data.segments.length} separate segments and ${data.waypoints.length} waypoints. No basemap or directions.`;
   const rows = document.createDocumentFragment();
-  for (const [index, p] of data.waypoints.slice(0, 100).entries()) { const row = node("tr"); row.append(node("td", p.name || `Waypoint ${index + 1}`), node("td", p.lat.toFixed(7)), node("td", p.lon.toFixed(7))); rows.append(row); }
+  for (const [index, p] of data.waypoints.slice(0, 100).entries()) {
+    const row = node("tr"), cell = node("td"), button = node("button", p.name || `Waypoint ${index + 1}`, "waypoint-select");
+    button.type = "button"; button.addEventListener("click", () => { routeExplorer.selectWaypoint(index); id("deskExplorePanel").scrollIntoView({block:"nearest"}); });
+    cell.append(button); row.append(cell, node("td", p.lat.toFixed(7)), node("td", p.lon.toFixed(7))); rows.append(row);
+  }
   id("deskPlaces").replaceChildren(rows); id("deskPlacesPanel").hidden = !data.waypoints.length;
   id("deskPlacesNote").textContent = `Showing ${Math.min(100, data.waypoints.length)} of ${data.waypoints.length} waypoints. CSV exports all waypoints, rounded to 7 decimal places.`;
   id("deskClearTrace").disabled = false; id("deskExportPlaces").disabled = !data.waypoints.length;
+  routeExplorer.load(data, projected);
 }
 async function readGPX(file) {
   if (!file) return;
