@@ -14,10 +14,10 @@ import time
 from http.cookies import CookieError, SimpleCookie
 from pathlib import Path
 
+from fieldforge.online.account_lifecycle import AccountLifecycleStore
 from fieldforge.online.chat_store import SESSION_SECONDS, ChatError
 from fieldforge.online.community import CATEGORIES
 from fieldforge.online.owner import OwnerStore
-from fieldforge.online.profiles import ProfileStore
 from fieldforge.online.server import (
     PortalApplication,
     PortalConfig,
@@ -34,9 +34,9 @@ API_ROOT = "/api/commons/"
 PHOTO_REQUEST_BYTES = ((1024 * 1024 + 2) // 3) * 4 + 256
 
 
-def _cookie(token, *, clear=False):
+def _cookie(token):
     return (f"{COOKIE_NAME}={token}; Path=/api/commons; HttpOnly; SameSite=Strict; "
-            f"Max-Age={0 if clear else SESSION_SECONDS}")
+            f"Max-Age={SESSION_SECONDS}")
 
 
 class PreviewHandler(PortalHandler):
@@ -131,6 +131,10 @@ class PreviewApplication(PortalApplication):
                    "account/resume": {"consent"},
                    "account/recover": {"username", "recovery_code", "new_password", "consent"},
                    "account/password": {"password", "new_password"},
+                   "account/export": {"password"},
+                   "account/export/page": {"export_token", "section", "after"},
+                   "account/export/finish": {"export_token"},
+                   "account/close": {"password", "username", "confirm"},
                    "profile/get": set(), "profile/save": {"profile", "revision"},
                    "profile/photo/upload": {"encoded", "revision"},
                    "profile/photo/remove": {"revision"}, "profile/photo/read": {"asset_id"},
@@ -163,8 +167,6 @@ class PreviewApplication(PortalApplication):
                            "resolve": self.store.owner_resolve, "lock": self.store.owner_lock,
                            "password": self.store.owner_password}
                 result = methods[name.split("/")[1]](token, **payload) or {"ok": True}
-                if name == "owner/password":
-                    cookie = _cookie("", clear=True)
         elif name.startswith("profile/"):
             methods = {"get": self.store.profile_get, "save": self.store.profile_save,
                        "photo/upload": self.store.profile_photo_upload,
@@ -175,13 +177,18 @@ class PreviewApplication(PortalApplication):
             result = methods[name.removeprefix("profile/")](token, **payload)
         elif name.startswith("account/"):
             fields = dict(payload)
-            if name != "account/password" and fields.pop("consent") is not True:
+            if name in {"account/register", "account/login", "account/recover", "account/resume"} and fields.pop("consent") is not True:
                 raise ChatError(400, "Confirm local account and message storage before continuing.")
-            if name == "account/resume":
+            lifecycle = {"account/export": self.store.account_export,
+                         "account/export/page": self.store.account_export_page,
+                         "account/export/finish": self.store.account_export_finish,
+                         "account/close": self.store.account_close}
+            if name in lifecycle:
+                result = lifecycle[name](token, **fields)
+            elif name == "account/resume":
                 result = self.store.account_resume(token)
             elif name == "account/recover":
                 result = self.store.account_recover(**fields)
-                cookie = _cookie("", clear=True)
             else:
                 methods = {"register": self.store.account_register, "login": self.store.account_login,
                            "password": self.store.account_change_password}
@@ -214,8 +221,10 @@ class PreviewApplication(PortalApplication):
             result = self.store.export(token)
         elif name == "leave":
             self.store.leave(token)
-            cookie = _cookie("", clear=True)
         response = PortalResponse.json(200, result)
+        # Session revocation (leave, recovery, owner password change or closure)
+        # intentionally has no Set-Cookie: a delayed response cannot delete the
+        # browser's newer sign-in. The old token is already invalid server-side.
         if cookie:
             response.extra_headers = (("Set-Cookie", cookie),)
         return response
@@ -235,7 +244,7 @@ class CommonsPreviewServer(PortalHTTPServer):
 
 
 def make_preview_server(database, port=8765):
-    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(ProfileStore(database)))
+    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(AccountLifecycleStore(database)))
     server.RequestHandlerClass = PreviewHandler
     return server
 

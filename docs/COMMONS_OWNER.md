@@ -73,14 +73,18 @@ cannot connect other people's computers. Do not forward or tunnel this preview.
 - **Remove message:** clear the reported message body from chat, exports and
   report review. Removed bodies cannot be restored by dismissing a report.
   Copies already delivered, screenshots and backups cannot be erased this way.
-- **Participants:** search and page through accounts and guests, fifty at a time.
-  No passwords, recovery secrets or authenticator keys are returned.
+- **Participants:** search and page through accounts, guests, and closed-account
+  records, fifty at a time. No passwords, recovery secrets or authenticator keys
+  are returned. A closed record displays **Closed account · Access permanently
+  removed**, with no access-control buttons. The separate **Closed accounts**
+  count excludes these records from **Guest identities**.
 - **Suspend:** stop that identity's access, revoke its session, and stop new
   invitations to it. Retained messages remain unless removed separately.
 - **Restore access:** allow a saved account to sign in again. It does not revive
   old cookies. A revoked guest cannot reclaim its former identity; use saved
   accounts for durable membership. Guests can create new identities, so guest
-  suspension is not a ban on a real person.
+  suspension is not a ban on a real person. Restore access cannot reopen a closed
+  account.
 - **Revoke session:** sign a participant out without suspending the saved
   account. The account can sign in again. The owner cannot suspend, restore or
   revoke itself through these controls.
@@ -101,6 +105,38 @@ can remain signed in for up to eight hours. **Return to Commons → Resume
 existing session** enters chat as King. Ordinary chat sign-out also invalidates
 owner access. Opening the owner console again requires both factors after lock
 or expiry. Signing in rotates the session and ends the previous one.
+
+## Account closure and retained records
+
+Saved members can now use **Account security → Close account** in Commons. This
+requires their own current session and password, a typed account username, and
+an explicit confirmation checkbox. The action permanently removes their
+credentials, recovery access, profile and normalized photo; revokes their
+session; leaves their private conversations; and withdraws all their retained
+public and private message bodies, including messages in conversations already
+left. **Delete my profile** remains a separate action that keeps the account and
+messages. The [account guide](COMMONS_ACCOUNTS.md) explains export before closure
+and the full member workflow.
+
+The owner console cannot close another member's account or restore a closed
+one. Closed rows remain visible as generic participant references, with their
+former usernames reserved by a stored hash. They have no suspend, restore, or
+revoke buttons. The server also rejects those operations on a closed target with
+HTTP 409, so an older console view cannot re-enable access. The closed record
+continues to occupy the existing participant limit.
+
+Closure preserves other people's messages and shared conversation titles and
+metadata under the existing retention rules. Incoming blocks, reports,
+moderation/audit records, and invitation records can remain, and closure itself
+is recorded in the activity history. Formerly authored message bodies are blank
+in subsequent report review. Closure cannot recall copies, exports, or database
+backups that were already kept.
+
+The sole owner cannot use self-service account closure. The server protects both
+the reserved owner username and the participant referenced by the sole-owner
+configuration; changing a display name or manipulating the browser cannot bypass
+these checks. Owner password changes and recovery remain the separate procedures
+below.
 
 ## Password changes and factor recovery
 
@@ -156,13 +192,19 @@ The existing `--review-reports` terminal command remains available to that local
 operator without a browser sign-in. Backup restoration can restore old factors,
 sessions or consumed counters; production backup/rotation procedures remain needed.
 
-Schema version 4 adds owner configuration, grants, participant controls,
-moderation resolutions and the bounded audit history. It preserves existing
-accounts, conversations and active sessions. Back up test data before upgrading;
-do not run old binaries against a newer schema.
+Schema version **4** introduced owner configuration, grants, participant
+controls, moderation resolutions and the bounded audit history. Versions **5**
+and **6** added profiles and the private-inbox lifecycle. The current **version
+7** adds account export authorizations and closed-account records, while
+preserving existing owner configuration and eligible account/chat records.
+Current owner utilities preserve the newer schema version. Back up the database
+before upgrading and do not run older binaries against a version they do not
+understand.
 
-**Public hosting, verified email/social sign-in, account deletion/lifecycle,
-production abuse controls and independent security review remain unfinished.**
+**Public hosting, verified email/social sign-in, production abuse controls and
+independent security review remain unfinished.** Local account export and
+self-service closure are implemented, with the sole-owner restriction described
+above.
 Public deployment also needs HTTPS/Secure cookies, host/domain configuration,
 secret and backup operations, reviewed moderation procedures and monitoring.
 TOTP is not phishing-resistant; hardware-backed passkeys are not implemented.
@@ -170,7 +212,11 @@ Messaging is not end-to-end encrypted, and screenshot prevention is not promised
 
 ## Verification
 
-On 2026-10-05 the combined chat/account/owner/profile/portal/connection suite
+The current schema 7 export/closure checks are recorded in the
+[account lifecycle verification](COMMONS_ACCOUNTS.md#account-lifecycle-verification).
+
+For the earlier owner-console release, on 2026-10-05 the combined
+chat/account/owner/profile/portal/connection suite
 passed **163 tests and six subtests**, including all **ten Chromium browser
 tests**. One existing native Tk handoff test was skipped because this environment
 has no graphical desktop. Scoped Ruff and JavaScript syntax checks passed.

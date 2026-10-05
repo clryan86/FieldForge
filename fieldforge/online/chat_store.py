@@ -88,7 +88,7 @@ class ChatStore:
             if ((version == 0 and (identity != 0 or tables))
                     or (version != 0 and identity != APPLICATION_ID)):
                 raise ValueError("Choose a separate Commons preview database, not an existing app database.")
-            if version not in (0, 1, 2, 3, 4, 5, 6):
+            if version not in (0, 1, 2, 3, 4, 5, 6, 7):
                 raise ValueError("Unsupported Commons preview database version.")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS participants (
@@ -151,12 +151,16 @@ class ChatStore:
                 "identity": "unverified preview name"}
 
     def _name_in_use(self, db, name, now):
+        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='closed_accounts'").fetchone():
+            fingerprint = hashlib.sha256(name.casefold().encode("utf-8")).hexdigest()
+            if db.execute("SELECT 1 FROM closed_accounts WHERE username_hash=?", (fingerprint,)).fetchone():
+                return True
         return db.execute("SELECT 1 FROM participants WHERE name_key=? AND expires>? "
                           "AND token_hash IS NOT NULL", (name.casefold(), now)).fetchone()
 
     def join(self, name, skill, token=None):
         name = _text(name, 40)
-        if name.casefold() in {"admin", "administrator", "moderator", "clryan86", "king"}:
+        if name.casefold() in {"admin", "administrator", "moderator", "clryan86", "king", "closed account"}:
             raise ChatError(400, "That name is reserved. Choose another preview name.")
         if not isinstance(skill, str) or skill and skill not in CATEGORY_BY_ID:
             raise ChatError(400, "Choose a supported skill or leave it blank.")

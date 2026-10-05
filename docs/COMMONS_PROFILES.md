@@ -157,8 +157,11 @@ browser includes its displayed participant ID on established-session requests.
 A request whose cookie now belongs to another participant is rejected, so an
 old view cannot submit its draft under a newly signed-in account. Photo uploads
 also recheck the session and profile revision after image processing, before
-the database write. Signing out, suspension, or a concurrent profile edit can
-therefore cancel an upload that was already processing.
+the database write. Signing out, account closure, suspension, or a concurrent
+profile edit can therefore cancel an upload that was already processing. A
+decoder that finishes after account closure cannot recreate the profile or photo.
+A delayed closure reply also leaves a newer account's browser cookie alone; the
+closed account's old session is revoked on the server.
 
 ## Export and delete your profile
 
@@ -166,7 +169,15 @@ therefore cancel an upload that was already processing.
 the saved profile, including private questionnaire answers, its sharing choices,
 the normalized photo as base64 when present, and an export timestamp. Unsaved
 form edits are excluded. Profile exports do not contain passwords, recovery
-codes, or session tokens; message exports remain separate.
+codes, or session tokens.
+
+For a broader download, open **Account security** and choose **Export my account
+data**. That separate action requires the current password and includes the
+saved profile and normalized photo alongside the account's retained sent-message
+and other supported records. It excludes other people's message bodies and all
+open-once bodies. Exporting does not close the account. See the
+[account guide](COMMONS_ACCOUNTS.md) for the complete export scope and collection
+limits.
 
 **Delete my profile** asks for confirmation, then clears the saved profile
 details, questionnaire answers, sharing choices, and normalized photo. It removes
@@ -176,24 +187,42 @@ an old editor cannot restore deleted data with a stale save. Creating a new
 profile starts private and issues a new public profile ID.
 
 Deleting a profile keeps the local account, password and recovery mechanism,
-contact code, inbox, messages, and blocking relationships. **Account deletion is
-not implemented yet.** Profile deletion cannot recall prior downloads or copies
-and does not erase separate database backups. A restored backup may contain an
-earlier profile state.
+contact code, inbox, messages, and blocking relationships. It is separate from
+**Close account** in **Account security**.
+
+Closing a saved account requires its current password, its typed username, and
+the explicit confirmation checkbox before **Permanently close account**. It
+removes the account's credentials, recovery access, saved profile, and normalized
+photo; signs the account out; leaves all its private conversations; and withdraws
+all its retained public and private message bodies, including messages in
+conversations already left. A closed account cannot be restored, and its former
+username remains reserved. The sole owner account cannot use this closure action.
+
+Other people's messages remain under the existing retention rules. Shared
+conversation titles and metadata, incoming blocks, reports, moderation and audit
+records, and invitation records may remain. Shared references display **Closed
+account**, with a retained record reserving the former username. Shared references
+can still connect earlier activity to the closed participant.
+
+Neither profile deletion nor account closure can recall prior downloads or
+copies, or erase separate database backups. A restored backup may contain an
+earlier account or profile state. Export any account data you want to keep before
+closing it; the [account guide](COMMONS_ACCOUNTS.md) explains the full workflow.
 
 ## Database upgrade and implementation boundaries
 
-Profiles introduced Commons database schema version **5**; the current inbox
-lifecycle update uses **version 6**. Opening an existing supported Commons
-database with the updated preview adds the profile table
-while retaining accounts, sessions, room messages, private conversations,
-invitations, blocks, reports, and owner configuration. Existing accounts do not
-automatically receive a directory listing.
+Profiles introduced Commons database schema version **5**, and the private inbox
+lifecycle introduced **version 6**. The current account export and closure update
+uses **version 7**. Opening an existing supported Commons database applies the
+missing tables while retaining accounts, sessions, room messages, private
+conversations, invitations, blocks, reports, and owner configuration under their
+existing retention rules. Existing accounts do not automatically receive a
+directory listing or close during the upgrade.
 
 Stop the server and back up the local database before upgrading. Continue using
 the same database path to retain the existing community. Use the updated code
 for both preview and owner commands; older releases that do not understand
-schema version 6 must not operate on the upgraded file. Current owner utilities
+schema version 7 must not operate on the upgraded file. Current owner utilities
 preserve the version instead of downgrading it. Keep databases and their private
 contents outside the source repository.
 
@@ -201,6 +230,13 @@ Version 6 also records invitation retries and reclaims private conversations
 after their last eligible member leaves. It does not remove saved accounts or
 their profiles/photos. See the [private inbox guide](COMMONS_PRIVATE_MESSAGES.md)
 for invitation limits and guest membership expiry.
+
+Version 7 adds short-lived account-export authorizations and closed-account
+records. Closing an account removes its profile/photo and export authorization
+along with the credentials. A generic participant reference and a hash reserving
+the former username remain so shared records stay consistent and the name cannot
+be reclaimed. This reservation is separate from the empty revision marker used
+when deleting only a profile.
 
 Profile operations require an authenticated local session. Edits and exports
 operate only on that session's saved account. The owner console does not bypass
@@ -233,7 +269,11 @@ The implementation was checked against these primary Pillow references:
 
 ## Verification
 
-On 2026-10-05 UTC, the combined Commons, profile/photo, community, and portal
+The current schema 7 export/closure checks are recorded in the
+[account lifecycle verification](COMMONS_ACCOUNTS.md#account-lifecycle-verification).
+
+Before the schema version 7 account-lifecycle update, on 2026-10-05 UTC, the
+combined Commons, profile/photo, community, and portal
 suite passed **259 tests and six subtests**, including **22 Chromium browser
 tests**. One existing graphical portal handoff test was skipped because the
 local environment has no native graphical desktop. The suite completed in

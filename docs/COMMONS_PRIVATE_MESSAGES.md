@@ -135,6 +135,16 @@ titles, participant records, message IDs/times, and delivery state remain after
 a body is cleared. Do not put sensitive content in a disappearing message's
 subject and expect that subject to disappear.
 
+Saved account holders can use **Account security → Export my account data** for
+all their retained saved sent messages, including those in conversations they
+previously left. It excludes all open-once bodies and never consumes a delivery.
+**Close account** withdraws all of that account's retained authored bodies,
+leaves its conversations and revokes its access. Other members keep their
+messages and conversation access while an eligible member remains; final-member
+cleanup and existing retention still apply. Shared titles and safety references
+may remain. See [account export and closure](COMMONS_ACCOUNTS.md) for the exact
+scope, confirmations and retained-data limits.
+
 ## Important preview limits
 
 - Guest identities expire within eight hours; logout or expiry loses their inbox
@@ -146,7 +156,8 @@ subject and expect that subject to disappear.
 - Each conversation retains 200 messages, displayed in pages of at most 100.
   A new message can age out the oldest message even if it was unread. Personal export contains
   up to 1,000 saved messages sent by the current participant in conversations
-  they still belong to.
+  they still belong to. The account-data export described above has no
+  1,000-message cutoff and includes retained sent messages after leaving.
 - Sending is limited to one new message every two seconds across public and
   private conversations. Duplicate retries do not resend retained messages.
 - Reports go to the local operator using `--review-reports` or the
@@ -154,14 +165,16 @@ subject and expect that subject to disappear.
   moderation or emergency response is available. Open-once bodies are never
   retained as report evidence.
 
-Private messaging introduced schema version 2; the inbox lifecycle update uses
+Private messaging introduced schema version 2; the inbox lifecycle update added
 **schema version 6**. It adds invitation receipts and backfills existing
 invitations before reclaiming fully left conversations or irrecoverable guest
 memberships. It preserves public room history, saved accounts, profiles and
 photos, owner configuration, and private history that still has an eligible
-member. Current preview and owner utilities preserve the newer version.
+member. The current account export/closure update uses **schema version 7**,
+adding account closure references and temporary export authorizations. Current
+preview and owner utilities preserve that version.
 Stop the preview and keep a backup of test data before changing versions; older
-code that does not support version 6 must not operate on the upgraded database.
+code that does not support version 7 must not operate on the upgraded database.
 The preview refuses to use an unrelated application database.
 
 ## Public launch status

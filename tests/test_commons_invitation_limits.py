@@ -364,7 +364,7 @@ def test_schema_five_backfill_preserves_live_history_closed_retries_and_abuse_li
     assert invite(reopened, carol, [dana]) == {"thread": closed, "duplicate": True, "closed": True}
     assert_status(429, lambda: invite(reopened, alice, [ellis], key=2))
     with reopened._db() as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 6
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 7
         assert db.execute("SELECT 1 FROM private_messages WHERE thread=?", (closed,)).fetchone() is None
         assert db.execute("SELECT recipient FROM private_invitation_contacts WHERE thread=?", (closed,)).fetchone()[0] == dana["id"]
         assert db.execute("PRAGMA foreign_key_check").fetchall() == []

@@ -12,7 +12,7 @@
   function clear() {
     active = false; revision++; clearTimeout(expiryTimer); secretsClear(); recoveryClear();
     for (const id of ["ownerReports", "ownerMembers", "ownerAudit"]) el(id).replaceChildren();
-    for (const id of ["ownerAccountCount", "ownerGuestCount", "ownerSuspendedCount", "ownerReportCount", "ownerMemberCount", "ownerExpiry"]) el(id).textContent = "";
+    for (const id of ["ownerAccountCount", "ownerGuestCount", "ownerClosedCount", "ownerSuspendedCount", "ownerReportCount", "ownerMemberCount", "ownerExpiry"]) el(id).textContent = "";
     query = ""; offset = 0; total = 0; el("ownerSearch").value = "";
     el("ownerSecurityDialog").close(); el("ownerDashboard").hidden = true; el("ownerSignIn").hidden = false;
     el("ownerConnection").textContent = "Owner verification required";
@@ -70,8 +70,9 @@
     el("ownerMemberCount").textContent = total ? `${offset + 1}–${Math.min(offset + 50, total)} of ${total}` : "No matches";
     for (const member of data.members) {
       const row = node("article", undefined, "owner-member"); row.dataset.participant = member.id;
-      row.append(node("strong", member.name), node("p", `${member.owner ? "Sole owner" : member.username ? "Account · " + member.username : "Guest identity"} · ${member.suspended ? "Suspended" : member.active_session ? "Session active" : "Signed out"}`, "hint"));
-      if (!member.owner) {
+      const identity = member.closed ? "Closed account · Access permanently removed" : `${member.owner ? "Sole owner" : member.username ? "Account · " + member.username : "Guest identity"} · ${member.suspended ? "Suspended" : member.active_session ? "Session active" : "Signed out"}`;
+      row.append(node("strong", member.name), node("p", identity, "hint"));
+      if (!member.owner && !member.closed) {
         const actions = node("div", undefined, "owner-actions"), reason = reasonSelect("Access reason for " + member.name); actions.append(reason);
         for (const [text, operation] of [[member.suspended ? "Restore access" : "Suspend", member.suspended ? "restore" : "suspend"], ["Revoke session", "revoke"]]) actions.append(action(text, async () => {
           if (!confirm(`${text} for ${member.name}? This action will be recorded.`)) return;
@@ -88,7 +89,7 @@
     if (generation !== revision || document.hidden) return;
     active = true; el("ownerSignIn").hidden = true; el("ownerDashboard").hidden = false;
     el("ownerConnection").textContent = "Owner verified"; el("ownerExpiry").textContent = "Verification expires " + date(dashboard.owner_expires) + ". Refresh is manual; hidden tabs clear this dashboard.";
-    el("ownerAccountCount").textContent = dashboard.accounts; el("ownerGuestCount").textContent = dashboard.guests; el("ownerSuspendedCount").textContent = dashboard.suspended;
+    el("ownerAccountCount").textContent = dashboard.accounts; el("ownerGuestCount").textContent = dashboard.guests; el("ownerClosedCount").textContent = dashboard.closed_accounts; el("ownerSuspendedCount").textContent = dashboard.suspended;
     renderReports(reports); renderMembers(members); el("ownerAudit").replaceChildren();
     for (const entry of dashboard.audit) {
       const row = node("div", undefined, "owner-audit-row"); row.append(node("strong", entry.event.replaceAll("_", " ")), node("span", entry.target_label || entry.target), node("span", entry.reason), node("time", date(entry.created))); el("ownerAudit").append(row);

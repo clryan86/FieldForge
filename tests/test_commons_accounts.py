@@ -263,7 +263,7 @@ def test_upgrades_existing_database_without_losing_guest_or_private_history(tmp_
     ChatStore(path)
     PrivateChatStore(path)
     with sqlite3.connect(path) as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 6
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 7
 
 
 def test_account_http_protections_cookie_and_recovery(preview_server):
@@ -283,7 +283,7 @@ def test_account_http_protections_cookie_and_recovery(preview_server):
     assert api(preview_server, "/api/commons/account/password", {"password": PASSWORD, "new_password": NEW_PASSWORD})[0] == 401
     status, headers, body = api(preview_server, "/api/commons/account/recover", {
         "username": "TestAlice", "recovery_code": result["recovery_code"], "new_password": NEW_PASSWORD, "consent": True})
-    assert status == 200 and "Max-Age=0" in headers["Set-Cookie"]
+    assert status == 200 and "Set-Cookie" not in headers
     assert api(preview_server, "/api/commons/private/inbox", {}, token=token)[0] == 401
     assert api(preview_server, "/api/commons/account/login", {
         "username": "TestAlice", "password": NEW_PASSWORD, "consent": True})[0] == 200

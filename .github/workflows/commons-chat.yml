@@ -5,6 +5,7 @@ on:
     paths:
       - 'fieldforge/online/chat_store.py'
       - 'fieldforge/online/accounts.py'
+      - 'fieldforge/online/account_lifecycle.py'
       - 'fieldforge/online/owner*.py'
       - 'fieldforge/online/private_chat.py'
       - 'fieldforge/online/profiles.py'
@@ -20,6 +21,7 @@ on:
     paths:
       - 'fieldforge/online/chat_store.py'
       - 'fieldforge/online/accounts.py'
+      - 'fieldforge/online/account_lifecycle.py'
       - 'fieldforge/online/owner*.py'
       - 'fieldforge/online/private_chat.py'
       - 'fieldforge/online/profiles.py'
@@ -50,9 +52,11 @@ jobs:
         run: python -m playwright install --with-deps chromium
       - name: Check chat source
         run: |
-          ruff check fieldforge/online/owner.py fieldforge/online/owner_setup.py fieldforge/online/accounts.py fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py fieldforge/online/profiles.py fieldforge/online/profile_photos.py tests/test_commons_*.py tests/test_profile_photos.py
+          ruff check fieldforge/online/owner.py fieldforge/online/owner_setup.py fieldforge/online/accounts.py fieldforge/online/account_lifecycle.py fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py fieldforge/online/profiles.py fieldforge/online/profile_photos.py tests/test_commons_*.py tests/test_profile_photos.py
           node --check fieldforge/online/commons.js
           node --check fieldforge/online/commons-private.js
+          node --check fieldforge/online/commons-accounts.js
+          node --check fieldforge/online/commons-owner.js
           node --check fieldforge/online/commons-profiles.js
       - name: Exercise real local chat and portal compatibility
         env:

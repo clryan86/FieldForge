@@ -160,7 +160,8 @@ class ProfileStore(OwnerStore):
                 assessment = assess_skills(profile["assessment"])
             except CommunityValidationError as exc:
                 raise ChatError(400, str(exc)) from None
-            if clean["display_name"].casefold() in RESERVED and member["account_name"] != OWNER_USERNAME:
+            name_key = clean["display_name"].casefold()
+            if name_key == "closed account" or name_key in RESERVED and member["account_name"] != OWNER_USERNAME:
                 raise ChatError(400, "That display name is reserved. Choose another name.")
             if profile["share_photo"] and photo_id is None:
                 raise ChatError(400, "Upload a photo before choosing to share it.")

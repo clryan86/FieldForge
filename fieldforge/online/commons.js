@@ -174,7 +174,17 @@
     } catch (error) { if (ownRevision === revision) failed(error); }
   }
   privateChat = new window.CommonsPrivate({request, notice, failed, refresh});
-  accountUI = new window.CommonsAccounts({request, notice, connected});
+  accountUI = new window.CommonsAccounts({request, notice, connected, refresh,
+    quiesce: expectedViewerId => {
+      if (!active || !joined || viewer?.id !== expectedViewerId) return false;
+      clearTimeout(timer); reader?.abort(); reader = null; revision++;
+      return true;
+    },
+    disconnected: expectedViewerId => {
+      if (viewer?.id !== expectedViewerId) return false;
+      clearIdentity(); return true;
+    }
+  });
   if (window.CommonsProfile) profileUI = new window.CommonsProfile({request, notice, failed, refresh});
   el("joinForm").addEventListener("submit", async event => {
     event.preventDefault(); if (!el("consent").checked) return;

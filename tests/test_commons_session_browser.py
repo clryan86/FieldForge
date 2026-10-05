@@ -122,10 +122,14 @@ def test_delayed_export_from_a_previous_session_is_discarded_after_reconnect(bro
 
     def hold_reply(route):
         retained.append((route, route.fetch()))
+        alice.evaluate("document.documentElement.setAttribute('data-test-export-reply-captured', 'true')")
 
     alice.on("download", lambda download: downloads.append(download.suggested_filename))
     alice.route("**/api/commons/export", hold_reply, times=1)
     alice.locator("#exportButton").click()
+    # The connection label is already connected before interception finishes.
+    # Wait for the held server response itself before changing the session.
+    expect(alice.locator("html")).to_have_attribute("data-test-export-reply-captured", "true")
     expect(alice.locator("#connectionLabel")).to_have_text("Local chat connected")
     assert len(retained) == 1
     switched = switch_shared_cookie(alice, url, "TEST_ExportBob")

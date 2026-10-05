@@ -195,7 +195,9 @@ class OwnerStore(AccountStore):
             return {"owner": self._public(owner), "owner_expires": expires,
                     "accounts": db.execute("SELECT COUNT(*) FROM accounts").fetchone()[0],
                     "guests": db.execute("SELECT COUNT(*) FROM participants p WHERE NOT EXISTS "
-                                         "(SELECT 1 FROM accounts a WHERE a.participant=p.id)").fetchone()[0],
+                                         "(SELECT 1 FROM accounts a WHERE a.participant=p.id) AND NOT EXISTS "
+                                         "(SELECT 1 FROM closed_accounts c WHERE c.participant=p.id)").fetchone()[0],
+                    "closed_accounts": db.execute("SELECT COUNT(*) FROM closed_accounts").fetchone()[0],
                     "suspended": db.execute("SELECT COUNT(*) FROM participant_controls WHERE suspended=1").fetchone()[0],
                     "audit": [dict(row) for row in db.execute(
                         "SELECT a.*,COALESCE(p.name,CASE WHEN a.target LIKE 'public:%' THEN 'Public message #'||substr(a.target,8) "
@@ -209,13 +211,18 @@ class OwnerStore(AccountStore):
             owner, _ = self._owner(db, token)
             query = query.strip().casefold()
             rows = db.execute("SELECT p.id,p.name,a.username,COALESCE(c.suspended,0) AS suspended, "
+                              "CASE WHEN d.participant IS NOT NULL THEN 1 ELSE 0 END AS closed, "
                               "CASE WHEN p.token_hash IS NOT NULL AND p.expires>? THEN 1 ELSE 0 END AS active_session "
                               "FROM participants p LEFT JOIN accounts a ON a.participant=p.id "
                               "LEFT JOIN participant_controls c ON c.participant=p.id "
-                              "WHERE instr(p.name_key,?)>0 OR instr(COALESCE(a.username,''),?)>0 "
+                              "LEFT JOIN closed_accounts d ON d.participant=p.id "
+                              "WHERE instr(CASE WHEN d.participant IS NULL THEN p.name_key ELSE 'closed account' END,?)>0 "
+                              "OR instr(COALESCE(a.username,''),?)>0 "
                               "ORDER BY p.name_key,p.id LIMIT 50 OFFSET ?", (self.clock(), query, query, offset)).fetchall()
             total = db.execute("SELECT COUNT(*) FROM participants p LEFT JOIN accounts a ON a.participant=p.id "
-                               "WHERE instr(p.name_key,?)>0 OR instr(COALESCE(a.username,''),?)>0", (query, query)).fetchone()[0]
+                               "LEFT JOIN closed_accounts d ON d.participant=p.id "
+                               "WHERE instr(CASE WHEN d.participant IS NULL THEN p.name_key ELSE 'closed account' END,?)>0 "
+                               "OR instr(COALESCE(a.username,''),?)>0", (query, query)).fetchone()[0]
             return {"members": [{**dict(row), "owner": row["id"] == owner["id"]} for row in rows], "total": total, "offset": offset}
 
     def owner_control(self, token, target, action, reason):
@@ -228,6 +235,8 @@ class OwnerStore(AccountStore):
                 raise ChatError(403, "The sole owner cannot be suspended or changed here.")
             if not db.execute("SELECT 1 FROM participants WHERE id=?", (target,)).fetchone():
                 raise ChatError(404, "That participant is unavailable.")
+            if db.execute("SELECT 1 FROM closed_accounts WHERE participant=?", (target,)).fetchone():
+                raise ChatError(409, "This account is closed. Its access cannot be restored or changed here.")
             if action in ("suspend", "restore"):
                 db.execute("INSERT INTO participant_controls VALUES(?,?,?,?) ON CONFLICT(participant) "
                            "DO UPDATE SET suspended=excluded.suspended,reason=excluded.reason,updated=excluded.updated",

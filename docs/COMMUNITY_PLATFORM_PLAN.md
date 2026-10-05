@@ -28,6 +28,10 @@ self-reported badge wording. It is a data contract, not an account server.
 
 ## Sign-in and account creation
 
+The requirements in this section concern the future public service. The working
+local username/password accounts, owner MFA, export, and closure are documented
+in the [account guide](COMMONS_ACCOUNTS.md) and [owner guide](COMMONS_OWNER.md).
+
 Support email-based sign-in and provider integrations through separately
 configured OAuth 2.0 / OpenID Connect clients. “All social accounts” is not one
 integration: each provider needs its own app registration, callback URL, terms,
@@ -59,7 +63,7 @@ competence. Initial categories are medical/first aid, food/farming, construction
 water/sanitation, power, machinery, logistics, communications, education,
 navigation, community safety, and research/documentation.
 
-Profile pictures are optional. The eventual upload handler must accept only
+Profile pictures are optional. A public-service upload handler must accept only
 bounded raster files, decode and re-encode them, remove metadata such as EXIF
 location, generate an opaque asset ID, and reject SVG/HTML and oversized input.
 Pictures, email addresses, real names, and questionnaire answers stay private
@@ -78,7 +82,8 @@ Authenticated uploads normalize bounded PNG/JPEG/WebP files into metadata-free
 PNG thumbnails. Each replacement begins private, invalidates its old image ID,
 and requires a fresh sharing choice. Blocks in either direction and participant
 suspension prevent future directory/photo access. Profile export and deletion
-are implemented; account deletion and lifecycle remain separate work.
+are implemented. Deleting only a profile keeps the account, credentials, inbox,
+messages, and blocks; whole-account closure is a separate explicit action.
 
 The shared-tab session guard binds an established browser action to its displayed
 participant, clears the old identity after a cookie changes, and rejects late
@@ -99,6 +104,48 @@ Persistent recipient-weighted daily invitation limits, a per-contact cooldown,
 and bounded closed-conversation retry receipts prevent cleanup from bypassing
 the local invitation controls. See [private messaging](COMMONS_PRIVATE_MESSAGES.md)
 for exact limits and schema version 6 upgrade behavior.
+
+### Local account export and closure
+
+Saved members can use **Account security → Export my account data**, with their
+current password, to collect retained account details, profile answers and the
+normalized photo, their own public and saved private messages, conversation
+titles they created, outgoing blocks, and submitted report metadata. Private
+sent-message records include retained messages from conversations already left.
+Credentials, session secrets, other people's message bodies, and every open-once
+body are excluded. Export does not mark messages read or consume open-once
+deliveries.
+
+The browser assembles the download from pages of at most 500 records, using a
+five-minute authorization tied to the account's current session. This permits a
+complete retained export beyond the older 1,000-message exports without one
+oversized response. Records are collected across requests, so withdrawal and
+retention can affect later pages. New records above
+the starting ID limits are excluded. Exporting is optional and does not close
+the account.
+
+**Close account** requires the saved member's current password, typed username,
+and explicit confirmation. It removes credentials, recovery access, profile and
+normalized photo; revokes access; leaves all private conversations; and withdraws
+all retained authored public and private message bodies, including messages in
+conversations already left. Late profile decoding or old session requests cannot
+restore the removed data. Closure revokes the old session on the server without
+overwriting a newer account's cookie when a delayed reply arrives. The sole owner
+is protected by checks on both the reserved owner username and the configured
+owner participant.
+
+Other people's messages, shared titles and conversation metadata, incoming
+blocks, and retained report, moderation/audit, and invitation records can remain.
+A generic **Closed account** participant record keeps shared references intact,
+and a stored username hash permanently reserves the former username. The owner
+console identifies and counts closed records separately and cannot restore their
+access. Previously viewed copies, downloads, and backups cannot be recalled.
+
+The current Commons schema is **version 7**. The profile additions in version
+**5** and invitation lifecycle in version **6** remain part of the supported
+upgrade path. Existing accounts and owner configuration are preserved; closure
+occurs only through its explicit authenticated action. See the
+[account guide](COMMONS_ACCOUNTS.md) for the full scope and migration details.
 
 ## Community areas and resources
 
@@ -131,8 +178,9 @@ public HTTPS hosting, backups, moderation workflow, privacy/terms documents,
 and an incident-response owner. Keep community data out of local FieldForge
 backups unless a user explicitly exports it.
 
-Before enabling registration, test account creation and verification, provider
-login, secure account linking, picture upload limits, the single-admin bootstrap,
-MFA, admin recovery, profile deletion, export, moderation, session revocation,
-backup restoration, and offline desktop behavior. Public launch remains a
-separate go/no-go after privacy, rights, hosting, and security review.
+Before enabling public registration, test account creation and verification,
+provider login, secure account linking, picture upload limits, the single-admin
+bootstrap, MFA, admin recovery, profile deletion, account export and closure, shared-data
+retention, moderation, session revocation, backup restoration, and offline desktop
+behavior. Public launch remains a separate go/no-go after privacy, rights,
+hosting, and security review.

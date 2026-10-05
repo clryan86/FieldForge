@@ -27,7 +27,7 @@ from fieldforge.online.private_chat import PrivateChatStore
 AUTH_WINDOW = 15 * 60
 AUTH_ACCOUNT_LIMIT = 8
 AUTH_GLOBAL_LIMIT = 60
-RESERVED = {"admin", "administrator", "moderator", "clryan86", "king"}
+RESERVED = {"admin", "administrator", "moderator", "clryan86", "king", "closed account"}
 BAD_CREDENTIALS = "The username or credential was not accepted."
 
 
@@ -67,6 +67,12 @@ def _recovery_hash(code):
     return hashlib.sha256(code.encode("ascii")).hexdigest()
 
 
+def _closed_username_hash(username):
+    # This reserves a public username without retaining its plaintext. It is
+    # not anonymization: a guessed username can still be compared to its hash.
+    return hashlib.sha256(username.casefold().encode("utf-8")).hexdigest()
+
+
 class AccountStore(PrivateChatStore):
     def __init__(self, path, **kwargs):
         super().__init__(path, **kwargs)
@@ -82,8 +88,17 @@ class AccountStore(PrivateChatStore):
                 CREATE TABLE IF NOT EXISTS auth_attempts (
                     bucket TEXT PRIMARY KEY, started REAL NOT NULL, attempts INTEGER NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS closed_accounts (
+                    participant TEXT PRIMARY KEY REFERENCES participants(id),
+                    username_hash TEXT NOT NULL UNIQUE, closed REAL NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS account_exports (
+                    participant TEXT PRIMARY KEY REFERENCES accounts(participant) ON DELETE CASCADE,
+                    token_hash TEXT NOT NULL UNIQUE, session_hash TEXT NOT NULL,
+                    expires REAL NOT NULL, ceilings TEXT NOT NULL
+                );
             """)
-            db.execute(f"PRAGMA user_version={max(3, version)}")
+            db.execute(f"PRAGMA user_version={max(7, version)}")
 
     def _member(self, db, token):
         member = db.execute("SELECT p.*,a.username AS account_name FROM participants p "
@@ -103,7 +118,13 @@ class AccountStore(PrivateChatStore):
 
     def _name_in_use(self, db, name, now):
         return (db.execute("SELECT 1 FROM accounts WHERE username=?", (name.casefold(),)).fetchone()
+                or self._closed_username(db, name)
                 or super()._name_in_use(db, name, now))
+
+    @staticmethod
+    def _closed_username(db, name):
+        return db.execute("SELECT 1 FROM closed_accounts WHERE username_hash=?",
+                          (_closed_username_hash(name),)).fetchone()
 
     def _contact_available(self, db, contact):
         return (db.execute("SELECT 1 FROM accounts WHERE participant=?", (contact,)).fetchone()
@@ -159,6 +180,7 @@ class AccountStore(PrivateChatStore):
             if member and member["account_name"]:
                 raise ChatError(409, "This session already has an account. Sign out before creating another.")
             if (db.execute("SELECT 1 FROM accounts WHERE username=?", (key,)).fetchone()
+                    or self._closed_username(db, key)
                     or db.execute("SELECT 1 FROM participants WHERE name_key=? AND expires>? "
                                   "AND token_hash IS NOT NULL AND id!=?",
                                   (key, self.clock(), member["id"] if member else "")).fetchone()):

@@ -45,7 +45,9 @@ The [private inbox and disappearing-message guide](COMMONS_PRIVATE_MESSAGES.md)
 covers direct conversations, invite-only groups, older-message pages, reusable
 conversation capacity, invitation limits and open-once delivery, including the
 limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
-covers saved accounts, guest upgrades, password sign-in, and recovery codes. The [owner console guide](COMMONS_OWNER.md)
+covers saved accounts, guest upgrades, password sign-in, recovery codes, complete
+retained account-data exports, and permanent self-service account closure.
+The [owner console guide](COMMONS_OWNER.md)
 covers sole-owner setup, authenticator sign-in, and moderation.
 The [profile and directory guide](COMMONS_PROFILES.md) covers private profile
 editing, optional photo thumbnails with embedded metadata removed, separate
@@ -62,6 +64,9 @@ sharing choices, member discovery, and profile export/deletion.
   only for the viewer; it does not stop the other participant reading a room.
 - Reporting with a reason and local operator review.
 - Export of up to 1,000 of the participant's latest retained, undeleted messages.
+- Saved accounts also have a complete retained-data export and password-confirmed
+  closure in Account security, with explicit protections for remaining members
+  and the sole owner.
 - Message retry IDs to avoid duplicates after a lost response while the original
   record is still retained. Drafts stay available after a failed send.
 
