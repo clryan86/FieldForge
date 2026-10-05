@@ -1,5 +1,96 @@
 # Online map and route preparation verification
 
+## Regional collection preparation — 2026-10-05
+
+`fieldforge-map-catalog prepare-collection` connects a saved
+`fieldforge-map-collection-v1` record and explicitly selected local ZIPs to the
+ordinary inventory publisher. The command verifies selected archive bytes,
+imports only each `map.ffmap`, compares the inspected source/count/license
+receipt, and derives numeric coverage and source-based versions. A preparation
+receipt distinguishes measured ZIP/map checksums from the original PBF identity
+declared by the collection and embedded index. No unselected archive, route
+graph or device installation is processed.
+
+The **53 new focused tests passed**. They use real synthetic PBF/index/ZIP
+fixtures and cover selected-only access, absent unselected packages, malformed
+documents and archive entries, source changes, metadata mismatches, interrupted
+multi-map work, and preservation of existing/concurrent destinations. A complete
+test builds the ordinary inventory, serves it over local HTTP, downloads through
+the desktop client, removes the source inputs and catalog, then searches the
+saved index with network connections blocked.
+
+Review caught and corrected directory spelling differences (`..` and Windows
+short names), a preparation/publisher title-limit mismatch, and exception-class
+differences under actual `python -m` execution. The cases verify a 240-character
+title prepares and publishes, a 241-character title produces no ready output,
+and both preparation/build CLI errors exit with readable messages and no
+traceback. Validated inventory publication is the commit point; a later private
+staging cleanup error can leave the complete output, as documented in the API
+and operator guide.
+
+A fresh wheel was installed outside the checkout. All **161 packaged source
+and asset files** match both the reviewed source and installed bytes. The new
+command loads under `python -S` outside the checkout. Repository-wide Ruff,
+patch whitespace, workflow YAML and referenced test paths pass. Both Linux and
+Windows map jobs now run the collection module alongside the existing regional,
+portal and native workflows. The 53-case result is local Linux validation;
+hosted results for the collection commit are recorded by Actions.
+
+The original South Dakota source was also recovered through a separate
+[verified artifact recovery job](https://github.com/clryan86/FieldForge/actions/runs/37322179144).
+The reconstructed acquisition ZIP is 49,423,079 bytes with SHA-256
+`83dbf47ee61a2daecd4d5d7e94ae20d47508df95c843fa09bfc4d93e16c979de`.
+Its actual PBF is 49,414,046 bytes with SHA-256
+`43ee4e5a620dc050735a6ab224cda5dc049e83f42bded062e1539e389a81d643`,
+matching the original source receipt and collection record. The source receipt
+names the 2026-10-02 Geofabrik snapshot. This recovery is of the original
+source, not the previously prepared 194 MB package; a new preparation has its
+own receipt and finished-map checksum.
+
+### Actual South Dakota acceptance
+
+The full source-to-offline-download workflow passed using that fresh installed
+wheel, outside the checkout with `python -S`. Pillow and pytest were unavailable
+and unimported. All loaded FieldForge modules came from the installed package,
+and their recorded source hashes remained unchanged during the run.
+
+| Measured item | Result |
+|---|---|
+| Source snapshot | **2026-10-02T20:21:34Z** |
+| New prepared map | **384,290,816 bytes** |
+| Indexed features | **626,562** |
+| Features with explicit house-number and street/place tags | **17,522** |
+| Ways with missing source nodes | **0** |
+| Indexed extent, west/south/east/north | **−105.5310248, 40.3387377, −95.0817848, 47.3719077** |
+| Prepare source PBF | **101.812 seconds** |
+| Inspect the finished map | **4.123 seconds**, using the unchanged 30-second limit |
+| Convert the selected package into an inventory | **5.731 seconds** |
+| Publish the ordinary inventory | **4.517 seconds** |
+| Verified download over real local HTTP | **4.859 seconds** |
+| Inspect the downloaded map while offline | **4.179 seconds** |
+
+The finished map's SHA-256 is
+`9e5a05c53702bf33095b599845b5693d49028afec8a30c25833b2b8a1d835e8c`.
+Its embedded source identity and feature/address/missing-node counts agree with
+the historical collection. The source contains 7,160,778 nodes, 575,053 ways,
+7,975 relations and 675 turn restrictions. The prepared display index counts
+those restrictions but does not apply them as a routing graph.
+
+After the server was stopped and socket connections were blocked, the saved
+download produced exactly the same search results as the prepared source index.
+Both **Sioux Falls** and **Rapid City** returned the bounded first 100 matches
+with the limit flag set; these are not total city-result counts. The explicit
+address query **37756 132nd street** returned **SEAL Livestock**,
+`node/78770266`, from its actual address tags. The three offline searches took
+0.008, 0.005 and 0.003 seconds respectively. No network connection was attempted.
+
+These are measurements in this Linux test environment, not performance promises
+for another device. All preparation, inspection and interactive-query limits
+were unchanged. The measured extent crosses state borders and does not certify
+complete coverage inside its rectangle. The package is a new display/search
+derivation from the October 2 source; it adds no routing graph, public hosting,
+verified user-device installation or claim of four-state/U.S. completeness.
+
 ## Windows portability follow-up — 2026-10-05
 
 The first hosted run for `a43e25d` passed Linux Tk and Chromium but exposed
@@ -28,9 +119,17 @@ The 17 new identity cases cover actual replacement with preserved size/mtime,
 changes during opening and reading, handle-only change-time differences,
 descriptor cleanup on interruption, and real PBF preparation/archive import.
 Independent review found no blocking issue. Both draft-branch platform jobs
-and the main workflow now include this module. These local Linux results use
-deterministic Windows-style metadata fixtures; the corrective commit's hosted
-Windows job remains the platform confirmation.
+and the main workflow now include this module.
+
+Corrective commit `6db7f54` passed its
+[hosted map workflow](https://github.com/clryan86/FieldForge/actions/runs/37319834164):
+**550 Windows tests and 78 subtests**, with two platform-specific skips;
+**552 Linux Tk tests and 78 subtests**, with no skips; and **11 Chromium
+scenarios**. The Windows skips are the existing POSIX named-pipe case and a
+symlink-creation case requiring extra Windows privileges. All regional identity
+and native viewer cases ran. The
+[Commons workflow](https://github.com/clryan86/FieldForge/actions/runs/37319834112)
+also passed for this corrective commit.
 
 ## Prepared regional portal workflow — 2026-10-05
 

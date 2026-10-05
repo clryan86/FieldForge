@@ -316,6 +316,57 @@ The catalog records `format: "ffmap"`; the compatibility protocol uses
 the prepared index. This publishes only the supplied file; no regional dataset
 is acquired or included automatically.
 
+### Prepare a saved regional collection
+
+If you have a `fieldforge-map-collection-v1` collection record and its local
+regional ZIPs, prepare selected packages for the portal without manually copying
+their coverage or source metadata:
+
+```bash
+python -m fieldforge.online.catalog prepare-collection \
+  --collection /path/to/FieldForge-USA-Wave5-Collection.json \
+  --archives /path/to/regional-packages \
+  --output ./regional-ready \
+  --select FieldForge-USA-South-Dakota-2026-10-02.zip
+
+python -m fieldforge.online.catalog build \
+  --inventory ./regional-ready/inventory.json \
+  --root ./new-portal-maps
+```
+
+Use the exact filenames in your collection record. Repeat `--select` to include
+another package. Every selected archive must be present; unselected archives
+need not be downloaded. The command does not scan the folder or assume that
+the collection's other regions are available on this device.
+
+Preparation checks each selected ZIP against its recorded byte count and
+SHA-256, then uses the existing regional importer to extract and validate its
+single `map.ffmap`. Source identity, snapshot, feature/address counts, missing
+ways and license must agree with the inspected index. The prepared files retain
+their exact bytes and embedded receipts. Numeric coverage comes from the index;
+it describes the indexed extent rather than promising complete coverage inside
+that rectangle. The catalog version uses the source snapshot when known, or
+the source hash when the snapshot is unknown.
+
+The new output directory contains `inventory.json`, `preparation-receipt.json`
+and a `maps` folder. The receipt keeps the measured ZIP and finished-map hashes
+separate from the original PBF identity declared by the collection and embedded
+index. It also records the selected packages and their declared road-preparation
+status. Preparation validates display/search indexes; it does not extract or
+certify a routing graph, independently re-hash a packaged PBF, or audit the
+collection's installation/coverage totals.
+
+Both output directories in the example must be **new**, with existing parents.
+An invalid package, metadata mismatch, source change or interruption before
+publication fails the batch and removes its unfinished output. Existing files
+are preserved. Once the validated inventory is installed, publication is
+complete; an interruption or temporary-folder cleanup error after that point
+can leave the completed output. Inspect that inventory before retrying with a
+new directory.
+The preparation step is local and does not start a server or a network session.
+Use the ordinary inventory builder above to create the immutable catalog, then
+review it before configuring your operated portal.
+
 ### Prepare several maps from an inventory
 
 Copy `examples/map-catalog-inventory.json`, replace its example entries with
@@ -327,8 +378,9 @@ python -m fieldforge.online.catalog build \
   --root ./new-portal-maps
 ```
 
-The installed `fieldforge-map-catalog` command provides the same `build`, `add`
-and `list` subcommands. `asset_folder` is relative to the inventory file (or an
+The installed `fieldforge-map-catalog` command provides the same
+`prepare-collection`, `build`, `add` and `list` subcommands. `asset_folder` is
+relative to the inventory file (or an
 absolute local folder). Each `filename` must be a simple basename in that
 folder. The example is a template, not a supplied map or permission to publish.
 

@@ -173,6 +173,12 @@ The application starts disconnected and does not submit addresses while typing.
   a local MBTiles map, or export its geometry as GPX after disconnecting.
   Routes downloaded from the browser portal can also be imported while offline.
 
+For a saved regional collection, operators can use
+[`prepare-collection`](docs/ONLINE_MAP_PORTAL.md#prepare-a-saved-regional-collection)
+to verify explicitly selected ZIPs and generate a portal inventory from their
+prepared indexes. It retains source and license information, records separate
+package/map checksums, and uses the actual indexed bounds for map discovery.
+
 This repository includes the **portal server and browser interface**, with adapters
 for an operator-configured Nominatim geocoder and OSRM driving router. It does
 not provision a public website, contain all world maps, or provide a default

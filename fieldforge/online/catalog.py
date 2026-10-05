@@ -540,7 +540,7 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    add = subparsers.add_parser("add", help="Publish a licensed local MBTiles pack or map image.")
+    add = subparsers.add_parser("add", help="Publish a licensed local MBTiles pack, prepared regional map or map image.")
     for flag in ("root", "file", "id", "title", "attribution", "license", "coverage", "version"):
         add.add_argument("--" + flag, required=True)
     add.add_argument("--source", dest="source_name", help="Actual source or provider reference for this map.")
@@ -549,6 +549,12 @@ def main(argv=None) -> int:
     build = subparsers.add_parser("build", help="Prepare all maps in an explicit inventory as one new catalog.")
     build.add_argument("--root", required=True, help="New catalog directory; must not already exist.")
     build.add_argument("--inventory", required=True, help="JSON inventory with approved maps and their provenance.")
+    collection = subparsers.add_parser("prepare-collection", help="Verify selected collection ZIPs as a new map inventory.")
+    collection.add_argument("--collection", required=True, help="Local fieldforge-map-collection-v1 JSON record.")
+    collection.add_argument("--archives", required=True, help="Existing folder containing the selected ZIPs.")
+    collection.add_argument("--output", required=True, help="New inventory directory; must not already exist.")
+    collection.add_argument("--select", action="append", required=True, dest="filenames",
+                            help="Exact collection ZIP basename; repeat for each explicit selection.")
     args = parser.parse_args(argv)
     try:
         if args.command == "list":
@@ -556,13 +562,18 @@ def main(argv=None) -> int:
         elif args.command == "build":
             from fieldforge.online.inventory import publish_inventory
             result = {"maps": publish_inventory(args.root, args.inventory)}
+        elif args.command == "prepare-collection":
+            from fieldforge.online.collection import prepare_collection
+            result = prepare_collection(args.collection, args.archives, args.output, filenames=args.filenames)
         else:
             result = publish_map(args.root, args.file, map_id=args.id, title=args.title,
                                  attribution=args.attribution, license=args.license,
                                  coverage=args.coverage, version=args.version, source_name=args.source_name)
         print(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False))
         return 0
-    except (CatalogError, OSError) as exc:
+    except (ValueError, OSError) as exc:
+        # Under python -m, imported APIs use the canonical catalog error class,
+        # distinct from __main__.CatalogError; all validation errors are ValueErrors.
         parser.exit(2, f"Map publishing failed: {exc}\n")
 
 
