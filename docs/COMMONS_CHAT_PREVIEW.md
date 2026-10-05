@@ -42,7 +42,7 @@ Keep the terminal open while testing; press Ctrl+C to stop the server.
 ## Working now
 
 The [private inbox and disappearing-message guide](COMMONS_PRIVATE_MESSAGES.md)
-covers direct conversations, invite-only groups, older-message pages, reusable
+covers direct conversations, invite-only groups, saved-message search, older-message pages, reusable
 conversation capacity, invitation limits and open-once delivery, including the
 limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
 covers saved accounts, guest upgrades, password sign-in, recovery codes, complete
@@ -72,6 +72,10 @@ the normal inbox acceptance flow; consent starts off for every existing profile.
   and the sole owner.
 - Message retry IDs to avoid duplicates after a lost response while the original
   record is still retained. Drafts stay available after a failed send.
+- Search retained saved private messages across accepted conversations, with an
+  optional current-conversation scope, 20-result pages, and direct navigation to
+  the original message. Search never includes open-once bodies or marks messages
+  read; opening the original conversation follows normal read-receipt rules.
 
 Deleting a message removes its text from normal queries, exports, and report
 review. It cannot erase screenshots, previous exports, database backups, or

@@ -105,6 +105,16 @@ and bounded closed-conversation retry receipts prevent cleanup from bypassing
 the local invitation controls. See [private messaging](COMMONS_PRIVATE_MESSAGES.md)
 for exact limits and schema version 6 upgrade behavior.
 
+**Search saved messages** now finds literal text across currently accepted
+private conversations, with an optional current-conversation filter. It returns
+20 matches per page after checking membership, intended delivery, blocking and
+withdrawal. Open-once bodies are excluded, and searching leaves read receipts
+unchanged. Results can open the original retained history page; the fresh read
+rechecks access and highlights the message if it is still available. Queries and
+results clear when the search closes, the tab hides, chat pauses or the identity
+changes. This increment uses the existing version-8 schema and requires no
+search service or index.
+
 ### Local account export and closure
 
 Saved members can use **Account security → Export my account data**, with their

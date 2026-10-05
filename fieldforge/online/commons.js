@@ -48,7 +48,7 @@
     el("joinPanel").hidden = joined;
     for (const button of el("rooms").querySelectorAll("button")) button.disabled = !enabled || sending;
     for (const button of document.querySelectorAll(".message-actions button, #blockedList button")) button.disabled = !enabled;
-    privateChat?.setSession(joined, active, sending);
+    privateChat?.setSession(joined, active, sending, viewer);
     accountUI?.setSession(joined, active, viewer);
     profileUI?.setSession(joined, active, viewer);
   }
@@ -174,6 +174,7 @@
     } catch (error) { if (ownRevision === revision) failed(error); }
   }
   privateChat = new window.CommonsPrivate({request, notice, failed, refresh});
+  privateChat.search = new window.CommonsPrivateSearch({request, notice, failed, privateChat});
   accountUI = new window.CommonsAccounts({request, notice, connected, refresh,
     quiesce: expectedViewerId => {
       if (!active || !joined || viewer?.id !== expectedViewerId) return false;

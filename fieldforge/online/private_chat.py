@@ -26,6 +26,8 @@ MAX_MEMBER_THREADS = 20
 MAX_GROUP_MEMBERS = 8
 MAX_THREAD_MESSAGES = 200
 PRIVATE_HISTORY_PAGE_SIZE = 100
+PRIVATE_SEARCH_PAGE_SIZE = 20
+PRIVATE_SEARCH_QUERY_CHARS = 100
 VIEW_ONCE_SECONDS = 24 * 60 * 60
 INVITATION_WINDOW = 24 * 60 * 60
 MAX_DAILY_INVITATIONS = 20
@@ -306,6 +308,55 @@ class PrivateChatStore(ChatStore):
                                (self.clock(), message["id"], member["id"]))
             return {"thread": self._meta(db, row, member["id"]), "messages": result,
                     "before": before, "older_before": older_before}
+
+    def private_search(self, token, query, thread=None, before=None):
+        if isinstance(query, str) and any(char in query for char in "\t\r\n\u2028\u2029"):
+            raise ChatError(400, "Enter a single line of search text without control characters.")
+        query = _text(query, PRIVATE_SEARCH_QUERY_CHARS, multiline=True)
+        if before is not None:
+            before = _message_id(before)
+            if before > 2**53 - 1:
+                raise ChatError(400, "Choose a valid search cursor.")
+        needle = query.casefold()
+        with self._db() as db:
+            member = self._member(db, token)
+            self._expire(db)
+            if thread is not None:
+                # Even a scope with no matching bodies needs current membership;
+                # a conversation code or an older-page cursor grants no access.
+                self._access(db, token, thread)
+            candidates = db.execute("""
+                SELECT m.id,m.thread,t.title,t.kind,m.author,p.name,m.created,m.body
+                FROM private_members membership
+                JOIN private_threads t ON t.id=membership.thread
+                JOIN private_messages m ON m.thread=t.id
+                JOIN participants p ON p.id=m.author
+                WHERE membership.participant=:viewer AND membership.status='accepted'
+                AND (:thread IS NULL OR t.id=:thread)
+                AND (:before IS NULL OR m.id<:before)
+                AND m.lifetime='saved' AND m.redacted=''
+                AND (m.author=:viewer OR EXISTS
+                    (SELECT 1 FROM private_deliveries d WHERE d.message=m.id AND d.recipient=:viewer))
+                AND NOT EXISTS (SELECT 1 FROM blocks b
+                    WHERE (b.viewer=:viewer AND b.target=m.author)
+                    OR (b.target=:viewer AND b.viewer=m.author))
+                ORDER BY m.id DESC
+            """, {"viewer": member["id"], "thread": thread, "before": before})
+            results = []
+            # The inbox is already bounded to 20 conversations of 200 messages.
+            # Match only authorized saved bodies, without truncating candidates
+            # to a history page or letting SQL treat punctuation as wildcards.
+            for message in candidates:
+                if needle not in message["body"].casefold():
+                    continue
+                results.append({**dict(message), "own": message["author"] == member["id"]})
+                if len(results) > PRIVATE_SEARCH_PAGE_SIZE:
+                    break
+            has_older = len(results) > PRIVATE_SEARCH_PAGE_SIZE
+            results = results[:PRIVATE_SEARCH_PAGE_SIZE]
+            return {"query": query, "thread": thread, "before": before,
+                    "older_before": results[-1]["id"] if has_older else None,
+                    "results": results}
 
     def private_send(self, token, thread, body, lifetime, request_id):
         body = _text(body, MAX_MESSAGE_CHARS, multiline=True)

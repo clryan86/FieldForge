@@ -93,6 +93,64 @@ out an older retained message even while its page is open; use Back to latest
 if that older page becomes empty. History navigation does not restore messages
 that have already aged out of the 200-message retention limit.
 
+## Search saved messages
+
+![Saved-message search in a 390-pixel browser test](images/commons-saved-search.png)
+
+The screenshot uses a temporary database and explicitly labeled test messages.
+
+Choose **Private inbox → Search saved messages**, enter a word or phrase, and
+choose **Search**. The default scope is **All accepted conversations**. When
+you have an accepted conversation open, you can narrow the search to that
+conversation. Pending invitations and conversations you left are excluded.
+
+Search matches text in saved message bodies, including messages you sent and
+messages delivered to you. It is case-insensitive for Unicode text and treats
+punctuation such as `%`, `_`, and `*` literally. It does not search conversation
+subjects, use regular expressions, or expand individual words. Enter a single
+line of up to 100 characters; leading and trailing whitespace is trimmed, while
+spaces inside the phrase remain significant.
+
+Results show at most **20 matching saved messages**, newest first, with the
+conversation title, author, date and message text. Choose **Older results** to
+continue or **Back to newest** to start again with current results. Each request
+checks your current session, accepted membership, intended delivery and blocking
+in both directions. Withdrawn, moderated, expired or no-longer-retained content
+cannot be recovered by searching. Open-once messages are excluded entirely,
+including unopened messages and your own sent open-once bodies.
+
+Searching does not mark saved messages read or open a sealed message. While the
+search dialog is open, the browser also suspends history reads for the conversation
+behind it. **Open conversation** fetches a fresh history page around the matching
+message and highlights it for keyboard focus. That page follows the normal saved
+message read-receipt rules. If the message is no longer available, the interface
+says so; it does not restore the text from the search result. **Back to latest**
+returns to the conversation's newest page.
+
+Opening the search form or typing makes no search request; submitting, paging
+and opening a result are explicit actions. Closing the search dialog, hiding the
+tab, pausing chat or changing accounts clears the query and displayed results.
+Reopening starts with an empty form. Search text is not saved in the URL, browser
+storage or the database. Results are fetched when you search or change pages,
+not continuously refreshed. A previously displayed result can become outdated;
+opening it always rechecks access and retention.
+
+### Search API
+
+`POST /api/commons/private/search` uses the same local session, Origin, JSON and
+displayed-participant protections as the rest of the inbox. The required field
+is `query`; optional fields are `thread` (an accepted conversation ID or `null`)
+and `before` (an exclusive, positive JavaScript-safe message ID or `null`).
+Unknown fields are rejected.
+
+The response has `query`, `thread`, `before`, `older_before`, and `results`.
+Each result includes `id`, `thread`, `title`, `kind`, `author`, `name`, `created`,
+`body`, and `own`. `older_before` is the last returned message ID when additional
+visible matches remain, or `null`. A cursor is only an ID boundary and grants no
+access. New messages and retention can change later results; this is a search
+of currently retained data, not a frozen export. No database migration or extra
+dependency is required; the current schema remains version 8.
+
 ## Conversation capacity and invitation limits
 
 The local preview applies these separate limits:
@@ -296,3 +354,37 @@ receipts, reusable capacity, closed retries, schema version 6 and restart.
 An independent review found no material issue in the new pagination, lifecycle,
 retry or migration paths. These checks do not constitute a public-launch
 security review.
+
+## Saved-message search verification, 2026-10-05
+
+The combined Commons, profile/photo, community, portal and connection suite
+passed **510 tests and six subtests**, including **65 Chromium browser tests**,
+in **383.34 seconds**. One existing native graphical portal handoff test was
+skipped because this environment has no graphical desktop.
+
+The final search-specific browser run passed **all 13 scenarios** in
+**31.49 seconds**, including an additional composer-focus regression added after
+the combined run had collected its tests. The search increment adds **58
+backend/HTTP cases** and these **13 browser scenarios**. Coverage includes
+literal Unicode matching, exclusive pagination, old matches behind more than
+100 nonmatching messages, intended-delivery restrictions, pending/left
+membership, blocking in both directions, withdrawal, expiry, suspension,
+account closure and unchanged unread/open-once state.
+
+Real browser checks cover mobile layout, current-conversation filtering,
+safe plain-text rendering, explicit search submission, late replies after edits,
+close/hide/pause/sign-out, shared-cookie account switches, older-result history
+jumps, membership loss between inbox discovery and history fetch, stale
+navigation, retained keyboard focus after read-receipt updates, and preserving
+focus while someone starts typing during a delayed history reply. Independent
+review identified and rechecked the two keyboard-focus fixes; no remaining
+material issue was found in the reviewed paths.
+
+Repository-wide Ruff, changed JavaScript syntax and whitespace checks passed.
+A built wheel was installed outside the checkout and exercised using
+`python -S`, without optional dependencies. Its actual HTTP server served the
+search asset and verified search/paging, an older hit, unchanged unread counts,
+open-once exclusion, history navigation, withdrawal, membership loss, schema 8
+and database reopen. All **32 packaged online code/asset files** matched the
+tested source bytes. These checks do not constitute a public-launch security
+review or native Windows/macOS verification.

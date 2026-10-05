@@ -36,7 +36,7 @@ include = ["fieldforge*"]
 
 [tool.setuptools.package-data]
 fieldforge_gps = ["data/*"]
-"fieldforge.online" = ["portal.html", "commons.html", "commons.css", "commons.js", "commons-private.js", "commons-accounts.js", "commons-profiles.js", "commons-owner.html", "commons-owner.js"]
+"fieldforge.online" = ["portal.html", "commons.html", "commons.css", "commons.js", "commons-private.js", "commons-search.js", "commons-accounts.js", "commons-profiles.js", "commons-owner.html", "commons-owner.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

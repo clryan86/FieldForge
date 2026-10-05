@@ -93,6 +93,7 @@ class PreviewApplication(PortalApplication):
             ("/commons.js", "commons.js", "text/javascript; charset=utf-8"),
             ("/commons.css", "commons.css", "text/css; charset=utf-8"),
             ("/commons-private.js", "commons-private.js", "text/javascript; charset=utf-8"),
+            ("/commons-search.js", "commons-search.js", "text/javascript; charset=utf-8"),
             ("/commons-accounts.js", "commons-accounts.js", "text/javascript; charset=utf-8"),
             ("/commons-profiles.js", "commons-profiles.js", "text/javascript; charset=utf-8"),
             ("/commons-owner", "commons-owner.html", "text/html; charset=utf-8"),
@@ -122,6 +123,7 @@ class PreviewApplication(PortalApplication):
                    "export": set(), "leave": set(), "private/inbox": set(),
                    "private/create": {"title", "kind", "contacts", "request_id"},
                    "private/accept": {"thread"}, "private/read": {"thread"},
+                   "private/search": {"query"},
                    "private/send": {"thread", "body", "lifetime", "request_id"},
                    "private/open": {"thread", "message"}, "private/delete": {"thread", "message"},
                    "private/leave": {"thread"}, "private/export": set(),
@@ -150,7 +152,7 @@ class PreviewApplication(PortalApplication):
                    "owner/password": {"password", "code", "new_password"}}
         if name not in schemas:
             raise ChatError(404, "Chat endpoint not found.")
-        optional = {"before"} if name == "private/read" else set()
+        optional = {"private/read": {"before"}, "private/search": {"thread", "before"}}.get(name, set())
         if not schemas[name] <= set(payload) or not set(payload) <= schemas[name] | optional:
             raise ChatError(400, "Unsupported chat request fields.")
         result = {"ok": True}
@@ -198,6 +200,7 @@ class PreviewApplication(PortalApplication):
         elif name.startswith("private/"):
             methods = {"inbox": self.store.private_inbox, "create": self.store.private_create,
                        "accept": self.store.private_accept, "read": self.store.private_read,
+                       "search": self.store.private_search,
                        "send": self.store.private_send, "open": self.store.private_open_once,
                        "delete": self.store.private_delete, "leave": self.store.private_leave,
                        "export": self.store.private_export, "report": self.store.private_report}

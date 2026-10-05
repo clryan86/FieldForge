@@ -6,6 +6,7 @@ window.CommonsPrivate = class {
     this.selected = null; this.threads = []; this.drafts = new Map(); this.viewEpoch = 0;
     this.before = null; this.olderBefore = null; this.pageRevision = 0;
     this.historyReady = false; this.historyCount = 0; this.pageScroll = "latest";
+    this.searchJump = null;
     this.el = id => document.getElementById(id);
     this.el("privateInboxButton").addEventListener("click", () => this.show(true));
     this.el("publicRoomsButton").addEventListener("click", () => this.show(false));
@@ -82,7 +83,7 @@ window.CommonsPrivate = class {
     const element = this.node("button", text); element.type = "button";
     element.addEventListener("click", () => this.run(callback)); return element;
   }
-  setSession(joined, active, publicBusy) {
+  setSession(joined, active, publicBusy, viewer) {
     if (!active) {
       if (this.active || this.historyReady || this.before !== null) this.resetHistory();
       else this.clearReveal();
@@ -92,7 +93,8 @@ window.CommonsPrivate = class {
       this.el("contactCode").value = ""; this.show(false);
       for (const id of ["newConversationDialog", "privateReportDialog"]) this.el(id).close();
     }
-    this.joined = joined; this.active = active; this.publicBusy = publicBusy; this.controls();
+    this.joined = joined; this.active = active; this.publicBusy = publicBusy;
+    this.search?.setSession(joined, active, viewer); this.controls();
     if (joined && !active && this.selected) this.el("privateEmpty").textContent = "Chat is paused. Resume chat to load this conversation's latest messages.";
   }
   controls() {
@@ -104,10 +106,11 @@ window.CommonsPrivate = class {
     this.el("privatePause").textContent = this.active ? "Pause chat" : "Resume chat";
     this.el("privateLeaveSession").disabled = !this.joined || this.busy || this.publicBusy;
     this.el("cancelConversation").disabled = false; this.el("cancelPrivateReport").disabled = false;
-    this.historyControls(disabled);
+    this.historyControls(disabled); this.search?.controls();
   }
   show(visible) {
     if (visible && !this.joined) return;
+    this.search?.close();
     if (this.visible !== visible) this.resetHistory();
     this.visible = visible; this.clearReveal();
     this.el("publicWorkspace").hidden = visible; this.el("privateWorkspace").hidden = !visible;
@@ -133,6 +136,7 @@ window.CommonsPrivate = class {
     this.drafts.set(this.selected, {body, lifetime, id: previous?.body === body && previous?.lifetime === lifetime ? previous.id : null});
   }
   choose(thread) {
+    this.search?.close();
     this.saveDraft(); this.selected = thread; this.resetHistory();
     const draft = this.drafts.get(thread);
     this.el("privateMessage").value = draft?.body || ""; this.el("privateLifetime").value = draft?.lifetime || "saved";
@@ -143,6 +147,7 @@ window.CommonsPrivate = class {
     this.controls();
   }
   resetHistory(before = null) {
+    this.clearSearchJump();
     this.pageRevision++; this.before = before; this.olderBefore = null;
     this.historyReady = false; this.historyCount = 0; this.pageScroll = before === null ? "latest" : "older";
     this.clearReveal(); this.el("privateMessages").replaceChildren();
@@ -151,6 +156,49 @@ window.CommonsPrivate = class {
     this.el("privateEmpty").textContent = this.selected ? "Loading this conversation's messages…" : "Start a conversation or accept an invitation. Saved messages stay here; open-once messages disappear after opening.";
     this.el("privateEmpty").hidden = false;
     this.el("privateScroll").scrollTop = 0;
+  }
+  clearSearchJump() {
+    this.searchJump = null;
+    this.el("privateSearchJumpStatus").textContent = ""; this.el("privateSearchJumpStatus").hidden = true;
+    for (const article of this.el("privateMessages").querySelectorAll(".search-match")) {
+      article.classList.remove("search-match"); article.removeAttribute("tabindex"); article.removeAttribute("aria-describedby");
+    }
+  }
+  searchJumpStatus(text) {
+    this.el("privateSearchJumpStatus").textContent = text; this.el("privateSearchJumpStatus").hidden = !text;
+  }
+  async openSearchResult({id, thread}) {
+    if (!this.active || !this.joined || !this.visible || document.hidden || this.busy || this.publicBusy) return;
+    if (!Number.isSafeInteger(id) || id <= 0 || !Number.isSafeInteger(id + 1) || typeof thread !== "string") return;
+    // The search cursor grants no access: the regular history endpoint checks
+    // membership, blocks, retention, and withdrawal again before any body loads.
+    this.choose(thread); this.resetHistory(id + 1);
+    this.searchJump = {id, thread, before: id + 1, revision: this.pageRevision, focused: false, focusOrigin: document.activeElement};
+    this.searchJumpStatus("Opening the matching saved message…"); this.controls();
+    await this.refresh();
+  }
+  finishSearchJump(messages) {
+    const jump = this.searchJump;
+    if (!jump || jump.revision !== this.pageRevision || jump.thread !== this.selected || jump.before !== this.before
+        || !this.active || !this.visible || document.hidden || this.search?.opened) return;
+    const message = messages.find(item => item.id === jump.id && item.lifetime === "saved" && item.body);
+    const article = Array.from(this.el("privateMessages").children).find(item => Number(item.dataset.id) === jump.id);
+    if (!message || !article) {
+      this.clearSearchJump();
+      this.searchJumpStatus("That saved message is no longer available. It may have been withdrawn, expired from retained history, or become inaccessible.");
+      return;
+    }
+    article.classList.add("search-match"); article.tabIndex = -1;
+    article.setAttribute("aria-describedby", "privateSearchJumpStatus");
+    this.searchJumpStatus("Matching saved message. This history page ends at the message you opened from search.");
+    if (!jump.focused && !document.querySelector("dialog[open]")) {
+      jump.focused = true;
+      // A person may already be writing while a slow history page arrives.
+      // Highlight the result, but do not take focus back from their next action.
+      if (document.activeElement === jump.focusOrigin) {
+        article.focus({preventScroll: true}); article.scrollIntoView({block: "center", behavior: "auto"});
+      }
+    }
   }
   historyControls(disabled = !this.active || this.busy || this.publicBusy) {
     const thread = this.threads.find(item => item.id === this.selected);
@@ -183,11 +231,14 @@ window.CommonsPrivate = class {
     if (signal.aborted || !this.active) return;
     this.el("contactCode").value = inbox.contact_code; this.threads = inbox.threads;
     this.renderThreads();
-    if (!this.visible || document.hidden || pageRevision !== this.pageRevision) { this.controls(); return; }
+    if (!this.visible || document.hidden || this.search?.opened || pageRevision !== this.pageRevision) { this.controls(); return; }
     const thread = this.threads.find(item => item.id === this.selected);
     if (!thread) {
-      this.choose(null); this.el("privateTitle").textContent = "Your conversations, in one place";
+      const searched = Boolean(this.searchJump);
+      if (this.selected !== null) this.choose(null);
+      this.el("privateTitle").textContent = "Your conversations, in one place";
       this.el("privateParticipants").textContent = ""; this.el("leaveConversation").hidden = true;
+      if (searched) this.searchJumpStatus("That saved message is no longer available. The conversation may have closed or your access may have changed.");
       this.el("privateEmpty").hidden = false; this.controls(); return;
     }
     this.el("privateTitle").textContent = thread.title; this.el("privateKind").textContent = thread.kind === "group" ? "Invite-only group" : "One-to-one conversation";
@@ -198,14 +249,27 @@ window.CommonsPrivate = class {
     if (thread.status === "accepted") {
       const selected = this.selected, before = this.before;
       const payload = before === null ? {thread: selected} : {thread: selected, before};
-      const data = await this.request("private/read", payload, signal);
-      if (signal.aborted || pageRevision !== this.pageRevision || selected !== this.selected || before !== this.before || !this.active || !this.visible || document.hidden) return;
+      let data;
+      try { data = await this.request("private/read", payload, signal); }
+      catch (error) {
+        if (error.name === "AbortError" || signal.aborted || pageRevision !== this.pageRevision || selected !== this.selected
+            || before !== this.before || !this.active || !this.visible || document.hidden || this.search?.opened) return;
+        if (this.searchJump && [403, 404].includes(error.status)) {
+          this.choose(null); this.searchJumpStatus("That saved message is no longer available. The conversation may have closed or your access may have changed.");
+          this.controls(); return;
+        }
+        throw error;
+      }
+      if (signal.aborted || pageRevision !== this.pageRevision || selected !== this.selected || before !== this.before || !this.active || !this.visible || document.hidden || this.search?.opened) return;
       if (data.thread.id !== selected || (data.before ?? null) !== before) return;
       this.olderBefore = Number.isSafeInteger(data.older_before) && data.older_before > 0 ? data.older_before : null;
       this.historyReady = true; this.historyCount = data.messages.length;
       this.threads = this.threads.map(item => item.id === selected ? data.thread : item);
-      this.renderMessages(data.messages); this.renderThreads();
-    } else { this.resetHistory(); this.el("privateEmpty").hidden = true; }
+      this.renderMessages(data.messages); this.renderThreads(); this.finishSearchJump(data.messages);
+    } else {
+      const searched = Boolean(this.searchJump); this.resetHistory(); this.el("privateEmpty").hidden = true;
+      if (searched) this.searchJumpStatus("That saved message is no longer available. You must accept this conversation before reading its saved messages.");
+    }
     this.controls();
   }
   renderThreads() {
@@ -256,7 +320,12 @@ window.CommonsPrivate = class {
         }));
       }
       article.append(actions);
+      // The first read updates a received message's receipt. A later poll may
+      // replace that article; retain focus only if it still belongs to this hit.
+      const restoreSearchFocus = previous === document.activeElement && previous?.classList.contains("search-match")
+        && message.lifetime === "saved" && Boolean(message.body);
       if (previous) previous.replaceWith(article); else log.insertBefore(article, log.children[index] || null);
+      if (restoreSearchFocus) { article.tabIndex = -1; article.focus({preventScroll: true}); }
     }
     this.el("privateEmpty").hidden = messages.length > 0;
     this.el("privateEmpty").textContent = this.before === null ? "No visible messages in this conversation yet." : "No messages remain on this older page. Choose Back to latest to read recent messages.";
