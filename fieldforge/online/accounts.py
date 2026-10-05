@@ -72,6 +72,7 @@ class AccountStore(PrivateChatStore):
         super().__init__(path, **kwargs)
         self._auth_slots = threading.BoundedSemaphore(2)
         with self._db() as db:
+            version = db.execute("PRAGMA user_version").fetchone()[0]
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS accounts (
                     participant TEXT PRIMARY KEY REFERENCES participants(id),
@@ -81,8 +82,8 @@ class AccountStore(PrivateChatStore):
                 CREATE TABLE IF NOT EXISTS auth_attempts (
                     bucket TEXT PRIMARY KEY, started REAL NOT NULL, attempts INTEGER NOT NULL
                 );
-                PRAGMA user_version=3;
             """)
+            db.execute(f"PRAGMA user_version={max(3, version)}")
 
     def _member(self, db, token):
         member = db.execute("SELECT p.*,a.username AS account_name FROM participants p "

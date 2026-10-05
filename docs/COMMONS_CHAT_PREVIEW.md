@@ -44,7 +44,8 @@ Keep the terminal open while testing; press Ctrl+C to stop the server.
 The [private inbox and disappearing-message guide](COMMONS_PRIVATE_MESSAGES.md)
 covers direct conversations, invite-only groups, and open-once delivery, including
 the limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
-covers saved accounts, guest upgrades, password sign-in, and recovery codes.
+covers saved accounts, guest upgrades, password sign-in, and recovery codes. The [owner console guide](COMMONS_OWNER.md)
+covers sole-owner setup, authenticator sign-in, and moderation.
 
 - Base camp plus twelve practical skill rooms, with independent room history.
 - Plain text messages and optional skill labels; all identities are unverified.
@@ -74,9 +75,11 @@ Stop the preview if desired, then run this against its database:
 python -m fieldforge.online.commons_preview --db PATH --review-reports
 ```
 
-This prints saved reports as JSON. Reports are unavailable through HTTP. There
-is no staffed moderation, admin web console, automatic removal, or emergency
-response. Reports disappear when their associated message ages out of retention.
+This prints saved reports as JSON. Ordinary chat participants cannot retrieve
+other people's reports through HTTP. There
+is no staffed moderation, automatic removal, or emergency response. The
+[owner web console](COMMONS_OWNER.md) now provides authenticated report review
+and moderation after local owner setup. Reports disappear when their associated message ages out of retention.
 
 ## Limits and privacy
 
@@ -110,7 +113,7 @@ remove the database only with an understanding of the local data it contains.
 
 ## What still blocks a public launch
 
-Verified email/account recovery integration, sole-owner administration with MFA, social
+Verified email/account recovery integration, production administration hardening, social
 sign-in configuration, profile picture handling, reviewed moderation and abuse
 controls, HTTPS hosting, operations/backup restoration, privacy/terms, and a
 security review are still required. Private messaging is available only within

@@ -14,7 +14,8 @@ invitation-only direct/group conversations and open-once messages. Run it in two
 browser profiles on one computer. [Start the chat preview](docs/COMMONS_CHAT_PREVIEW.md).
 The [local account guide](docs/COMMONS_ACCOUNTS.md) covers saved accounts, password
 sign-in, guest upgrades, and recovery codes. Public accounts and internet hosting
-are not enabled by this preview.
+are not enabled by this preview. The [owner console](docs/COMMONS_OWNER.md) adds
+local sole-owner setup, authenticator verification, report review and access controls.
 
 ## Design principles
 

@@ -73,7 +73,7 @@
     if (message.skill) { const badge = node("span", message.skill + " · self-reported", "skill-tag"); header.append(badge); }
     const date = new Date(message.created * 1000); const time = node("time", date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}));
     time.dateTime = date.toISOString(); time.title = date.toLocaleString(); header.append(time); content.append(header);
-    content.append(node("p", message.deleted ? "Message deleted by its author." : message.body, "message-body"));
+    content.append(node("p", message.deleted ? "Message removed." : message.body, "message-body"));
     if (!message.deleted) {
       const actions = node("div", undefined, "message-actions");
       if (message.own) actions.append(action("Delete", async () => {

@@ -13,9 +13,9 @@ import time
 from http.cookies import CookieError, SimpleCookie
 from pathlib import Path
 
-from fieldforge.online.accounts import AccountStore
 from fieldforge.online.chat_store import SESSION_SECONDS, ChatError
 from fieldforge.online.community import CATEGORIES
+from fieldforge.online.owner import OwnerStore
 from fieldforge.online.server import (
     PortalApplication,
     PortalConfig,
@@ -80,6 +80,8 @@ class PreviewApplication(PortalApplication):
             ("/commons.css", "commons.css", "text/css; charset=utf-8"),
             ("/commons-private.js", "commons-private.js", "text/javascript; charset=utf-8"),
             ("/commons-accounts.js", "commons-accounts.js", "text/javascript; charset=utf-8"),
+            ("/commons-owner", "commons-owner.html", "text/html; charset=utf-8"),
+            ("/commons-owner.js", "commons-owner.js", "text/javascript; charset=utf-8"),
         ):
             self.assets[path] = ((root / filename).read_bytes(), mime)
         data, mime = self.assets["/commons"]
@@ -113,14 +115,35 @@ class PreviewApplication(PortalApplication):
                    "account/login": {"username", "password", "consent"},
                    "account/resume": {"consent"},
                    "account/recover": {"username", "recovery_code", "new_password", "consent"},
-                   "account/password": {"password", "new_password"}}
+                   "account/password": {"password", "new_password"},
+                   "owner/login": {"username", "password", "code", "consent"},
+                   "owner/dashboard": set(), "owner/reports": set(), "owner/lock": set(),
+                   "owner/members": {"query", "offset"},
+                   "owner/control": {"target", "action", "reason"},
+                   "owner/resolve": {"scope", "message", "action", "reason"},
+                   "owner/password": {"password", "code", "new_password"}}
         if name not in schemas:
             raise ChatError(404, "Chat endpoint not found.")
         if set(payload) != schemas[name]:
             raise ChatError(400, "Unsupported chat request fields.")
         result = {"ok": True}
         cookie = None
-        if name.startswith("account/"):
+        if name.startswith("owner/"):
+            if name == "owner/login":
+                fields = dict(payload)
+                if fields.pop("consent") is not True:
+                    raise ChatError(400, "Confirm connection to the local owner console.")
+                token, result = self.store.owner_login(token=token, **fields)
+                cookie = _cookie(token)
+            else:
+                methods = {"dashboard": self.store.owner_dashboard, "members": self.store.owner_members,
+                           "reports": self.store.owner_reports, "control": self.store.owner_control,
+                           "resolve": self.store.owner_resolve, "lock": self.store.owner_lock,
+                           "password": self.store.owner_password}
+                result = methods[name.split("/")[1]](token, **payload) or {"ok": True}
+                if name == "owner/password":
+                    cookie = _cookie("", clear=True)
+        elif name.startswith("account/"):
             fields = dict(payload)
             if name != "account/password" and fields.pop("consent") is not True:
                 raise ChatError(400, "Confirm local account and message storage before continuing.")
@@ -182,7 +205,7 @@ class CommonsPreviewServer(PortalHTTPServer):
 
 
 def make_preview_server(database, port=8765):
-    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(AccountStore(database)))
+    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(OwnerStore(database)))
     server.RequestHandlerClass = PreviewHandler
     return server
 
@@ -191,15 +214,23 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", required=True, type=Path, help="Local SQLite chat database (outside the source tree).")
     parser.add_argument("--port", default=8765, type=int)
-    parser.add_argument("--review-reports", action="store_true", help="Print local reports as JSON without starting a server.")
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument("--review-reports", action="store_true", help="Print local reports as JSON without starting a server.")
+    action.add_argument("--init-owner", action="store_true", help="Set up the sole owner interactively, without starting the server.")
+    action.add_argument("--recover-owner", action="store_true", help="Reset owner factors using the saved recovery code in a local terminal.")
     args = parser.parse_args(argv)
     try:
         if not 0 <= args.port <= 65535:
             raise ValueError("Port must be between 0 and 65535.")
+        if args.init_owner or args.recover_owner:
+            from fieldforge.online.owner_setup import setup_owner
+
+            setup_owner(OwnerStore(args.db), recover=args.recover_owner)
+            return 0
         if args.review_reports:
             if not args.db.is_file():
                 raise ValueError("Choose an existing Commons preview database to review reports.")
-            print(json.dumps(AccountStore(args.db).reports(), ensure_ascii=False, indent=2))
+            print(json.dumps(OwnerStore(args.db).reports(), ensure_ascii=False, indent=2))
             return 0
         server = make_preview_server(args.db, args.port)
     except (OSError, ValueError, sqlite3.Error) as exc:

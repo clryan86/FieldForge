@@ -97,10 +97,14 @@ or an expired/revoked session to avoid carrying them into another identity.
   messages or operator reports. Auth responses use the existing no-store headers.
   Inputs require the existing same-origin, JSON, custom-header protections.
 - `CLRYAN86`, `King`, and administrator/moderator usernames remain reserved.
-  Registration cannot assign roles. No owner credentials are embedded in code.
+  Registration cannot assign roles. [Owner setup](COMMONS_OWNER.md) is a separate
+  local-terminal action with authenticator verification. No owner credentials
+  are embedded in code.
   Skill labels grant no privileges.
 
-Schema version 3 adds accounts and rate-limit counters to version 1/2 databases.
+Accounts introduced schema version 3; the owner console adds version 4. Both
+upgrades preserve existing data. Version 3 adds accounts and rate-limit counters
+to version 1/2 databases.
 Existing participants, active sessions, messages, invitations and reports remain.
 Stop the server and back up the database before changing versions. Old binaries
 that do not understand schema 3 must not be used against the upgraded database.
@@ -110,7 +114,7 @@ public launch. Do not publish or commit databases or recovery codes.
 
 ## Still needed for public launch
 
-Verified email/social identity integration, owner-only administration with MFA,
+Verified email/social identity integration, production administration hardening,
 account deletion and lifecycle tools, compromised-password screening, reviewed
 distributed abuse controls, HTTPS deployment, recovery/backup operations, and
 security review remain unfinished. Hosting/domains/provider credentials are not

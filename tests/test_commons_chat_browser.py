@@ -91,7 +91,7 @@ def test_two_browser_conversation_controls_and_layout(browsers, preview_server, 
 
     alice.on("dialog", lambda dialog: dialog.accept())
     alice.get_by_role("button", name="Delete", exact=True).click()
-    expect(bob.locator(".message.deleted")).to_contain_text("Message deleted by its author.")
+    expect(bob.locator(".message.deleted")).to_contain_text("Message removed.")
     with bob.expect_download() as download:
         bob.get_by_role("button", name="Export my messages").click()
     exported = tmp_path / "mine.json"

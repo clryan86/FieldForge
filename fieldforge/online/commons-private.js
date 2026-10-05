@@ -166,12 +166,12 @@ window.CommonsPrivate = class {
       const header = this.node("div", undefined, "message-header");
       header.append(this.node("strong", message.name + (message.own ? " (you)" : "")), this.node("span", message.lifetime === "saved" ? "Saved" : "Open once", "tag"));
       const date = new Date(message.created * 1000); const time = this.node("time", date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})); time.dateTime = date.toISOString(); header.append(time); article.append(header);
-      const labels = {opened: "Opened and cleared for this recipient.", expired: "Message expired.", deleted: "Message withdrawn by its sender."};
+      const labels = {opened: "Opened and cleared for this recipient.", expired: "Message expired.", deleted: "Message withdrawn by its sender.", moderated: "Message removed by the owner."};
       const body = message.lifetime === "saved" && message.body ? message.body : labels[message.state] || (message.own ? "Open-once message sent. Its body is not available in sent history." : "A message is waiting to be opened once.");
       article.append(this.node("p", body, "message-body"));
       const actions = this.node("div", undefined, "message-actions");
       if (message.can_open) actions.append(this.button("Open once", () => this.openOnce(message)));
-      if (message.own && !["deleted", "expired", "opened"].includes(message.state)) actions.append(this.button("Withdraw", async () => {
+      if (message.own && !["deleted", "expired", "opened", "moderated"].includes(message.state)) actions.append(this.button("Withdraw", async () => {
         if (!confirm("Withdraw this message from the conversation? Existing copies and screenshots cannot be erased.")) return;
         await this.request("private/delete", {thread: this.selected, message: message.id}); await this.refresh();
       }));

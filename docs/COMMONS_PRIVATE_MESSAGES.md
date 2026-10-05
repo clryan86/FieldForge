@@ -89,7 +89,8 @@ subject and expect that subject to disappear.
   they still belong to.
 - Sending is limited to one new message every two seconds across public and
   private conversations. Duplicate retries do not resend retained messages.
-- Reports go to the local operator using `--review-reports`; no staffed
+- Reports go to the local operator using `--review-reports` or the
+  [authenticated owner console](COMMONS_OWNER.md); no staffed
   moderation or emergency response is available. Open-once bodies are never
   retained as report evidence.
 
@@ -105,7 +106,7 @@ not turn this local-account preview into a public messaging service.
 There is still no configured public hostname or public Commons deployment.
 
 The next release work is verified sign-in and email recovery integration,
-sole-owner administration and MFA, abuse/moderation operations, production
+production abuse/moderation operations, deployment hardening,
 HTTPS and secure sessions, backups and recovery testing, and deployment to a
 chosen host. Email/social provider configuration and an operator-controlled
 domain are not supplied by an OpenAI API account.
