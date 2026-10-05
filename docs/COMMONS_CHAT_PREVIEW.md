@@ -43,7 +43,8 @@ Keep the terminal open while testing; press Ctrl+C to stop the server.
 
 The [private inbox and disappearing-message guide](COMMONS_PRIVATE_MESSAGES.md)
 covers direct conversations, invite-only groups, and open-once delivery, including
-the limits of browser clearing and screenshots.
+the limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
+covers saved accounts, guest upgrades, password sign-in, and recovery codes.
 
 - Base camp plus twelve practical skill rooms, with independent room history.
 - Plain text messages and optional skill labels; all identities are unverified.
@@ -61,8 +62,9 @@ the limits of browser clearing and screenshots.
 
 Deleting a message removes its text from normal queries, exports, and report
 review. It cannot erase screenshots, previous exports, database backups, or
-guarantee forensic erasure from the SQLite file. A new preview name/session is a
+guarantee forensic erasure from the SQLite file. A new guest name/session is a
 new participant after logout or expiry and does not regain ownership of old posts.
+A saved local account returns to the same participant after signing in.
 
 ## Local operator report review
 
@@ -79,11 +81,13 @@ response. Reports disappear when their associated message ages out of retention.
 ## Limits and privacy
 
 The preview binds only to `127.0.0.1` and has no public-bind option. Do not expose
-it through port forwarding, a tunnel, or a reverse proxy. Preview names are not
-password-protected accounts. Reserved owner/admin names cannot be claimed here,
+it through port forwarding, a tunnel, or a reverse proxy. Guest names are not
+password protected. Optional local accounts preserve identity using a password
+and recovery code, but do not verify a real-world identity. Reserved owner/admin names cannot be claimed here,
 and a skill label gives no administrative privilege or verified qualification.
 
-No chat API requests occur before joining. Joining and sending explicitly use
+No chat API requests occur until an explicit join, account, or resume action.
+Joining and sending explicitly use
 the local server; no cloud AI, third-party services, telemetry, external fonts,
 or public map providers are contacted. The ordinary production map server has
 no chat endpoints. This separate preview command serves an unconfigured map
@@ -106,7 +110,7 @@ remove the database only with an understanding of the local data it contains.
 
 ## What still blocks a public launch
 
-Verified accounts and recovery, sole-owner administration with MFA, social
+Verified email/account recovery integration, sole-owner administration with MFA, social
 sign-in configuration, profile picture handling, reviewed moderation and abuse
 controls, HTTPS hosting, operations/backup restoration, privacy/terms, and a
 security review are still required. Private messaging is available only within

@@ -3,7 +3,8 @@
 This extends the **local** FieldForge Commons preview. It is a working inbox
 inside the program, not an email service: it does not send email or connect to
 external mail accounts. Launch it with the [existing preview command](COMMONS_CHAT_PREVIEW.md#start-it),
-then choose **Private inbox** after joining.
+then choose **Private inbox** after joining. [Local accounts](COMMONS_ACCOUNTS.md)
+now let you keep the same inbox across sign-outs and server restarts.
 
 ![Private group in the browser test](images/commons-private-preview.png)
 
@@ -75,11 +76,11 @@ subject and expect that subject to disappear.
 
 ## Important preview limits
 
-- Identities are temporary sessions, expiring within eight hours. Logout or
-  expiry loses access to that identity's old inbox. A new session with the same
-  name does not recover it. This is why the preview is not ready for real users.
+- Guest identities expire within eight hours; logout or expiry loses their inbox
+  access. Save the guest as an account before leaving to retain its identity.
+  Local accounts sign back in to the same inbox after session expiry or logout.
 - The service still binds only to `127.0.0.1`; it is not exposed publicly.
-- No accounts, account recovery, social sign-in, attachments, notifications,
+- No public accounts, email recovery, social sign-in, attachments, notifications,
   external email delivery, or end-to-end encryption are implemented.
 - Each database supports 200 private conversations, 20 per participant, and 200
   retained messages per conversation. The UI shows the latest 100. A new message
@@ -92,17 +93,18 @@ subject and expect that subject to disappear.
   moderation or emergency response is available. Open-once bodies are never
   retained as report evidence.
 
-Schema version 2 upgrades the preview database without removing public room
+Private messaging introduced schema version 2; local accounts add version 3
+without removing public room
 history or active sessions. Keep a backup of test data before changing versions.
 The preview refuses to use an unrelated application database.
 
 ## Public launch status
 
 The existing Linux/Caddy deployment examples apply to the map portal; they do
-not turn this temporary-identity preview into a public messaging service.
+not turn this local-account preview into a public messaging service.
 There is still no configured public hostname or public Commons deployment.
 
-The next release work is durable accounts with verified sign-in and recovery,
+The next release work is verified sign-in and email recovery integration,
 sole-owner administration and MFA, abuse/moderation operations, production
 HTTPS and secure sessions, backups and recovery testing, and deployment to a
 chosen host. Email/social provider configuration and an operator-controlled
@@ -112,7 +114,7 @@ The screenshot restriction cannot be promised at public launch either. An
 end-to-end encrypted mode would require a maintained protocol/client and a
 separate review; this implementation does not build custom cryptography.
 
-## Verification, 2026-10-05
+## Initial private-message verification, 2026-10-05
 
 The combined chat, private-message, profile, portal and connection suite passed
 **113 tests plus six subtests**. One existing Tk desktop handoff test was skipped

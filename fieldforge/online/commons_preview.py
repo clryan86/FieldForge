@@ -1,7 +1,7 @@
 """Run local Commons chat: python -m fieldforge.online.commons_preview --db chat.sqlite3.
 
 This preview binds exclusively to 127.0.0.1. Do not forward it to a public host:
-display names are unverified and there is no production account service.
+local accounts are not verified identities and there is no production account service.
 """
 
 from __future__ import annotations
@@ -13,9 +13,9 @@ import time
 from http.cookies import CookieError, SimpleCookie
 from pathlib import Path
 
+from fieldforge.online.accounts import AccountStore
 from fieldforge.online.chat_store import SESSION_SECONDS, ChatError
 from fieldforge.online.community import CATEGORIES
-from fieldforge.online.private_chat import PrivateChatStore
 from fieldforge.online.server import (
     PortalApplication,
     PortalConfig,
@@ -79,6 +79,7 @@ class PreviewApplication(PortalApplication):
             ("/commons.js", "commons.js", "text/javascript; charset=utf-8"),
             ("/commons.css", "commons.css", "text/css; charset=utf-8"),
             ("/commons-private.js", "commons-private.js", "text/javascript; charset=utf-8"),
+            ("/commons-accounts.js", "commons-accounts.js", "text/javascript; charset=utf-8"),
         ):
             self.assets[path] = ((root / filename).read_bytes(), mime)
         data, mime = self.assets["/commons"]
@@ -89,7 +90,7 @@ class PreviewApplication(PortalApplication):
                  b'<h2>Try FieldForge Commons chat</h2><p>A working local chat preview with '
                  b'shared rooms and saved messages. Test with two separate browser profiles.</p>'
                  b'<a class="button" href="/commons">Open local chat preview</a>'
-                 b'<p class="hint">Local preview only. Public accounts and membership are not active.</p></section>')
+                 b'<p class="hint">Local accounts can keep your inbox across sessions. Public membership is not active.</p></section>')
         page = page.replace(
             b'No account, profile photo, public directory, chat or encrypted messaging is active here.',
             b'Public accounts, profile photos, a public directory and encrypted messaging are not active. '
@@ -107,14 +108,33 @@ class PreviewApplication(PortalApplication):
                    "private/send": {"thread", "body", "lifetime", "request_id"},
                    "private/open": {"thread", "message"}, "private/delete": {"thread", "message"},
                    "private/leave": {"thread"}, "private/export": set(),
-                   "private/report": {"thread", "message", "reason"}}
+                   "private/report": {"thread", "message", "reason"},
+                   "account/register": {"username", "password", "skill", "consent"},
+                   "account/login": {"username", "password", "consent"},
+                   "account/resume": {"consent"},
+                   "account/recover": {"username", "recovery_code", "new_password", "consent"},
+                   "account/password": {"password", "new_password"}}
         if name not in schemas:
             raise ChatError(404, "Chat endpoint not found.")
         if set(payload) != schemas[name]:
             raise ChatError(400, "Unsupported chat request fields.")
         result = {"ok": True}
         cookie = None
-        if name.startswith("private/"):
+        if name.startswith("account/"):
+            fields = dict(payload)
+            if name != "account/password" and fields.pop("consent") is not True:
+                raise ChatError(400, "Confirm local account and message storage before continuing.")
+            if name == "account/resume":
+                result = self.store.account_resume(token)
+            elif name == "account/recover":
+                result = self.store.account_recover(**fields)
+                cookie = _cookie("", clear=True)
+            else:
+                methods = {"register": self.store.account_register, "login": self.store.account_login,
+                           "password": self.store.account_change_password}
+                token, result = methods[name.split("/")[1]](token=token, **fields)
+                cookie = _cookie(token)
+        elif name.startswith("private/"):
             methods = {"inbox": self.store.private_inbox, "create": self.store.private_create,
                        "accept": self.store.private_accept, "read": self.store.private_read,
                        "send": self.store.private_send, "open": self.store.private_open_once,
@@ -162,7 +182,7 @@ class CommonsPreviewServer(PortalHTTPServer):
 
 
 def make_preview_server(database, port=8765):
-    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(PrivateChatStore(database)))
+    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(AccountStore(database)))
     server.RequestHandlerClass = PreviewHandler
     return server
 
@@ -179,13 +199,13 @@ def main(argv=None):
         if args.review_reports:
             if not args.db.is_file():
                 raise ValueError("Choose an existing Commons preview database to review reports.")
-            print(json.dumps(PrivateChatStore(args.db).reports(), ensure_ascii=False, indent=2))
+            print(json.dumps(AccountStore(args.db).reports(), ensure_ascii=False, indent=2))
             return 0
         server = make_preview_server(args.db, args.port)
     except (OSError, ValueError, sqlite3.Error) as exc:
         parser.exit(2, f"Cannot start Commons preview: {exc}\n")
     print(f"Local Commons preview: http://127.0.0.1:{server.server_address[1]}/commons", flush=True)
-    print("Local, unverified preview identities. Do not expose this server to the internet.", flush=True)
+    print("Local accounts and guest sessions. Do not expose this server to the internet.", flush=True)
     try:
         server.serve_forever(poll_interval=.25)
     except KeyboardInterrupt:

@@ -49,6 +49,7 @@ class PrivateChatStore(ChatStore):
     def __init__(self, path, **kwargs):
         super().__init__(path, **kwargs)
         with self._db() as db:
+            version = db.execute("PRAGMA user_version").fetchone()[0]
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS private_threads (
                     id TEXT PRIMARY KEY, title TEXT NOT NULL, kind TEXT NOT NULL,
@@ -80,9 +81,13 @@ class PrivateChatStore(ChatStore):
                     reporter TEXT NOT NULL REFERENCES participants(id), reason TEXT NOT NULL,
                     created REAL NOT NULL, PRIMARY KEY(message,reporter)
                 );
-                PRAGMA user_version=2;
             """)
+            db.execute(f"PRAGMA user_version={max(2, version)}")
             self._expire(db)
+
+    def _contact_available(self, db, contact):
+        return db.execute("SELECT 1 FROM participants WHERE id=? AND token_hash IS NOT NULL AND expires>?",
+                          (contact, self.clock())).fetchone()
 
     def _expire(self, db):
         db.execute("UPDATE private_messages SET body='',redacted='expired' "
@@ -150,8 +155,7 @@ class PrivateChatStore(ChatStore):
             if member["id"] in contacts:
                 raise ChatError(400, "Enter another participant's contact code.")
             for contact in contacts:
-                if (not db.execute("SELECT 1 FROM participants WHERE id=? AND token_hash IS NOT NULL AND expires>?",
-                                   (contact, self.clock())).fetchone() or _blocked(db, member["id"], contact)):
+                if not self._contact_available(db, contact) or _blocked(db, member["id"], contact):
                     raise ChatError(404, "A selected contact is unavailable for a private invitation.")
             if db.execute("SELECT COUNT(*) FROM private_threads").fetchone()[0] >= MAX_THREADS:
                 raise ChatError(409, "This local preview has reached its conversation limit.")

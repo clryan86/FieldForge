@@ -88,7 +88,7 @@ class ChatStore:
             if ((version == 0 and (identity != 0 or tables))
                     or (version != 0 and identity != APPLICATION_ID)):
                 raise ValueError("Choose a separate Commons preview database, not an existing app database.")
-            if version not in (0, 1, 2):
+            if version not in (0, 1, 2, 3):
                 raise ValueError("Unsupported Commons preview database version.")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS participants (
@@ -150,6 +150,10 @@ class ChatStore:
                 "skill_label": skill.label if skill else None,
                 "identity": "unverified preview name"}
 
+    def _name_in_use(self, db, name, now):
+        return db.execute("SELECT 1 FROM participants WHERE name_key=? AND expires>? "
+                          "AND token_hash IS NOT NULL", (name.casefold(), now)).fetchone()
+
     def join(self, name, skill, token=None):
         name = _text(name, 40)
         if name.casefold() in {"admin", "administrator", "moderator", "clryan86", "king"}:
@@ -168,8 +172,7 @@ class ChatStore:
             db.execute("UPDATE participants SET token_hash=NULL WHERE expires<=?", (now,))
             if db.execute("SELECT COUNT(*) FROM participants").fetchone()[0] >= MAX_PARTICIPANTS:
                 raise ChatError(409, "This local preview is full. Use a new preview database.")
-            if db.execute("SELECT 1 FROM participants WHERE name_key=? AND expires>? "
-                          "AND token_hash IS NOT NULL", (name.casefold(), now)).fetchone():
+            if self._name_in_use(db, name, now):
                 raise ChatError(409, "That preview name is in use. Choose another name.")
             token = secrets.token_urlsafe(32)
             participant = secrets.token_hex(12)

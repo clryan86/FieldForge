@@ -12,7 +12,9 @@ A working local chat preview now supports shared rooms, saved messages, optional
 skill labels, blocking, reports, and author deletion. A private inbox adds
 invitation-only direct/group conversations and open-once messages. Run it in two separate
 browser profiles on one computer. [Start the chat preview](docs/COMMONS_CHAT_PREVIEW.md).
-Public accounts and internet hosting are not enabled by this preview.
+The [local account guide](docs/COMMONS_ACCOUNTS.md) covers saved accounts, password
+sign-in, guest upgrades, and recovery codes. Public accounts and internet hosting
+are not enabled by this preview.
 
 ## Design principles
 

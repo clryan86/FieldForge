@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'fieldforge/online/chat_store.py'
+      - 'fieldforge/online/accounts.py'
       - 'fieldforge/online/private_chat.py'
       - 'fieldforge/online/commons*'
       - 'fieldforge/online/community.py'
@@ -14,6 +15,7 @@ on:
   pull_request:
     paths:
       - 'fieldforge/online/chat_store.py'
+      - 'fieldforge/online/accounts.py'
       - 'fieldforge/online/private_chat.py'
       - 'fieldforge/online/commons*'
       - 'fieldforge/online/community.py'
@@ -39,8 +41,8 @@ jobs:
       - name: Install Chromium
         run: python -m playwright install --with-deps chromium
       - name: Check chat source
-        run: ruff check fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py tests/test_commons_chat.py tests/test_commons_chat_browser.py tests/test_commons_private.py tests/test_commons_private_browser.py
+        run: ruff check fieldforge/online/accounts.py fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py tests/test_commons_chat.py tests/test_commons_chat_browser.py tests/test_commons_private.py tests/test_commons_private_browser.py tests/test_commons_accounts.py tests/test_commons_accounts_browser.py
       - name: Exercise real local chat and portal compatibility
         env:
           FIELDFORGE_PORTAL_BROWSER_TESTS: '1'
-        run: python -m pytest -o addopts='' -q -ra tests/test_commons_chat.py tests/test_community_profile.py tests/test_online_portal.py tests/test_online_integration.py tests/test_portal_connection.py tests/test_commons_chat_browser.py tests/test_commons_private.py tests/test_commons_private_browser.py
+        run: python -m pytest -o addopts='' -q -ra tests/test_commons_chat.py tests/test_community_profile.py tests/test_online_portal.py tests/test_online_integration.py tests/test_portal_connection.py tests/test_commons_chat_browser.py tests/test_commons_private.py tests/test_commons_private_browser.py tests/test_commons_accounts.py tests/test_commons_accounts_browser.py

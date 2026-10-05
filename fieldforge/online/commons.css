@@ -9,3 +9,5 @@
 @media print{#viewOnceDialog,#viewOnceBody{display:none!important}}
 
 .private-disclosure .session-actions{display:flex;gap:.5rem;margin:.2rem 0 .7rem}.private-disclosure .session-actions button{width:auto}.private-scroll{height:270px}
+
+.account-entry{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0}.account-entry button{font-size:.78rem;padding:.65rem .8rem}.account-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.8rem 1rem;margin-bottom:.8rem;background:var(--tint);border:1px solid var(--line);border-radius:10px}.account-bar strong{font-size:.85rem}.account-bar p{margin:.25rem 0 0}.account-bar button{flex:none;font-size:.78rem}#accountDialog,#recoveryDialog{max-height:90vh;overflow:auto;width:min(520px,calc(100vw - 2rem))}#accountDialog label{margin-top:.65rem}#accountDialog p,#recoveryDialog p{font-size:.85rem}#accountError:empty{display:none}#recoveryValue{font: .8rem ui-monospace,monospace}#recoveryContinue{margin-top:1rem}@media(max-width:700px){.account-bar{align-items:flex-start;flex-direction:column}.account-entry button{flex:1 1 40%}}@media print{#accountDialog,#recoveryDialog{display:none!important}}

@@ -3,7 +3,7 @@
   const el = id => document.getElementById(id);
   let joined = false, active = false, room = "general", timer = null, reader = null;
   let revision = 0, sending = false, reportMessage = null;
-  let privateChat;
+  let privateChat, accountUI, viewer = null;
   const drafts = new Map();
   const notice = (text, error = false) => { el("status").textContent = text; el("status").classList.toggle("error", error); };
   const node = (tag, text, className) => { const result = document.createElement(tag); if (text !== undefined) result.textContent = text; if (className) result.className = className; return result; };
@@ -28,6 +28,7 @@
     for (const button of el("rooms").querySelectorAll("button")) button.disabled = !enabled || sending;
     for (const button of document.querySelectorAll(".message-actions button, #blockedList button")) button.disabled = !enabled;
     privateChat?.setSession(joined, active, sending);
+    accountUI?.setSession(joined, active, viewer);
   }
   function stop() {
     active = false; revision++; clearTimeout(timer); reader?.abort(); reader = null; controls();
@@ -35,8 +36,19 @@
   function failed(error) {
     if (error.name === "AbortError") return;
     stop();
-    if (error.status === 401) { joined = false; controls(); }
-    notice((error.status ? error.message : "The local server could not be reached.") + " Your draft is retained. " + (joined ? "Choose Resume chat to reconnect." : "Join again when ready."), true);
+    if (error.status === 401) clearIdentity();
+    notice((error.status ? error.message : "The local server could not be reached.") + (joined ? " Your draft is retained. Choose Resume chat to reconnect." : " Sign in or join again when ready."), true);
+  }
+  function clearIdentity() {
+    joined = false; viewer = null; drafts.clear(); el("message").value = ""; count(); controls();
+    el("messages").replaceChildren(); el("emptyState").hidden = false;
+    el("sessionName").textContent = "Preview"; el("blockedList").replaceChildren(); delete el("blockedList").dataset.value; el("blockedCount").textContent = "(0)";
+  }
+  async function connected(data) {
+    if (viewer && viewer.id !== data.viewer.id) clearIdentity();
+    viewer = data.viewer; joined = true; active = true; controls();
+    notice(`Joined as ${viewer.name}. ${viewer.account ? "Your account keeps access to your inbox after sign-out." : "Messages are saved on this local server."}`);
+    await refresh();
   }
   function saveDraft() {
     const body = el("message").value;
@@ -77,6 +89,7 @@
     article.append(content); return article;
   }
   function render(data) {
+    viewer = data.viewer;
     el("sessionName").textContent = data.viewer.name;
     const currentRoom = data.rooms.find(value => value.id === room);
     el("roomTitle").textContent = currentRoom.label; el("roomBadge").textContent = currentRoom.badge;
@@ -127,12 +140,13 @@
     } catch (error) { if (ownRevision === revision) failed(error); }
   }
   privateChat = new window.CommonsPrivate({request, notice, failed, refresh});
+  accountUI = new window.CommonsAccounts({request, notice, connected});
   el("joinForm").addEventListener("submit", async event => {
     event.preventDefault(); if (!el("consent").checked) return;
     el("joinButton").disabled = true;
     try {
       const data = await request("join", {name: el("displayName").value, skill: el("skill").value, consent: true});
-      joined = true; active = true; controls(); notice(`Joined as ${data.viewer.name}. Messages are saved on this local server.`); await refresh();
+      await connected(data);
     } catch (error) { notice(error.message || "Cannot join local chat.", true); }
     finally { el("joinButton").disabled = false; }
   });
@@ -158,10 +172,12 @@
   el("leaveButton").addEventListener("click", async () => {
     stop();
     try {
-      await request("leave"); joined = false; controls(); el("messages").replaceChildren(); el("emptyState").hidden = false;
-      el("sessionName").textContent = "Preview"; el("blockedList").replaceChildren(); delete el("blockedList").dataset.value; el("blockedCount").textContent = "(0)";
-      notice("You left chat. Your saved messages remain in the rooms. Your session can no longer send or read.");
-    } catch (error) { notice("Chat is paused, but the server could not confirm logout. Retry Leave chat when it is reachable; the session expires within eight hours.", true); }
+      await request("leave"); const account = viewer?.account; clearIdentity();
+      notice("You left chat. " + (account ? "Sign in to your account to return to your inbox." : "Your saved messages remain, but this guest session cannot be recovered."));
+    } catch (error) {
+      if (error.status === 401) { clearIdentity(); notice("This session has already ended. Sign in to return to your account."); }
+      else notice("Chat is paused, but the server could not confirm logout. Retry Leave chat when it is reachable; the session expires within eight hours.", true);
+    }
   });
   el("exportButton").addEventListener("click", async () => {
     if (!active) return;
