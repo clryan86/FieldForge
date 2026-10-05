@@ -7,6 +7,7 @@ import os
 import sqlite3
 import struct
 import zipfile
+from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 from threading import Event
@@ -44,6 +45,31 @@ def change(index, sql, args=()):
     with sqlite3.connect(index.path) as con:
         con.execute(sql, args)
     return replace(index, fingerprint=regional.signature(index.path))
+
+
+def crowded_index(tmp_path, *, points=900, roads=900, areas=900,
+                  center=(-70, 40), point_center=None):
+    """Prepare actual PBF with points first, then buildings, then highway ways."""
+    lon, lat = center
+    point_lon, point_lat = point_center or center
+    strings = ('', 'highway', 'residential', 'name', 'Map Street',
+               'building', 'yes', 'crossing')
+    group = (binary(1, node(1, lon, lat)) +
+             binary(1, node(2, lon + .001, lat + .001)) +
+             binary(1, node(3, lon - .001, lat + .001)))
+    # Highway-tagged points must not take the slots reserved for road lines.
+    tags = packed(2, (1, 3)) + packed(3, (7, 4))
+    group += b''.join(binary(1, node(1000 + i, point_lon, point_lat, tags))
+                      for i in range(points))
+    group += b''.join(binary(3, way(i + 1, (1, 2, 3, 1), keys=(5, 3), vals=(6, 4)))
+                      for i in range(areas))
+    group += b''.join(binary(3, way(areas + i + 1)) for i in range(roads))
+    return build(tmp_path, header() + primitive(group, strings))
+
+
+def geometry_counts(features):
+    return Counter('point' if len(f.geometry) == 1 else
+                   'road' if f.kind.startswith('highway=') else 'area' for f in features)
 
 
 def test_historical_geometry_matches_existing_reader_exactly(tmp_path):
@@ -425,6 +451,8 @@ def test_bad_query_limits(tmp_path, limit):
     index = build(tmp_path)
     with pytest.raises(ValueError):
         regional.search_index(index, '', limit=limit)
+    with pytest.raises(ValueError):
+        regional.visible_index(index, (-71, 39, -69, 41), limit=limit)
 
 
 @pytest.mark.parametrize('bounds', [(-200, 0, 10, 20), (10, 20, 5, 30), (1, -89, 2, 0),
@@ -445,12 +473,148 @@ def test_spatial_query_empty_and_subregion(tmp_path):
     assert regional.view_boxes(Viewport(0, 0, 0, 800, 400))[0][0::2] == (-180, 180)
 
 
+def test_crowded_view_reserves_roads_areas_and_points_without_changing_search(tmp_path):
+    index = crowded_index(tmp_path)
+    bounds = (-70.01, 39.99, -69.99, 40.01)
+    found = regional.visible_index(index, bounds)
+
+    assert len(found.features) == 700 and found.limited
+    assert geometry_counts(found.features) == {'road': 350, 'area': 175, 'point': 175}
+    assert len({f.id for f in found.features}) == 700
+    assert regional.visible_index(index, bounds) == found
+    # Ways remain complete, including the closed building boundary.
+    assert next(f for f in found.features if f.kind == 'highway=residential').geometry == (
+        (-70, 40), (-69.999, 40.001))
+    assert next(f for f in found.features if f.kind == 'building=yes').geometry == (
+        (-70, 40), (-69.999, 40.001), (-70.001, 40.001), (-70, 40))
+    # Text search keeps its original source/fid order and complete matching rules.
+    searched = regional.search_index(index, 'Map Street', limit=700)
+    assert geometry_counts(searched.features) == {'point': 700} and searched.limited
+
+
+@pytest.mark.parametrize('limit,expected', [
+    (1, {'road': 1}),
+    (2, {'road': 1, 'point': 1}),
+    (3, {'road': 1, 'point': 1, 'area': 1}),
+    (4, {'road': 2, 'point': 1, 'area': 1}),
+    (5, {'road': 3, 'point': 1, 'area': 1}),
+])
+def test_small_view_limits_keep_deterministic_geometry_priority(tmp_path, limit, expected):
+    index = crowded_index(tmp_path, points=6, roads=6, areas=6)
+    found = regional.visible_index(index, (-71, 39, -69, 41), limit=limit)
+    assert geometry_counts(found.features) == expected
+    assert len(found.features) == limit and found.limited
+
+
+@pytest.mark.parametrize('points,roads,areas,expected,limited', [
+    (12, 0, 0, {'point': 9}, True),
+    (0, 12, 0, {'road': 9}, True),
+    (0, 0, 12, {'area': 9}, True),
+    (12, 2, 0, {'point': 7, 'road': 2}, True),
+    (2, 12, 0, {'point': 2, 'road': 7}, True),
+    (0, 2, 2, {'road': 2, 'area': 2}, False),
+    (3, 3, 3, {'point': 3, 'road': 3, 'area': 3}, False),
+    (0, 0, 0, {}, False),
+])
+def test_sparse_geometry_pools_refill_unused_slots(tmp_path, points, roads, areas,
+                                                  expected, limited):
+    index = crowded_index(tmp_path, points=points, roads=roads, areas=areas)
+    found = regional.visible_index(index, (-71, 39, -69, 41), limit=9)
+    assert geometry_counts(found.features) == expected
+    assert found.limited is limited
+
+
+def test_view_geometry_budget_skips_large_paths_and_keeps_whole_smaller_features(tmp_path,
+                                                                              monkeypatch):
+    index = crowded_index(tmp_path, points=6, roads=6, areas=6)
+    # First road is valid but cannot fit; subsequent short roads still can.
+    index = change(index, "UPDATE features SET geometry=? WHERE osm_id='way/7'",
+                   (struct.pack('<dd', -70, 40) * 10,))
+    monkeypatch.setattr(regional, 'MAX_QUERY_POINTS', 8)
+    found = regional.visible_index(index, (-71, 39, -69, 41), limit=8)
+    assert geometry_counts(found.features) == {'road': 1, 'area': 1, 'point': 2}
+    assert sum(len(f.geometry) for f in found.features) == 8 and found.limited
+    assert 'way/7' not in {f.id for f in found.features}
+    assert next(f for f in found.features if f.kind == 'building=yes').geometry[0] == (
+        next(f for f in found.features if f.kind == 'building=yes').geometry[-1])
+
+
+def test_view_decodes_only_selected_geometry_with_maximum_supported_feature_limit(tmp_path,
+                                                                                monkeypatch):
+    index = crowded_index(tmp_path)
+    real_feature = regional._feature
+    decoded = []
+
+    def record(row):
+        decoded.append(row[0])
+        return real_feature(row)
+
+    monkeypatch.setattr(regional, '_feature', record)
+    found = regional.visible_index(index, (-71, 39, -69, 41), limit=1000)
+    assert len(found.features) == len(decoded) == 1000 and found.limited
+    assert geometry_counts(found.features) == {'road': 500, 'area': 250, 'point': 250}
+    assert set(decoded) == {f.id for f in found.features}
+    assert sum(len(f.geometry) for f in found.features) <= regional.MAX_QUERY_POINTS
+
+
+@pytest.mark.parametrize('geometry', [b'x', b'x' * 17, 'x' * 16, b'x' * 160016,
+                                     struct.pack('<dd', float('nan'), 4),
+                                     struct.pack('<dd', 200, 4), struct.pack('<dd', 1, 89)])
+def test_view_rejects_invalid_geometry_instead_of_skipping_it_as_over_budget(tmp_path,
+                                                                           geometry):
+    index = build(tmp_path)
+    index = change(index, 'UPDATE features SET geometry=?', (geometry,))
+    with pytest.raises(ValueError, match='feature'):
+        regional.visible_index(index, (-71, 39, -69, 41))
+    with pytest.raises(ValueError, match='feature'):
+        regional.viewport_index(index, Viewport(40, -70, 16, 800, 400))
+
+
+def test_view_refines_outward_rounded_rtree_bounds(tmp_path):
+    tags = packed(2, (3,)) + packed(3, (4,))
+    index = build(tmp_path, header() + primitive(binary(1, node(1, 10.0000001, 20.0000001,
+                                                             tags))))
+    # SQLite's float32 spatial box overlaps, but the original coordinates do not.
+    with sqlite3.connect(index.path) as con:
+        assert con.execute('SELECT COUNT(*) FROM feature_bounds WHERE west<=10 AND south<=20'
+                           ).fetchone()[0] == 1
+    found = regional.visible_index(index, (9, 19, 10, 20))
+    assert found.features == () and not found.limited
+    assert len(regional.visible_index(index, (10, 20, 11, 21)).features) == 1
+
+
+def test_wrapped_view_balances_geometry_across_both_longitude_boxes(tmp_path):
+    index = crowded_index(tmp_path, points=800, roads=10, areas=10,
+                          center=(-179.9, 0), point_center=(179.9, 0))
+    view = Viewport(0, 179.9, 4, 800, 400)
+    assert len(regional.view_boxes(view)) == 2
+    found = regional.viewport_index(index, view)
+    assert len(found.features) == 700 and found.limited
+    assert geometry_counts(found.features) == {'road': 10, 'area': 10, 'point': 680}
+    assert len({f.id for f in found.features}) == 700
+
+
+def test_wrapped_view_deduplicates_before_counting_or_reporting_limits(tmp_path):
+    tags = packed(2, (3,)) + packed(3, (4,))
+    group = (binary(1, node(1, 179, 0, tags)) + binary(1, node(2, 0, 0)) +
+             binary(1, node(3, -179, 0)) + binary(3, way(refs=(1, 2, 3))))
+    index = build(tmp_path, header() + primitive(group))
+    view = Viewport(0, 179.9, 4, 800, 400)
+    found = regional.viewport_index(index, view)
+    assert {f.id for f in found.features} == {'node/1', 'way/10'}
+    assert len(found.features) == 2 and not found.limited
+
+
 def test_cancelled_queries(tmp_path):
     index = build(tmp_path)
     event = Event()
     event.set()
     with pytest.raises(MapCancelled):
         regional.search_index(index, '', cancel=event)
+    with pytest.raises(MapCancelled):
+        regional.visible_index(index, (-71, 39, -69, 41), cancel=event)
+    with pytest.raises(MapCancelled):
+        regional.viewport_index(index, Viewport(40, -70, 16, 800, 400), cancel=event)
 
 
 def test_symlink_index_and_source_rejected(tmp_path):

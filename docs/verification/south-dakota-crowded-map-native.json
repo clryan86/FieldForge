@@ -1,0 +1,231 @@
+{
+  "verified_utc": "2026-10-05T15:45:04.948517+00:00",
+  "map_sha256_before": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a",
+  "views": [
+    {
+      "canvas_items": 869,
+      "label_count": 81,
+      "label_collisions": [],
+      "selected_label": "Sioux Falls",
+      "selected_label_box": [
+        455,
+        323,
+        527,
+        338
+      ],
+      "drawn_highway_features": 350,
+      "drawn_segments": 3018,
+      "caption": "PREPARED SOURCE GEOMETRY • NOT NAVIGATION\nVIEW LIMITED — more features may be present; zoom in.",
+      "summary": "626,562 indexed features • 700 in this view (LIMITED: zoom in) • 100 search results (more not shown). Relations/turn restrictions are NOT drawn or applied.",
+      "status": "Display limited: label limit reached; more names are available by search. Zoom in for detail. Source data remains loaded.",
+      "view": {
+        "zoom": 16,
+        "width": 897,
+        "height": 692,
+        "latitude": 43.54760079999999,
+        "longitude": -96.7293629,
+        "queried_features": 700,
+        "limited": true
+      },
+      "redraw_seconds": 0.3113,
+      "layout": {
+        "window": [
+          1420,
+          1000
+        ],
+        "canvas": [
+          897,
+          692
+        ],
+        "result_list": [
+          462,
+          341
+        ],
+        "controls": [
+          {
+            "text": "Open index…",
+            "bounds": [
+              16,
+              104,
+              104,
+              33
+            ]
+          },
+          {
+            "text": "Fit source",
+            "bounds": [
+              120,
+              104,
+              104,
+              33
+            ]
+          },
+          {
+            "text": "−",
+            "bounds": [
+              229,
+              104,
+              40,
+              33
+            ]
+          },
+          {
+            "text": "+",
+            "bounds": [
+              274,
+              104,
+              40,
+              33
+            ]
+          },
+          {
+            "text": "Source details",
+            "bounds": [
+              1298,
+              104,
+              106,
+              33
+            ]
+          },
+          {
+            "text": "Import package ZIP…",
+            "bounds": [
+              324,
+              104,
+              149,
+              33
+            ]
+          },
+          {
+            "text": "Prepare PBF…",
+            "bounds": [
+              483,
+              104,
+              106,
+              33
+            ]
+          },
+          {
+            "text": "Center on selected feature",
+            "bounds": [
+              16,
+              549,
+              477,
+              33
+            ]
+          },
+          {
+            "text": "Copy lat, lon",
+            "bounds": [
+              16,
+              593,
+              477,
+              33
+            ]
+          },
+          {
+            "text": "Cancel operation",
+            "bounds": [
+              1280,
+              955,
+              124,
+              33
+            ]
+          }
+        ]
+      },
+      "attribution": "© OpenStreetMap contributors • ODbL 1.0 • openstreetmap.org/copyright • Source reports 2026-10-02T20:21:34+00:00",
+      "screenshot": "docs/screenshots/south-dakota-crowded-map-z16.png"
+    },
+    {
+      "canvas_items": 330,
+      "label_count": 38,
+      "label_collisions": [],
+      "selected_label": "Sioux Falls",
+      "selected_label_box": [
+        455,
+        323,
+        527,
+        338
+      ],
+      "drawn_highway_features": 117,
+      "drawn_segments": 631,
+      "caption": "PREPARED SOURCE GEOMETRY • NOT NAVIGATION\nBlank space is not proof that nothing is there.",
+      "summary": "626,562 indexed features • 247 in this view • 100 search results (more not shown). Relations/turn restrictions are NOT drawn or applied.",
+      "status": "Read-only regional index. No original PBF needed to reopen; not route-ready.",
+      "view": {
+        "zoom": 18,
+        "width": 897,
+        "height": 692,
+        "latitude": 43.54760079999999,
+        "longitude": -96.7293629,
+        "queried_features": 247,
+        "limited": false
+      },
+      "redraw_seconds": 0.2591,
+      "attribution": "© OpenStreetMap contributors • ODbL 1.0 • openstreetmap.org/copyright • Source reports 2026-10-02T20:21:34+00:00",
+      "screenshot": "docs/screenshots/south-dakota-crowded-map-z18.png"
+    }
+  ],
+  "open_seconds": 6.264,
+  "search_seconds": 1.672,
+  "copied_coordinates": "43.5476008, -96.7293629",
+  "network_attempts": [],
+  "tk_callback_errors": [],
+  "workers_stopped": true,
+  "map_sha256_after": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a",
+  "loaded_modules": {
+    "fieldforge": {
+      "path": "fieldforge/__init__.py",
+      "sha256": "8af13acced20c532feb9d374490feacb17ff30bb01c9f47da58466dbf42b707f"
+    },
+    "fieldforge.navigation": {
+      "path": "fieldforge/navigation/__init__.py",
+      "sha256": "9401cdda37eab020656e40eae8a29a912e74b6a6d95f299d61e83b311f444a2a"
+    },
+    "fieldforge.navigation.atlas": {
+      "path": "fieldforge/navigation/atlas.py",
+      "sha256": "1a9f5b1927879fa6067bc51f30fc27d6c50771abada7b1d06b6cf71b66b17705"
+    },
+    "fieldforge.navigation.map_view": {
+      "path": "fieldforge/navigation/map_view.py",
+      "sha256": "f6a335aa05d9cc02baae914ac0bf5a008e2639a63aa90e08c5fe0f0e82e420ea"
+    },
+    "fieldforge.navigation.mbtiles": {
+      "path": "fieldforge/navigation/mbtiles.py",
+      "sha256": "a1a320b28f7a389b0892a1dc2b0c468406df3043e58603bb5c7d156fc6a8e397"
+    },
+    "fieldforge.navigation.osm_source": {
+      "path": "fieldforge/navigation/osm_source.py",
+      "sha256": "b52d5f8175202f6c0b445513dff4f271f8cd84e677392b5d86ac7fd6f33434d3"
+    },
+    "fieldforge.navigation.pbf_stream": {
+      "path": "fieldforge/navigation/pbf_stream.py",
+      "sha256": "ebab09fe4c5ae1ce85f4b6c23b4b6e876d3651c99789dc50887da5bea9a7ed9c"
+    },
+    "fieldforge.navigation.regional_index": {
+      "path": "fieldforge/navigation/regional_index.py",
+      "sha256": "c55506df28368e83ceebaec3afb35ebbf1949c3bc44cb873807427267cce4af7"
+    },
+    "fieldforge.navigation.route_overlay": {
+      "path": "fieldforge/navigation/route_overlay.py",
+      "sha256": "01c6b163687a88f85f70d101589c382ba2020c58db6d99a43558aaf8d3848deb"
+    },
+    "fieldforge.ui": {
+      "path": "fieldforge/ui/__init__.py",
+      "sha256": "067110557e1c2c84014ae73892f8d16ec837760d1ecf376cdf02a554fb5a4c8d"
+    },
+    "fieldforge.ui.map_tasks": {
+      "path": "fieldforge/ui/map_tasks.py",
+      "sha256": "07fa737225db5783cf20beb2bbdcc07552547532e6ccd2b47f569fe7cda394f4"
+    },
+    "fieldforge.ui.regional_index": {
+      "path": "fieldforge/ui/regional_index.py",
+      "sha256": "8ae92bdf1fb9070b39d91337a5698a829a22f71e07c78f0d7f156181a79de406"
+    },
+    "fieldforge.ui.street_source": {
+      "path": "fieldforge/ui/street_source.py",
+      "sha256": "346b2053874e7e825a2ce47f817397aa9fd2347de954d05b466b164f0772b4c5"
+    }
+  }
+}

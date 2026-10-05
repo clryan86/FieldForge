@@ -1,5 +1,113 @@
 # Online map and route preparation verification
 
+## Crowded regional map display — 2026-10-05
+
+The real historical South Dakota index exposed a display-order defect: at the
+same Sioux Falls center, zoom levels 10, 12, 14 and 16 returned 700 point features
+and **zero highway lines**. Tagged nodes precede ways in the prepared source,
+so a single source-ordered viewport page could exclude all roads.
+
+Viewport selection now reserves slots for highway lines, other lines/areas,
+and points. With sufficient candidates, the feature share is 2:1:1; sparse
+groups give unused capacity to the others. Both longitude boxes of a wrapped
+view share the limit, with deduplication before budgeting. Candidate queries
+use the spatial index and read IDs/sizes first; only selected geometry is
+decoded. The 700-feature viewport and 50,000-coordinate bounds remain in place,
+and a feature is never cut during query selection. An oversized candidate is
+skipped whole while smaller candidates can still fit. Omitted candidates keep
+the view marked limited.
+
+Exact stored bounds also refine the outward-rounded RTree boxes. In the zoom-18
+comparison this excludes three nearby features outside the view: 247 features
+remain, without truncation, instead of the earlier 250. It does not remove
+anything from the saved map. Text-search ordering, the 100-result default,
+source receipts, file fingerprint/sidecar checks, and the v1 schema are retained.
+Existing saved indexes need no migration or new download.
+
+### Installed-package and actual native acceptance
+
+All **161 packaged source/assets** matched the reviewed checkout, wheel and
+fresh installation. The real index then ran outside the checkout under
+`python -S`, with neither pytest nor Pillow loaded. Inspection and searches
+for Sioux Falls, Rapid City and the explicit-address query
+`37756 132nd street` succeeded with Python network connections and DNS APIs
+blocked. Repeated viewport requests returned identical feature sets.
+
+The direct query comparison used latitude **43.5476008**, longitude
+**−96.7293629**, and an **897 × 692** pixel viewport:
+
+| Zoom | Earlier highway lines | Updated highway lines | Other lines/areas | Points | Total | Query time |
+|---|---:|---:|---:|---:|---:|---:|
+| 10 | 0 | 350 | 175 | 175 | 700 | 0.291 s |
+| 12 | 0 | 350 | 175 | 175 | 700 | 0.242 s |
+| 14 | 0 | 350 | 175 | 175 | 700 | 0.058 s |
+| 16 | 0 | 350 | 175 | 175 | 700 | 0.016 s |
+| 18 | 118 | 117 | 56 | 74 | 247 | 0.005 s |
+
+The installed native viewer also opened the real index, searched for Sioux
+Falls, selected and centered its source city point, and rendered both zooms 16
+and 18. At zoom 16 it actually drew **350 highway features** and **81 text
+labels**, including the selected city label, with **zero intersecting text
+bounding boxes**. The complete redraw took **0.311 seconds**. At zoom 18 it drew
+117 highway features and 38 nonoverlapping labels in 0.259 seconds. The window
+controls and attribution remained visible, coordinate copy matched the source
+point, no Python network/DNS call was attempted, no Tk callback failed, and
+worker threads stopped on close.
+
+- [Actual crowded view at zoom 16](screenshots/south-dakota-crowded-map-z16.png)
+- [Actual detailed view at zoom 18](screenshots/south-dakota-crowded-map-z18.png)
+- [Installed offline query record](verification/south-dakota-crowded-map.json)
+- [Installed native rendering record](verification/south-dakota-crowded-map-native.json)
+
+The map was **384,290,816 bytes** before and after both checks, with unchanged
+SHA-256 `1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a`.
+It contains the previously verified 626,562 features from the source snapshot
+of 2026-10-02T20:21:34Z. These are Linux measurements using Tk 9.0.4 and a
+temporary authenticated loopback display. They do not establish other-device
+performance, complete geographical coverage or usable routing.
+
+### Rendering limits and regression coverage
+
+The regional and small-PBF viewers now allocate ordinary drawing capacity to
+roads first, then restore visual layers with points/area outlines below roads.
+Text placement measures actual Tk bounding boxes, reserves caption space and
+places the selected feature's label before ordinary names. Long geometry is
+projected in bounded chunks with shared source endpoints; no nonadjacent nodes
+are joined. Clipped geometry supplies the label anchor when a source midpoint
+is outside the screen.
+
+The selected overlay has its own allowance of 5,000 original segments. Ordinary
+geometry remains bounded at 20,000 segments and 1,500 point markers; at most 500
+ordinary label candidates and 80 accepted ordinary labels are processed. A
+long selected feature that exceeds its allowance is visibly labeled and
+explicitly reported as partly drawn. **VIEW LIMITED** and **DRAW LIMITED** are
+kept distinct. A tiny canvas shortens only the selected annotation; the full
+source name stays in the details.
+
+The update adds **26 regional-query cases and 12 native Tk rendering cases**.
+Coverage includes dense points/buildings before roads, sparse-group refill,
+small/maximum limits, malformed geometry, complete-path query budgets, exact
+bounds, date-line deduplication, cancellation, real glyph overlap, selected
+geometry under exhausted ordinary budgets, clipped gaps, tiny canvases and
+truthful limit messages. These tests are included in both native Linux and
+Windows map workflows. Independent review found no blocker and confirmed
+in-flight statewide-query cancellation and chunked date-line equivalence.
+
+Final local regression verification passed **818 tests and 78 subtests**, with
+no skips, in 40.87 seconds. This is the native map-workflow set plus the 92
+source/projection cases; focused reruns are not counted again. Repository-wide
+Ruff, patch whitespace, Python 3.10 grammar parsing, and native workflow test-path
+checks passed. The temporary test runner destroys its display-startup probe
+before pytest creates fixture roots, keeping native widgets and their Tk
+variables in the same interpreter. The real-map acceptance intentionally uses
+the single root supplied by that display helper. Hosted Windows/Linux/browser
+results are recorded on the development PR for the saved commit.
+
+This update improves an existing source map's display and search workflow.
+Offline route calculation, broader verified U.S. payloads and public hosting
+remain separate unfinished work.
+
+
 ## Historical package compatibility and Windows map publication — 2026-10-05
 
 The exact original South Dakota prepared ZIP was recovered locally and checked
@@ -105,9 +213,8 @@ application screenshot, not generated cartography. The capture used a temporary
 Tk 9.0.4 runtime with registered DejaVu fonts; production UI code was unchanged.
 At zoom 18 the view contains 250 features, including 118 highway line features,
 without reaching the viewport cap. At zoom 16 the existing 700-feature cap
-returned point features before road lines. Prioritizing road display in crowded
-views is a concrete remaining map-viewer task. Search results remain bounded at
-100 as labeled in the UI.
+returned point features before road lines. That defect is fixed by the crowded-view update documented above. Search
+results remain bounded at 100 as labeled in the UI.
 
 The data remains a bounded source display/search index; it adds no offline
 routing graph, public map hosting, complete-U.S. coverage or verified

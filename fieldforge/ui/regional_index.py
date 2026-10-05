@@ -255,9 +255,15 @@ class RegionalIndexWindow(StreetSourceWindow):
 
     def _render(self):
         StreetSourceWindow.draw(self)
-        self.canvas.itemconfigure('caption', text='PREPARED SOURCE GEOMETRY • NOT NAVIGATION\n' +
-                                  ('VIEW LIMITED — zoom in to inspect more features.' if self.page_limited else
-                                   'Blank space is not proof that nothing is there.'))
+
+    def _caption_text(self):
+        limits = []
+        if self.page_limited:
+            limits.append('VIEW LIMITED — more features may be present; zoom in.')
+        if self._geometry_limited:
+            limits.append('DRAW LIMITED — some loaded geometry is not drawn.')
+        return 'PREPARED SOURCE GEOMETRY • NOT NAVIGATION\n' + (
+            '\n'.join(limits) if limits else 'Blank space is not proof that nothing is there.')
 
     def selected(self):
         return self._selected_feature

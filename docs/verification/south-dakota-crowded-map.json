@@ -1,0 +1,248 @@
+{
+  "verified_utc": "2026-10-05T15:44:37.375443+00:00",
+  "baseline_commit": "4dc0d18eadd5d5623e5fff0c016f71e62977de81",
+  "map_bytes": 384290816,
+  "map_sha256_before": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a",
+  "python": "3.12.14",
+  "python_no_site": true,
+  "width": 897,
+  "height": 692,
+  "views": [
+    {
+      "zoom": 10,
+      "seconds": 0.2908,
+      "features": 700,
+      "points": 175,
+      "highway_lines": 350,
+      "other_lines": 175,
+      "coordinates": 15434,
+      "limited": true,
+      "before": {
+        "zoom": 10,
+        "elapsed_seconds": 0.0904,
+        "features": 700,
+        "points": 700,
+        "highway_lines": 0,
+        "limited": true,
+        "coordinates": 700
+      }
+    },
+    {
+      "zoom": 12,
+      "seconds": 0.2415,
+      "features": 700,
+      "points": 175,
+      "highway_lines": 350,
+      "other_lines": 175,
+      "coordinates": 10331,
+      "limited": true,
+      "before": {
+        "zoom": 12,
+        "elapsed_seconds": 0.0641,
+        "features": 700,
+        "points": 700,
+        "highway_lines": 0,
+        "limited": true,
+        "coordinates": 700
+      }
+    },
+    {
+      "zoom": 14,
+      "seconds": 0.0578,
+      "features": 700,
+      "points": 175,
+      "highway_lines": 350,
+      "other_lines": 175,
+      "coordinates": 7469,
+      "limited": true,
+      "before": {
+        "zoom": 14,
+        "elapsed_seconds": 0.0211,
+        "features": 700,
+        "points": 700,
+        "highway_lines": 0,
+        "limited": true,
+        "coordinates": 700
+      }
+    },
+    {
+      "zoom": 16,
+      "seconds": 0.016,
+      "features": 700,
+      "points": 175,
+      "highway_lines": 350,
+      "other_lines": 175,
+      "coordinates": 4993,
+      "limited": true,
+      "before": {
+        "zoom": 16,
+        "elapsed_seconds": 0.0089,
+        "features": 700,
+        "points": 700,
+        "highway_lines": 0,
+        "limited": true,
+        "coordinates": 700
+      }
+    },
+    {
+      "zoom": 18,
+      "seconds": 0.0049,
+      "features": 247,
+      "points": 74,
+      "highway_lines": 117,
+      "other_lines": 56,
+      "coordinates": 2439,
+      "limited": false,
+      "before": {
+        "zoom": 18,
+        "elapsed_seconds": 0.0033,
+        "features": 250,
+        "points": 76,
+        "highway_lines": 118,
+        "limited": false,
+        "coordinates": 2445
+      }
+    }
+  ],
+  "searches": [
+    {
+      "query": "Sioux Falls",
+      "seconds": 0.0087,
+      "returned": 100,
+      "limited": true,
+      "sample": [
+        {
+          "id": "node/151394207",
+          "name": "Sioux Falls Junction",
+          "kind": "place=locality"
+        },
+        {
+          "id": "node/151584076",
+          "name": "East Sioux Falls",
+          "kind": "place=hamlet"
+        },
+        {
+          "id": "node/151734278",
+          "name": "Sioux Falls",
+          "kind": "place=city"
+        },
+        {
+          "id": "node/357089586",
+          "name": "KCFS-FM (Sioux Falls)",
+          "kind": "man_made=antenna"
+        }
+      ]
+    },
+    {
+      "query": "Rapid City",
+      "seconds": 0.0047,
+      "returned": 100,
+      "limited": true,
+      "sample": [
+        {
+          "id": "node/357089672",
+          "name": "KOTA-AM (Rapid City)",
+          "kind": "man_made=tower"
+        },
+        {
+          "id": "node/585371258",
+          "name": "Rapid City Quarry",
+          "kind": "landuse=quarry"
+        },
+        {
+          "id": "node/585371270",
+          "name": "Rapid City Lime Plant",
+          "kind": "landuse=quarry"
+        },
+        {
+          "id": "node/1685216866",
+          "name": "Family Fare",
+          "kind": "address tags"
+        }
+      ]
+    },
+    {
+      "query": "37756 132nd street",
+      "seconds": 0.0029,
+      "returned": 1,
+      "limited": false,
+      "sample": [
+        {
+          "id": "node/78770266",
+          "name": "SEAL Livestock",
+          "kind": "amenity=animal_breeding"
+        }
+      ]
+    }
+  ],
+  "scope": "Source geometry display and literal feature search; not routing or coverage certification.",
+  "inspection_seconds": 4.0253,
+  "source_receipt": {
+    "format": "fieldforge-regional-index-v1",
+    "state": "visual-search-only",
+    "created_utc": "2026-10-03T04:06:11.825842+00:00",
+    "attribution": "© OpenStreetMap contributors • ODbL 1.0 • https://www.openstreetmap.org/copyright",
+    "license": "ODbL-1.0",
+    "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+    "notice": "Prepared source geometry, NOT driving directions. Relations and turn restrictions are counted, not applied or drawn. No GPS, address interpolation, closures, or safety checks. Blank space and a truncated view do not establish missing real-world roads.",
+    "bounds": [
+      -105.5310248,
+      40.3387377,
+      -95.0817848,
+      47.3719077
+    ],
+    "fts": true,
+    "lookup_profile": "explicit-tags-v1",
+    "source_name": "source.osm.pbf",
+    "source_sha256": "43ee4e5a620dc050735a6ab224cda5dc049e83f42bded062e1539e389a81d643",
+    "source_bytes": 49414046,
+    "replication_timestamp": 1790972494,
+    "nodes": 7160778,
+    "ways": 575053,
+    "relations": 7975,
+    "references": 8029652,
+    "restrictions": 675,
+    "features": 626562,
+    "omitted_ways": 51421,
+    "missing_node_ways": 0,
+    "polar_features": 0,
+    "dateline_features": 0,
+    "address_features": 17522
+  },
+  "network_attempts": [],
+  "map_sha256_after": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a",
+  "loaded_modules": {
+    "fieldforge": {
+      "path": "fieldforge/__init__.py",
+      "sha256": "8af13acced20c532feb9d374490feacb17ff30bb01c9f47da58466dbf42b707f"
+    },
+    "fieldforge.navigation": {
+      "path": "fieldforge/navigation/__init__.py",
+      "sha256": "9401cdda37eab020656e40eae8a29a912e74b6a6d95f299d61e83b311f444a2a"
+    },
+    "fieldforge.navigation.atlas": {
+      "path": "fieldforge/navigation/atlas.py",
+      "sha256": "1a9f5b1927879fa6067bc51f30fc27d6c50771abada7b1d06b6cf71b66b17705"
+    },
+    "fieldforge.navigation.map_view": {
+      "path": "fieldforge/navigation/map_view.py",
+      "sha256": "f6a335aa05d9cc02baae914ac0bf5a008e2639a63aa90e08c5fe0f0e82e420ea"
+    },
+    "fieldforge.navigation.mbtiles": {
+      "path": "fieldforge/navigation/mbtiles.py",
+      "sha256": "a1a320b28f7a389b0892a1dc2b0c468406df3043e58603bb5c7d156fc6a8e397"
+    },
+    "fieldforge.navigation.osm_source": {
+      "path": "fieldforge/navigation/osm_source.py",
+      "sha256": "b52d5f8175202f6c0b445513dff4f271f8cd84e677392b5d86ac7fd6f33434d3"
+    },
+    "fieldforge.navigation.pbf_stream": {
+      "path": "fieldforge/navigation/pbf_stream.py",
+      "sha256": "ebab09fe4c5ae1ce85f4b6c23b4b6e876d3651c99789dc50887da5bea9a7ed9c"
+    },
+    "fieldforge.navigation.regional_index": {
+      "path": "fieldforge/navigation/regional_index.py",
+      "sha256": "c55506df28368e83ceebaec3afb35ebbf1949c3bc44cb873807427267cce4af7"
+    }
+  }
+}

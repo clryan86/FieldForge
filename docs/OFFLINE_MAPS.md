@@ -152,6 +152,26 @@ viewport; zoom in when it reports that the view is limited. The available Wave
 5 indexes cover Kansas, Nebraska, North Dakota, and South Dakota only, not all
 U.S. states. ZIPs over 2 GiB and indexes over 4 GiB are rejected.
 
+Crowded regional views reserve display slots for highway lines, other lines or
+area outlines, and point features. When all three groups are plentiful, their
+feature-slot share is 2:1:1; a sparse group gives unused slots to the others.
+This lets roads appear even when many point or building records precede them
+in the source. The shared query still loads at most 700 features and 50,000
+coordinates, keeps each selected source geometry complete, and reports a
+limited view when candidates are omitted. Text search retains its own unchanged
+100-result default. Both longitude boxes of a date-line view share one budget.
+Existing `.ffmap` files work directly; no map conversion or new download is
+needed for this display change.
+
+The regional and small-PBF viewers draw area outlines and points below roads,
+measure label bounds to avoid name collisions, and reserve a separate bounded
+overlay for the selected feature. Ordinary labels cannot exhaust its label
+slot. A selected long line can still exceed its own drawing budget; the status
+then says it is only partly drawn. **VIEW LIMITED** describes omitted query
+features, while **DRAW LIMITED** describes loaded geometry that did not fit the
+renderer. These are display limits, not evidence of empty geography or usable
+routes. Zoom in and search individual features for detail.
+
 These indexes are for display and local feature search. They do not contain a
 prepared routing graph, support turn-by-turn navigation, or verify road access,
 freshness, safety, or completeness. An operator can now publish a completed

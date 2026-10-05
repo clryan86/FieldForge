@@ -579,17 +579,100 @@ def feature_coordinate(feature: osm.StreetFeature) -> tuple[float, float, bool] 
             (min(longitudes) + max(longitudes)) / 2, False)
 
 
-def visible_index(index: PreparedIndex, bounds, *, limit=700, cancel=None):
-    """Return a bounded subset intersecting a WGS84 box. No unseen-edge routing."""
-    _limit(limit)
-    bounds = _bounds(bounds)
-    w, s, e, n = bounds
+def _visible_candidates(con, boxes, limit):
+    """Keep small ordered pools of IDs/sizes; never sort whole geometry blobs.
+
+    Nodes are written before ways, so a single fid-ordered page can contain only
+    points. Buildings can similarly precede every road. Keep highway lines,
+    other lines/areas, and points separate until their shared budget is applied.
+    The spatial index drives each query, including on existing v1 map files.
+    """
+    groups = (
+        "length(f.geometry) IS NOT 16 AND substr(f.kind,1,8) = 'highway='",
+        "length(f.geometry) IS NOT 16 AND substr(f.kind,1,8) IS NOT 'highway='",
+        'length(f.geometry) IS 16',
+    )
+    pools = []
+    for group in groups:
+        candidates = {}
+        for w, s, e, n in boxes:
+            rows = con.execute(
+                'SELECT f.fid,length(f.geometry),typeof(f.geometry) '
+                'FROM feature_bounds b CROSS JOIN features f ON f.fid=b.fid '
+                'WHERE b.east>=? AND b.west<=? AND b.north>=? AND b.south<=? '
+                # RTree bounds round outward to float32. Check the original
+                # bounds too, so a nearby point outside the box is not selected.
+                'AND f.east>=? AND f.west<=? AND f.north>=? AND f.south<=? '
+                f'AND {group} ORDER BY f.fid LIMIT ?',
+                (w, e, s, n, w, e, s, n, limit + 1))
+            for fid, size, storage in rows:
+                # Invalid BLOB sizes/types must not become silently skipped
+                # "too expensive" geometry during budget selection.
+                if storage != 'blob' or not 16 <= size <= 160000 or size % 16:
+                    raise ValueError('Invalid indexed feature.')
+                candidates[fid] = size // 16
+        # A wrapped viewport can find a feature in both boxes. Deduplicate
+        # before limiting, and use fid order independently of box order.
+        pools.append(sorted(candidates.items())[:limit + 1])
+    return pools
+
+
+def _visible_boxes(index, boxes, *, limit, cancel):
     with _connect(index.path, fingerprint=index.fingerprint, cancel=cancel) as con:
-        rows = con.execute('SELECT f.osm_id,f.name,f.kind,f.geometry,f.tags '
-                           'FROM feature_bounds b JOIN features f ON f.fid=b.fid '
-                           'WHERE b.east>=? AND b.west<=? AND b.north>=? AND b.south<=? '
-                           'ORDER BY f.fid LIMIT ?', (w, e, s, n, limit + 1))
-        return _collect(rows, limit)
+        pools = _visible_candidates(con, boxes, limit)
+        remaining = MAX_QUERY_POINTS
+        selected = {}
+        queues = [iter(pool) for pool in pools]
+        # With plentiful geometry, share slots 2:1:1 among highway lines,
+        # other lines/areas, and points. Small limits prioritize road, point,
+        # then other geometry. Empty pools yield their slots to the others.
+        for slot in range(limit):
+            preferred = (0, 2, 1, 0)[slot % 4]
+            order = (preferred,) + tuple(group for group in range(3) if group != preferred)
+            found = False
+            for group in order:
+                for fid, points in queues[group]:
+                    if points <= remaining:
+                        selected[fid] = points
+                        remaining -= points
+                        found = True
+                        break
+                    # A whole feature that does not fit can never fit later.
+                    # Continue to smaller candidates without cutting its path.
+                if found:
+                    break
+            if not found:
+                break
+        limited = sum(len(pool) for pool in pools) > len(selected)
+        features = []
+        ordered = sorted(selected)
+        # Retrieve only chosen geometry; <=400 parameters also supports SQLite
+        # builds with the older 999-variable limit. Preserve public fid order.
+        for start in range(0, len(ordered), 400):
+            ids = ordered[start:start + 400]
+            rows = con.execute('SELECT fid,osm_id,name,kind,geometry,tags FROM features '
+                               'WHERE fid IN (' + ','.join('?' for _ in ids) + ') '
+                               'ORDER BY fid', ids)
+            for row in rows:
+                osm._check(cancel)
+                feature = _feature(row[1:])
+                if len(feature.geometry) != selected[row[0]]:
+                    raise ValueError('Prepared map changed during the query; discard results.')
+                features.append(feature)
+        if len(features) != len(selected):
+            raise ValueError('Prepared map changed during the query; discard results.')
+        return IndexResults(tuple(features), limited)
+
+
+def visible_index(index: PreparedIndex, bounds, *, limit=700, cancel=None):
+    """Return a geometry-balanced subset whose bounds intersect a WGS84 box.
+
+    Highway lines, other lines/areas, and points share a single feature/vertex
+    budget. Geometry stays intact; omitted candidates set ``limited``. This is
+    display selection, not unseen-edge routing or a completeness guarantee.
+    """
+    _limit(limit)
+    return _visible_boxes(index, (_bounds(bounds),), limit=limit, cancel=cancel)
 
 
 def view_boxes(view: Viewport):
@@ -606,19 +689,9 @@ def view_boxes(view: Viewport):
 
 
 def viewport_index(index, view, *, cancel=None):
-    features, ids, points, limited = [], set(), 0, False
-    for box in view_boxes(view):
-        page = visible_index(index, box, cancel=cancel)
-        limited |= page.limited
-        for feature in page.features:
-            if feature.id not in ids:
-                if len(features) >= 700 or points + len(feature.geometry) > MAX_QUERY_POINTS:
-                    limited = True
-                    break
-                features.append(feature)
-                ids.add(feature.id)
-                points += len(feature.geometry)
-    return IndexResults(tuple(features), limited)
+    # Apply the budget after combining wrap boxes, so points in the first box
+    # cannot consume all slots before roads in the second box are considered.
+    return _visible_boxes(index, view_boxes(view), limit=700, cancel=cancel)
 
 
 def main(argv=None):
