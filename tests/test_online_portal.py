@@ -367,7 +367,8 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
     assert b"MapTiler On-prem Standard" in body and b"excludes B2C/B2B" in body
     assert b"basic offline preview style" in body and b"bounded labels for named points, roads, and areas" in body
     assert b"four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota" in body
-    assert b"not hosted in this portal or yet supported by the current GitHub build" in body
+    assert b"Prepared regional map" in body and b"Import package ZIP" in body
+    assert b"portal does not host these files yet" in body
     external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)
     allowed_hosts = (b"download.geofabrik.de", b"operations.osmfoundation.org",
                      b"www.maptiler.com", b"distribution.charts.noaa.gov", b"www.redcross.org",
