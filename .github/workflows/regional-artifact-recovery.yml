@@ -1,0 +1,279 @@
+name: Recover original South Dakota acquisition artifact
+
+on:
+  push:
+    branches: [chatgpt/regional-artifact-recovery-20261005]
+    paths: [.github/workflows/regional-artifact-recovery.yml]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  recover-original-acquisition:
+    if: github.repository == 'clryan86/FieldForge'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify the original acquisition artifact and prepare bounded pieces
+        env:
+          RECOVERY_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import sys
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          REPOSITORY = "clryan86/FieldForge"
+          RUN_ID = 37095186139
+          HEAD_SHA = "82e1f199d5518a508da2424cff2af116b8579a67"
+          ARTIFACT_ID = 11263906434
+          ARTIFACT_NAME = "fieldforge-usa-wave5-south-dakota"
+          EXPECTED_BYTES = 49423079
+          EXPECTED_SHA256 = "83dbf47ee61a2daecd4d5d7e94ae20d47508df95c843fa09bfc4d93e16c979de"
+          PART_BYTES = 20 * 1024 * 1024
+          BLOCK_BYTES = 1024 * 1024
+          API_URL = f"https://api.github.com/repos/{REPOSITORY}/actions/artifacts/{ARTIFACT_ID}"
+          OUTPUT = Path("original-acquisition-recovery")
+
+          class RecoveryError(Exception):
+              pass
+
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self, request, response, code, message, headers, newurl):
+                  return None
+
+          def require(condition, message):
+              if not condition:
+                  raise RecoveryError(message)
+
+          def api_request(url, token):
+              return urllib.request.Request(url, headers={
+                  "Authorization": f"Bearer {token}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              })
+
+          def validate_metadata(metadata):
+              require(isinstance(metadata, dict), "Invalid artifact metadata.")
+              expected = {
+                  "id": ARTIFACT_ID,
+                  "name": ARTIFACT_NAME,
+                  "size_in_bytes": EXPECTED_BYTES,
+                  "digest": f"sha256:{EXPECTED_SHA256}",
+                  "expired": False,
+                  "archive_download_url": f"{API_URL}/zip",
+              }
+              require(
+                  all(metadata.get(key) == value for key, value in expected.items()),
+                  "Artifact identity, size, digest, or availability changed.",
+              )
+              run = metadata.get("workflow_run")
+              require(
+                  isinstance(run, dict)
+                  and run.get("id") == RUN_ID
+                  and run.get("head_sha") == HEAD_SHA,
+                  "Artifact does not belong to the authorized original run.",
+              )
+
+          def read_metadata(api, token):
+              with api.open(api_request(API_URL, token), timeout=30) as response:
+                  require(response.status == 200, "Unexpected metadata response.")
+                  data = response.read(65537)
+              require(len(data) <= 65536, "Artifact metadata exceeded its limit.")
+              metadata = json.loads(data)
+              validate_metadata(metadata)
+
+          def archive_location(api, token):
+              try:
+                  response = api.open(api_request(f"{API_URL}/zip", token), timeout=30)
+              except urllib.error.HTTPError as error:
+                  try:
+                      require(error.code == 302, "Archive endpoint did not return its documented redirect.")
+                      location = error.headers.get("Location", "")
+                  finally:
+                      error.close()
+              else:
+                  response.close()
+                  raise RecoveryError("Archive endpoint did not return its documented redirect.")
+              parsed = urllib.parse.urlsplit(location)
+              require(
+                  parsed.scheme == "https"
+                  and bool(parsed.hostname)
+                  and parsed.username is None
+                  and parsed.password is None
+                  and parsed.port in (None, 443)
+                  and not parsed.fragment
+                  and not any(ord(char) < 32 or ord(char) == 127 for char in location),
+                  "Archive endpoint returned an invalid storage location.",
+              )
+              return location
+
+          def copy_verified(response, destination):
+              require(response.status == 200, "Unexpected archive storage response.")
+              require(
+                  response.headers.get("Content-Encoding", "identity").lower() == "identity",
+                  "Encoded archive storage response is not supported.",
+              )
+              length = response.headers.get("Content-Length")
+              require(
+                  length is None or (length.isdecimal() and int(length) == EXPECTED_BYTES),
+                  "Archive storage length differs from the authorized artifact.",
+              )
+              digest = hashlib.sha256()
+              size = 0
+              with destination.open("xb") as output:
+                  while True:
+                      block = response.read(min(BLOCK_BYTES, EXPECTED_BYTES + 1 - size))
+                      if not block:
+                          break
+                      size += len(block)
+                      require(size <= EXPECTED_BYTES, "Archive exceeded its byte limit.")
+                      output.write(block)
+                      digest.update(block)
+              require(size == EXPECTED_BYTES, "Archive download was incomplete.")
+              require(digest.hexdigest() == EXPECTED_SHA256, "Archive SHA-256 verification failed.")
+
+          def split_verified_archive(archive):
+              require(archive.stat().st_size == EXPECTED_BYTES, "Saved archive size changed.")
+              digest = hashlib.sha256()
+              with archive.open("rb") as source:
+                  for block in iter(lambda: source.read(BLOCK_BYTES), b""):
+                      digest.update(block)
+              require(digest.hexdigest() == EXPECTED_SHA256, "Saved archive SHA-256 verification failed.")
+              require((EXPECTED_BYTES + PART_BYTES - 1) // PART_BYTES == 3, "Expected exactly three pieces.")
+              pieces_directory = OUTPUT / "pieces"
+              pieces_directory.mkdir()
+              pieces = []
+              offset = 0
+              copied_digest = hashlib.sha256()
+              with archive.open("rb") as source:
+                  for number in range(1, 4):
+                      filename = f"south-dakota-original-acquisition.zip.part-{number:03d}"
+                      part_digest = hashlib.sha256()
+                      size = 0
+                      with (pieces_directory / filename).open("xb") as part:
+                          while size < PART_BYTES:
+                              block = source.read(min(BLOCK_BYTES, PART_BYTES - size))
+                              if not block:
+                                  break
+                              part.write(block)
+                              part_digest.update(block)
+                              copied_digest.update(block)
+                              size += len(block)
+                      require(0 < size <= PART_BYTES, "An acquisition piece has an invalid size.")
+                      pieces.append({
+                          "order": number,
+                          "filename": filename,
+                          "offset": offset,
+                          "bytes": size,
+                          "sha256": part_digest.hexdigest(),
+                      })
+                      offset += size
+                  require(not source.read(1), "Saved archive grew while splitting.")
+              require(
+                  offset == EXPECTED_BYTES and copied_digest.hexdigest() == EXPECTED_SHA256,
+                  "Saved archive changed while splitting.",
+              )
+              manifest = {
+                  "format": "fieldforge-original-acquisition-recovery-v1",
+                  "notice": (
+                      "Pieces of the original GitHub source-acquisition artifact. "
+                      "This is not a prepared regional map package and does not establish "
+                      "installed coverage, a prepared regional index, or driving directions."
+                  ),
+                  "original": {
+                      "repository": REPOSITORY,
+                      "run_id": RUN_ID,
+                      "head_sha": HEAD_SHA,
+                      "artifact_id": ARTIFACT_ID,
+                      "artifact_name": ARTIFACT_NAME,
+                      "archive_filename": f"{ARTIFACT_NAME}.zip",
+                      "artifact_url": (
+                          f"https://github.com/{REPOSITORY}/actions/runs/"
+                          f"{RUN_ID}/artifacts/{ARTIFACT_ID}"
+                      ),
+                      "bytes": EXPECTED_BYTES,
+                      "sha256": EXPECTED_SHA256,
+                  },
+                  "piece_byte_limit": PART_BYTES,
+                  "pieces": pieces,
+              }
+              with (OUTPUT / "manifest.json").open("x", encoding="utf-8") as output:
+                  output.write(json.dumps(manifest, indent=2) + "\n")
+
+          def main():
+              token = os.environ.pop("RECOVERY_GITHUB_TOKEN", "")
+              require(bool(token), "The workflow token is unavailable.")
+              api = urllib.request.build_opener(NoRedirect())
+              read_metadata(api, token)
+              location = archive_location(api, token)
+              del token
+
+              # The storage request uses a separate opener and carries no Authorization.
+              # Redirects are disabled on both openers; the signed location is never logged.
+              storage = urllib.request.build_opener(NoRedirect())
+              request = urllib.request.Request(location, headers={"Accept-Encoding": "identity"})
+              OUTPUT.mkdir()
+              archive = OUTPUT / f"{ARTIFACT_NAME}.zip"
+              with storage.open(request, timeout=30) as response:
+                  copy_verified(response, archive)
+              split_verified_archive(archive)
+              print("Verified the original acquisition artifact; prepared three pieces and a checksum manifest.")
+
+          if __name__ == "__main__":
+              try:
+                  main()
+              except RecoveryError as error:
+                  print(f"Recovery failed: {error}", file=sys.stderr)
+                  raise SystemExit(1)
+              except Exception as error:
+                  # Network exceptions can contain signed URLs; report only their type.
+                  print(f"Recovery failed ({type(error).__name__}); no artifacts will be uploaded.", file=sys.stderr)
+                  raise SystemExit(1)
+          PY
+
+      - name: Upload original acquisition piece 001
+        uses: actions/upload-artifact@v4
+        with:
+          name: south-dakota-original-acquisition-part-001
+          path: original-acquisition-recovery/pieces/south-dakota-original-acquisition.zip.part-001
+          compression-level: 0
+          retention-days: 3
+          overwrite: false
+          if-no-files-found: error
+
+      - name: Upload original acquisition piece 002
+        uses: actions/upload-artifact@v4
+        with:
+          name: south-dakota-original-acquisition-part-002
+          path: original-acquisition-recovery/pieces/south-dakota-original-acquisition.zip.part-002
+          compression-level: 0
+          retention-days: 3
+          overwrite: false
+          if-no-files-found: error
+
+      - name: Upload original acquisition piece 003
+        uses: actions/upload-artifact@v4
+        with:
+          name: south-dakota-original-acquisition-part-003
+          path: original-acquisition-recovery/pieces/south-dakota-original-acquisition.zip.part-003
+          compression-level: 0
+          retention-days: 3
+          overwrite: false
+          if-no-files-found: error
+
+      - name: Upload original acquisition recovery manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: south-dakota-original-acquisition-manifest
+          path: original-acquisition-recovery/manifest.json
+          compression-level: 0
+          retention-days: 3
+          overwrite: false
+          if-no-files-found: error
