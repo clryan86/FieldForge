@@ -545,3 +545,47 @@ bridges are automated test doubles; native browser and phone QA remain pending.
 
 Offline edition: **dd827730dadc**, **2,074,756 bytes**. Map datasets, routing,
 geocoding and hosted Commons services remain separate unfinished work.
+
+
+## Saved places on local MBTiles maps (October 5, 2026)
+
+Each Saved places row now has **View on map**. It opens the MBTiles panel and
+centres the current pack at the record's original coordinate, using the current
+displayed zoom. If no pack is open, the coordinate is retained in the tab while
+the user chooses a local pack; that pack starts at its lowest stored zoom.
+No map is downloaded or uploaded automatically.
+
+A blue diamond marks the saved coordinate, separate from the gold inspected
+pixel cross. The original decimal coordinate and place name appear in a
+**Saved place snapshot** card with **Centre on place**, **Back to saved places**
+and **Clear marker** controls. The snapshot does not change when the collection
+is later edited; choosing View on map again uses the updated record.
+Names are rendered as plain text.
+
+Opening a saved place does not create a new record, round the saved coordinate
+or automatically select a nearby map pixel for collection. A marker can appear
+over missing tiles. The card distinguishes a decoded tile, no decoded tile and
+a coordinate outside the current viewport. A decoded tile does not establish
+map accuracy or access. This remains map inspection, not route calculation.
+
+Latitude outside the Web Mercator range is rejected without replacing the
+current map or marker. Zero coordinates and date-line wrapping are supported;
+the marker uses the nearest displayed world copy. While a file, frame or
+coverage operation is running, new place navigation is refused with an
+explanation. Replacing a pack retains the chosen snapshot; Close / cancel
+clears it, while leaving the Saved places collection intact.
+
+Validation: **82 Node tests and 4 Python tests pass**. The actual downloadable
+HTML exercises the path through Saved places, the embedded worker and raster
+or vector MBTiles, with network and storage forbidden. Tests check decimal
+preservation, selecting before opening a pack, marker geometry, edits and
+snapshots, missing tiles, polar rejection, zero coordinates, return controls
+and close/reopen behavior. Core checks cover the exact marker centre and
+date-line wrapping through zoom 22; lifecycle checks preserve the prior marker
+during a delayed coverage scan and discard stale results after replacement.
+HTML IDs, label/ARIA references, local imports and embedded worker bytes were
+checked. Native browser and phone QA remain outstanding; these automated
+integration checks use DOM/Canvas doubles.
+
+Offline edition: **fb5817ebd9b7**, **2,080,235 bytes**. No new map datasets,
+hosted chat/account services, geocoding or routing are included.

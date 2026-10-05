@@ -6,7 +6,7 @@ import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {createHash,webcrypto} from "node:crypto";
 import vm from "node:vm";
-import {inspectMBDatabase,readMBFrame,readMBCoverage,mbFrame,mbUnproject,checkMBHeader} from "./mbtiles-core.mjs";
+import {inspectMBDatabase,readMBFrame,readMBCoverage,mbFrame,mbUnproject,mbScreenPoint,checkMBHeader} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 const require=createRequire(import.meta.url),SQL=await require("./vendor/sql-asm-1.14.2.js")();
 const fixture=mode=>new Uint8Array(execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[fileURLToPath(new URL("./mbtiles-fixture.py",import.meta.url)),mode||"valid"],{maxBuffer:4*1024*1024}));
@@ -64,6 +64,15 @@ test("fractional viewport edges include the tile beneath every corner pixel",()=
       assert.ok(frame.tiles.some(tile=>x>=tile.left&&x<tile.left+256&&y>=tile.top&&y<tile.top+256),`zoom ${z}, origin ${offset}, corner ${x}/${y}`);
     }
   }
+});
+test("saved-coordinate markers keep exact centres, use the nearest date-line copy and reject polar latitudes",()=> {
+  for(const z of [0,1,10,22])for(const [lat,lon] of [[0,0],[38.12345678901234,-90.12345678901234],[-84,179.9]]){
+    const p=mbScreenPoint(lat,lon,mbFrame(lat,lon,z));assert.ok(Math.abs(p.x-384)<1e-7&&Math.abs(p.y-256)<1e-7);assert.equal(p.inside,true);
+  }
+  assert.deepEqual(mbScreenPoint(0,-180,mbFrame(0,180,10)),{x:384,y:256,inside:true});
+  const p=mbScreenPoint(0,-179.99,mbFrame(0,179.99,10));assert.ok(p.x>384&&p.x<400);assert.equal(p.inside,true);
+  assert.equal(mbScreenPoint(84,0,mbFrame(0,0,10)).inside,false);assert.equal(mbScreenPoint(0,120,mbFrame(0,0,10)).inside,false);
+  assert.throws(()=>mbScreenPoint(90,0,mbFrame(0,0,0)),/Mercator/);
 });
 test("built SQLite worker starts and reads a pack with network, eval and WebAssembly disabled",async()=> {
   const root=fileURLToPath(new URL("../",import.meta.url));

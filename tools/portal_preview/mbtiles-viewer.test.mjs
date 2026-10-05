@@ -36,7 +36,7 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
     Object.defineProperty(globalThis,"document",{value:{getElementById:el,createElement:make},configurable:true});
     Object.defineProperty(globalThis,"createImageBitmap",{value:(...args)=>decode(...args),configurable:true});
     Object.defineProperty(globalThis,"FileReader",{value:Reader,configurable:true});
-    createMBViewer({clientFactory:factory,onAddPoint:p=>collected.push(p)});
+    const viewer=createMBViewer({clientFactory:factory,onAddPoint:p=>collected.push(p)});
     assert.equal(el("mbAddPlace").disabled,true);await open("test.mbtiles");assert.equal(el("mbControls").disabled,false);assert.ok(draws.length);assert.equal(el("mbAttribution").textContent,"<b>Fixture credit</b>");
     await el("mbAddPlace").fire("click");assert.equal(collected.length,1);assert.ok(collected[0].lat<0&&collected[0].lon<0);assert.match(collected[0].source,/test.mbtiles/);
     el("mbColumn").value="767";el("mbRow").value="256";await el("mbPixelForm").fire("submit");assert.equal(el("mbAddPlace").disabled,true);assert.match(el("mbSelected").textContent,/No decoded tile/);
@@ -54,11 +54,13 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
     assert.equal(el("mbControls").disabled,false);await el("mbAddPlace").fire("click");assert.match(collected.at(-1).source,/replacement.mbtiles/);
     slowDecode.resolve(lateDecode);await decoding;assert.equal(lateDecode.closed,true);assert.equal(el("mbControls").disabled,false);
     for(const replace of [false,true]){
-      await open("scan.mbtiles");const wait=deferred();coverageDelay=wait.promise;const scanning=el("mbCoverageScan").fire("click");
+      await open("scan.mbtiles");await viewer.viewPlace({name:"Retained place",lat:20,lon:-90,source:"Fixture"});const wait=deferred();coverageDelay=wait.promise;const scanning=el("mbCoverageScan").fire("click");
       assert.equal(el("mbControls").disabled,true);assert.equal(el("mbAddPlace").disabled,true);assert.ok(draws.length);
+      assert.equal(viewer.viewPlace({name:"Late place",lat:0,lon:0,source:"Fixture"}),false);assert.equal(el("mbTargetName").textContent,"Retained place");assert.match(el("mbStatus").textContent,/still running/);
       if(replace)await open("replacement-scan.mbtiles");else await el("mbClose").fire("click");
       wait.resolve();await scanning;coverageDelay=null;
       assert.equal(el("mbCoverageResult").hidden,true);assert.equal(el("mbCoverageDrawing").children.length,0);assert.equal(el("mbCoverageOpen").disabled,true);assert.equal(el("mbControls").disabled,!replace);
+      assert.equal(el("mbTargetCard").hidden,!replace);if(replace)assert.equal(el("mbTargetName").textContent,"Retained place");
     }
     await el("mbClose").fire("click");assert.ok(bitmaps.every(b=>b.closed));
   } finally {for(const c of clients)if(!c.closed)c.close();for(const [key,value] of saved){if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}}

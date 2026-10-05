@@ -62,6 +62,11 @@ export function mbFrame(lat,lon,zoom) {
   }
   return {lat,lon,zoom,left,top,tiles};
 }
+export function mbScreenPoint(lat,lon,frame) {
+  const point=mbFrame(lat,lon,frame.zoom),world=256*2**frame.zoom,delta=point.left-frame.left;
+  const x=384+((delta+world/2)%world+world)%world-world/2,y=point.top+256-frame.top;
+  return {x,y,inside:x>=0&&x<768&&y>=0&&y<512};
+}
 export function readMBFrame(pack,lat,lon,zoom) {
   if(!pack.info.zooms.includes(zoom)) throw new Error("That zoom level is not stored in this pack.");
   const frame=mbFrame(lat,lon,zoom);let total=0;

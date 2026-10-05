@@ -39,7 +39,7 @@ class Element {
   getContext() { return {setTransform() {},clearRect() {}}; }
 }
 function boot({mbtiles=false}={}) {
-  const elements = new Map(), opened = [], blobs = [], downloads = [], workers=[], bitmaps=[], draws=[];
+  const elements = new Map(), opened = [], blobs = [], downloads = [], workers=[], bitmaps=[], draws=[], markers=[];
   let storageTouches = 0, requests = 0, confirmation = false;
   for (const match of source.matchAll(/<([a-zA-Z][\w-]*)\b([^>]*\bid="([^"]+)"[^>]*)>/g)) {
     const attrs = Object.fromEntries([...match[2].matchAll(/([\w-]+)(?:="([^"]*)")?/g)].map(([_,key,value]) => [key,value ?? ""]));
@@ -58,7 +58,7 @@ function boot({mbtiles=false}={}) {
   const sandbox = {document,window:{devicePixelRatio:1,addEventListener() {},confirm:() => confirmation,open:(...args) => opened.push(args)},URL:LocalURL,Blob,TextEncoder,TextDecoder,setTimeout() {},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,navigator:{sendBeacon:forbidden}};
   if(mbtiles) {
     id("mbWorkerPayload").textContent=source.match(/<div id="mbWorkerPayload" hidden>([A-Za-z0-9+/=]+)<\/div>/)[1];
-    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){},save(){},restore(){},rect(){},clip(){},translate(){},closePath(){},fill(rule){draws.push({vector:true,rule});},setLineDash(){},measureText:text=>({width:text.length*6}),strokeText(){}});
+    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;markers.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(x,y){this.lastMove=[x,y];},lineTo(){},stroke(){if(this.strokeStyle==="#7fe3ff")markers.push(this.lastMove);},save(){},restore(){},rect(){},clip(){},translate(){},closePath(){},fill(rule){draws.push({vector:true,rule});},setLineDash(){},measureText:text=>({width:text.length*6}),strokeText(){}});
     class Reader {
       readAsArrayBuffer(file){this.readyState=1;file.arrayBuffer().then(bytes=>{if(this.readyState!==1)return;this.readyState=2;this.result=bytes;this.onload?.();},()=>{this.readyState=2;this.onerror?.();});}
       abort(){this.readyState=2;this.onabort?.();}
@@ -81,7 +81,7 @@ function boot({mbtiles=false}={}) {
   }
   Object.defineProperty(sandbox,"localStorage",{get() { storageTouches++; throw Error("Storage unavailable for local file"); }});
   vm.runInNewContext(script,sandbox,{timeout:1000,filename:"fieldforge-offline.html"});
-  return {id,opened,blobs,downloads,workers,bitmaps,draws,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
+  return {id,opened,blobs,downloads,workers,bitmaps,draws,markers,get storageTouches() { return storageTouches; },get requests() { return requests; },confirm:choice => { confirmation = choice; }};
 }
 
 test("downloaded desk boots without storage or network and can save/reopen a source plan", async () => {
@@ -145,6 +145,34 @@ for(const mode of ["valid","vector-mixed"])test(`offline download opens ${mode} 
     assert.match(app.id("placesCount").textContent,/1 total/);assert.equal(app.storageTouches,0);assert.equal(app.requests,0);assert.deepEqual(app.opened,[]);
     assert.equal(app.id("mbVectorNote").hidden,true);assert.equal(app.id("mbIssues").textContent,"");
     assert.equal(app.id("mbCoverageResult").hidden,true);assert.equal(app.id("mbCoverageDrawing").children.length,0);assert.equal(app.id("mbCoverageOpen").disabled,true);
+  }finally{app.id("mbClose").fire("click");}
+});
+
+for(const mode of ["valid","vector"])test(`saved places open in ${mode} MBTiles without rounding records or treating markers as tile data`,{timeout:5000},async()=> {
+  const app=boot({mbtiles:true}),lat="38.12345678901234",lon="-90.12345678901234",name="Camp <b>reference</b>";
+  const raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),mode]);
+  const open=async()=>{app.id("mbFile").files=[{name:"places.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");};
+  const view=index=>app.id("placesRows").children[index].children[3].children[2].fire("click");
+  try{
+    addManual(app,name,lat,lon,"Original source");await view(0);
+    assert.equal(app.id("mbPanel").hidden,false);assert.equal(app.id("placesPanel").hidden,true);assert.equal(app.id("mbTargetCard").hidden,false);assert.equal(app.id("mbTargetName").textContent,name);assert.match(app.id("mbTargetState").textContent,/Choose a local MBTiles/);assert.equal(app.workers.length,0);
+    await open();assert.equal(app.id("mbLatitude").value,lat);assert.equal(app.id("mbLongitude").value,lon);assert.equal(app.id("mbTargetCoordinates").textContent,`${lat}, ${lon}`);assert.match(app.id("mbTargetState").textContent,/within a decoded tile/);
+    assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.markers.length,1);assert.ok(Math.abs(app.markers[0][0]-384)<1e-7&&Math.abs(app.markers[0][1]-246)<1e-7);
+    app.id("mbBackPlaces").fire("click");assert.equal(app.id("placesPanel").hidden,false);app.id("placesSaveJSON").fire("click");
+    assert.deepEqual(JSON.parse(await app.blobs.at(-1).text()).places,[{name,lat:Number(lat),lon:Number(lon),source:"Original source"}]);
+    // The map keeps an explicitly labelled snapshot; opening the edited row uses its new coordinates.
+    app.id("placesRows").children[0].children[3].children[0].fire("click");app.id("placesLatitude").value="39.25";app.id("placesForm").fire("submit");assert.equal(app.id("mbTargetCoordinates").textContent,`${lat}, ${lon}`);
+    await view(0);assert.equal(app.id("mbLatitude").value,"39.25");assert.equal(app.id("mbTargetCoordinates").textContent,`39.25, ${lon}`);
+    // The pack has zoom 2, but no usable tile at this place at that zoom.
+    app.id("mbZoom").value="2";await app.id("mbGo").fire("submit");await view(0);assert.equal(app.id("mbZoom").value,"2");assert.match(app.id("mbTargetState").textContent,/No decoded tile/);assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.markers.length,1);
+    addManual(app,"Polar place","90","0");await view(1);assert.match(app.id("mbStatus").textContent,/Mercator/);assert.equal(app.id("mbLatitude").value,"39.25");assert.equal(app.id("mbTargetName").textContent,name);
+    // Returning to a marker recentres at the currently displayed zoom.
+    app.id("mbLatitude").value="-60";app.id("mbLongitude").value="100";await app.id("mbGo").fire("submit");assert.match(app.id("mbTargetState").textContent,/outside this view/);assert.equal(app.markers.length,0);
+    await app.id("mbTargetCentre").fire("click");assert.equal(app.id("mbLatitude").value,"39.25");assert.equal(app.id("mbZoom").value,"2");assert.equal(app.markers.length,1);
+    app.id("mbTargetClear").fire("click");assert.equal(app.id("mbTargetCard").hidden,true);assert.equal(app.markers.length,0);assert.equal(app.id("mbControls").disabled,false);
+    addManual(app,"Zero coordinate","0","0");await view(2);assert.equal(app.id("mbLatitude").value,"0");assert.equal(app.id("mbLongitude").value,"0");assert.equal(app.id("mbTargetCoordinates").textContent,"0, 0");assert.match(app.id("mbTargetState").textContent,/No decoded tile/);
+    app.id("mbClose").fire("click");assert.equal(app.id("mbTargetCard").hidden,true);await open();assert.equal(app.id("mbTargetCard").hidden,true);assert.ok(Number(app.id("mbLatitude").value)<0);
+    assert.equal(app.requests,0);assert.equal(app.storageTouches,0);assert.deepEqual(app.opened,[]);
   }finally{app.id("mbClose").fire("click");}
 });
 

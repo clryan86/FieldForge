@@ -1,7 +1,7 @@
 import {MAX_PLACE_BYTES, placeCoordinateText, manualPlace, mergePlaces, matchingPlaces, parsePlacesJSON, parsePlacesCSV, placesJSON, placesCSV, placesGPX} from "./places-core.mjs";
 import {createFieldSheet} from "./field-sheet.mjs";
 
-export function createPlaces({download}) {
+export function createPlaces({download,onViewMap}) {
   const id = key => document.getElementById(key);
   const node = (tag,text) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; return element; };
   let records = [], editing = null, page = 0, generation = 0, undo = null;
@@ -29,6 +29,7 @@ export function createPlaces({download}) {
       for (const [label,action] of [["Edit",() => { editing = record; id("placesName").value = record.name; id("placesLatitude").value = placeCoordinateText(record.lat); id("placesLongitude").value = placeCoordinateText(record.lon); id("placesSource").value = record.source; id("placesSubmit").textContent = "Save changes"; id("placesCancelEdit").hidden = false; id("placesEditorTitle").textContent = "Edit coordinates"; id("placesName").focus(); }],["Remove",() => { if (!records.includes(record)) return; undo = records; records = records.filter(point => point !== record); cancelRead(); if (editing === record) resetEditor(); render(); announce("Place removed from this tab. Undo restores the previous collection."); }]]) {
         const button = node("button",label); button.type = "button"; button.className = "secondary"; button.setAttribute("aria-label",`${label} ${record.name}`); button.addEventListener("click",action); actions.append(button);
       }
+      if(onViewMap){const button=node("button","View on map");button.type="button";button.className="place-map-button";button.setAttribute("aria-label",`View ${record.name} on a local MBTiles map`);button.addEventListener("click",async()=>{if(!records.includes(record))return;try{await onViewMap({...record});}catch(error){announce(error.message||"Could not open this place on the map.",true);}});actions.append(button);}
       row.append(name,coords,source,actions); body.append(row);
     }
     if (!matches.length) { const row = node("tr"), cell = node("td",records.length ? "No places match this search." : "Add a place, import a collection, or collect points from the GPX and image tools."); cell.colSpan = 4; row.append(cell); body.append(row); }
