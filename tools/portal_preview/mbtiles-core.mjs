@@ -38,8 +38,7 @@ export function inspectMBDatabase(SQL,bytes) {
     if(!metadata.name?.trim()) throw new Error("The pack needs a name in its metadata.");
     if((metadata.scheme||"tms").toLowerCase()!=="tms") throw new Error("This viewer needs MBTiles/TMS tile rows, not XYZ rows.");
     const format=(metadata.format||"").toLowerCase();
-    if(format==="pbf") throw new Error("This is vector MBTiles. This browser release renders raster PNG/JPEG/WebP packs; use the desktop vector reader for PBF packs.");
-    if(!["png","jpg","jpeg","webp"].includes(format)) throw new Error("Choose raster MBTiles declared as PNG, JPEG or WebP.");
+    if(!["png","jpg","jpeg","webp","pbf"].includes(format)) throw new Error("Choose MBTiles declared as PNG, JPEG, WebP or PBF vector tiles.");
     const table=`tiles INDEXED BY ${mbQuote(index)}`;
     for(const order of ["ASC","DESC"]) { const row=mbRows(db,`SELECT zoom_level,typeof(zoom_level) FROM ${table} ORDER BY zoom_level ${order} LIMIT 1`,[],1)[0]; if(!row||row[1]!=="integer"||!Number.isInteger(row[0])||row[0]<0||row[0]>22) throw new Error("The pack must have integer zoom levels from 0 to 22."); }
     const zooms=[];for(let z=0;z<=22;z++) if(mbRows(db,`SELECT 1 FROM ${table} WHERE zoom_level=? LIMIT 1`,[z],1).length) zooms.push(z);
@@ -69,7 +68,7 @@ export function readMBFrame(pack,lat,lon,zoom) {
     if(slot.outside) return {...slot,issue:"Outside Mercator world"};
     const size=mbRows(pack.db,`SELECT typeof(tile_data),length(tile_data) FROM ${pack.table} WHERE zoom_level=? AND tile_column=? AND tile_row=? LIMIT 1`,[zoom,slot.x,slot.tms],1)[0];
     if(!size) return {...slot,issue:"Missing tile"};
-    if(size[0]!=="blob"||!Number.isInteger(size[1])||size[1]<12||size[1]>MAX_MB_TILE_BYTES||total+size[1]>16*1024*1024) return {...slot,issue:"Unsupported tile size"};
+    if(size[0]!=="blob"||!Number.isInteger(size[1])||size[1]<(pack.info.format==="pbf"?1:12)||size[1]>MAX_MB_TILE_BYTES||total+size[1]>16*1024*1024) return {...slot,issue:"Unsupported tile size"};
     const data=mbRows(pack.db,`SELECT tile_data FROM ${pack.table} WHERE zoom_level=? AND tile_column=? AND tile_row=? LIMIT 1`,[zoom,slot.x,slot.tms],1)[0]?.[0];
     if(!(data instanceof Uint8Array)||data.length!==size[1]) return {...slot,issue:"Unreadable tile"};
     total+=data.length;return {...slot,data};

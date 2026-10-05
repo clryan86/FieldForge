@@ -13,7 +13,7 @@ def worker_source(assets: Path) -> str:
     raw = (vendor / "sql-asm-1.14.2.js").read_bytes()
     if hashlib.sha256(raw).hexdigest() != provenance["sha256"]:
         raise ValueError("Pinned SQLite reader checksum differs; review the dependency update")
-    core = (assets / "mbtiles-core.mjs").read_text()
+    core = "\n".join((assets / name).read_text() for name in ("mbtiles-core.mjs", "mvt-core.mjs"))
     core = re.sub(r"^export (?=(?:const|function) )", "", core, flags=re.M)
     if re.search(r"^\s*(?:export|import)\b", core, re.M):
         raise ValueError("Unsupported worker core module syntax")

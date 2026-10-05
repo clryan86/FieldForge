@@ -20,8 +20,8 @@ test("real SQLite reads indexed MBTiles, observed zooms and stored-tile centre w
     assert.throws(()=>pack.db.run("DELETE FROM tiles"),/readonly/);assert.equal(createHash("sha256").update(bytes).digest("hex"),before);
   }finally{pack.db.close();}
 });
-test("reader rejects unsupported schemas, vector packs, WAL, XYZ and malformed metadata",()=> {
-  for(const [mode,message] of [["unindexed",/index/],["vector",/vector MBTiles/],["wal",/WAL/],["xyz",/TMS/],["duplicate",/Duplicate/],["oversize-metadata",/metadata/],["bad-coordinate",/coordinates/],["view",/Normalized/]])assert.throws(()=>inspectMBDatabase(SQL,fixture(mode)),message,mode);
+test("reader rejects unsupported schemas, WAL, XYZ and malformed metadata",()=> {
+  for(const [mode,message] of [["unindexed",/index/],["wal",/WAL/],["xyz",/TMS/],["duplicate",/Duplicate/],["oversize-metadata",/metadata/],["bad-coordinate",/coordinates/],["view",/Normalized/]])assert.throws(()=>inspectMBDatabase(SQL,fixture(mode)),message,mode);
   const bytes=fixture();assert.throws(()=>checkMBHeader(bytes.subarray(0,bytes.length-1)),/layout/);bytes[0]=0;assert.throws(()=>checkMBHeader(bytes),/SQLite/);
 });
 test("oversized tile blobs are identified before returning them and absent zooms fail",()=> {
@@ -45,10 +45,12 @@ test("built SQLite worker starts and reads a pack with network, eval and WebAsse
   const root=fileURLToPath(new URL("../",import.meta.url));
   const source=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",["-c","from pathlib import Path; from build_mbtiles_worker import worker_source; print(worker_source(Path('portal_preview')))"],{cwd:root,maxBuffer:4*1024*1024,encoding:"utf8"});
   let reply,requests=0;const forbidden=()=>{requests++;throw new Error("Network forbidden");};
-  const sandbox={self:{postMessage:value=>reply(value)},crypto:webcrypto,TextDecoder,TextEncoder,setTimeout,clearTimeout,console:{log(){},error(){},warn(){}},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden};
+  const sandbox={self:{postMessage:value=>reply(value)},crypto:webcrypto,Blob,DecompressionStream,TextDecoder,TextEncoder,setTimeout,clearTimeout,console:{log(){},error(){},warn(){}},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden};
   vm.createContext(sandbox,{codeGeneration:{strings:false,wasm:false}});vm.runInContext(source,sandbox,{timeout:5000});
   const send=data=>new Promise(resolve=>{reply=resolve;sandbox.self.onmessage({data});});
   const data=fixture(),opened=await send({id:1,kind:"open",bytes:data.buffer});assert.equal(opened.error,undefined);assert.equal(opened.result.name,"Synthetic test fixture");
   const frame=await send({id:2,kind:"frame",lat:opened.result.initial.lat,lon:-90,zoom:1});assert.equal(frame.error,undefined);assert.ok(frame.result.tiles.some(tile=>tile.data));assert.equal(requests,0);
+  const vector=await send({id:3,kind:"open",bytes:fixture("vector-mixed").buffer});assert.equal(vector.result.format,"pbf");
+  const vectorFrame=await send({id:4,kind:"frame",lat:vector.result.initial.lat,lon:-90,zoom:1});assert.equal(vectorFrame.error,undefined);assert.ok(vectorFrame.result.tiles.some(tile=>tile.vector?.features.length===3));assert.ok(vectorFrame.result.tiles.some(tile=>tile.issue?.includes("Truncated protobuf")));assert.ok(vectorFrame.result.tiles.every(tile=>!tile.data));assert.equal(requests,0);
   const provenance=JSON.parse(readFileSync(new URL("./vendor/sql.js-provenance.json",import.meta.url)));assert.equal(createHash("sha256").update(readFileSync(new URL("./vendor/sql-asm-1.14.2.js",import.meta.url))).digest("hex"),provenance.sha256);
 });

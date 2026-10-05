@@ -58,7 +58,7 @@ function boot({mbtiles=false}={}) {
   const sandbox = {document,window:{devicePixelRatio:1,addEventListener() {},confirm:() => confirmation,open:(...args) => opened.push(args)},URL:LocalURL,Blob,TextEncoder,TextDecoder,setTimeout() {},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,navigator:{sendBeacon:forbidden}};
   if(mbtiles) {
     id("mbWorkerPayload").textContent=source.match(/<div id="mbWorkerPayload" hidden>([A-Za-z0-9+/=]+)<\/div>/)[1];
-    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){}});
+    id("mbCanvas").getContext=()=>({clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){},save(){},restore(){},rect(){},clip(){},translate(){},closePath(){},fill(rule){draws.push({vector:true,rule});},setLineDash(){},measureText:text=>({width:text.length*6}),strokeText(){}});
     class Reader {
       readAsArrayBuffer(file){this.readyState=1;file.arrayBuffer().then(bytes=>{if(this.readyState!==1)return;this.readyState=2;this.result=bytes;this.onload?.();},()=>{this.readyState=2;this.onerror?.();});}
       abort(){this.readyState=2;this.onabort?.();}
@@ -67,7 +67,7 @@ function boot({mbtiles=false}={}) {
       constructor(url) {
         workers.push(this);this.terminated=false;
         this.ready=blobs[Number(url.split("-").at(-1))-1].text().then(code=> {
-          const worker={self:{postMessage:(value,transfer=[])=>{const data=structuredClone(value,{transfer});queueMicrotask(()=>{if(!this.terminated)this.onmessage?.({data});});}},Uint8Array,ArrayBuffer,crypto:webcrypto,TextEncoder,TextDecoder,setTimeout,clearTimeout,fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,console:{log(){},warn(){},error(){}}};
+          const worker={self:{postMessage:(value,transfer=[])=>{const data=structuredClone(value,{transfer});queueMicrotask(()=>{if(!this.terminated)this.onmessage?.({data});});}},Uint8Array,ArrayBuffer,crypto:webcrypto,Blob,DecompressionStream,TextEncoder,TextDecoder,setTimeout,clearTimeout,fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden,console:{log(){},warn(){},error(){}}};
           vm.createContext(worker,{codeGeneration:{strings:false,wasm:false}});vm.runInContext(code,worker,{timeout:5000});return worker;
         });
       }
@@ -118,17 +118,24 @@ function addManual(app,name,lat = "0",lon = "0",source = "") {
   app.id("placesForm").fire("submit");
 }
 function collectionFile(name,text) { const bytes = new TextEncoder().encode(text); return {name,size:bytes.length,arrayBuffer:async () => bytes.buffer}; }
-test("offline download opens a pack through its embedded SQLite worker and exports a selected map coordinate",{timeout:5000},async()=> {
+for(const mode of ["valid","vector-mixed"])test(`offline download opens ${mode} MBTiles through its embedded worker and exports a selected coordinate`,{timeout:5000},async()=> {
   const app=boot({mbtiles:true});
-  const raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py")]);
+  const raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),mode]);
   try {
     app.id("mbTab").fire("click");assert.equal(app.id("mbPanel").hidden,false);assert.equal(app.id("packPanel").hidden,true);
     app.id("mbFile").files=[{name:"offline-fixture.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");
     assert.equal(app.id("mbControls").disabled,false,app.id("mbStatus").textContent);assert.ok(app.draws.length);assert.equal(app.id("mbAttribution").textContent,"<b>Fixture credit</b>");
+    assert.equal(app.id("mbVectorNote").hidden,mode==="valid");
+    if(mode!=="valid"){
+      assert.equal(app.bitmaps.length,0);assert.ok(app.draws.some(draw=>draw.rule==="evenodd"));assert.match(app.id("mbTileSummary").textContent,/basic vector style/);assert.match(app.id("mbIssues").textContent,/Truncated protobuf/);
+      app.id("mbPointNames").checked=false;app.id("mbPointNames").fire("change");assert.ok(app.draws.length);assert.equal(app.id("mbAddPlace").disabled,false);
+    }
     app.id("mbAddPlace").fire("click");assert.equal(app.id("placesPanel").hidden,false);assert.match(app.id("placesCount").textContent,/1 total/);
     app.id("placesSaveJSON").fire("click");const place=JSON.parse(await app.blobs.at(-1).text()).places[0];assert.ok(place.lat<0&&place.lon<0);assert.match(place.source,/offline-fixture\.mbtiles/);
+    assert.match(place.source,mode==="valid"?/raster MBTiles/:/vector MBTiles, basic preview style/);
     app.id("mbClose").fire("click");assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.draws.length,0);assert.ok(app.bitmaps.every(bitmap=>bitmap.closed));assert.ok(app.workers.every(worker=>worker.terminated));
     assert.match(app.id("placesCount").textContent,/1 total/);assert.equal(app.storageTouches,0);assert.equal(app.requests,0);assert.deepEqual(app.opened,[]);
+    assert.equal(app.id("mbVectorNote").hidden,true);assert.equal(app.id("mbIssues").textContent,"");
   }finally{app.id("mbClose").fire("click");}
 });
 

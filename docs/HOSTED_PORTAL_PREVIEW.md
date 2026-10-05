@@ -436,3 +436,64 @@ is the self-contained SQLite reader. The offline size-budget test now allows
 
 References: [MBTiles 1.3 specification](https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md),
 [SQL.js](https://github.com/sql-js/sql.js).
+
+
+## Browser vector MBTiles preview (October 5, 2026)
+
+The **MBTiles maps** tab now opens local PBF vector packs as well as raster
+packs. This is also included in the standalone offline download. Raw and
+gzip-compressed Mapbox Vector Tiles (MVT versions 1 and 2) are decoded inside
+the existing disposable SQLite worker. No map data, style, font or sprite is
+downloaded or uploaded. The original file is never written.
+
+The fixed Canvas preview draws polygon areas with holes, lines and points.
+Common source layer/class names choose water, land, building, road, boundary
+and rail colours; other features use a neutral style. Geometry is clipped to
+each tile. A **Show point names** control toggles available source point names,
+with overlap suppression. Publisher styling, symbol sprites, detailed road
+labels and full cartographic accuracy are not reproduced. An empty decoded
+tile has a neutral background; it does not establish anything about terrain.
+
+Navigation, stored zoom selection and coordinate collection work with either
+format. Saved-place source notes identify vector MBTiles and the basic preview
+style. Coordinates are Web Mercator pixel centres, not feature identities or
+verified access/navigation guidance. Damaged or unsupported vector tiles show
+an issue while usable neighbours remain available; missing/unreadable tiles
+cannot supply selected coordinates.
+
+The existing 64-MiB closed, flat/indexed MBTiles file restriction, TMS rows,
+zoom 0–22, 2-MiB tile input and 16-MiB compressed frame limits still apply.
+Vector limits additionally include 8 MiB expanded per tile, 64 layers, 5,000
+features, 50,000 positions and 250,000 geometry/tag words per tile. Each frame
+accepts at most 10,000 features and 100,000 positions; tiles crossing that
+budget are omitted with an explicit issue. Extents are 1–65,536 and coordinate
+buffers are limited to one tile width outside the tile. Invalid UTF-8, broken
+protobuf, missing tag references, malformed geometry and unsupported formats
+are rejected. Gzip expansion is bounded while streaming and requires browser
+DecompressionStream support. The worker remains subject to a 15-second
+deadline and Close / cancel termination.
+
+Point names are cleaned of control and bidirectional override characters,
+limited to 48 code points and drawn as text, never as markup. At most 32 names
+per tile and 96 per frame are drawn. No dynamic CSS, code or URLs are taken
+from feature properties.
+
+Validation: **75 Node tests and 4 Python tests pass**. Independent Python
+SQLite/protobuf fixtures cover raster tiles, raw and gzip MVT with known
+coordinates, a polygon hole, a road and a named point. Checks cover malformed
+data, gzip checksum failure and expansion limits, per-tile/frame budgets,
+Canvas clipping/fill commands, selection/export and resource cleanup. The
+actual downloadable HTML opens a mixed valid/damaged vector pack through its
+embedded worker, draws the usable geometry and exports a selected coordinate
+with network and browser storage access forbidden. Canvas and DOM are test
+doubles: native browser rendering/worker startup and phone QA remain
+outstanding. No real map datasets were added or claimed.
+
+Offline edition: **742105bd7fc2**, **2,062,831 bytes**. Built HTML label/ARIA
+targets, local assets and embedded worker bytes were checked. Hosted chat,
+accounts, map hosting, geocoding, routing and world-data acquisition remain
+separate unfinished work.
+
+References: [Mapbox Vector Tile specification](https://github.com/mapbox/vector-tile-spec),
+[version 2.1 protobuf schema](https://github.com/mapbox/vector-tile-spec/blob/master/2.1/vector_tile.proto),
+[DecompressionStream](https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream).

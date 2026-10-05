@@ -155,7 +155,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     <nav class="portal-nav" aria-label="Preview screens">{''.join(f'<a href="#{key}">{title}</a>' for key,title,_,_ in screens)}</nav>
     <section class="preview-gallery" aria-label="Development screenshots">{''.join(gallery)}</section>
     <section class="card maps-section"><h2>Current status</h2><table class="status-table"><thead><tr><th scope="col">Area</th><th scope="col">Available now</th><th scope="col">Still to connect</th></tr></thead><tbody>
-    <tr><th scope="row">Website</th><td>Map source planner, download estimates, saved plans, local GPX and map-image inspection, coordinate CSV export and these screens</td><td>Hosted application services and a public community launch</td></tr>
+    <tr><th scope="row">Website</th><td>Map source planner, download estimates, saved plans, local GPX, map-image, GeoJSON and raster/vector MBTiles inspection, saved places, offline tools and these screens</td><td>Hosted application services and a public community launch</td></tr>
     <tr><th scope="row">Maps &amp; routes</th><td>Links to regional PBF sources, NOAA charts and paid dataset providers</td><td>Hosted map files, address provider and route provider; world MBTiles collection not acquired</td></tr>
     <tr><th scope="row">Commons</th><td>Local rooms, inbox, accounts, profiles, search and owner controls</td><td>Online account services, email/social providers and production operations</td></tr>
     <tr><th scope="row">Library &amp; tiers</th><td>Subject areas and draft plans</td><td>Published knowledge packages, final prices and billing</td></tr>
@@ -166,7 +166,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "commons.html").write_text(commons, encoding="utf-8")
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
-    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css", "field-sheet-core.mjs", "field-sheet.mjs", "vector-core.mjs", "vector-viewer.mjs", "vector-viewer.css", "mbtiles-core.mjs", "mbtiles-client.mjs", "mbtiles-viewer.mjs", "mbtiles-viewer.css"):
+    for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css", "field-sheet-core.mjs", "field-sheet.mjs", "vector-core.mjs", "vector-viewer.mjs", "vector-viewer.css", "mbtiles-core.mjs", "mbtiles-client.mjs", "mvt-renderer.mjs", "mbtiles-viewer.mjs", "mbtiles-viewer.css"):
         shutil.copyfile(assets / name, output / name)
     offline = export_offline(assets, output, (source_root / "fieldforge/online/portal.html").read_text(encoding="utf-8"), revision, FAVICON)
     print(f"Offline desk: {offline['bytes']:,} bytes, edition {offline['edition_id']}")
