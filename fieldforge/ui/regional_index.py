@@ -4,13 +4,14 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+from tkinter import TclError, filedialog, messagebox, ttk
 
 from fieldforge.navigation.map_view import Viewport
 from fieldforge.navigation.osm_source import StreetSource
 from fieldforge.navigation.regional_index import (
     NOTICE,
     import_archive,
+    feature_coordinate,
     inspect_index,
     prepare_index,
     search_index,
@@ -31,6 +32,7 @@ class RegionalIndexWindow(StreetSourceWindow):
         self._pending_refresh = False
         self._task_kind = None
         self._selected_feature = None
+        self._selected_coordinate = None
         self._viewport_features = ()
         self.page_limited = False
         super().__init__(panel, heading='Regional maps • prepared local index')
@@ -46,6 +48,14 @@ class RegionalIndexWindow(StreetSourceWindow):
         self.prepare_button = ttk.Button(actions, text='Prepare PBF…', command=self.choose_prepare)
         self.prepare_button.pack(side='left', padx=5)
         self._controls.append((self.prepare_button, 'normal'))
+        left = self.details.master
+        left.rowconfigure(4, weight=0)
+        left.rowconfigure(5, weight=1)
+        self.copy_button = ttk.Button(left, text='Copy lat, lon', command=self.copy_coordinates,
+                                      state='disabled')
+        self.copy_button.grid(row=4, column=0, sticky='ew', pady=(4, 0))
+        self.details.grid_configure(row=5)
+        self._controls.append((self.copy_button, 'disabled'))
         self.summary.set('No prepared map open. Your PBF source and household data are not modified.')
         self.status.set('Prepare a local source once, then reopen its .ffmap for offline search and display.')
         self.credit.set('No network or GPS access. A prepared index is visual/search data, NOT a routing graph.')
@@ -143,7 +153,7 @@ class RegionalIndexWindow(StreetSourceWindow):
         self._selected_feature = None
         self.matches = ()
         self.query.set('')
-        self._text('Search names and features in this local index. Address-tag search, GPS fixes, and verified entrances are not available here.')
+        self._text('Search names, feature tags, and explicit address tags when present. Results are source features, not verified geocoding or entrances. No GPS fix is available here.')
         date = ('Unknown snapshot date' if meta['replication_timestamp'] is None else
                 'Source reports ' + datetime.fromtimestamp(meta['replication_timestamp'], timezone.utc).isoformat())
         self.credit.set('© OpenStreetMap contributors • ODbL 1.0 • openstreetmap.org/copyright • ' + date)
@@ -179,6 +189,8 @@ class RegionalIndexWindow(StreetSourceWindow):
         self.matches = ()
         self.selected_id = None
         self._selected_feature = None
+        self._selected_coordinate = None
+        self._set_copy_enabled(False)
         self.results.delete(*self.results.get_children())
         self._text('Searching the local index… Previous search results have been cleared.')
         self._schedule()
@@ -249,6 +261,26 @@ class RegionalIndexWindow(StreetSourceWindow):
     def selected(self):
         return self._selected_feature
 
+    def _set_copy_enabled(self, enabled):
+        state = 'normal' if enabled else 'disabled'
+        self.copy_button.configure(state=state)
+        self._controls = [(widget, state if widget is self.copy_button else saved)
+                          for widget, saved in self._controls]
+
+    def copy_coordinates(self):
+        if self._selected_coordinate is None:
+            return
+        latitude, longitude, is_source_point = self._selected_coordinate
+        value = f'{latitude:.7f}, {longitude:.7f}'
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(value)
+        except TclError:
+            self.status.set('Clipboard unavailable. Coordinates: ' + value)
+            return
+        kind = 'source point' if is_source_point else 'approximate feature-bounds center'
+        self.status.set(f'Copied {kind} (latitude, longitude): {value}. Not a verified entrance.')
+
     def select(self):
         selection = self.results.selection()
         if not selection:
@@ -257,9 +289,17 @@ class RegionalIndexWindow(StreetSourceWindow):
         if feature is None:
             return
         self.selected_id, self._selected_feature = feature.id, feature
-        self._text(feature.name + '\n' + feature.id + '\n\n' +
+        self._selected_coordinate = feature_coordinate(feature)
+        self._set_copy_enabled(self._selected_coordinate is not None)
+        coordinate_text = ''
+        if self._selected_coordinate is not None:
+            latitude, longitude, is_source_point = self._selected_coordinate
+            kind = ('Source point coordinate' if is_source_point else
+                    'Approximate feature-bounds center; not an entrance')
+            coordinate_text = f'{kind} (latitude, longitude): {latitude:.7f}, {longitude:.7f}\n\n'
+        self._text(feature.name + '\n' + feature.id + '\n\n' + coordinate_text +
                    '\n'.join(k + ': ' + v for k, v in feature.tags) +
-                   '\n\nSource tags, not access authorization, an address match, or current road conditions.')
+                   '\n\nSource tags do not verify an address, access, or current road conditions.')
         if self.source is not None:
             features = {f.id: f for f in self._viewport_features}
             features[feature.id] = feature
