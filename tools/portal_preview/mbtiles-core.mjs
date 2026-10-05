@@ -1,6 +1,7 @@
 export const MAX_MB_BYTES = 64 * 1024 * 1024;
 export const MAX_MB_TILE_BYTES = 2 * 1024 * 1024;
 export const MB_LAT_LIMIT = 85.0511287798066;
+export const MAX_MB_COVERAGE_ROWS = 50000;
 export function checkMBHeader(bytes) {
   if (!(bytes instanceof Uint8Array) || bytes.length<100 || bytes.length>MAX_MB_BYTES) throw new Error("Choose a closed MBTiles export no larger than 64 MiB. Compatible larger packs can use the desktop map viewer.");
   if (String.fromCharCode(...bytes.subarray(0,16))!=="SQLite format 3\0") throw new Error("This is not a SQLite MBTiles file.");
@@ -74,4 +75,20 @@ export function readMBFrame(pack,lat,lon,zoom) {
     total+=data.length;return {...slot,data};
   });
   return {...frame,tiles};
+}
+
+// Read only the selected zoom's indexed coordinates, never tile blobs or
+// declared coverage metadata. One extra row establishes a partial result.
+export function readMBCoverage(pack,zoom) {
+  if(!pack.info.zooms.includes(zoom))throw new Error("Choose a stored zoom level to inspect coverage.");
+  const rows=mbRows(pack.db,`SELECT tile_column,tile_row,typeof(tile_column),typeof(tile_row) FROM ${pack.table} WHERE zoom_level=? ORDER BY tile_column,tile_row LIMIT ?`,[zoom,MAX_MB_COVERAGE_ROWS+1],MAX_MB_COVERAGE_ROWS+1);
+  const partial=rows.length>MAX_MB_COVERAGE_ROWS,scanned=Math.min(rows.length,MAX_MB_COVERAGE_ROWS),count=2**zoom,groups=new Map();let invalid=0;
+  for(let i=0;i<scanned;i++){
+    const [x,tms,xType,yType]=rows[i];
+    if(xType!=="integer"||yType!=="integer"||!Number.isInteger(x)||!Number.isInteger(tms)||x<0||tms<0||x>=count||tms>=count){invalid++;continue;}
+    const y=count-1-tms,column=Math.floor(x*32/count),row=Math.floor(y*32/count),key=row*32+column;
+    if(groups.has(key)){groups.get(key).count++;continue;}
+    groups.set(key,{column,row,span:Math.max(1,32/count),count:1,sample:{x,y,tms,...mbUnproject((x+.5)*256,(y+.5)*256,zoom)}});
+  }
+  return {zoom,scanned,valid:scanned-invalid,invalid,partial,limit:MAX_MB_COVERAGE_ROWS,cells:[...groups.values()].sort((a,b)=>a.row-b.row||a.column-b.column)};
 }

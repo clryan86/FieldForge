@@ -6,7 +6,7 @@ import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {createHash,webcrypto} from "node:crypto";
 import vm from "node:vm";
-import {inspectMBDatabase,readMBFrame,mbFrame,mbUnproject,checkMBHeader} from "./mbtiles-core.mjs";
+import {inspectMBDatabase,readMBFrame,readMBCoverage,mbFrame,mbUnproject,checkMBHeader} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 const require=createRequire(import.meta.url),SQL=await require("./vendor/sql-asm-1.14.2.js")();
 const fixture=mode=>new Uint8Array(execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[fileURLToPath(new URL("./mbtiles-fixture.py",import.meta.url)),mode||"valid"],{maxBuffer:4*1024*1024}));
@@ -26,6 +26,30 @@ test("reader rejects unsupported schemas, WAL, XYZ and malformed metadata",()=> 
 });
 test("oversized tile blobs are identified before returning them and absent zooms fail",()=> {
   const pack=inspectMBDatabase(SQL,fixture("oversize-tile"));try{const frame=readMBFrame(pack,pack.info.initial.lat,-90,1);assert.ok(frame.tiles.some(tile=>tile.issue==="Unsupported tile size"));assert.ok(frame.tiles.every(tile=>!tile.data||tile.data.length<=2097152));assert.throws(()=>readMBFrame(pack,0,0,3),/not stored/);}finally{pack.db.close();}
+});
+test("coverage uses stored coordinates, TMS orientation and a separate count for malformed rows",()=> {
+  const pack=inspectMBDatabase(SQL,fixture("coverage-invalid"));
+  try {
+    const report=readMBCoverage(pack,1);assert.equal(report.scanned,5);assert.equal(report.valid,2);assert.equal(report.invalid,3);assert.equal(report.partial,false);
+    assert.deepEqual(report.cells.map(c=>[c.column,c.row,c.span,c.count]),[[0,0,16,1],[0,16,16,1]]);
+    assert.equal(report.cells[0].sample.tms,1);assert.ok(report.cells[0].sample.lat>0);assert.ok(report.cells[1].sample.lat<0);assert.equal(report.cells[0].sample.lon,-90);
+    assert.equal(readMBCoverage(pack,2).valid,1);assert.throws(()=>readMBCoverage(pack,3),/stored zoom/);
+    assert.throws(()=>readMBCoverage(pack,"1"),/stored zoom/);assert.throws(()=>pack.db.run("DELETE FROM tiles"),/readonly/);
+  }finally{pack.db.close();}
+});
+test("coverage is explicitly partial only when more indexed rows remain, and groups high zoom tiles",()=> {
+  for(const mode of ["coverage-exact","coverage-limit"]){const pack=inspectMBDatabase(SQL,fixture(mode));try{
+    const report=readMBCoverage(pack,8);assert.equal(report.scanned,50000);assert.equal(report.valid,50000);assert.equal(report.invalid,0);assert.equal(report.partial,mode==="coverage-limit");assert.equal(report.cells.reduce((sum,c)=>sum+c.count,0),50000);assert.ok(report.cells.length<=1024);assert.ok(report.cells.every(c=>c.span===1));
+    for(const c of report.cells){assert.equal(Math.floor(c.sample.x/8),c.column);assert.equal(Math.floor(c.sample.y/8),c.row);}
+  }finally{pack.db.close();}}
+});
+test("world and date-line coverage retain actual tile footprints and do not need readable blobs",()=> {
+  for(const mode of ["coverage-world","coverage-wrap","oversize-tile"]){const pack=inspectMBDatabase(SQL,fixture(mode));try{
+    const report=readMBCoverage(pack,pack.info.initial.zoom);assert.equal(report.invalid,0);assert.equal(report.partial,false);
+    if(mode==="coverage-world"){assert.equal(report.cells.length,1);assert.equal(report.cells[0].span,32);assert.equal(report.cells[0].sample.lon,0);assert.equal(report.cells[0].sample.lat,0);}
+    if(mode==="coverage-wrap"){assert.deepEqual(report.cells.map(c=>[c.column,c.row]),[[31,0],[0,31]]);assert.ok(report.cells[0].sample.lon>179&&report.cells[1].sample.lon<-179);}
+    if(mode==="oversize-tile")assert.equal(report.valid,2);
+  }finally{pack.db.close();}}
 });
 test("Mercator frame math preserves zero, wraps the date line and marks polar padding",()=> {
   assert.deepEqual(mbUnproject(128,128,0),{lat:0,lon:0});assert.equal(mbUnproject(0,128,0).lon,-180);assert.equal(mbUnproject(256,128,0).lon,-180);
@@ -50,6 +74,7 @@ test("built SQLite worker starts and reads a pack with network, eval and WebAsse
   const send=data=>new Promise(resolve=>{reply=resolve;sandbox.self.onmessage({data});});
   const data=fixture(),opened=await send({id:1,kind:"open",bytes:data.buffer});assert.equal(opened.error,undefined);assert.equal(opened.result.name,"Synthetic test fixture");
   const frame=await send({id:2,kind:"frame",lat:opened.result.initial.lat,lon:-90,zoom:1});assert.equal(frame.error,undefined);assert.ok(frame.result.tiles.some(tile=>tile.data));assert.equal(requests,0);
+  const coverage=await send({id:5,kind:"coverage",zoom:1});assert.equal(coverage.error,undefined);assert.equal(coverage.result.valid,2);assert.equal(coverage.result.cells.length,2);
   const vector=await send({id:3,kind:"open",bytes:fixture("vector-mixed").buffer});assert.equal(vector.result.format,"pbf");
   const vectorFrame=await send({id:4,kind:"frame",lat:vector.result.initial.lat,lon:-90,zoom:1});assert.equal(vectorFrame.error,undefined);assert.ok(vectorFrame.result.tiles.some(tile=>tile.vector?.features.length===3));assert.ok(vectorFrame.result.tiles.some(tile=>tile.issue?.includes("Truncated protobuf")));assert.ok(vectorFrame.result.tiles.every(tile=>!tile.data));assert.equal(requests,0);
   const provenance=JSON.parse(readFileSync(new URL("./vendor/sql.js-provenance.json",import.meta.url)));assert.equal(createHash("sha256").update(readFileSync(new URL("./vendor/sql-asm-1.14.2.js",import.meta.url))).digest("hex"),provenance.sha256);

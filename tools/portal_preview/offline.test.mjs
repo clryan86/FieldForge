@@ -133,9 +133,30 @@ for(const mode of ["valid","vector-mixed"])test(`offline download opens ${mode} 
     app.id("mbAddPlace").fire("click");assert.equal(app.id("placesPanel").hidden,false);assert.match(app.id("placesCount").textContent,/1 total/);
     app.id("placesSaveJSON").fire("click");const place=JSON.parse(await app.blobs.at(-1).text()).places[0];assert.ok(place.lat<0&&place.lon<0);assert.match(place.source,/offline-fixture\.mbtiles/);
     assert.match(place.source,mode==="valid"?/raster MBTiles/:/vector MBTiles, basic preview style/);
+    assert.equal(app.id("mbCoverageControls").disabled,false);assert.equal(app.id("mbCoverageResult").hidden,true);
+    await app.id("mbCoverageScan").fire("click");assert.match(app.id("mbCoverageStatus").textContent,/2 indexed tile locations/);assert.match(app.id("mbCoverageStatus").textContent,/Complete index scan at this zoom/);
+    assert.equal(app.id("mbCoverageDrawing").children.length,2);assert.equal(app.id("mbCoverageDrawing").children[0].attrs.height,"16");assert.equal(app.id("mbAddPlace").disabled,false);
+    // The next scan's zoom selector must not change the report's jump target.
+    app.id("mbCoverageZoom").value="2";app.id("mbCoverageAreas").value="0";app.id("mbCoverageAreas").fire("change");await app.id("mbCoverageOpen").fire("click");
+    assert.ok(Number(app.id("mbLatitude").value)>0);assert.equal(app.id("mbZoom").value,"1");
+    assert.equal(app.id("mbAddPlace").disabled,mode!=="valid"); // Northern vector tile is intentionally damaged.
+    app.id("mbCoverageDrawing").children[1].fire("click");assert.match(app.id("mbCoverageSelected").textContent,/tile 1\/0\/1/);await app.id("mbCoverageOpen").fire("click");assert.ok(Number(app.id("mbLatitude").value)<0);assert.equal(app.id("mbAddPlace").disabled,false);
     app.id("mbClose").fire("click");assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.draws.length,0);assert.ok(app.bitmaps.every(bitmap=>bitmap.closed));assert.ok(app.workers.every(worker=>worker.terminated));
     assert.match(app.id("placesCount").textContent,/1 total/);assert.equal(app.storageTouches,0);assert.equal(app.requests,0);assert.deepEqual(app.opened,[]);
     assert.equal(app.id("mbVectorNote").hidden,true);assert.equal(app.id("mbIssues").textContent,"");
+    assert.equal(app.id("mbCoverageResult").hidden,true);assert.equal(app.id("mbCoverageDrawing").children.length,0);assert.equal(app.id("mbCoverageOpen").disabled,true);
+  }finally{app.id("mbClose").fire("click");}
+});
+
+test("offline coverage exposes a partial index scan without claiming unreadable tiles can be used",{timeout:5000},async()=> {
+  const app=boot({mbtiles:true}),raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),"coverage-limit"],{maxBuffer:4*1024*1024});
+  try{
+    app.id("mbFile").files=[{name:"partial.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");
+    assert.equal(app.id("mbAddPlace").disabled,true);await app.id("mbCoverageScan").fire("click");
+    assert.match(app.id("mbCoverageStatus").textContent,/50,000 indexed tile locations/);assert.match(app.id("mbCoverageStatus").textContent,/Partial scan: first 50,000 rows only; more remain/);
+    assert.ok(app.id("mbCoverageAreas").children.length>0&&app.id("mbCoverageAreas").children.length<=1024);assert.equal(app.id("mbCoverageOpen").disabled,false);
+    await app.id("mbCoverageOpen").fire("click");assert.equal(app.id("mbZoom").value,"8");assert.equal(app.id("mbAddPlace").disabled,true);assert.match(app.id("mbIssues").textContent,/Unsupported tile size/);
+    assert.equal(app.requests,0);assert.equal(app.storageTouches,0);
   }finally{app.id("mbClose").fire("click");}
 });
 

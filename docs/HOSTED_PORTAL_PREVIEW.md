@@ -500,3 +500,48 @@ separate unfinished work.
 References: [Mapbox Vector Tile specification](https://github.com/mapbox/vector-tile-spec),
 [version 2.1 protobuf schema](https://github.com/mapbox/vector-tile-spec/blob/master/2.1/vector_tile.proto),
 [DecompressionStream](https://developer.mozilla.org/en-US/docs/Web/API/DecompressionStream).
+
+
+## Stored MBTiles coverage overview (October 5, 2026)
+
+The website and offline desk now include **Stored tile coverage** beneath the
+MBTiles map. Open a pack, choose a stored zoom and select **Inspect coverage**.
+The overview highlights areas containing actual indexed tile coordinates.
+Select an area with the graphic or the labelled area selector, then choose
+**Open stored tile** to navigate to a real indexed tile at the inspected zoom.
+The destination uses that tile's Web Mercator centre. Changing the next scan's
+zoom selector does not change the previous report's jump destination.
+
+This is an index inspection, not a tile-content or coverage-quality audit.
+It does not trust declared bounds or centre metadata. The worker reads only
+tile coordinates from the existing index; it does not retrieve tile blobs.
+At zooms 0–5, rectangles represent actual tile footprints. At higher zooms,
+a 32 × 32 world grid groups tiles into at most 1,024 areas. Highlighting means
+at least one indexed tile exists in that area, not continuous coverage.
+
+Each scan inspects up to 50,000 rows at one zoom and probes one extra row to
+distinguish a complete result from a partial result. Partial scans are labelled
+explicitly; unvisited areas remain unknown. Invalid coordinate rows are counted
+and skipped. Stored coordinates alone do not establish readability, freshness,
+access or usable routes. Opening the destination uses the existing decoder,
+so a damaged tile still cannot supply a selected place.
+
+Scanning preserves the currently displayed map but temporarily disables map
+navigation and coordinate collection. The existing worker deadline applies;
+Close / cancel terminates it. New packs and closure clear coverage, selections
+and controls. Late scan results cannot overwrite a newer pack. No upload,
+external map image, added dependency or persistent browser storage is used.
+
+Validation: **79 Node tests and 4 Python tests pass**. Independent SQLite
+fixtures exercise complete and partial scans at the exact 50,000-row boundary,
+invalid coordinates, coarse grouping, TMS orientation, zoom-zero footprints,
+date-line cells and unreadable/oversized tile blobs. The downloadable HTML
+executes coverage inspection and area navigation through its actual embedded
+worker for raster and mixed valid/damaged vector packs with network and
+storage access forbidden. Additional lifecycle checks discard delayed scan
+results after close or replacement. HTML IDs, label/ARIA references, local
+module imports and embedded worker bytes were checked. DOM/Canvas/worker
+bridges are automated test doubles; native browser and phone QA remain pending.
+
+Offline edition: **dd827730dadc**, **2,074,756 bytes**. Map datasets, routing,
+geocoding and hosted Commons services remain separate unfinished work.

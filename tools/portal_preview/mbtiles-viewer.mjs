@@ -3,21 +3,30 @@ import {createMBClient, createMBFileRead} from "./mbtiles-client.mjs";
 import {imageHeader} from "./image-core.mjs";
 import {vectorLabel} from "./vector-core.mjs";
 import {drawVectorTiles} from "./mvt-renderer.mjs";
+import {createMBCoverage} from "./mbtiles-coverage.mjs";
 
 export function createMBViewer({onAddPoint,clientFactory=createMBClient}) {
   const id=key=>document.getElementById(key),canvas=id("mbCanvas"),ctx=canvas.getContext("2d");
-  let client=null,fileRead=null,info=null,frame=null,selected=null,bitmaps=[],vectors=[],generation=0,busy=false,filename="";
+  let client=null,fileRead=null,info=null,frame=null,selected=null,bitmaps=[],vectors=[],generation=0,busy=false,filename="",coverage=null;
   const status=(text,error=false)=>{id("mbStatus").textContent=text;id("mbStatus").classList.toggle("error",error);};
   const node=(tag,text)=>{const element=document.createElement(tag);if(text!==undefined)element.textContent=text;return element;};
-  function controls() {id("mbControls").disabled=!info||busy;id("mbAddPlace").disabled=!selected||busy;id("mbPixelControls").disabled=!frame||busy;}
+  function controls() {id("mbControls").disabled=!info||busy;id("mbAddPlace").disabled=!selected||busy;id("mbPixelControls").disabled=!frame||busy;coverage?.setBusy(busy);}
   function dispose() {for(const item of bitmaps)item.bitmap.close();bitmaps=[];vectors=[];frame=null;selected=null;id("mbSelected").textContent="No tile pixel selected";id("mbTileSummary").textContent="No frame loaded";id("mbIssues").textContent="";ctx?.clearRect(0,0,768,512);controls();}
   function clear(message="Map pack closed. Collected places and your original file are unchanged.") {
-    generation++;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";dispose();
+    generation++;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";coverage?.reset();dispose();
     id("mbFile").value="";id("mbClose").disabled=true;id("mbName").textContent="Local MBTiles map";id("mbAttribution").textContent="Attribution will appear here from your map pack.";
     id("mbDescription").textContent="";id("mbZoom").replaceChildren();id("mbLatitude").value="";id("mbLongitude").value="";id("mbColumn").value="384";id("mbRow").value="256";
     id("mbVectorNote").hidden=true;id("mbPointNames").checked=true;status(message);
   }
   if(!ctx) {id("mbFile").disabled=true;status("This browser cannot draw the local map canvas.",true);return;}
+  coverage=createMBCoverage({onOpen:show,onScan:async zoom=>{
+    if(!client||!info||busy)return;
+    if(!info.zooms.includes(zoom)){status("Choose a stored zoom level to inspect coverage.",true);return;}
+    const token=generation;busy=true;controls();coverage.reading(zoom);
+    try {const report=await client.request("coverage",{zoom});if(token!==generation)return;coverage.show(report);}
+    catch(error){if(token===generation){clear();status(error.message||"Could not inspect the tile index.",true);}}
+    finally{if(token===generation){busy=false;controls();}}
+  }});
   function draw() {
     ctx.clearRect(0,0,768,512);if(!frame)return;
     ctx.fillStyle="#102c23";ctx.fillRect(0,0,768,512);ctx.font="13px system-ui";ctx.textAlign="center";
@@ -76,6 +85,7 @@ export function createMBViewer({onAddPoint,clientFactory=createMBClient}) {
       const result=await client.request("open",{bytes},[bytes]);if(token!==generation)return;
       if(result.format!=="pbf"&&typeof createImageBitmap!=="function")throw new Error("This browser needs ImageBitmap support to decode raster map tiles.");
       info=result;filename=file.name;busy=false;
+      coverage.setPack(info);
       id("mbVectorNote").hidden=info.format!=="pbf";
       id("mbName").textContent=vectorLabel(info.name,"Local map pack",160);id("mbAttribution").textContent=info.attribution;id("mbDescription").textContent=info.description;
       id("mbZoom").replaceChildren();for(const z of info.zooms){const option=node("option",`Zoom ${z}`);option.value=String(z);id("mbZoom").append(option);}

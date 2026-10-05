@@ -5,7 +5,7 @@ import {execFileSync} from "node:child_process";
 import {createRequire} from "node:module";
 import {fileURLToPath} from "node:url";
 import {createMBViewer} from "./mbtiles-viewer.mjs";
-import {inspectMBDatabase,readMBFrame} from "./mbtiles-core.mjs";
+import {inspectMBDatabase,readMBFrame,readMBCoverage} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 import {createMBClient, createMBFileRead} from "./mbtiles-client.mjs";
 const require=createRequire(import.meta.url),SQL=await require("./vendor/sql-asm-1.14.2.js")();
@@ -15,7 +15,7 @@ const deferred=()=> {let resolve;const promise=new Promise(r=>{resolve=r;});retu
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 
 // Real SQLite and tile bytes, with DOM/bitmap doubles. Not native Canvas QA.
-test("MBTiles UI collects decoded pixels and replacement opens do not wait for canceled reads or decodes",{timeout:5000},async()=> {
+test("MBTiles UI collects pixels and replacement opens discard canceled reads, decodes and coverage scans",{timeout:5000},async()=> {
   const saved=new Map(["document","createImageBitmap","FileReader"].map(key=>[key,Object.getOwnPropertyDescriptor(globalThis,key)])),elements=new Map(),draws=[],bitmaps=[],clients=[],collected=[],readers=[];
   class Reader {
     constructor(){this.readyState=0;this.aborted=false;readers.push(this);}
@@ -29,7 +29,8 @@ test("MBTiles UI collects decoded pixels and replacement opens do not wait for c
   el("mbCanvas").getContext=()=>ctx;el("mbCanvas").getBoundingClientRect=()=>({width:768,height:512,left:0,top:0});
   const bitmap=()=>{const b={width:256,height:256,closed:false,close(){this.closed=true;}};bitmaps.push(b);return b;};
   let decode=async blob=>{assert.equal(imageHeader(new Uint8Array(await blob.arrayBuffer())).width,256);return bitmap();};
-  const factory=()=>{let pack;const c={closed:false,async request(kind,data){if(kind==="open"){pack=inspectMBDatabase(SQL,new Uint8Array(data.bytes));return pack.info;}return readMBFrame(pack,data.lat,data.lon,data.zoom);},close(){pack?.db.close();this.closed=true;}};clients.push(c);return c;};
+  let coverageDelay=null;
+  const factory=()=>{let pack;const c={closed:false,async request(kind,data){if(kind==="open"){pack=inspectMBDatabase(SQL,new Uint8Array(data.bytes));return pack.info;}if(kind==="coverage"){const report=readMBCoverage(pack,data.zoom);if(coverageDelay)await coverageDelay;return report;}return readMBFrame(pack,data.lat,data.lon,data.zoom);},close(){pack?.db.close();this.closed=true;}};clients.push(c);return c;};
   const open=name=>{el("mbFile").files=[{name,size:bytes.byteLength,arrayBuffer:async()=>bytes.slice(0)}];return el("mbFile").fire("change");};
   try {
     Object.defineProperty(globalThis,"document",{value:{getElementById:el,createElement:make},configurable:true});
@@ -52,6 +53,13 @@ test("MBTiles UI collects decoded pixels and replacement opens do not wait for c
     const slowDecode=deferred(),lateDecode=bitmap();decode=()=>slowDecode.promise;const decoding=open("old-decode.mbtiles");await settle();decode=async()=>bitmap();await open("replacement.mbtiles");
     assert.equal(el("mbControls").disabled,false);await el("mbAddPlace").fire("click");assert.match(collected.at(-1).source,/replacement.mbtiles/);
     slowDecode.resolve(lateDecode);await decoding;assert.equal(lateDecode.closed,true);assert.equal(el("mbControls").disabled,false);
+    for(const replace of [false,true]){
+      await open("scan.mbtiles");const wait=deferred();coverageDelay=wait.promise;const scanning=el("mbCoverageScan").fire("click");
+      assert.equal(el("mbControls").disabled,true);assert.equal(el("mbAddPlace").disabled,true);assert.ok(draws.length);
+      if(replace)await open("replacement-scan.mbtiles");else await el("mbClose").fire("click");
+      wait.resolve();await scanning;coverageDelay=null;
+      assert.equal(el("mbCoverageResult").hidden,true);assert.equal(el("mbCoverageDrawing").children.length,0);assert.equal(el("mbCoverageOpen").disabled,true);assert.equal(el("mbControls").disabled,!replace);
+    }
     await el("mbClose").fire("click");assert.ok(bitmaps.every(b=>b.closed));
   } finally {for(const c of clients)if(!c.closed)c.close();for(const [key,value] of saved){if(value)Object.defineProperty(globalThis,key,value);else delete globalThis[key];}}
 });
