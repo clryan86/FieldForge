@@ -93,6 +93,37 @@ function addManual(app,name,lat = "0",lon = "0",source = "") {
   app.id("placesForm").fire("submit");
 }
 function collectionFile(name,text) { const bytes = new TextEncoder().encode(text); return {name,size:bytes.length,arrayBuffer:async () => bytes.buffer}; }
+test("offline vector layers draw polygon holes, inspect vertices and collect selected coordinates",async()=> {
+  const app=boot(), shape={type:"Feature",properties:{name:"Area <b>text</b>",note:"<img src=x>"},geometry:{type:"Polygon",coordinates:[[[0,0],[4,0],[4,4],[0,4],[0,0]],[[1,1],[2,1],[2,2],[1,2],[1,1]]]}};
+  app.id("vectorTab").fire("click"); assert.equal(app.id("vectorPanel").hidden,false); assert.equal(app.id("packPanel").hidden,true);
+  app.id("vectorFile").files=[collectionFile("area.geojson",JSON.stringify(shape))]; await app.id("vectorFile").fire("change");
+  assert.match(app.id("vectorOverview").textContent,/1 features · 10 positions/);
+  const path=app.id("vectorDrawing").children[0].children[1]; assert.equal(path.attrs["fill-rule"],"evenodd"); assert.equal((path.attrs.d.match(/Z/g)||[]).length,2);
+  assert.equal(app.id("vectorSelectedName").textContent,"Area <b>text</b>"); assert.ok(app.id("vectorProperties").textContent.includes("<img src=x>"));
+  app.id("vectorVertex").value="6"; app.id("vectorVertex").fire("input"); assert.equal(app.id("vectorLatitude").textContent,"1.0000000"); assert.equal(app.id("vectorLongitude").textContent,"2.0000000");
+  app.id("vectorZoomIn").fire("click"); assert.equal(app.id("vectorZoomLevel").textContent,"1.5×"); app.id("vectorFit").fire("click"); assert.equal(app.id("vectorSvg").attrs.viewBox,"0 0 800 380");
+  app.id("vectorSaveFeature").fire("click"); assert.deepEqual(JSON.parse(await app.blobs.at(-1).text()),shape);
+  app.id("vectorAddPlace").fire("click"); assert.equal(app.id("placesPanel").hidden,false); assert.match(app.id("placesRows").textContent,/vertex 7/); assert.match(app.id("placesRows").textContent,/area.geojson/);
+  app.id("placesSaveJSON").fire("click"); const place=JSON.parse(await app.blobs.at(-1).text()).places[0]; assert.equal(place.lat,1); assert.equal(place.lon,2);
+  app.id("vectorClear").fire("click"); assert.equal(app.id("vectorAddPlace").disabled,true); assert.match(app.id("placesCount").textContent,/1 total/);
+  assert.equal(app.storageTouches,0); assert.equal(app.requests,0); assert.deepEqual(app.opened,[]);
+});
+test("offline vector selection is cleared for failed, cancelled and superseded reads",async()=> {
+  const app=boot(), geo=name=>JSON.stringify({type:"Feature",properties:{name},geometry:{type:"Point",coordinates:[0,0]}});
+  app.id("vectorFile").files=[collectionFile("point.json",geo("Current"))]; await app.id("vectorFile").fire("change");
+  app.id("vectorSearch").value="missing"; app.id("vectorSearch").fire("input"); assert.equal(app.id("vectorAddPlace").disabled,true);
+  app.id("vectorDrawing").children[0].fire("click"); assert.equal(app.id("vectorSearch").value,""); assert.equal(app.id("vectorAddPlace").disabled,false);
+  app.id("vectorFile").files=[collectionFile("invalid.json",'{"type":"Point","coordinates":[0,91]}')]; await app.id("vectorFile").fire("change"); assert.equal(app.id("vectorAddPlace").disabled,true); assert.equal(app.id("vectorDrawing").children.length,0);
+  for(const replacement of [false,true]) {
+    let release; const pending=new Promise(resolve=>{release=resolve;});
+    app.id("vectorFile").files=[{name:"late.json",size:100,arrayBuffer:()=>pending}]; const reading=app.id("vectorFile").fire("change");
+    if(replacement) { app.id("vectorFile").files=[collectionFile("new.json",geo("Replacement"))]; await app.id("vectorFile").fire("change"); } else app.id("vectorClear").fire("click");
+    release(new TextEncoder().encode(geo("Late stale result")).buffer); await reading;
+    assert.ok(!app.id("vectorSelectedName").textContent.includes("Late")); assert.equal(app.id("vectorAddPlace").disabled,!replacement);
+  }
+  app.id("vectorFile").files=[{name:"bad-utf8.json",size:1,arrayBuffer:async()=>new Uint8Array([255]).buffer}]; await app.id("vectorFile").fire("change"); assert.match(app.id("vectorStatus").textContent,/UTF-8/);
+  assert.equal(app.id("vectorSaveFeature").disabled,true); assert.equal(app.storageTouches,0); assert.equal(app.requests,0);
+});
 test("offline field sheets include all filtered matches, selected estimates and chosen source notes", async () => {
   const app = boot();
   addManual(app,"Camp west","0","179","PRIVATE_WEST"); addManual(app,"Camp east","0","-179","PRIVATE_EAST"); addManual(app,"Excluded site","1","2");

@@ -1,4 +1,5 @@
 import {MAX_GPX_BYTES, PLAN_KIND, downloadEstimate, validatePlan, parseGPX, projectTrace, waypointCSV} from "./desk-core.mjs";
+import {createVectorViewer} from "./vector-viewer.mjs";
 import {createPlaces} from "./places.mjs";
 import {GPX_SOURCE, IMAGE_SOURCE} from "./places-core.mjs";
 import {createImageViewer} from "./image-viewer.mjs";
@@ -76,6 +77,7 @@ function download(text, mime, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 const savedPlaces = createPlaces({download});
+createVectorViewer({download, onAddPoint:point => { id("vectorStatus").textContent = savedPlaces.add([point],"GeoJSON vertex"); selectTool("places"); }});
 function collectPlaces(points, source, label, statusId) {
   try {
     const entries = points.map((point,index) => ({name:point.name || `Waypoint ${index+1}`,lat:point.lat,lon:point.lon,source}));
@@ -125,7 +127,7 @@ if (!offlineEdition) try {
 } catch { announcePlan("A saved device plan could not be restored. Open a saved plan file or start a new selection."); }
 
 function selectTool(kind) {
-  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"]]) {
+  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"], ["vector", "vectorTab", "vectorPanel"]]) {
     id(panel).hidden = kind !== tool; id(tab).setAttribute("aria-pressed", String(kind === tool));
   }
   if (kind === "image") imageViewer.refresh();
@@ -133,6 +135,7 @@ function selectTool(kind) {
 id("packTab").addEventListener("click", () => selectTool("packs"));
 id("traceTab").addEventListener("click", () => selectTool("trace"));
 id("imageTab").addEventListener("click", () => selectTool("image"));
+id("vectorTab").addEventListener("click", () => selectTool("vector"));
 id("placesTab").addEventListener("click", () => selectTool("places"));
 const svgNS = "http://www.w3.org/2000/svg";
 function svg(tag, attrs) { const element = document.createElementNS(svgNS, tag); for (const [key, value] of Object.entries(attrs)) element.setAttribute(key, value); return element; }

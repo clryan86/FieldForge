@@ -317,3 +317,57 @@ printing/PDF pagination, desktop UI and phone behavior have not been tested.
 This addition does not activate hosted accounts, live messaging, address search,
 routing, billing or map-data hosting. Existing source links and other portal
 sections retain their stated status.
+
+## Offline GeoJSON vector layers (October 5, 2026)
+
+The preparation desk now includes **Vector layers**, available on the website
+and in its standalone offline HTML download. Users open a local WGS 84 GeoJSON
+file, view points / lines / polygons, select a drawn feature or choose it in a
+searchable feature list, inspect its coordinate vertices and properties, and
+copy a selected vertex into Saved places. That collection can then produce the
+existing CSV, GPX, JSON and printable field sheets. The selected feature can
+also be exported as GeoJSON with its geometry, properties and optional ID.
+Other top-level feature metadata is omitted; retain the original source.
+
+The renderer uses native SVG paths and circles with bounded 1–8× zoom, pan and
+fit controls. Polygon rings use separate even-odd subpaths to retain holes.
+The view is north-up, linear longitude / latitude (plate carrée), not a basemap,
+a measured ground-distance view or a navigation route. A selected vertex is an
+actual file position, not a centroid or inferred destination. Source filename
+and an unverified-coordinate label accompany points collected into Saved places.
+Properties are rendered as text, never active HTML or links; nested properties
+are summarized onscreen but retained in feature exports.
+
+Supported geometry types: Point, MultiPoint, LineString, MultiLineString,
+Polygon, MultiPolygon and GeometryCollection. Limits: 4 MiB UTF-8, 1,000
+features, 10,000 positions, 2,000 geometry parts and eight nested collection
+levels. Coordinates must be finite longitude / latitude with optional finite
+altitude. Altitude is retained in feature export but not used in this 2D view
+or Saved places. Null feature geometries are counted and cannot produce a
+selected coordinate. Empty geometry arrays are rejected. Polygon closure is
+checked; topology, winding, source accuracy and access rights are not verified.
+Legacy CRS declarations are rejected. Edges spanning over 180° longitude must
+be split before import; split date-line parts appear on opposite sides of the
+unwrapped longitude view. Supplied bounding-box metadata is not used for fitting.
+
+Opening a new file clears previous geometry and selected coordinates. Invalid
+files reject as a whole. Clear/cancel and later file choices invalidate earlier
+asynchronous reads. No file content is uploaded or automatically persisted.
+Clearing the viewer does not delete points already collected or exported files.
+
+Validation: **58 Node tests and 4 Python tests pass**. New checks exercise all
+supported geometry types, hole subpaths, finite projection, zero/polar/date-line
+coordinates, invalid geometry and resource limits, provenance and export
+retention. The actual offline bundle runs against a DOM double with network and
+storage forbidden; tests cover feature selection, vertex collection, local
+export, zoom, failed imports, UTF-8 rejection, cancellation and superseded reads.
+Built HTML IDs, labels, ARIA targets, local assets and module imports were
+checked. These are automated DOM/structure checks, not native browser rendering,
+phone or physical printing QA.
+
+The new offline edition is **fe0749353e8b**, 197,901 bytes. No third-party runtime
+or online asset dependency was added. GeoJSON support does **not** provide
+browser MBTiles/vector-tile decoding, shapefile/KML/GeoTIFF support, map datasets,
+routing, hosted chat or accounts.
+
+Format reference: [IETF RFC 7946](https://www.rfc-editor.org/rfc/rfc7946.html).
