@@ -369,6 +369,10 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
     assert b"four user-shared OSM packages cover Kansas, Nebraska, North Dakota and South Dakota" in body
     assert b"Prepared regional map" in body and b"Import package ZIP" in body
     assert b"portal does not host these files yet" in body
+    assert body.count(b'href="https://download.geofabrik.de/north-america/us/') == 53
+    assert b"Download a regional PBF (53 areas)" in body
+    assert b"U.S. Virgin Islands" in body and b"district-of-columbia-latest.osm.pbf" in body
+    assert b"not a routing graph or driving directions" in body
     external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)
     allowed_hosts = (b"download.geofabrik.de", b"operations.osmfoundation.org",
                      b"www.maptiler.com", b"distribution.charts.noaa.gov", b"www.redcross.org",
