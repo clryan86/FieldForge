@@ -247,7 +247,7 @@ def test_failed_atomic_route_write_leaves_no_available_or_temporary_file(tmp_pat
         raise OSError("Simulated publication failure")
 
     library = PortalLibrary(tmp_path)
-    monkeypatch.setattr(storage.os, "link", fail)
+    monkeypatch.setattr(storage, "_publish_new_path", fail)
     with pytest.raises(OSError):
         library.save_route(route())
     assert list(library.routes_directory.iterdir()) == [] and library.routes() == ()

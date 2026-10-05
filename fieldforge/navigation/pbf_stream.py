@@ -51,7 +51,11 @@ def checked_open(path: Path):
         actual = os.fstat(descriptor)
         key = (actual.st_dev, actual.st_ino, actual.st_size,
                actual.st_mtime_ns, actual.st_ctime_ns)
-        if not stat.S_ISREG(actual.st_mode) or key != before:
+        # Windows can report different ctimes through paths and file handles.
+        # Compare identity/size/mtime across APIs, but the full path signature
+        # before and after opening so a real change is still refused.
+        if (not stat.S_ISREG(actual.st_mode) or key[:4] != before[:4]
+                or signature(path) != before):
             raise ValueError('Local source changed while opening.')
         return os.fdopen(descriptor, 'rb'), before
     except BaseException:

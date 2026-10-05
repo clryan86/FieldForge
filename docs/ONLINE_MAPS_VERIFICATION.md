@@ -1,5 +1,37 @@
 # Online map and route preparation verification
 
+## Windows portability follow-up — 2026-10-05
+
+The first hosted run for `a43e25d` passed Linux Tk and Chromium but exposed
+Windows failures in the regional source opener and three test fixtures. The
+[map compatibility run](https://github.com/clryan86/FieldForge/actions/runs/37317039859)
+recorded 17 failed tests and 8 setup errors on Windows; its Linux job passed.
+The separate [Commons run](https://github.com/clryan86/FieldForge/actions/runs/37317040022)
+passed for the same commit.
+
+The source opener now compares device, inode, size and modification time
+between the pathname and file handle, then checks the complete pathname
+signature, including change time, before and after opening. This follows the
+existing download-storage approach: Windows can report different change times
+through the two APIs. Complete pathname checks after PBF reading and archive
+extraction remain in place. Regular-file checks and descriptor cleanup are
+unchanged.
+
+The fixture corrections resolve both destination paths before comparing them,
+explicitly close two SQLite connections after committing, and inject a route
+publication failure at the shared publication helper used on both platforms.
+They retain the original destination, cleanup and failure assertions.
+
+Focused local verification passed **195 tests and 78 subtests**, with no skips:
+124 regional-reader, identity and portal tests, plus 71 server/storage tests.
+The 17 new identity cases cover actual replacement with preserved size/mtime,
+changes during opening and reading, handle-only change-time differences,
+descriptor cleanup on interruption, and real PBF preparation/archive import.
+Independent review found no blocking issue. Both draft-branch platform jobs
+and the main workflow now include this module. These local Linux results use
+deterministic Windows-style metadata fixtures; the corrective commit's hosted
+Windows job remains the platform confirmation.
+
 ## Prepared regional portal workflow — 2026-10-05
 
 Prepared `.ffmap` indexes now use the shared immutable publisher, catalog,
