@@ -151,7 +151,7 @@ and a stored username hash permanently reserves the former username. The owner
 console identifies and counts closed records separately and cannot restore their
 access. Previously viewed copies, downloads, and backups cannot be recalled.
 
-The current Commons schema is **version 8**. The profile additions in version
+The current Commons schema is **version 9**. The profile additions in version
 **5** and invitation lifecycle in version **6** remain part of the supported
 upgrade path, along with account export/closure in version **7**. Version **8**
 adds a separate invitation choice to profiles, off by default. Saved members
@@ -162,6 +162,9 @@ records. The server rechecks current profile visibility and consent when creatin
 an invitation. Existing accounts and owner configuration are preserved; closure
 occurs only through its explicit authenticated action. See the
 [account guide](COMMONS_ACCOUNTS.md) for the full scope and migration details.
+Version **9** adds bounded owner announcements and withdrawn-notice retry
+records. It preserves existing account, owner, profile, and conversation state
+under the established retention rules.
 
 ## Community areas and resources
 
@@ -170,6 +173,16 @@ The web experience should connect **Community**, **Maps**, **Knowledge Library**
 rooms can be grouped by member-selected work area. Include member blocking,
 reporting, moderation, admin announcements, and deletion/export controls before
 opening rooms to the public.
+
+The local preview now implements owner announcements: a current MFA-verified
+owner session can publish up to five active plain-text notices or withdraw
+them. Connected members, including guests, see these service notices above both
+rooms and the private inbox. Publication retries are checked against retained
+request records, withdrawal clears notice text, and the bounded owner audit
+records the action without the title or body. The server retains withdrawn
+retry metadata for seven days, up to 1,000 total announcement records. No push
+notifications, delivery receipts, scheduling, or public hosting are implied.
+See [owner announcements](COMMONS_OWNER.md#owner-announcements).
 
 Resources should use reviewed topic pages for medical supplies, food and water
 storage, communications, tools, MREs, and military-surplus equipment. External

@@ -148,8 +148,9 @@ Each result includes `id`, `thread`, `title`, `kind`, `author`, `name`, `created
 `body`, and `own`. `older_before` is the last returned message ID when additional
 visible matches remain, or `null`. A cursor is only an ID boundary and grants no
 access. New messages and retention can change later results; this is a search
-of currently retained data, not a frozen export. No database migration or extra
-dependency is required; the current schema remains version 8.
+of currently retained data, not a frozen export. Search itself requires no
+database migration or extra dependency. The current schema is version 9,
+which adds the separate [owner-announcement feature](COMMONS_OWNER.md#owner-announcements).
 
 ## Conversation capacity and invitation limits
 
@@ -289,13 +290,14 @@ invitations before reclaiming fully left conversations or irrecoverable guest
 memberships. It preserves public room history, saved accounts, profiles and
 photos, owner configuration, and private history that still has an eligible
 member. Account export/closure introduced **schema version 7**, adding account
-closure references and temporary export authorizations. The current directory
+closure references and temporary export authorizations. The directory
 invitation update uses **schema version 8**, adding the profile's separate
 `allow_invitations` choice with a false default. Existing listed profiles also
-migrate with directory invitations off. Current preview and owner utilities
-preserve version 8.
+migrate with directory invitations off. Current **schema version 9** adds owner
+announcements and their retry records without changing private-message storage.
+Preview and owner utilities preserve version 9.
 Stop the preview and keep a backup of test data before changing versions; older
-code that does not support version 8 must not operate on the upgraded database.
+code that does not support version 9 must not operate on the upgraded database.
 The preview refuses to use an unrelated application database.
 
 ## Public launch status

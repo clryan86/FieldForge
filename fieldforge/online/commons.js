@@ -2,7 +2,7 @@
 (() => {
   const el = id => document.getElementById(id);
   let joined = false, active = false, room = "general", timer = null, reader = null;
-  let revision = 0, identityRevision = 0, sending = false, reportMessage = null;
+  let revision = 0, identityRevision = 0, announcementRevision = 0, sending = false, reportMessage = null;
   let privateChat, accountUI, profileUI, viewer = null;
   const drafts = new Map();
   const notice = (text, error = false) => { el("status").textContent = text; el("status").classList.toggle("error", error); };
@@ -53,7 +53,7 @@
     profileUI?.setSession(joined, active, viewer);
   }
   function stop() {
-    active = false; revision++; identityRevision++; clearTimeout(timer); reader?.abort(); reader = null; controls();
+    active = false; revision++; identityRevision++; clearTimeout(timer); reader?.abort(); reader = null; clearAnnouncements(); controls();
   }
   function failed(error) {
     if (error.name === "AbortError" || error.sessionEnded) return;
@@ -64,6 +64,7 @@
   function clearIdentity() {
     active = false; joined = false; viewer = null; identityRevision++; revision++;
     clearTimeout(timer); reader?.abort(); reader = null;
+    clearAnnouncements();
     drafts.clear(); el("message").value = ""; count(); controls();
     el("messages").replaceChildren(); el("emptyState").hidden = false;
     el("sessionName").textContent = "Preview"; el("blockedList").replaceChildren(); delete el("blockedList").dataset.value; el("blockedCount").textContent = "(0)";
@@ -79,6 +80,7 @@
   }
   async function connected(data) {
     if (viewer && viewer.id !== data.viewer.id) clearIdentity();
+    clearAnnouncements();
     identityRevision++; viewer = data.viewer; joined = true; active = true; controls();
     notice(`Joined as ${viewer.name}. ${viewer.account ? "Your account keeps access to your inbox after sign-out." : "Messages are saved on this local server."}`);
     await refresh();
@@ -121,6 +123,35 @@
       content.append(actions);
     }
     article.append(content); return article;
+  }
+  function clearAnnouncements() {
+    // Hiding and showing a tab may happen before an older reply arrives.
+    // This generation belongs to notices alone; ordinary chat keeps its lifecycle.
+    announcementRevision++;
+    el("commonsAnnouncementList").replaceChildren(); el("commonsAnnouncements").hidden = true;
+    el("commonsAnnouncementCount").textContent = "";
+  }
+  function renderAnnouncements(data) {
+    if (!joined || !active || document.hidden) return;
+    const list = el("commonsAnnouncementList"), announcements = data.announcements;
+    const existing = new Map(Array.from(list.children).map(child => [Number(child.dataset.id), child]));
+    const ids = new Set(announcements.map(announcement => announcement.id));
+    for (const [id, article] of existing) if (!ids.has(id)) article.remove();
+    for (const [index, announcement] of announcements.entries()) {
+      const previous = existing.get(announcement.id), signature = JSON.stringify(announcement);
+      if (previous?.dataset.value === signature) continue;
+      const article = node("article", undefined, "announcement-card");
+      article.dataset.id = announcement.id; article.dataset.value = signature; article.setAttribute("role", "listitem");
+      const heading = node("div", undefined, "announcement-meta");
+      heading.append(node("span", "Owner announcement", "tag"), node("strong", "CLRYAN86"));
+      const created = new Date(announcement.created * 1000), time = node("time", created.toLocaleString());
+      time.dateTime = created.toISOString(); heading.append(time);
+      article.append(heading, node("h3", announcement.title), node("p", announcement.body, "announcement-body"));
+      if (previous) previous.replaceWith(article); else list.insertBefore(article, list.children[index] || null);
+    }
+    const count = `${announcements.length} active`;
+    if (el("commonsAnnouncementCount").textContent !== count) el("commonsAnnouncementCount").textContent = count;
+    el("commonsAnnouncements").hidden = announcements.length === 0;
   }
   function render(data) {
     viewer = data.viewer;
@@ -166,10 +197,16 @@
     clearTimeout(timer); reader?.abort(); const ownRevision = ++revision;
     if (!active) return;
     reader = new AbortController();
+    const ownAnnouncementRevision = announcementRevision;
     try {
-      const data = await request("read", {room}, reader.signal);
+      const [data, announcements] = await Promise.all([
+        request("read", {room}, reader.signal),
+        !document.hidden ? request("announcements", {}, reader.signal) : Promise.resolve(null)
+      ]);
       if (!active || ownRevision !== revision) return;
-      render(data); await privateChat.poll(reader.signal);
+      render(data);
+      if (announcements && ownAnnouncementRevision === announcementRevision && !document.hidden) renderAnnouncements(announcements);
+      await privateChat.poll(reader.signal);
       if (active && ownRevision === revision) timer = setTimeout(refresh, 2000);
     } catch (error) { if (ownRevision === revision) failed(error); }
   }
@@ -248,6 +285,7 @@
     finally { button.disabled = false; }
   });
   window.addEventListener("offline", () => { if (joined) { stop(); notice("Connection changed. Chat is paused; choose Resume chat when ready."); } });
+  document.addEventListener("visibilitychange", () => { if (document.hidden) clearAnnouncements(); });
   window.addEventListener("pagehide", stop);
   controls();
 })();

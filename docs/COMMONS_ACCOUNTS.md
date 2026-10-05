@@ -237,9 +237,11 @@ or an expired/revoked session to avoid carrying them into another identity.
 
 Accounts introduced schema version 3; the owner console adds version 4,
 profiles add version 5, the [inbox lifecycle update](COMMONS_PRIVATE_MESSAGES.md)
-adds version 6, and account export/closure adds version 7. The current
-**version 8** adds separate, default-off consent for
+adds version 6, and account export/closure adds version 7. Version **8** adds
+separate, default-off consent for
 [invitations from directory profiles](COMMONS_PROFILES.md#invite-a-directory-member-to-chat).
+Current **version 9** adds [owner announcements](COMMONS_OWNER.md#owner-announcements)
+and bounded withdrawn-notice retry metadata.
 These upgrades
 preserve saved-account data. Version 3 adds accounts and rate-limit counters
 to version 1/2 databases.

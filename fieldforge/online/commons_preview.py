@@ -52,10 +52,11 @@ class PreviewHandler(PortalHandler):
             if (self.headers.get_all("X-FieldForge-Chat") != ["preview-v1"]
                     or self.command != "POST" or len(self.headers.get_all("Origin", [])) != 1):
                 raise ChatError(403, "Use the local chat page to access this preview.")
-            # Preserve small API limits while allowing bounded photo bytes and a fully
-            # JSON-escaped, 500-character Unicode biography with its questionnaire.
+            # Preserve small API limits while allowing bounded photos and fully
+            # JSON-escaped Unicode in profile and announcement payloads.
             body_limit = {API_ROOT + "profile/photo/upload": PHOTO_REQUEST_BYTES,
-                          API_ROOT + "profile/save": 8192}.get(self.path, 4096)
+                          API_ROOT + "profile/save": 8192,
+                          API_ROOT + "owner/announcements/publish": 8192}.get(self.path, 4096)
             payload = _request_body(self.rfile, self.headers.get_all("Content-Length", []),
                                     self.headers.get_all("Content-Type", []), maximum=body_limit)
             cookies = SimpleCookie()
@@ -117,7 +118,7 @@ class PreviewApplication(PortalApplication):
 
     def chat_response(self, path, payload, token):
         name = path.removeprefix(API_ROOT)
-        schemas = {"join": {"name", "skill", "consent"}, "read": {"room"},
+        schemas = {"join": {"name", "skill", "consent"}, "read": {"room"}, "announcements": set(),
                    "send": {"room", "body", "request_id"}, "delete": {"message"},
                    "block": {"target", "blocked"}, "report": {"message", "reason"},
                    "export": set(), "leave": set(), "private/inbox": set(),
@@ -146,6 +147,9 @@ class PreviewApplication(PortalApplication):
                    "profile/invite": {"profile_id", "title", "request_id"},
                    "owner/login": {"username", "password", "code", "consent"},
                    "owner/dashboard": set(), "owner/reports": set(), "owner/lock": set(),
+                   "owner/announcements": set(),
+                   "owner/announcements/publish": {"title", "body", "request_id"},
+                   "owner/announcements/withdraw": {"announcement"},
                    "owner/members": {"query", "offset"},
                    "owner/control": {"target", "action", "reason"},
                    "owner/resolve": {"scope", "message", "action", "reason"},
@@ -168,8 +172,11 @@ class PreviewApplication(PortalApplication):
                 methods = {"dashboard": self.store.owner_dashboard, "members": self.store.owner_members,
                            "reports": self.store.owner_reports, "control": self.store.owner_control,
                            "resolve": self.store.owner_resolve, "lock": self.store.owner_lock,
+                           "announcements": self.store.owner_announcements,
+                           "announcements/publish": self.store.owner_announcements_publish,
+                           "announcements/withdraw": self.store.owner_announcements_withdraw,
                            "password": self.store.owner_password}
-                result = methods[name.split("/")[1]](token, **payload) or {"ok": True}
+                result = methods[name.removeprefix("owner/")](token, **payload) or {"ok": True}
         elif name.startswith("profile/"):
             methods = {"get": self.store.profile_get, "save": self.store.profile_save,
                        "photo/upload": self.store.profile_photo_upload,
@@ -213,6 +220,8 @@ class PreviewApplication(PortalApplication):
             cookie = _cookie(token)
         elif name == "read":
             result = self.store.read(token, payload["room"])
+        elif name == "announcements":
+            result = self.store.announcements(token)
         elif name == "send":
             result = self.store.send(token, **payload)
         elif name == "delete":

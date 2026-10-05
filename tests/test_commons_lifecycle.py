@@ -663,7 +663,7 @@ def test_schema_six_migration_preserves_accounts_history_profiles_and_schema_eig
     for constructor in (ChatStore, PrivateChatStore, AccountStore, OwnerStore, ProfileStore, AccountLifecycleStore):
         constructor(store.path, clock=store.clock)
         with sqlite3.connect(store.path) as db:
-            assert db.execute("PRAGMA user_version").fetchone()[0] == 8
+            assert db.execute("PRAGMA user_version").fetchone()[0] == 9
             assert db.execute("SELECT COUNT(*) FROM closed_accounts").fetchone()[0] == 1
             assert db.execute("PRAGMA foreign_key_check").fetchall() == []
     assert reopened.account_resume(bob["token"])["viewer"]["id"] == bob["id"]

@@ -48,7 +48,7 @@ limits of browser clearing and screenshots. The [local account guide](COMMONS_AC
 covers saved accounts, guest upgrades, password sign-in, recovery codes, complete
 retained account-data exports, and permanent self-service account closure.
 The [owner console guide](COMMONS_OWNER.md)
-covers sole-owner setup, authenticator sign-in, and moderation.
+covers sole-owner setup, authenticator sign-in, moderation, and announcements.
 The [profile and directory guide](COMMONS_PROFILES.md) covers private profile
 editing, optional photo thumbnails with embedded metadata removed, separate
 sharing choices, member discovery, and profile export/deletion. Listed members
@@ -66,6 +66,9 @@ the normal inbox acceptance flow; consent starts off for every existing profile.
 - Participant blocking/unblocking. Blocking hides that participant's messages
   only for the viewer; it does not stop the other participant reading a room.
 - Reporting with a reason and local operator review.
+- Up to five owner announcements above the rooms and private inbox, visible
+  after an explicit connection. The verified owner can publish and withdraw
+  notices from the console; active members see changes on the next refresh.
 - Export of up to 1,000 of the participant's latest retained, undeleted messages.
 - Saved accounts also have a complete retained-data export and password-confirmed
   closure in Account security, with explicit protections for remaining members

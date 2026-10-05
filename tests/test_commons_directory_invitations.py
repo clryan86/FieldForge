@@ -113,7 +113,7 @@ def test_version_seven_profiles_migrate_without_enabling_invitations(tmp_path):
                         AccountLifecycleStore):
         constructor(path, clock=older.clock)
         with sqlite3.connect(path) as db:
-            assert db.execute("PRAGMA user_version").fetchone()[0] == 8
+            assert db.execute("PRAGMA user_version").fetchone()[0] == 9
             assert db.execute("SELECT allow_invitations FROM profiles").fetchone()[0] == 1
             assert db.execute("PRAGMA foreign_key_check").fetchall() == []
 

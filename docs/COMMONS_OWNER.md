@@ -2,7 +2,7 @@
 
 The local Commons preview now has an owner console at **/commons-owner**. It
 provides report review, reported-message removal, participant suspension and
-restoration, session revocation, and an activity history. The sole owner signs
+restoration, session revocation, member announcements, and an activity history. The sole owner signs
 in as **CLRYAN86**, with the visible chat name **King**.
 
 No owner account or password is preinstalled. Owner setup is an interactive
@@ -91,6 +91,8 @@ cannot connect other people's computers. Do not forward or tunnel this preview.
 - **Activity history:** latest 100 actions, with a bounded retention of 1,000.
   Records include the action, target, reason and time, without message bodies
   or credentials. This database record is not a tamper-proof external audit log.
+- **Owner announcements:** publish a notice for all connected members or
+  withdraw an active notice. Up to five notices can be active at once.
 
 The console refreshes when requested; it does not poll automatically. Opening
 or reloading its page makes no API calls until sign-in or **Resume verified
@@ -105,6 +107,100 @@ can remain signed in for up to eight hours. **Return to Commons → Resume
 existing session** enters chat as King. Ordinary chat sign-out also invalidates
 owner access. Opening the owner console again requires both factors after lock
 or expiry. Signing in rotates the session and ends the previous one.
+
+## Owner announcements
+
+The browser checks include a [desktop owner-console screenshot](images/commons-owner-announcements.png)
+and a [member view at phone width](images/commons-member-announcements.png).
+Both use explicitly labeled TEST notices and temporary accounts.
+
+Use the **Owner announcements** section after verifying or resuming the console.
+Enter an **Announcement title** and **Announcement text**, then choose
+**Publish announcement**. The server requires the current sole-owner identity
+and its unexpired fifteen-minute MFA grant for every publication, withdrawal,
+and owner-list request. A saved account, guest name, profile label, or ordinary
+owner chat session cannot grant these permissions.
+
+Each notice has a title of up to **80 Unicode characters** and a body of up to
+**1,000 Unicode characters / 2,000 UTF-8 bytes**. The body supports line breaks;
+HTML, Markdown, and URLs remain plain text. Up to **five notices** can be active.
+The console shows every active notice, newest first, with its publication time.
+Notices are immutable: withdraw an outdated notice and publish its replacement.
+
+Connected Commons members, including guests, see an **Owner announcements**
+panel above the community-room and private-inbox tabs. These service notices
+come from **CLRYAN86**, independently of any editable member profile. Blocking
+the owner's ordinary chat identity does not suppress owner announcements.
+Notices update with the existing chat refresh, usually within two seconds.
+There are no browser notifications, emails, sounds, read receipts, or tracking
+of which members have viewed a notice.
+
+Opening Commons or the owner page makes no API requests until an explicit
+join, sign-in, or resume action. Pausing chat, leaving it, or clearing the
+session removes the member's displayed notices. Hiding the tab clears the
+notice text and stops announcement reads while hidden. Late replies cannot
+repopulate a cleared notice view. Returning to a visible, still-connected chat
+allows its normal refresh to retrieve the current list again.
+
+The owner composer is held only in the current page. **Refresh console** keeps
+an unfinished draft; **Clear draft** removes it. Publication disables the
+composer while the request is pending. A successful publication clears the
+submitted draft. Hiding or leaving the page, locking the console, expiry,
+authentication failure, or a lost connection clears both drafts and displayed
+notices. If a publication's reply is lost, it may already have saved: resume or
+verify the console and inspect its active notices before publishing again.
+The browser does not retry publication automatically.
+
+**Withdraw announcement** removes the active notice after confirmation. It
+clears both title and body from the announcement row; connected members lose
+it on their next successful refresh. Existing screenshots, copies, database
+backups, and content already delivered cannot be recalled. This is logical
+removal, not a promise of forensic erasure from SQLite storage.
+
+The owner activity history records publication and withdrawal with the
+announcement ID and time. It does not copy the title or body. Announcements are
+service content and are not included in members' chat-message exports.
+
+### Announcement API and retention
+
+Every endpoint below uses the existing authenticated, same-origin POST API,
+JSON content type, `X-FieldForge-Chat: preview-v1`, and no-store responses.
+Established Commons requests also carry the participant shown in that tab so
+a shared-cookie account switch cannot read under the wrong displayed identity.
+Unknown fields are rejected.
+
+| Endpoint under `/api/commons/` | Required JSON fields | Access and result |
+| --- | --- | --- |
+| `announcements` | None | Current member; active `announcements` and `limit: 5`. |
+| `owner/announcements` | None | Verified owner; all active notices and `limit: 5`. |
+| `owner/announcements/publish` | `title`, `body`, `request_id` | Verified owner; saved `announcement` and `withdrawn` flag. |
+| `owner/announcements/withdraw` | `announcement` | Verified owner; numeric announcement ID, returns `ok: true`. |
+
+Notice records returned to readers contain only `id`, `title`, `body`, and
+`created`, ordered by descending ID. Title whitespace is normalized and outer
+body whitespace is trimmed. The publish route accepts up to 8,192 request bytes
+so a valid Unicode notice can also arrive as JSON-escaped text; decoded content
+limits still apply. Request IDs follow the existing UUID-style retry format.
+
+An exact retry with the same normalized title, body, and retained request ID
+returns the original result without creating another notice. Reusing that ID
+with changed content returns **409**. After withdrawal, an exact retained retry
+returns `withdrawn: true` with the original ID/time and empty title/body; it does
+not republish the notice. Repeated withdrawal of a retained row is harmless and
+does not duplicate the audit entry.
+
+Active notices retain their retry records while active. Withdrawn notices keep
+only their ID, times, request ID, and content fingerprint for **seven days from
+withdrawal**. Cleanup removes expired withdrawn rows during authenticated
+announcement operations. There are at most **1,000 total announcement rows**;
+new publication returns **409** at capacity until an eligible withdrawn record
+can be removed. Current active notices are not evicted to make space. Retried
+request IDs are no longer recognized after their withdrawn record is removed,
+so the seven-day guarantee is not permanent deduplication. Repeated withdrawal
+does not extend the original timestamp. Active notices do not expire
+automatically. All authorization, retry checks, capacity checks, writes, and
+cleanup use serialized transactions; a rejected operation rolls back its cleanup
+as well as its attempted write.
 
 ## Account closure and retained records
 
@@ -194,9 +290,11 @@ sessions or consumed counters; production backup/rotation procedures remain need
 
 Schema version **4** introduced owner configuration, grants, participant
 controls, moderation resolutions and the bounded audit history. Versions **5**
-and **6** added profiles and the private-inbox lifecycle. The current **version
-7** adds account export authorizations and closed-account records, while
-preserving existing owner configuration and eligible account/chat records.
+and **6** added profiles and the private-inbox lifecycle. Version **7** added
+account export authorizations and closed-account records, and version **8**
+added separate directory-invitation consent. Current **version 9** adds the
+announcement table and bounded retry metadata while preserving existing owner
+configuration and eligible account/chat/profile records.
 Current owner utilities preserve the newer schema version. Back up the database
 before upgrading and do not run older binaries against a version they do not
 understand.
@@ -211,6 +309,40 @@ TOTP is not phishing-resistant; hardware-backed passkeys are not implemented.
 Messaging is not end-to-end encrypted, and screenshot prevention is not promised.
 
 ## Verification
+
+### Announcement verification
+
+The announcement increment adds **43 backend/HTTP checks and 11 Chromium
+browser scenarios**. The final backend module passed all 43 checks; browser
+checks passed for owner publishing/withdrawal, member display at phone width,
+literal text, Unicode limits, draft retention, disabled pending fields,
+duplicate submits, lost replies, hidden/paused views, account switches, expiry,
+and preserving a confirmed publication when its follow-up refresh fails.
+
+Backend coverage includes active and total capacity, concurrent requests,
+canonical and conflicting retries, seven-day boundaries, content removal,
+content-free audit records, rollback, owner grants, member sessions, blocks,
+read-state independence, request provenance, escaped/raw Unicode transport,
+actual version-8 migration, and earlier profile-consent upgrades. A block test's
+baseline was corrected to account for the existing behavior that blocking
+consumes open-once deliveries; announcement reads themselves leave delivery
+state unchanged.
+
+The built wheel was installed outside the checkout, and all **32 packaged
+online source/asset files** matched the reviewed source bytes. After preparing
+a temporary MFA test owner, actual HTTP verification ran under `python -S`
+without optional packages, covering static assets, authenticated publication,
+member reading, retries, withdrawal, audit records, owner locking, logout,
+schema 9, and database reopening. Owner setup/sign-in still requires the
+optional PyOTP dependency. Repository-wide Ruff, changed JavaScript syntax,
+whitespace checks, and independent source review passed.
+
+```sh
+python -m pytest -o addopts='' -q tests/test_commons_announcements.py
+FIELDFORGE_PORTAL_BROWSER_TESTS=1 python -m pytest -o addopts='' -q tests/test_commons_announcements_browser.py
+```
+
+### Earlier owner and account checks
 
 The schema 7 export/closure checks are recorded in the
 [account lifecycle verification](COMMONS_ACCOUNTS.md#account-lifecycle-verification).

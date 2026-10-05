@@ -16,7 +16,8 @@ in its original conversation. [Start the chat preview](docs/COMMONS_CHAT_PREVIEW
 The [local account guide](docs/COMMONS_ACCOUNTS.md) covers saved accounts, password
 sign-in, guest upgrades, and recovery codes. Public accounts and internet hosting
 are not enabled by this preview. The [owner console](docs/COMMONS_OWNER.md) adds
-local sole-owner setup, authenticator verification, report review and access controls.
+local sole-owner setup, authenticator verification, report review, access controls,
+and announcements shared with connected members.
 The [profile guide](docs/COMMONS_PROFILES.md) covers editable private profiles,
 optional photos, self-selected interests, and the opt-in local member directory.
 Members can export or delete their profile without deleting their account or inbox.

@@ -222,3 +222,50 @@ button.account-danger.secondary:hover{background:#f7ece5}
   .private-search-jump-status{padding:.75rem 1rem}
 }
 @media print{#privateSearchDialog{display:none!important}}
+
+.commons-announcements{margin:0 0 1rem;padding:1.15rem;border:1px solid #c7d3bd;border-radius:var(--radius);background:#edf2e6;min-width:0}
+.commons-announcements>.section-heading,.owner-announcements>.section-heading{margin-bottom:.6rem}
+.commons-announcements .section-heading>.tag,.owner-announcements .section-heading>.tag{flex:none}
+.commons-announcements>.hint{font-size:.75rem;margin-bottom:.85rem}
+.announcement-list{display:grid;gap:.75rem;max-height:390px;overflow:auto;overscroll-behavior:contain;padding:.2rem;scrollbar-gutter:stable;min-width:0}
+.announcement-card{min-width:0;padding:1rem;border:1px solid var(--line);border-left:3px solid #648454;border-radius:9px;background:var(--card);overflow-wrap:anywhere}
+.announcement-meta{display:flex;flex-wrap:wrap;gap:.35rem .6rem;align-items:center;margin-bottom:.55rem;font-size:.73rem}
+.announcement-meta .tag{font-size:.64rem;background:#e5eddd;color:#315329}
+.announcement-meta strong{font-size:.72rem;letter-spacing:.025em}
+.announcement-meta time{color:var(--muted);font-size:.7rem}
+.announcement-card h3{font-size:.95rem;line-height:1.4;margin:.4rem 0}
+.announcement-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:.4rem 0 0;color:var(--ink);font-size:.84rem;line-height:1.65}
+.owner-announcements{margin-bottom:1rem}
+.owner-announcement-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:1.5rem;align-items:start;margin-top:1.2rem}
+.owner-announcement-grid>div>h3{font-size:.87rem;margin-bottom:.65rem}
+.owner-announcement-grid .announcement-list{max-height:500px}
+.owner-announcement-grid .announcement-card button{font-size:.73rem;margin-top:.8rem;min-height:40px}
+#ownerAnnouncementForm{min-width:0;padding:1rem;border:1px solid var(--line);border-radius:10px;background:#f8faf3}
+#ownerAnnouncementForm label:not(:first-child){margin-top:.85rem}
+#ownerAnnouncementForm input,#ownerAnnouncementForm textarea{font-size:.86rem}
+#ownerAnnouncementForm textarea{min-height:150px;max-height:320px}
+#ownerAnnouncementForm>.hint{font-size:.73rem;margin:.45rem 0 .8rem}
+.announcement-count.error{color:#9b3629}
+.owner-announcement-form-actions{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.owner-announcement-form-actions button{font-size:.77rem}
+#ownerAnnouncementStatus{margin:.8rem 0 0}
+#ownerAnnouncementStatus:empty{display:none}
+.announcement-empty{padding:1.3rem .7rem;text-align:center;margin:0;border:1px dashed #c7d3bd;border-radius:9px;background:#f4f7ee}
+@media(max-width:760px){.owner-announcement-grid{grid-template-columns:minmax(0,1fr);gap:1.2rem}}
+@media(max-width:520px){
+  .commons-announcements{padding:.9rem}
+  .commons-announcements .section-heading,.owner-announcements .section-heading{align-items:flex-start;gap:.5rem}
+  .commons-announcements .section-heading h2,.owner-announcements .section-heading h2{font-size:1.1rem}
+  .commons-announcements .section-heading .eyebrow,.owner-announcements .section-heading .eyebrow{font-size:.57rem}
+  .commons-announcements .section-heading>.tag,.owner-announcements .section-heading>.tag{font-size:.63rem;padding:.2rem .4rem}
+  .announcement-list{max-height:360px}
+  .announcement-card{padding:.8rem}
+  .announcement-meta{gap:.3rem .5rem}
+  .announcement-meta time{flex-basis:100%}
+  .announcement-card h3{font-size:.91rem}
+  .announcement-body{font-size:.81rem}
+  .owner-announcements{padding:1rem}
+  #ownerAnnouncementForm{padding:.85rem}
+  .owner-announcement-form-actions{gap:.5rem}
+  .owner-announcement-form-actions button{flex:1;font-size:.7rem;padding:.65rem .5rem;min-height:44px}
+}

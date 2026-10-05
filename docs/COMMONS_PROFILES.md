@@ -254,7 +254,8 @@ closing it; the [account guide](COMMONS_ACCOUNTS.md) explains the full workflow.
 
 Profiles introduced Commons database schema version **5**, the private inbox
 lifecycle introduced **version 6**, and account export and closure introduced
-**version 7**. Directory invitation consent uses the current **version 8**.
+**version 7**. Directory invitation consent uses **version 8**. Current
+**version 9** adds owner announcements and their bounded retry metadata.
 Opening an existing supported Commons database applies the missing schema
 changes while retaining accounts, sessions, room messages, private
 conversations, invitations, blocks, reports, and owner configuration under their
@@ -265,7 +266,7 @@ directory invitations off, including profiles already listed in the directory.
 Stop the server and back up the local database before upgrading. Continue using
 the same database path to retain the existing community. Use the updated code
 for both preview and owner commands; older releases that do not understand
-schema version 8 must not operate on the upgraded file. Current owner utilities
+schema version 9 must not operate on the upgraded file. Current owner utilities
 preserve the version instead of downgrading it. Keep databases and their private
 contents outside the source repository.
 
@@ -283,7 +284,7 @@ when deleting only a profile.
 
 Version 8 adds the profile's separate `allow_invitations` choice, defaulting to
 false. It takes effect only with a current shared directory listing. Current
-preview and owner database initializers preserve schema version 8; continue
+preview and owner database initializers preserve schema version 9; continue
 using the updated code for every operation on the upgraded database.
 
 Profile operations require an authenticated local session. Edits and exports

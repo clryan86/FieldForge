@@ -28,6 +28,11 @@
     </section>
     <p id="status" class="status" role="status">Join when you're ready. Chat makes no API requests before you join.</p>
     <div id="accountBar" class="account-bar" hidden><div><strong id="accountIdentity"></strong><p id="accountHint" class="hint"></p></div><button id="accountManage" class="secondary" type="button">Account security</button></div>
+    <section id="commonsAnnouncements" class="commons-announcements" aria-labelledby="commonsAnnouncementsTitle" hidden>
+      <div class="section-heading"><div><p class="eyebrow">From the Commons owner</p><h2 id="commonsAnnouncementsTitle">Owner announcements</h2></div><span id="commonsAnnouncementCount" class="tag"></span></div>
+      <p class="hint">Service notices from CLRYAN86 appear in both rooms and private inboxes. Participant blocks do not hide these notices.</p>
+      <div id="commonsAnnouncementList" class="announcement-list" role="list" aria-label="Active owner announcements" tabindex="0"></div>
+    </section>
     <nav class="conversation-tabs" aria-label="Conversation areas"><button type="button" id="publicRoomsButton" aria-pressed="true">Community rooms</button><button type="button" id="privateInboxButton" aria-pressed="false" disabled>Private inbox <span id="inboxCount"></span></button><button type="button" id="openProfile" aria-haspopup="dialog" disabled>My profile</button><button type="button" id="openDirectory" aria-haspopup="dialog" disabled>Member directory</button></nav>
     <section class="workspace" id="publicWorkspace" aria-label="Commons chat workspace">
       <aside class="rooms-panel"><p class="eyebrow">Conversation rooms</p><nav id="rooms" aria-label="Chat rooms"><button type="button" disabled aria-current="page">Base camp</button><button type="button" disabled>Maps &amp; navigation</button><button type="button" disabled>Food &amp; farming</button><button type="button" disabled>Construction &amp; repair</button></nav><div class="room-note"><span class="tag">People helping people</span><p>Skill labels describe a member's own interests or experience. They are not verified qualifications.</p></div></aside>

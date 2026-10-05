@@ -1,4 +1,4 @@
-"""Sole-owner moderation for the loopback Commons preview.
+"""Sole-owner moderation and announcements for the loopback Commons preview.
 
 Owner provisioning and factor recovery are local-terminal operations, never
 HTTP endpoints. Administrative sessions require password plus TOTP. Only
@@ -7,7 +7,9 @@ reported private messages may be reviewed; open-once bodies are never returned.
 
 from __future__ import annotations
 
+import hashlib
 import hmac
+import json
 import re
 import secrets
 
@@ -20,13 +22,24 @@ from fieldforge.online.accounts import (
     _username,
     _verify,
 )
-from fieldforge.online.chat_store import MAX_PARTICIPANTS, ChatError, _digest, _message_id
-from fieldforge.online.private_chat import _opaque
+from fieldforge.online.chat_store import (
+    MAX_MESSAGE_BYTES,
+    MAX_MESSAGE_CHARS,
+    MAX_PARTICIPANTS,
+    ChatError,
+    _digest,
+    _message_id,
+    _text,
+)
+from fieldforge.online.private_chat import _opaque, _retry_id
 
 OWNER_USERNAME = "clryan86"
 OWNER_SECONDS = 15 * 60
 REASONS = {"spam", "harassment", "unsafe", "other"}
 MAX_AUDIT = 1000
+MAX_ACTIVE_ANNOUNCEMENTS = 5
+MAX_ANNOUNCEMENT_RECORDS = 1000
+ANNOUNCEMENT_RETENTION_SECONDS = 7 * 24 * 60 * 60
 
 
 def otp_library():
@@ -83,8 +96,13 @@ class OwnerStore(AccountStore):
                     id INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT NOT NULL,
                     target TEXT NOT NULL, reason TEXT NOT NULL, created REAL NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS owner_announcements (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL, body TEXT NOT NULL, created REAL NOT NULL,
+                    withdrawn REAL, request_id TEXT NOT NULL UNIQUE, fingerprint TEXT NOT NULL
+                );
             """)
-            db.execute(f"PRAGMA user_version={max(4, version)}")
+            db.execute(f"PRAGMA user_version={max(9, version)}")
 
     def _audit(self, db, event, target, reason=""):
         db.execute("INSERT INTO owner_audit(event,target,reason,created) VALUES(?,?,?,?)",
@@ -201,8 +219,83 @@ class OwnerStore(AccountStore):
                     "suspended": db.execute("SELECT COUNT(*) FROM participant_controls WHERE suspended=1").fetchone()[0],
                     "audit": [dict(row) for row in db.execute(
                         "SELECT a.*,COALESCE(p.name,CASE WHEN a.target LIKE 'public:%' THEN 'Public message #'||substr(a.target,8) "
-                        "WHEN a.target LIKE 'private:%' THEN 'Private message #'||substr(a.target,9) ELSE a.target END) AS target_label "
+                        "WHEN a.target LIKE 'private:%' THEN 'Private message #'||substr(a.target,9) "
+                        "WHEN a.target LIKE 'announcement:%' THEN 'Announcement #'||substr(a.target,14) "
+                        "ELSE a.target END) AS target_label "
                         "FROM owner_audit a LEFT JOIN participants p ON p.id=a.target ORDER BY a.id DESC LIMIT 100")]}
+
+    def _prune_announcements(self, db):
+        # Active notices remain until withdrawal. Only cleared retry receipts
+        # expire, inside the caller's authenticated transaction.
+        db.execute("DELETE FROM owner_announcements WHERE withdrawn<=?",
+                   (self.clock() - ANNOUNCEMENT_RETENTION_SECONDS,))
+
+    @staticmethod
+    def _announcement_data(row):
+        return {key: row[key] for key in ("id", "title", "body", "created")}
+
+    def _announcement_feed(self, db):
+        self._prune_announcements(db)
+        rows = db.execute("SELECT id,title,body,created FROM owner_announcements "
+                          "WHERE withdrawn IS NULL ORDER BY id DESC LIMIT ?",
+                          (MAX_ACTIVE_ANNOUNCEMENTS,))
+        return {"announcements": [self._announcement_data(row) for row in rows],
+                "limit": MAX_ACTIVE_ANNOUNCEMENTS}
+
+    def announcements(self, token):
+        with self._db() as db:
+            self._member(db, token)
+            return self._announcement_feed(db)
+
+    def owner_announcements(self, token):
+        with self._db() as db:
+            self._owner(db, token)
+            return self._announcement_feed(db)
+
+    def owner_announcements_publish(self, token, title, body, request_id):
+        title = _text(title, 80)
+        body = _text(body, MAX_MESSAGE_CHARS, multiline=True)
+        if len(body.encode("utf-8")) > MAX_MESSAGE_BYTES:
+            raise ChatError(400, "The announcement exceeds the 2,000-byte text limit.")
+        request_id = _retry_id(request_id)
+        fingerprint = hashlib.sha256(json.dumps([title, body], ensure_ascii=False).encode("utf-8")).hexdigest()
+        with self._db() as db:
+            self._owner(db, token)
+            self._prune_announcements(db)
+            previous = db.execute("SELECT * FROM owner_announcements WHERE request_id=?", (request_id,)).fetchone()
+            if previous is not None:
+                if previous["fingerprint"] != fingerprint:
+                    raise ChatError(409, "That retry ID belongs to a different announcement.")
+                # A retry cannot restore a withdrawn notice while its receipt
+                # remains within the seven-day retry window.
+                return {"announcement": self._announcement_data(previous),
+                        "withdrawn": previous["withdrawn"] is not None}
+            if db.execute("SELECT COUNT(*) FROM owner_announcements WHERE withdrawn IS NULL").fetchone()[0] >= MAX_ACTIVE_ANNOUNCEMENTS:
+                raise ChatError(409, "Up to five announcements can be active. Withdraw one before publishing another.")
+            if db.execute("SELECT COUNT(*) FROM owner_announcements").fetchone()[0] >= MAX_ANNOUNCEMENT_RECORDS:
+                raise ChatError(409, "Announcement history is full. Wait for withdrawn announcements to pass their seven-day retry window.")
+            now = self.clock()
+            cursor = db.execute("INSERT INTO owner_announcements(title,body,created,request_id,fingerprint) "
+                                "VALUES(?,?,?,?,?)", (title, body, now, request_id, fingerprint))
+            self._audit(db, "publish_announcement", f"announcement:{cursor.lastrowid}")
+            return {"announcement": {"id": cursor.lastrowid, "title": title, "body": body, "created": now},
+                    "withdrawn": False}
+
+    def owner_announcements_withdraw(self, token, announcement):
+        announcement = _message_id(announcement)
+        if announcement > 2**53 - 1:
+            raise ChatError(400, "Choose a valid announcement.")
+        with self._db() as db:
+            self._owner(db, token)
+            self._prune_announcements(db)
+            row = db.execute("SELECT withdrawn FROM owner_announcements WHERE id=?", (announcement,)).fetchone()
+            if row is None:
+                raise ChatError(404, "That announcement is unavailable.")
+            if row["withdrawn"] is None:
+                db.execute("UPDATE owner_announcements SET title='',body='',withdrawn=? WHERE id=?",
+                           (self.clock(), announcement))
+                self._audit(db, "withdraw_announcement", f"announcement:{announcement}")
+            return {"ok": True}
 
     def owner_members(self, token, query, offset):
         if not isinstance(query, str) or len(query) > 40 or type(offset) is not int or not 0 <= offset <= MAX_PARTICIPANTS:
