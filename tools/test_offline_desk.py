@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import base64
+import contextlib
+import io
 import hashlib
 import json
 import re
@@ -11,7 +13,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 from build_offline_desk import MODULES, bundle_modules, export_offline
-from build_hosted_preview import FAVICON
+from build_hosted_preview import FAVICON, export
 
 ROOT = Path(__file__).resolve().parent
 
@@ -49,10 +51,20 @@ class OfflineDeskTests(unittest.TestCase):
         portal = ROOT.parent / "fieldforge/online/portal.html"
         if not portal.exists():
             portal = ROOT / "snapshot/fieldforge/online/portal.html"
+        cls.source_root = portal.parents[2]
         export_offline(ROOT / "portal_preview", cls.output, portal.read_text(), "0" * 40, FAVICON)
         cls.raw = (cls.output / "fieldforge-offline.html").read_bytes()
         cls.text = cls.raw.decode()
         cls.doc = Document(cls.text)
+
+    def test_hosted_export_includes_every_local_module_dependency(self):
+        with tempfile.TemporaryDirectory() as folder, contextlib.redirect_stdout(io.StringIO()):
+            output = Path(folder)
+            export(self.source_root, output, "0" * 40)
+            self.assertTrue((output / "desk.mjs").is_file())
+            for module in output.glob("*.mjs"):
+                for target in re.findall(r'from "(\./[^"\n]+)"', module.read_text()):
+                    self.assertTrue((output / target).is_file(), (module.name, target))
 
     def test_page_has_no_external_resources_or_active_external_links(self):
         self.assertEqual(len(self.doc.scripts), 1)

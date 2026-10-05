@@ -2,6 +2,7 @@ export const MAX_MB_BYTES = 64 * 1024 * 1024;
 export const MAX_MB_TILE_BYTES = 2 * 1024 * 1024;
 export const MB_LAT_LIMIT = 85.0511287798066;
 export const MAX_MB_COVERAGE_ROWS = 50000;
+export const MAX_MB_ROUTE_TILES = 4096;
 export function checkMBHeader(bytes) {
   if (!(bytes instanceof Uint8Array) || bytes.length<100 || bytes.length>MAX_MB_BYTES) throw new Error("Choose a closed MBTiles export no larger than 64 MiB. Compatible larger packs can use the desktop map viewer.");
   if (String.fromCharCode(...bytes.subarray(0,16))!=="SQLite format 3\0") throw new Error("This is not a SQLite MBTiles file.");
@@ -96,4 +97,23 @@ export function readMBCoverage(pack,zoom) {
     groups.set(key,{column,row,span:Math.max(1,32/count),count:1,sample:{x,y,tms,...mbUnproject((x+.5)*256,(y+.5)*256,zoom)}});
   }
   return {zoom,scanned,valid:scanned-invalid,invalid,partial,limit:MAX_MB_COVERAGE_ROWS,cells:[...groups.values()].sort((a,b)=>a.row-b.row||a.column-b.column)};
+}
+
+// A bounded set of exact indexed lookups. Do not copy or decode tile blobs.
+export function readMBRouteTiles(pack,zoom,tiles) {
+  if(!Number.isInteger(zoom)||!pack.info.zooms.includes(zoom))throw new Error("Choose a stored zoom level for the path check.");
+  if(!Array.isArray(tiles)||!tiles.length||tiles.length>MAX_MB_ROUTE_TILES)throw new Error("Path check needs 1–4,096 unique tiles.");
+  const count=2**zoom,seen=new Set();
+  for(const tile of tiles){
+    if(!tile||![tile.x,tile.y].every(v=>Number.isInteger(v)&&v>=0&&v<count))throw new Error("Invalid path tile coordinate.");
+    const key=`${tile.x}/${tile.y}`;if(seen.has(key))throw new Error("Duplicate path tile coordinate.");seen.add(key);
+  }
+  const report={zoom,checked:tiles.length,present:0,missing:0,unsupported:0,tiles:[]};
+  const stmt=pack.db.prepare(`SELECT typeof(tile_data),length(tile_data) FROM ${pack.table} WHERE zoom_level=? AND tile_column=? AND tile_row=? LIMIT 1`);
+  try {for(const {x,y} of tiles){
+    const tms=count-1-y;stmt.bind([zoom,x,tms]);const size=stmt.step()?stmt.get():null;stmt.reset();
+    const status=!size?"missing":size[0]!=="blob"||!Number.isInteger(size[1])||size[1]<(pack.info.format==="pbf"?1:12)||size[1]>MAX_MB_TILE_BYTES?"unsupported":"present";
+    report[status]++;report.tiles.push({x,y,tms,status,...(size?.[0]==="blob"?{bytes:size[1]}:{})});
+  }}finally{stmt.free();}
+  return report;
 }

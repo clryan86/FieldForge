@@ -57,6 +57,8 @@ def fixture(mode="valid"):
         db.execute("UPDATE tiles SET tile_data=? WHERE tile_row=0", (gzip.compress(vector, mtime=0),))
         if mode == "vector-mixed": db.execute("UPDATE tiles SET tile_data=? WHERE tile_row=1", (b'\x1a\xff',))
     if mode == "oversize-tile": db.execute("UPDATE tiles SET tile_data=zeroblob(2097153) WHERE zoom_level=1 AND tile_row=0")
+    if mode == "route-types":
+        db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", [(2, 0, 0, None), (2, 0, 1, 'not a blob'), (2, 0, 2, b''), (2, 0, 3, b'not an image')])
     if mode == "bad-coordinate": db.execute("UPDATE tiles SET tile_column=-1 WHERE zoom_level=1")
     if mode == "coverage-invalid":
         db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", [(1, 1, 99, b'x'), (1, 'invalid', 0, b'x'), (1, 1, -1, b'x')])

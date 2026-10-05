@@ -6,7 +6,7 @@ import {fileURLToPath} from "node:url";
 import {readFileSync} from "node:fs";
 import {createHash,webcrypto} from "node:crypto";
 import vm from "node:vm";
-import {inspectMBDatabase,readMBFrame,readMBCoverage,mbFrame,mbUnproject,mbScreenPoint,checkMBHeader} from "./mbtiles-core.mjs";
+import {inspectMBDatabase,readMBFrame,readMBCoverage,readMBRouteTiles,mbFrame,mbUnproject,mbScreenPoint,checkMBHeader} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 const require=createRequire(import.meta.url),SQL=await require("./vendor/sql-asm-1.14.2.js")();
 const fixture=mode=>new Uint8Array(execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[fileURLToPath(new URL("./mbtiles-fixture.py",import.meta.url)),mode||"valid"],{maxBuffer:4*1024*1024}));
@@ -84,7 +84,25 @@ test("built SQLite worker starts and reads a pack with network, eval and WebAsse
   const data=fixture(),opened=await send({id:1,kind:"open",bytes:data.buffer});assert.equal(opened.error,undefined);assert.equal(opened.result.name,"Synthetic test fixture");
   const frame=await send({id:2,kind:"frame",lat:opened.result.initial.lat,lon:-90,zoom:1});assert.equal(frame.error,undefined);assert.ok(frame.result.tiles.some(tile=>tile.data));assert.equal(requests,0);
   const coverage=await send({id:5,kind:"coverage",zoom:1});assert.equal(coverage.error,undefined);assert.equal(coverage.result.valid,2);assert.equal(coverage.result.cells.length,2);
+  const path=await send({id:6,kind:"route-tiles",zoom:1,tiles:[{x:0,y:0},{x:0,y:1},{x:1,y:1}]});assert.equal(path.error,undefined);assert.equal(path.result.present,2);assert.equal(path.result.missing,1);assert.ok(path.result.tiles.every(t=>!t.data));
   const vector=await send({id:3,kind:"open",bytes:fixture("vector-mixed").buffer});assert.equal(vector.result.format,"pbf");
   const vectorFrame=await send({id:4,kind:"frame",lat:vector.result.initial.lat,lon:-90,zoom:1});assert.equal(vectorFrame.error,undefined);assert.ok(vectorFrame.result.tiles.some(tile=>tile.vector?.features.length===3));assert.ok(vectorFrame.result.tiles.some(tile=>tile.issue?.includes("Truncated protobuf")));assert.ok(vectorFrame.result.tiles.every(tile=>!tile.data));assert.equal(requests,0);
   const provenance=JSON.parse(readFileSync(new URL("./vendor/sql.js-provenance.json",import.meta.url)));assert.equal(createHash("sha256").update(readFileSync(new URL("./vendor/sql-asm-1.14.2.js",import.meta.url))).digest("hex"),provenance.sha256);
+});
+
+test("path records distinguish present, missing and unsupported without retrieving tile blobs",()=>{
+  for(const mode of ["valid","vector-mixed","oversize-tile","route-types"]){
+    const pack=inspectMBDatabase(SQL,fixture(mode));try{
+      const queries=[],prepare=pack.db.prepare.bind(pack.db);pack.db.prepare=(sql,...args)=>{queries.push(sql);return prepare(sql,...args);};
+      const zoom=mode==="route-types"?2:1,tiles=mode==="route-types"?[{x:0,y:0},{x:0,y:1},{x:0,y:2},{x:0,y:3},{x:3,y:3}]:[{x:0,y:0},{x:0,y:1},{x:1,y:1}];
+      const report=readMBRouteTiles(pack,zoom,tiles);assert.equal(report.checked,tiles.length);assert.equal(report.missing,1);
+      assert.equal(report.unsupported,mode==="route-types"?3:mode==="oversize-tile"?1:0);
+      assert.equal(report.present,tiles.length-1-report.unsupported);
+      assert.ok(queries.every(q=>q.startsWith("SELECT typeof(tile_data),length(tile_data) FROM tiles INDEXED BY")));assert.equal(queries.length,1);
+      assert.ok(report.tiles.every(t=>t.tms===2**zoom-1-t.y&&!t.data));assert.equal(report.tiles[0].status,"present");
+      assert.throws(()=>readMBRouteTiles(pack,22,tiles),/stored zoom/);
+      for(const invalid of [[],Array(4097).fill({x:0,y:0}),[{x:0,y:0},{x:0,y:0}],[{x:-1,y:0}],[{x:0,y:2**zoom}],[{x:0,y:NaN}],[null]])assert.throws(()=>readMBRouteTiles(pack,zoom,invalid));
+      assert.throws(()=>pack.db.run("DELETE FROM tiles"),/readonly/);
+    }finally{pack.db.close();}
+  }
 });

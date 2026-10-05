@@ -7,7 +7,7 @@ import {createMBCoverage} from "./mbtiles-coverage.mjs";
 import {validatePlace,placeCoordinateText} from "./places-core.mjs";
 import {createMBRoute} from "./mbtiles-route.mjs";
 
-export function createMBViewer({onAddPoint,clientFactory=createMBClient}) {
+export function createMBViewer({onAddPoint,download,clientFactory=createMBClient}) {
   const id=key=>document.getElementById(key),canvas=id("mbCanvas"),ctx=canvas.getContext("2d");
   let client=null,fileRead=null,info=null,frame=null,selected=null,bitmaps=[],vectors=[],generation=0,busy=false,filename="",coverage=null,target=null,route=null;
   const status=(text,error=false)=>{id("mbStatus").textContent=text;id("mbStatus").classList.toggle("error",error);};
@@ -23,13 +23,21 @@ export function createMBViewer({onAddPoint,clientFactory=createMBClient}) {
   function controls() {id("mbControls").disabled=!info||busy;id("mbAddPlace").disabled=!selected||busy;id("mbPixelControls").disabled=!frame||busy;coverage?.setBusy(busy);updateTarget();route?.update(frame,decodedAt,busy,!!info);}
   function dispose() {for(const item of bitmaps)item.bitmap.close();bitmaps=[];vectors=[];frame=null;selected=null;id("mbSelected").textContent="No tile pixel selected";id("mbTileSummary").textContent="No frame loaded";id("mbIssues").textContent="";ctx?.clearRect(0,0,768,512);controls();}
   function clear(message="Map pack closed. Collected places and your original file are unchanged.",{keepOverlays=false}={}) {
-    generation++;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";if(!keepOverlays){target=null;route?.clear();}coverage?.reset();dispose();
+    generation++;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";if(!keepOverlays){target=null;route?.clear();}coverage?.reset();route?.setPack(null);dispose();
     id("mbFile").value="";id("mbClose").disabled=true;id("mbName").textContent="Local MBTiles map";id("mbAttribution").textContent="Attribution will appear here from your map pack.";
     id("mbDescription").textContent="";id("mbZoom").replaceChildren();id("mbLatitude").value="";id("mbLongitude").value="";id("mbColumn").value="384";id("mbRow").value="256";
     id("mbVectorNote").hidden=true;id("mbPointNames").checked=true;status(message);
   }
   if(!ctx) {id("mbFile").disabled=true;const unavailable=()=>{status("This browser cannot draw the local map canvas.",true);return false;};unavailable();return {viewPlace:unavailable,viewGPX:unavailable,clearRoute(){}};}
-  route=createMBRoute({onCentre:p=>show(p.lat,p.lon,frame?.zoom??info.initial.zoom,false),onAddPoint,onRedraw:()=>{draw();controls();}});
+  route=createMBRoute({onCentre:p=>show(p.lat,p.lon,frame?.zoom??info.initial.zoom,false),onAddPoint,onRedraw:()=>{draw();controls();},download,onOpen:(lat,lon,zoom)=>show(lat,lon,zoom,false),onCheck:async(zoom,tiles)=>{
+    if(!client||!info||busy)return null;
+    const token=generation;busy=true;controls();
+    try{
+      const result=await client.request("route-tiles",{zoom,tiles});if(token!==generation)return null;
+      return {...result,map_file:vectorLabel(filename,"map pack",160),map_name:vectorLabel(info.name,"Local map pack",160),map_format:info.format};
+    }catch(error){if(token===generation){clear();status(error.message||"Could not check the path tile records.",true);}return null;}
+    finally{if(token===generation){busy=false;controls();}}
+  }});
   coverage=createMBCoverage({onOpen:show,onScan:async zoom=>{
     if(!client||!info||busy)return;
     if(!info.zooms.includes(zoom)){status("Choose a stored zoom level to inspect coverage.",true);return;}
@@ -98,7 +106,7 @@ export function createMBViewer({onAddPoint,clientFactory=createMBClient}) {
       const result=await client.request("open",{bytes},[bytes]);if(token!==generation)return;
       if(result.format!=="pbf"&&typeof createImageBitmap!=="function")throw new Error("This browser needs ImageBitmap support to decode raster map tiles.");
       info=result;filename=file.name;busy=false;
-      coverage.setPack(info);
+      coverage.setPack(info);route.setPack(info);
       id("mbVectorNote").hidden=info.format!=="pbf";
       id("mbName").textContent=vectorLabel(info.name,"Local map pack",160);id("mbAttribution").textContent=info.attribution;id("mbDescription").textContent=info.description;
       id("mbZoom").replaceChildren();for(const z of info.zooms){const option=node("option",`Zoom ${z}`);option.value=String(z);id("mbZoom").append(option);}

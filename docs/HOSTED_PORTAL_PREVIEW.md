@@ -642,3 +642,59 @@ worker payload were checked.
 Offline edition: **2b61b291f44d**, **2,092,431 bytes**. This adds a local viewing
 workflow; route calculation, geocoding, hosted map downloads and live Commons
 remain separate unfinished work. No real map datasets were added.
+
+
+## GPX path tile checks (October 5, 2026)
+
+The website and downloadable offline desk now offer **Check map tiles along
+this GPX** in the MBTiles overlay card. Inspect a GPX, choose **View GPX on map**,
+open a local pack, select a stored zoom and choose **Check path tiles**.
+The check includes cells crossed between recorded points, isolated segment
+points and independent waypoints. Separate segments remain disconnected.
+Date-line edges follow the shorter longitude span. Ambiguous exactly
+180-degree edges reject the entire check with an explanation.
+
+Conservative grid traversal includes both neighbours along tile boundaries
+and all neighbours at corner touches. It follows the straight Web Mercator
+edges drawn by the overlay. It does not infer roads or a travel corridor.
+Checks are bounded to 4,096 unique tiles and 250,000 traversal samples;
+exceeding either bound refuses the entire check. Users can choose a lower
+stored zoom or shorter GPX. There is no silently truncated coverage result.
+
+The SQLite worker performs indexed type/size lookups without copying tile
+blobs. Counts distinguish present records, missing records and unsupported
+blob sizes/types. Present means a blob passes the viewer's per-tile size
+limits, **not that it decodes or contains correct map data**. Off-path areas,
+other zoom levels, map accuracy and route safety are not checked. Existing
+format/schema and 64 MiB browser-pack limits still apply. Nothing is uploaded
+or downloaded automatically.
+
+Users can open a gap's tile location. The on-screen list shows at most 100 gaps
+and explicitly identifies overflow. **Save tile-check report** exports every
+checked tile as JSON, including XYZ coordinates, TMS rows, byte lengths where
+applicable, status, checked zoom, GPX filename and map filename/name/format.
+The report identifies the selected files and tile locations; no tile contents
+are copied. File names alone do not establish map identity or freshness.
+
+Reports reset when the GPX or map is cleared/replaced, the check zoom changes,
+or a new check starts. Opening a gap retains its report and checked zoom.
+Close / cancel terminates the worker request. Clearing only the GPX also
+invalidates a pending result so it cannot reappear. Refused geometry checks
+preserve the open pack and overlay.
+
+Validation: **96 Node tests and 5 Python tests pass**. Tile traversal is checked
+against an independent segment/rectangle intersection oracle. Tests cover
+segment gaps, boundaries/corners, date-line and polar endpoints, ambiguous
+edges, unique-tile and repeated-traversal limits, real SQLite type/size lookups,
+TMS orientation and read-only behavior. Actual offline HTML runs raster/vector
+path checks, gap navigation, full report exports, list overflow and invalidation
+with network and browser storage forbidden. Late results are discarded after
+GPX clearing, map replacement and closing. The hosted build now copies the new
+check module; a regression test builds into an empty directory and verifies
+all local module dependencies. HTML IDs, label/ARIA references, local assets
+and worker payloads were checked. Native browser and phone QA remain
+outstanding; DOM/Canvas and browser-worker lifecycle tests use doubles.
+
+Offline edition: **14bba6656297**, **2,105,416 bytes**. No real map datasets,
+route calculation, live geocoding, hosted map downloads or live Commons
+services were added in this update.

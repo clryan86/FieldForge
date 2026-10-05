@@ -78,7 +78,7 @@ function download(text, mime, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 const savedPlaces = createPlaces({download,onViewMap:point=>{selectTool("mbtiles");const result=mbViewer.viewPlace(point);id("mbPanel").scrollIntoView({block:"start"});return result;}});
-const mbViewer = createMBViewer({onAddPoint:(point,label="MBTiles pixel") => { id("mbStatus").textContent = savedPlaces.add([point],label); selectTool("places"); }});
+const mbViewer = createMBViewer({download,onAddPoint:(point,label="MBTiles pixel") => { id("mbStatus").textContent = savedPlaces.add([point],label); selectTool("places"); }});
 id("mbBackPlaces").addEventListener("click",()=>{selectTool("places");id("placesTab").focus();});
 id("mbRouteBack").addEventListener("click",()=>{selectTool("trace");id("traceTab").focus();});
 createVectorViewer({download, onAddPoint:point => { id("vectorStatus").textContent = savedPlaces.add([point],"GeoJSON vertex"); selectTool("places"); }});

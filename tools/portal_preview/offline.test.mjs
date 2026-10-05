@@ -7,6 +7,7 @@ import {fileURLToPath} from "node:url";
 import {execFileSync} from "node:child_process";
 import {webcrypto} from "node:crypto";
 import vm from "node:vm";
+import {mbUnproject} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
 
 // Execute the actual downloadable script with a DOM double and forbidden network
@@ -136,11 +137,16 @@ for(const mode of ["valid","vector"])test(`offline GPX overlays connect the insp
   try{
     await loadGPX();assert.equal(app.id("deskViewMap").disabled,false);await app.id("deskViewMap").fire("click");assert.equal(app.id("mbPanel").hidden,false);assert.match(app.id("mbRouteSummary").textContent,/5 original points · 2 separate segments · 1 waypoints/);assert.equal(app.workers.length,0);
     await open();assert.equal(app.id("mbLatitude").value,"38.12345678901234");assert.equal(app.id("mbRouteCoordinates").textContent,"38.12345678901234, -90.12345678901234");assert.equal(app.id("mbAddPlace").disabled,true);assert.equal(app.overlays[0].filter(c=>c[0]==="line").length,2);assert.equal(app.overlays[0].filter(c=>c[0]==="move").length,2);
+    await app.id("mbRouteCheckRun").fire("click");assert.match(app.id("mbRouteCheckState").textContent,/4 tiles checked · 2 present · 2 missing · 0 unsupported/);assert.equal(app.id("mbRouteCheckResult").hidden,false);
+    app.id("mbRouteReportSave").fire("click");const report=JSON.parse(await app.blobs.at(-1).text());assert.equal(report.kind,"fieldforge-gpx-tile-check");assert.equal(report.gpx_file,"track.gpx");assert.equal(report.map_file,"map.mbtiles");assert.equal(report.map_format,mode==="valid"?"png":"pbf");assert.equal(report.zoom,1);assert.equal(report.tiles.length,4);assert.match(report.scope,/not decoded/);assert.equal(app.downloads.at(-1).name,"FieldForge-GPX-Tile-Check.json");assert.deepEqual(report.tiles.filter(t=>t.status==="missing").map(t=>[t.x,t.y,t.tms]),[[1,0,1],[1,1,0]]);
+    await app.id("mbRouteGapOpen").fire("click");assert.equal(app.id("mbLongitude").value,"90");assert.ok(Number(app.id("mbLatitude").value)>0);assert.equal(app.id("mbRouteCheckResult").hidden,false);assert.match(app.id("mbRouteCheckState").textContent,/Zoom 1/);
+    app.id("mbRouteCheckZoom").value="2";app.id("mbRouteCheckZoom").fire("change");assert.equal(app.id("mbRouteReportSave").disabled,true);assert.equal(app.id("mbRouteCheckResult").hidden,true);
+    await app.id("mbRouteCheckRun").fire("click");assert.match(app.id("mbRouteCheckState").textContent,/Zoom 2/);assert.match(app.id("mbRouteCheckState").textContent,/missing/);
     app.id("mbRouteShow").checked=false;app.id("mbRouteShow").fire("change");assert.equal(app.overlays.length,0);app.id("mbRouteShow").checked=true;app.id("mbRouteShow").fire("change");assert.ok(app.overlays.length);
     app.id("mbRouteNext").fire("click");assert.match(app.id("mbRouteSelected").textContent,/Segment 1 · point 2/);app.id("mbRouteNext").fire("click");assert.match(app.id("mbRouteSelected").textContent,/Segment 2 · point 1/);
     app.id("mbRoutePoint").value="4";app.id("mbRoutePoint").fire("input");await app.id("mbRouteCentre").fire("click");assert.equal(app.id("mbLatitude").value,"0");assert.equal(app.id("mbLongitude").value,"100");assert.match(app.id("mbRouteState").textContent,/No decoded tile/);assert.equal(app.id("mbAddPlace").disabled,true);
     app.id("mbRouteAdd").fire("click");assert.equal(app.id("placesPanel").hidden,false);app.id("placesSaveJSON").fire("click");const point=JSON.parse(await app.blobs.at(-1).text()).places[0];assert.equal(point.name,"Camp <b>name</b>");assert.equal(point.lat,0);assert.equal(point.lon,100);assert.match(point.source,/GPX overlay; Waypoint 1/);
-    await open();assert.equal(app.id("mbRouteCoordinates").textContent,"0, 100");assert.equal(app.id("mbRouteCard").hidden,false);
+    await open();assert.equal(app.id("mbRouteCheckResult").hidden,true);assert.equal(app.id("mbRouteReportSave").disabled,true);assert.equal(app.id("mbRouteCoordinates").textContent,"0, 100");assert.equal(app.id("mbRouteCard").hidden,false);
     app.id("mbRouteBack").fire("click");assert.equal(app.id("tracePanel").hidden,false);app.id("deskClearTrace").fire("click");assert.equal(app.id("mbRouteCard").hidden,true);assert.equal(app.overlays.length,0);assert.equal(app.id("mbControls").disabled,false);
     await loadGPX('<gpx><wpt lat="90" lon="0"/></gpx>');await app.id("deskViewMap").fire("click");assert.match(app.id("mbStatus").textContent,/Every overlay point needs Web Mercator/);assert.equal(app.id("mbRouteCard").hidden,true);
     await loadGPX();await app.id("deskViewMap").fire("click");app.id("mbRouteClear").fire("click");assert.equal(app.id("mbRouteCard").hidden,true);assert.equal(app.id("deskViewMap").disabled,false);
@@ -316,4 +322,18 @@ test("offline places reject a whole invalid import and discard reads after cance
   }
   assert.match(app.id("placesCount").textContent,/2 total/); assert.equal(app.id("placesCancelRead").disabled,true);
   assert.equal(app.storageTouches,0); assert.equal(app.requests,0);
+});
+
+test("offline path reports keep every gap while limiting the on-screen list and invalidate exports",{timeout:5000},async()=>{
+  const app=boot({mbtiles:true,gpxParser:FixtureXMLParser}),raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),"coverage-wrap"]);
+  const points=[.5,120.5].map(x=>mbUnproject(x*256,10.5*256,8)),gpx=`<gpx><trk><trkseg>${points.map(p=>`<trkpt lat="${p.lat}" lon="${p.lon}"/>`).join("")}</trkseg></trk></gpx>`;
+  try{
+    app.id("deskGpx").files=[{name:"long.gpx",size:gpx.length,text:async()=>gpx}];await app.id("deskGpx").fire("change");await app.id("deskViewMap").fire("click");
+    app.id("mbFile").files=[{name:"sparse.mbtiles",size:raw.length,arrayBuffer:async()=>raw.buffer.slice(raw.byteOffset,raw.byteOffset+raw.byteLength)}];await app.id("mbFile").fire("change");
+    await app.id("mbRouteCheckRun").fire("click");assert.match(app.id("mbRouteCheckState").textContent,/121 tiles checked · 0 present · 121 missing/);assert.equal(app.id("mbRouteGaps").children.length,100);assert.match(app.id("mbRouteGapNote").textContent,/first 100 of 121/);
+    app.id("mbRouteGaps").value="99";await app.id("mbRouteGapOpen").fire("click");assert.equal(Number(app.id("mbLongitude").value),mbUnproject(99.5*256,10.5*256,8).lon);
+    app.id("mbRouteReportSave").fire("click");const report=JSON.parse(await app.blobs.at(-1).text());assert.equal(report.tiles.length,121);assert.equal(report.tiles.at(-1).x,120);
+    app.id("deskClearTrace").fire("click");assert.equal(app.id("mbRouteReportSave").disabled,true);assert.equal(app.id("mbRouteCheckResult").hidden,true);const saved=app.downloads.length;app.id("mbRouteReportSave").fire("click");assert.equal(app.downloads.length,saved);
+    assert.equal(app.requests,0);assert.equal(app.storageTouches,0);
+  }finally{app.id("mbClose").fire("click");}
 });
