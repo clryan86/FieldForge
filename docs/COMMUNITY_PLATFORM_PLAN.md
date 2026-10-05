@@ -65,6 +65,34 @@ location, generate an opaque asset ID, and reject SVG/HTML and oversized input.
 Pictures, email addresses, real names, and questionnaire answers stay private
 unless the member chooses otherwise.
 
+### Working in the local preview
+
+The [profile editor and local directory](COMMONS_PROFILES.md) now implement this
+profile/photo portion for saved local accounts. Profiles default to private.
+Members separately choose directory presence, sharing selected interests/ways
+to help, and sharing a photo. Experience answers remain private, including their
+relative ranking. The directory shows the account username beside the chosen
+display name and does not publish private contact codes.
+
+Authenticated uploads normalize bounded PNG/JPEG/WebP files into metadata-free
+PNG thumbnails. Each replacement begins private, invalidates its old image ID,
+and requires a fresh sharing choice. Blocks in either direction and participant
+suspension prevent future directory/photo access. Profile export and deletion
+are implemented; account deletion and lifecycle remain separate work.
+
+The shared-tab session guard binds an established browser action to its displayed
+participant, clears the old identity after a cookie changes, and rejects late
+replies from earlier sessions. Public hosting and verified identity integrations
+remain unconfigured.
+
+### Other known preview work
+
+Private conversation history currently returns the latest 100 messages from a
+200-message retained conversation. Add bounded pagination so older retained
+messages can be read. The per-participant conversation limit currently counts
+left and declined memberships as well as active ones; design lifecycle cleanup
+with invitation abuse limits so old invitations cannot exhaust usable capacity.
+
 ## Community areas and resources
 
 The web experience should connect **Community**, **Maps**, **Knowledge Library**,

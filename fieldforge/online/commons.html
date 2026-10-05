@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/commons.css">
   <script src="/commons-private.js" defer></script>
   <script src="/commons-accounts.js" defer></script>
+  <script src="/commons-profiles.js" defer></script>
   <script src="/commons.js" defer></script>
 </head>
 <body>
@@ -26,7 +27,7 @@
     </section>
     <p id="status" class="status" role="status">Join when you're ready. Chat makes no API requests before you join.</p>
     <div id="accountBar" class="account-bar" hidden><div><strong id="accountIdentity"></strong><p id="accountHint" class="hint"></p></div><button id="accountManage" class="secondary" type="button">Account security</button></div>
-    <nav class="conversation-tabs" aria-label="Conversation areas"><button type="button" id="publicRoomsButton" aria-pressed="true">Community rooms</button><button type="button" id="privateInboxButton" aria-pressed="false" disabled>Private inbox <span id="inboxCount"></span></button></nav>
+    <nav class="conversation-tabs" aria-label="Conversation areas"><button type="button" id="publicRoomsButton" aria-pressed="true">Community rooms</button><button type="button" id="privateInboxButton" aria-pressed="false" disabled>Private inbox <span id="inboxCount"></span></button><button type="button" id="openProfile" aria-haspopup="dialog" disabled>My profile</button><button type="button" id="openDirectory" aria-haspopup="dialog" disabled>Member directory</button></nav>
     <section class="workspace" id="publicWorkspace" aria-label="Commons chat workspace">
       <aside class="rooms-panel"><p class="eyebrow">Conversation rooms</p><nav id="rooms" aria-label="Chat rooms"><button type="button" disabled aria-current="page">Base camp</button><button type="button" disabled>Maps &amp; navigation</button><button type="button" disabled>Food &amp; farming</button><button type="button" disabled>Construction &amp; repair</button></nav><div class="room-note"><span class="tag">People helping people</span><p>Skill labels describe a member's own interests or experience. They are not verified qualifications.</p></div></aside>
       <div class="conversation">
@@ -41,7 +42,7 @@
         <p class="eyebrow">Your session</p><h3>Stay in control</h3><p class="small">The latest 100 visible messages appear in each room. Drafts stay in this tab until you close it.</p>
         <div class="session-actions"><button id="pauseButton" class="secondary" type="button" disabled>Pause chat</button><button id="exportButton" class="secondary" type="button" disabled>Export my messages</button><button id="leaveButton" class="secondary" type="button" disabled>Leave chat</button></div>
         <details><summary>Blocked participants <span id="blockedCount">(0)</span></summary><div id="blockedList"><p class="hint">No participants blocked.</p></div></details>
-        <div class="privacy-note"><h3>About this preview</h3><p>Chat runs only on this computer. Messages are stored in a local database and are not end-to-end encrypted.</p><p>Reports are saved for the local operator to review. No staffed moderation or emergency response is provided.</p><p>Local accounts preserve your inbox. Public accounts, social sign-in, and profile photos are still under development.</p></div>
+        <div class="privacy-note"><h3>About this preview</h3><p>Chat runs only on this computer. Messages are stored in a local database and are not end-to-end encrypted.</p><p>Reports are saved for the local operator to review. No staffed moderation or emergency response is provided.</p><p>Local accounts preserve your inbox and can choose to share a profile in the local member directory. Public hosting and social sign-in are not connected.</p></div>
       </aside>
     </section>
     <section id="privateWorkspace" class="private-workspace" aria-label="Private messaging workspace" hidden>
@@ -57,6 +58,36 @@
     </section>
     <footer><span>FieldForge Commons</span><span>Prepare together. Keep your offline tools close.</span></footer>
   </main>
+  <dialog id="profileDialog" class="people-dialog" aria-labelledby="profileTitle">
+    <div class="people-dialog-heading"><div><p class="eyebrow">Your place in Commons</p><h2 id="profileTitle">My profile</h2></div><button id="closeProfile" type="button" class="secondary">Close profile</button></div>
+    <p id="profileStatus" class="status" role="status"></p>
+    <div id="profileGuest" class="profile-guest" hidden><span class="tag">Temporary guest</span><h3>Give your profile a place to stay.</h3><p>Choose Save my account to keep this session, its inbox, and a profile you can edit when you return. Profiles start private, and joining chat does not list you in the directory.</p><button id="profileSaveAccount" type="button">Save my account to add a profile</button></div>
+    <form id="profileForm" hidden>
+      <div class="profile-account-note"><p id="profileUsername" class="profile-username"></p><span id="profileSavedState" class="tag">Private profile</span></div>
+      <p class="hint">Your account username stays the same in chat. A profile name is your choice; real identities and qualifications are unverified.</p>
+      <p class="hint">Save before leaving this view. Unsaved edits and on-screen photos clear when you close it, pause chat, or hide this tab.</p>
+      <div class="profile-editor-grid">
+        <section class="profile-panel" aria-labelledby="profileBasicsTitle"><h3 id="profileBasicsTitle">A little about you</h3><label for="profileDisplayName">Profile display name</label><input id="profileDisplayName" maxlength="60" required autocomplete="off" aria-describedby="profileNameHint"><p id="profileNameHint" class="hint">Up to 60 characters. Your @username will also appear in the directory.</p><label for="profileBio">About you</label><textarea id="profileBio" rows="4" maxlength="500" placeholder="What are you learning, working on, or happy to help with?" aria-describedby="profileBioCount"></textarea><p id="profileBioCount" class="hint">0 / 500 characters</p></section>
+        <section class="profile-panel" aria-labelledby="profilePhotoTitle"><h3 id="profilePhotoTitle">Profile photo <span class="hint">· optional</span></h3><div id="profilePhotoPreview" class="profile-photo-preview"><span class="profile-photo-placeholder">No photo saved</span></div><p id="profilePhotoState" class="hint">Photos stay private until you choose to share them.</p><div id="profilePhotoUploadFields"><label for="profilePhotoFile">Choose a photo from this device</label><input id="profilePhotoFile" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="profilePhotoHint"><p id="profilePhotoHint" class="hint">PNG, JPEG, or WebP. Up to 1 MiB, 4,096 pixels per side, and 12 megapixels. Upload creates a small PNG with embedded metadata removed.</p><button id="profilePhotoUpload" type="button" class="secondary" disabled>Upload photo privately</button></div><p id="profilePhotoUnavailable" class="hint" hidden>Photo uploads are unavailable on this local server. You can still use a profile without a photo.</p><button id="profilePhotoRemove" type="button" class="secondary" disabled>Remove photo</button></section>
+      </div>
+      <fieldset class="profile-panel profile-assessment"><legend>Interests &amp; experience</legend><p class="hint">Choose up to five areas. Experience answers stay private; shared skill labels are self-reported interests, not verified qualifications.</p><p id="profileInterestCount" class="hint">0 of 5 areas selected</p><div id="profileInterests" class="profile-interests"></div></fieldset>
+      <fieldset class="profile-panel"><legend>How would you like to help?</legend><p class="hint">Choose any that fit. These appear with your interests only if you choose to share your skills.</p><div id="profileContributions" class="profile-contributions"></div></fieldset>
+      <fieldset class="profile-panel profile-sharing"><legend>Your sharing choices</legend><label class="consent"><input id="profileVisibility" type="checkbox"><span><strong>List my profile in the local Commons directory</strong><small>Share my profile name, @username, and bio with participants on this server.</small></span></label><label class="consent"><input id="profileShareSkills" type="checkbox"><span><strong>Share my interests and ways to help</strong><small>Only when my profile is listed. My experience answers remain private.</small></span></label><label class="consent"><input id="profileSharePhoto" type="checkbox"><span><strong>Share my profile photo</strong><small>Only when my profile is listed. Each new upload starts private and needs this choice again.</small></span></label><p id="profileSharingSummary" class="profile-sharing-summary"></p><p class="hint">Uncheck the directory choice and save to withdraw your listing. People who previously viewed it may have kept a copy.</p></fieldset>
+      <div id="profileConflict" class="profile-conflict" role="alert" hidden><h3>Your saved profile changed.</h3><p>Your draft is still here. Choose Reload saved profile to replace it with the current saved version before making another change.</p></div>
+      <div class="profile-form-actions"><button id="profileReload" type="button" class="secondary">Reload saved profile</button><button id="profileSave" type="submit">Save profile</button></div>
+      <div class="profile-data-actions"><div><h3>Your profile data</h3><p class="hint">Export or delete your profile and its photo. Deleting a profile keeps your account, inbox, and messages.</p></div><div><button id="profileExport" type="button" class="secondary">Export my profile</button><button id="profileDelete" type="button" class="secondary">Delete my profile</button></div></div>
+    </form>
+  </dialog>
+  <dialog id="directoryDialog" class="people-dialog directory-dialog" aria-labelledby="directoryTitle">
+    <div class="people-dialog-heading"><div><p class="eyebrow">People helping people</p><h2 id="directoryTitle">Member directory</h2></div><button id="closeDirectory" type="button" class="secondary">Close directory</button></div>
+    <p>Find people who chose to share a profile on this local server. Names and skill labels are self-reported; identities and qualifications are unverified.</p>
+    <form id="directorySearchForm" class="directory-search"><div><label for="directoryQuery">Search member profiles</label><input id="directoryQuery" maxlength="60" autocomplete="off" placeholder="Name, username, or bio"></div><div><label for="directoryCategory">Interest area</label><select id="directoryCategory"><option value="">All interest areas</option><!-- SKILL_OPTIONS --></select></div><button id="directorySearch" type="submit">Search</button></form>
+    <div class="directory-toolbar"><p class="hint">The directory updates when you open it, search, or choose Refresh.</p><button id="directoryRefresh" type="button" class="secondary">Refresh directory</button></div>
+    <p id="directoryStatus" class="status" role="status"></p>
+    <div id="directoryCards" class="directory-cards" aria-label="Shared member profiles"></div>
+    <div class="directory-pages"><button id="directoryPrevious" type="button" class="secondary" disabled>Previous</button><span id="directoryPage" class="hint"></span><button id="directoryNext" type="button" class="secondary" disabled>Next</button></div>
+    <p class="hint directory-privacy">Joining chat does not add you here. Create a saved account and use My profile to choose what to share. Contact codes and private experience answers are never shown in this directory.</p>
+  </dialog>
   <dialog id="accountDialog" aria-labelledby="accountTitle"><form id="accountForm">
     <h2 id="accountTitle">Create a local account</h2><p id="accountDescription"></p>
     <div id="accountUsernameField"><label for="accountUsername">Account username</label><input id="accountUsername" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z][A-Za-z0-9_]{2,31}" required><p class="hint">3–32 letters, numbers or underscores, starting with a letter. Your username is visible to participants.</p></div>

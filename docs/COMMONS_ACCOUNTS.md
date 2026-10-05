@@ -15,6 +15,11 @@ verified by creating an account.
 This screenshot comes from a browser test using explicitly named TEST users
 and messages. It contains no passwords or recovery codes.
 
+Saved accounts can now use [My profile](COMMONS_PROFILES.md) for an optional
+profile, photo and self-selected interests. A profile starts private; publishing
+it, sharing skills and sharing a photo are separate choices. Deleting a profile
+keeps the local account, inbox and contact code.
+
 ## Try it
 
 Use the [local preview launch instructions](COMMONS_CHAT_PREVIEW.md#start-it).
@@ -102,12 +107,13 @@ or an expired/revoked session to avoid carrying them into another identity.
   are embedded in code.
   Skill labels grant no privileges.
 
-Accounts introduced schema version 3; the owner console adds version 4. Both
+Accounts introduced schema version 3; the owner console adds version 4 and
+profiles add version 5. These
 upgrades preserve existing data. Version 3 adds accounts and rate-limit counters
 to version 1/2 databases.
 Existing participants, active sessions, messages, invitations and reports remain.
 Stop the server and back up the database before changing versions. Old binaries
-that do not understand schema 3 must not be used against the upgraded database.
+that do not understand the current schema must not be used against the upgraded database.
 Restoring a backup may also restore credentials/sessions that had since been
 revoked; backup recovery and secret rotation need an operational procedure before
 public launch. Do not publish or commit databases or recovery codes.

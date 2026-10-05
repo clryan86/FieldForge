@@ -2,16 +2,37 @@
 (() => {
   const el = id => document.getElementById(id);
   let joined = false, active = false, room = "general", timer = null, reader = null;
-  let revision = 0, sending = false, reportMessage = null;
-  let privateChat, accountUI, viewer = null;
+  let revision = 0, identityRevision = 0, sending = false, reportMessage = null;
+  let privateChat, accountUI, profileUI, viewer = null;
   const drafts = new Map();
   const notice = (text, error = false) => { el("status").textContent = text; el("status").classList.toggle("error", error); };
   const node = (tag, text, className) => { const result = document.createElement(tag); if (text !== undefined) result.textContent = text; if (className) result.className = className; return result; };
   async function request(action, data = {}, signal) {
-    const response = await fetch("/api/commons/" + action, {method: "POST", credentials: "same-origin", cache: "no-store", signal,
-      headers: {"Content-Type": "application/json", "X-FieldForge-Chat": "preview-v1"}, body: JSON.stringify(data)});
-    const result = await response.json();
-    if (!response.ok) { const error = new Error(result.error?.message || "Chat request failed."); error.status = response.status; throw error; }
+    const ownIdentityRevision = identityRevision, expectedViewer = viewer?.id;
+    const entering = ["join", "account/login", "account/resume", "account/recover"].includes(action);
+    const headers = {"Content-Type": "application/json", "X-FieldForge-Chat": "preview-v1"};
+    // Tabs share cookies. Bind established-session requests to the person shown
+    // here so an account switch elsewhere cannot send this person's draft as another.
+    if (expectedViewer && !entering) headers["X-FieldForge-Participant"] = expectedViewer;
+    let response, result;
+    try {
+      response = await fetch("/api/commons/" + action, {method: "POST", credentials: "same-origin", cache: "no-store", signal,
+        headers, body: JSON.stringify(data)});
+      result = await response.json();
+    } catch (error) {
+      if (ownIdentityRevision !== identityRevision) throw new DOMException("This reply belongs to a previous chat session.", "AbortError");
+      throw error;
+    }
+    if (ownIdentityRevision !== identityRevision) throw new DOMException("This reply belongs to a previous chat session.", "AbortError");
+    if (!response.ok) {
+      const error = new Error(result.error?.message || "Chat request failed."); error.status = response.status;
+      if (expectedViewer && !entering && error.status === 401) failed(error);
+      throw error;
+    }
+    if (expectedViewer && !entering && result.viewer && result.viewer.id !== expectedViewer) {
+      const error = new Error("The account in this browser changed. Resume the current session when ready.");
+      error.status = 401; failed(error); throw error;
+    }
     return result;
   }
   function controls() {
@@ -29,26 +50,39 @@
     for (const button of document.querySelectorAll(".message-actions button, #blockedList button")) button.disabled = !enabled;
     privateChat?.setSession(joined, active, sending);
     accountUI?.setSession(joined, active, viewer);
+    profileUI?.setSession(joined, active, viewer);
   }
   function stop() {
-    active = false; revision++; clearTimeout(timer); reader?.abort(); reader = null; controls();
+    active = false; revision++; identityRevision++; clearTimeout(timer); reader?.abort(); reader = null; controls();
   }
   function failed(error) {
-    if (error.name === "AbortError") return;
+    if (error.name === "AbortError" || error.sessionEnded) return;
     stop();
-    if (error.status === 401) clearIdentity();
-    notice((error.status ? error.message : "The local server could not be reached.") + (joined ? " Your draft is retained. Choose Resume chat to reconnect." : " Sign in or join again when ready."), true);
+    if (error.status === 401) { clearIdentity(); error.sessionEnded = true; }
+    notice((error.status ? error.message : "The local server could not be reached.") + (joined ? " Your draft is retained. Choose Resume chat to reconnect." : " Choose Resume existing session or sign in when ready."), true);
   }
   function clearIdentity() {
-    joined = false; viewer = null; drafts.clear(); el("message").value = ""; count(); controls();
+    active = false; joined = false; viewer = null; identityRevision++; revision++;
+    clearTimeout(timer); reader?.abort(); reader = null;
+    drafts.clear(); el("message").value = ""; count(); controls();
     el("messages").replaceChildren(); el("emptyState").hidden = false;
     el("sessionName").textContent = "Preview"; el("blockedList").replaceChildren(); delete el("blockedList").dataset.value; el("blockedCount").textContent = "(0)";
+    // Clear unfinished private invitations/reports as well as the thread drafts
+    // cleared by CommonsPrivate.setSession(). They also belong to this identity.
+    el("newConversationForm").reset(); el("privateReportForm").reset(); el("reportForm").reset();
+    el("privateTitle").textContent = "Your conversations, in one place";
+    el("privateParticipants").textContent = ""; el("privateKind").textContent = ""; el("inboxCount").textContent = "";
+    delete el("threadList").dataset.value;
+    el("reportDialog").close(); reportMessage = null;
+    privateChat.inviteDraft = null; privateChat.reportTarget = null;
+    accountUI.clearFields(); accountUI.clearRecovery(); el("accountDialog").close();
   }
   async function connected(data) {
     if (viewer && viewer.id !== data.viewer.id) clearIdentity();
-    viewer = data.viewer; joined = true; active = true; controls();
+    identityRevision++; viewer = data.viewer; joined = true; active = true; controls();
     notice(`Joined as ${viewer.name}. ${viewer.account ? "Your account keeps access to your inbox after sign-out." : "Messages are saved on this local server."}`);
     await refresh();
+    if (!joined || viewer?.id !== data.viewer.id) throw new DOMException("The account changed before connection completed.", "AbortError");
   }
   function saveDraft() {
     const body = el("message").value;
@@ -141,6 +175,7 @@
   }
   privateChat = new window.CommonsPrivate({request, notice, failed, refresh});
   accountUI = new window.CommonsAccounts({request, notice, connected});
+  if (window.CommonsProfile) profileUI = new window.CommonsProfile({request, notice, failed, refresh});
   el("joinForm").addEventListener("submit", async event => {
     event.preventDefault(); if (!el("consent").checked) return;
     el("joinButton").disabled = true;
@@ -161,7 +196,9 @@
       drafts.delete(room); el("message").value = ""; count(); notice("Message saved."); await refresh();
       el("messageScroll").scrollTop = el("messageScroll").scrollHeight;
     } catch (error) {
+      if (error.name === "AbortError") return;
       if (error.status === 429 || error.status === 400) notice(error.message + " Your draft is retained.", true);
+      else if (error.status === 401) failed(error);
       else { failed(error); notice("Delivery could not be confirmed. Your draft is retained; resume and send again to check the same message without duplicating it.", true); }
     } finally { sending = false; controls(); if (active) el("message").focus(); }
   });

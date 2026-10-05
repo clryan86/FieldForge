@@ -59,6 +59,7 @@ class OwnerStore(AccountStore):
     def __init__(self, path, **kwargs):
         super().__init__(path, **kwargs)
         with self._db() as db:
+            version = db.execute("PRAGMA user_version").fetchone()[0]
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS owner_config (
                     singleton INTEGER PRIMARY KEY CHECK(singleton=1),
@@ -82,8 +83,8 @@ class OwnerStore(AccountStore):
                     id INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT NOT NULL,
                     target TEXT NOT NULL, reason TEXT NOT NULL, created REAL NOT NULL
                 );
-                PRAGMA user_version=4;
             """)
+            db.execute(f"PRAGMA user_version={max(4, version)}")
 
     def _audit(self, db, event, target, reason=""):
         db.execute("INSERT INTO owner_audit(event,target,reason,created) VALUES(?,?,?,?)",

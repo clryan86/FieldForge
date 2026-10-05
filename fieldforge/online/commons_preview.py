@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sqlite3
 import time
 from http.cookies import CookieError, SimpleCookie
@@ -16,6 +17,7 @@ from pathlib import Path
 from fieldforge.online.chat_store import SESSION_SECONDS, ChatError
 from fieldforge.online.community import CATEGORIES
 from fieldforge.online.owner import OwnerStore
+from fieldforge.online.profiles import ProfileStore
 from fieldforge.online.server import (
     PortalApplication,
     PortalConfig,
@@ -29,6 +31,7 @@ from fieldforge.online.server import (
 
 COOKIE_NAME = "fieldforge_commons_preview"
 API_ROOT = "/api/commons/"
+PHOTO_REQUEST_BYTES = ((1024 * 1024 + 2) // 3) * 4 + 256
 
 
 def _cookie(token, *, clear=False):
@@ -49,13 +52,22 @@ class PreviewHandler(PortalHandler):
             if (self.headers.get_all("X-FieldForge-Chat") != ["preview-v1"]
                     or self.command != "POST" or len(self.headers.get_all("Origin", [])) != 1):
                 raise ChatError(403, "Use the local chat page to access this preview.")
+            # Preserve small API limits while allowing bounded photo bytes and a fully
+            # JSON-escaped, 500-character Unicode biography with its questionnaire.
+            body_limit = {API_ROOT + "profile/photo/upload": PHOTO_REQUEST_BYTES,
+                          API_ROOT + "profile/save": 8192}.get(self.path, 4096)
             payload = _request_body(self.rfile, self.headers.get_all("Content-Length", []),
-                                    self.headers.get_all("Content-Type", []))
+                                    self.headers.get_all("Content-Type", []), maximum=body_limit)
             cookies = SimpleCookie()
             if len(self.headers.get_all("Cookie", [])) > 1:
                 raise ChatError(400, "Invalid preview cookie.")
             cookies.load(self.headers.get("Cookie", ""))
             token = cookies[COOKIE_NAME].value if COOKIE_NAME in cookies else None
+            expected = self.headers.get_all("X-FieldForge-Participant", [])
+            if expected:
+                if (len(expected) != 1 or not re.fullmatch(r"[a-f0-9]{24}", expected[0])
+                        or app.store.account_resume(token)["viewer"]["id"] != expected[0]):
+                    raise ChatError(401, "The account in this browser changed. Resume the current session when ready.")
             response = app.chat_response(self.path, payload, token)
         except ChatError as exc:
             self.close_connection = True
@@ -73,6 +85,8 @@ class PreviewApplication(PortalApplication):
     def __init__(self, store):
         super().__init__(PortalConfig())
         self.store = store
+        # Profile images are sanitized PNG data, fetched through the authenticated API.
+        self.csp = self.csp.replace("img-src 'self' blob:", "img-src 'self' blob: data:")
         root = Path(__file__).parent
         for path, filename, mime in (
             ("/commons", "commons.html", "text/html; charset=utf-8"),
@@ -80,6 +94,7 @@ class PreviewApplication(PortalApplication):
             ("/commons.css", "commons.css", "text/css; charset=utf-8"),
             ("/commons-private.js", "commons-private.js", "text/javascript; charset=utf-8"),
             ("/commons-accounts.js", "commons-accounts.js", "text/javascript; charset=utf-8"),
+            ("/commons-profiles.js", "commons-profiles.js", "text/javascript; charset=utf-8"),
             ("/commons-owner", "commons-owner.html", "text/html; charset=utf-8"),
             ("/commons-owner.js", "commons-owner.js", "text/javascript; charset=utf-8"),
         ):
@@ -95,8 +110,8 @@ class PreviewApplication(PortalApplication):
                  b'<p class="hint">Local accounts can keep your inbox across sessions. Public membership is not active.</p></section>')
         page = page.replace(
             b'No account, profile photo, public directory, chat or encrypted messaging is active here.',
-            b'Public accounts, profile photos, a public directory and encrypted messaging are not active. '
-            b'Use the local chat preview button above to test shared rooms on this computer.')
+            b'Public accounts, an internet-wide directory and encrypted messaging are not active. '
+            b'Use the local chat preview button above to try shared rooms and optional profiles on this computer.')
         self.assets["/"] = (page.replace(b"<main>", b"<main>" + entry, 1), mime)
 
     def chat_response(self, path, payload, token):
@@ -116,6 +131,12 @@ class PreviewApplication(PortalApplication):
                    "account/resume": {"consent"},
                    "account/recover": {"username", "recovery_code", "new_password", "consent"},
                    "account/password": {"password", "new_password"},
+                   "profile/get": set(), "profile/save": {"profile", "revision"},
+                   "profile/photo/upload": {"encoded", "revision"},
+                   "profile/photo/remove": {"revision"}, "profile/photo/read": {"asset_id"},
+                   "profile/delete": {"revision"}, "profile/export": set(),
+                   "profile/directory": {"query", "category", "offset"},
+                   "profile/block": {"profile_id"},
                    "owner/login": {"username", "password", "code", "consent"},
                    "owner/dashboard": set(), "owner/reports": set(), "owner/lock": set(),
                    "owner/members": {"query", "offset"},
@@ -143,6 +164,14 @@ class PreviewApplication(PortalApplication):
                 result = methods[name.split("/")[1]](token, **payload) or {"ok": True}
                 if name == "owner/password":
                     cookie = _cookie("", clear=True)
+        elif name.startswith("profile/"):
+            methods = {"get": self.store.profile_get, "save": self.store.profile_save,
+                       "photo/upload": self.store.profile_photo_upload,
+                       "photo/remove": self.store.profile_photo_remove,
+                       "photo/read": self.store.profile_photo_read, "delete": self.store.profile_delete,
+                       "export": self.store.profile_export, "directory": self.store.profile_directory,
+                       "block": self.store.profile_block}
+            result = methods[name.removeprefix("profile/")](token, **payload)
         elif name.startswith("account/"):
             fields = dict(payload)
             if name != "account/password" and fields.pop("consent") is not True:
@@ -205,7 +234,7 @@ class CommonsPreviewServer(PortalHTTPServer):
 
 
 def make_preview_server(database, port=8765):
-    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(OwnerStore(database)))
+    server = CommonsPreviewServer(("127.0.0.1", port), PreviewApplication(ProfileStore(database)))
     server.RequestHandlerClass = PreviewHandler
     return server
 

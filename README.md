@@ -16,6 +16,9 @@ The [local account guide](docs/COMMONS_ACCOUNTS.md) covers saved accounts, passw
 sign-in, guest upgrades, and recovery codes. Public accounts and internet hosting
 are not enabled by this preview. The [owner console](docs/COMMONS_OWNER.md) adds
 local sole-owner setup, authenticator verification, report review and access controls.
+The [profile guide](docs/COMMONS_PROFILES.md) covers editable private profiles,
+optional photos, self-selected interests, and the opt-in local member directory.
+Members can export or delete their profile without deleting their account or inbox.
 
 ## Design principles
 

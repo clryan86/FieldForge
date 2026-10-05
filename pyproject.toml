@@ -15,7 +15,7 @@ dependencies = []
 pdf = ["pypdf>=6.19.0,<7"]
 gps = ["pyserial>=3.5,<4"]
 maps = ["Pillow>=12.3,<13"]
-commons = ["pyotp==2.9.0"]
+commons = ["pyotp==2.9.0", "Pillow>=12.3,<13"]
 dev = [
   "build>=1.2,<2",
   "pytest>=8,<10",
@@ -36,7 +36,7 @@ include = ["fieldforge*"]
 
 [tool.setuptools.package-data]
 fieldforge_gps = ["data/*"]
-"fieldforge.online" = ["portal.html", "commons.html", "commons.css", "commons.js", "commons-private.js", "commons-accounts.js", "commons-owner.html", "commons-owner.js"]
+"fieldforge.online" = ["portal.html", "commons.html", "commons.css", "commons.js", "commons-private.js", "commons-accounts.js", "commons-profiles.js", "commons-owner.html", "commons-owner.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

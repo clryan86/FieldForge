@@ -7,10 +7,13 @@ on:
       - 'fieldforge/online/accounts.py'
       - 'fieldforge/online/owner*.py'
       - 'fieldforge/online/private_chat.py'
+      - 'fieldforge/online/profiles.py'
+      - 'fieldforge/online/profile_photos.py'
       - 'fieldforge/online/commons*'
       - 'fieldforge/online/community.py'
       - 'fieldforge/online/server.py'
       - 'tests/test_commons_*'
+      - 'tests/test_profile_photos.py'
       - 'pyproject.toml'
       - '.github/workflows/commons-chat.yml'
   pull_request:
@@ -19,10 +22,13 @@ on:
       - 'fieldforge/online/accounts.py'
       - 'fieldforge/online/owner*.py'
       - 'fieldforge/online/private_chat.py'
+      - 'fieldforge/online/profiles.py'
+      - 'fieldforge/online/profile_photos.py'
       - 'fieldforge/online/commons*'
       - 'fieldforge/online/community.py'
       - 'fieldforge/online/server.py'
       - 'tests/test_commons_*'
+      - 'tests/test_profile_photos.py'
       - 'pyproject.toml'
       - '.github/workflows/commons-chat.yml'
 
@@ -43,8 +49,11 @@ jobs:
       - name: Install Chromium
         run: python -m playwright install --with-deps chromium
       - name: Check chat source
-        run: ruff check fieldforge/online/owner.py fieldforge/online/owner_setup.py fieldforge/online/accounts.py fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py tests/test_commons_chat.py tests/test_commons_chat_browser.py tests/test_commons_private.py tests/test_commons_private_browser.py tests/test_commons_accounts.py tests/test_commons_accounts_browser.py tests/test_commons_owner.py tests/test_commons_owner_browser.py
+        run: |
+          ruff check fieldforge/online/owner.py fieldforge/online/owner_setup.py fieldforge/online/accounts.py fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py fieldforge/online/profiles.py fieldforge/online/profile_photos.py tests/test_commons_*.py tests/test_profile_photos.py
+          node --check fieldforge/online/commons.js
+          node --check fieldforge/online/commons-profiles.js
       - name: Exercise real local chat and portal compatibility
         env:
           FIELDFORGE_PORTAL_BROWSER_TESTS: '1'
-        run: python -m pytest -o addopts='' -q -ra tests/test_commons_chat.py tests/test_community_profile.py tests/test_online_portal.py tests/test_online_integration.py tests/test_portal_connection.py tests/test_commons_chat_browser.py tests/test_commons_private.py tests/test_commons_private_browser.py tests/test_commons_accounts.py tests/test_commons_accounts_browser.py tests/test_commons_owner.py tests/test_commons_owner_browser.py
+        run: python -m pytest -o addopts='' -q -ra tests/test_commons_*.py tests/test_profile_photos.py tests/test_community_profile.py tests/test_online_portal.py tests/test_online_integration.py tests/test_portal_connection.py

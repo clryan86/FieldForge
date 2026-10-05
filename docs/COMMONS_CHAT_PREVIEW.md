@@ -46,6 +46,9 @@ covers direct conversations, invite-only groups, and open-once delivery, includi
 the limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
 covers saved accounts, guest upgrades, password sign-in, and recovery codes. The [owner console guide](COMMONS_OWNER.md)
 covers sole-owner setup, authenticator sign-in, and moderation.
+The [profile and directory guide](COMMONS_PROFILES.md) covers private profile
+editing, optional photo thumbnails with embedded metadata removed, separate
+sharing choices, member discovery, and profile export/deletion.
 
 - Base camp plus twelve practical skill rooms, with independent room history.
 - Plain text messages and optional skill labels; all identities are unverified.
@@ -114,11 +117,17 @@ remove the database only with an understanding of the local data it contains.
 ## What still blocks a public launch
 
 Verified email/account recovery integration, production administration hardening, social
-sign-in configuration, profile picture handling, reviewed moderation and abuse
+sign-in configuration, production profile/photo moderation, reviewed moderation and abuse
 controls, HTTPS hosting, operations/backup restoration, privacy/terms, and a
 security review are still required. Private messaging is available only within
 this local preview; encryption between members, notifications, payments, and
 public hosting are not implemented.
+
+Established browser requests are bound to the participant shown in that tab.
+If another tab switches accounts, the old tab clears its message/profile drafts
+and private state, then asks for explicit reconnection. This also prevents a
+send or account change made before the next poll from using the new account's
+cookie. Late replies from an old session cannot repopulate a resumed session.
 
 ## Verification
 
