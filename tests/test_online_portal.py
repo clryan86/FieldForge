@@ -373,11 +373,17 @@ def test_portal_assets_are_local_with_restrictive_csp(portal):
     assert b"Download a regional PBF (53 areas)" in body
     assert b"U.S. Virgin Islands" in body and b"district-of-columbia-latest.osm.pbf" in body
     assert b"not a routing graph or driving directions" in body
+    assert b"Choose a country or smaller area before downloading" in body
+    assert b"not ready-to-open MBTiles or route graphs" in body
+    for region in (b"africa.html", b"antarctica.html", b"asia.html",
+                   b"australia-oceania.html", b"central-america.html",
+                   b"europe.html", b"north-america.html", b"south-america.html"):
+        assert b"https://download.geofabrik.de/" + region in body
     external_links = re.findall(rb'<a href="(https://[^"]+)"[^>]*>', body)
     allowed_hosts = (b"download.geofabrik.de", b"operations.osmfoundation.org",
                      b"www.maptiler.com", b"distribution.charts.noaa.gov", b"www.redcross.org",
                      b"www.ready.gov", b"www.dla.mil", b"www.gsa.gov", b"www.usa.gov")
-    assert len(external_links) == 14
+    assert len(external_links) == 22
     for link in external_links:
         assert any(host in link for host in allowed_hosts)
         element = re.search(rb'<a href="' + re.escape(link) + rb'"[^>]*>', body).group(0)
