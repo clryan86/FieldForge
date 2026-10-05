@@ -107,11 +107,13 @@ or an expired/revoked session to avoid carrying them into another identity.
   are embedded in code.
   Skill labels grant no privileges.
 
-Accounts introduced schema version 3; the owner console adds version 4 and
-profiles add version 5. These
-upgrades preserve existing data. Version 3 adds accounts and rate-limit counters
+Accounts introduced schema version 3; the owner console adds version 4,
+profiles add version 5, and the [inbox lifecycle update](COMMONS_PRIVATE_MESSAGES.md)
+adds version 6. These upgrades preserve saved-account data. Version 3 adds accounts and rate-limit counters
 to version 1/2 databases.
-Existing participants, active sessions, messages, invitations and reports remain.
+Saved accounts keep their inbox across expired or revoked sessions. Version 6
+retires irrecoverable guest memberships and reclaims conversations only after
+their last eligible member leaves; it retains bounded invitation retry records.
 Stop the server and back up the database before changing versions. Old binaries
 that do not understand the current schema must not be used against the upgraded database.
 Restoring a backup may also restore credentials/sessions that had since been

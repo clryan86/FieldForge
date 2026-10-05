@@ -284,7 +284,7 @@ def test_rate_limits_owner_guesses_persist_and_migration_preserves_accounts(tmp_
     assert error.value.status == 429
     AccountStore(path)
     with sqlite3.connect(path) as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 4
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 6
 
 
 def test_http_owner_requires_factors_consent_origin_and_never_exposes_setup(preview_server):

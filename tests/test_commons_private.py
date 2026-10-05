@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
+from fieldforge.online.accounts import AccountStore
 from fieldforge.online.chat_store import ChatError, ChatStore
 from fieldforge.online.private_chat import VIEW_ONCE_SECONDS, PrivateChatStore
 
@@ -34,7 +35,7 @@ def send(store, token, thread, *, body="Private text", lifetime="saved", key="b"
     return store.private_send(token, thread, body, lifetime, key)["id"]
 
 
-def test_migrates_v1_without_losing_public_history_or_downgrading_v2(tmp_path):
+def test_migrates_v1_without_losing_public_history_or_downgrading_private_schema(tmp_path):
     path = tmp_path / "old.sqlite3"
     old = ChatStore(path, clock=lambda: 1000)
     token, _ = old.join("Alice", "")
@@ -43,7 +44,7 @@ def test_migrates_v1_without_losing_public_history_or_downgrading_v2(tmp_path):
     assert private.read(token, "general")["messages"][0]["body"] == "Keep this public message"
     ChatStore(path)  # An older public-only caller must not lower the schema version.
     with sqlite3.connect(path) as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 6
 
 
 def test_invitation_acceptance_and_outsider_access_boundaries(private_store):
@@ -132,6 +133,11 @@ def test_expiration_sweep_clears_unopened_content_after_restart(private_store):
     alice, bob, *_ = participants(store)
     thread = create(store, [alice, bob])
     message = send(store, alice[0], thread, lifetime="view_once")
+    # Saved accounts retain this conversation after the eight-hour session
+    # expires; irrecoverable guest-only conversations are now reclaimed.
+    accounts = AccountStore(store.path, clock=store.clock)
+    for index, participant in enumerate((alice, bob)):
+        accounts.account_register(f"Test_Expiry_{index}", "TEST expiry account passphrase", "", token=participant[0])
     store.test_clock[0] += VIEW_ONCE_SECONDS
     reopened = PrivateChatStore(store.path, clock=store.clock)
     reopened.expire_private_messages()
@@ -229,6 +235,8 @@ def test_idle_server_sweep_expires_bodies_without_client_requests(tmp_path):
         alice, bob, *_ = participants(store)
         thread = create(store, [alice, bob])
         message = send(store, alice[0], thread, lifetime="view_once")
+        for index, participant in enumerate((alice, bob)):
+            store.account_register(f"Test_Idle_{index}", "TEST idle expiry passphrase", "", token=participant[0])
         now[0] += VIEW_ONCE_SECONDS
         server._last_expiry = time.monotonic() - 61
         server.service_actions()

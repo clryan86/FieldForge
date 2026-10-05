@@ -28,12 +28,73 @@ withdraw messages in that conversation. Every operation checks membership on
 the server. Knowing a thread ID or another person's contact code grants no access.
 
 Members may leave; a left or declined invitation cannot be rejoined in this
-preview. Create a new conversation to add members. Blocking either direction
+preview. Declining or leaving immediately frees that participant's conversation
+slot. Create a new conversation to add members, subject to the invitation limits
+below. Blocking either direction
 stops new private invitations/messages between those people and consumes their
-pending open-once deliveries to one another. In a group, a sender with a blocked
+pending open-once deliveries to one another. An unwanted invitation offers
+**Decline and block sender**, so the recipient can stop further contact without
+accepting or reading the conversation. In a group, a sender with a blocked
 recipient must use a different conversation to continue sending. Other unblocked
 members may continue their own conversation. The Community rooms tab retains the
 block list and Unblock control.
+
+## Read older messages
+
+An accepted conversation opens on its latest **100 visible messages**. Choose
+**Older messages** to read the previous page, and **Back to latest** to return to
+recent messages. Each conversation retains up to **200 messages** across all
+participants; blocked or unavailable messages can make a page shorter.
+
+The preview keeps refreshing the page you are viewing. New messages do not pull
+you out of older history. Withdrawals, blocking, expiry and membership checks
+still apply to every page. Saved messages are marked read only when their page
+is fetched; opening the latest page does not silently mark older pages read.
+Open-once placeholders remain unread until explicitly opened, withdrawn or
+expired, and their bodies never appear in history pages.
+
+Leaving the inbox, pausing, hiding the tab or changing participants clears the
+displayed history. Reopening starts at the latest page. A new message can age
+out an older retained message even while its page is open; use Back to latest
+if that older page becomes empty. History navigation does not restore messages
+that have already aged out of the 200-message retention limit.
+
+## Conversation capacity and invitation limits
+
+The local preview applies these separate limits:
+
+| Limit | Behavior |
+|---|---|
+| 20 conversations per participant | Counts accepted conversations and pending invitations. Declined and left memberships do not count. |
+| 200 conversations per database | A conversation remains while any accepted or invited member can return to it. |
+| 20 invited recipients per sender in a rolling 24 hours | Each group recipient counts separately. An unsuccessful invitation or an unchanged retry uses no extra allowance. |
+| One new invitation to the same contact per hour | Applies across direct conversations and groups, including after a decline or a closed conversation. The other participant has their own sending allowance. |
+| 20,000 invitation retry records per database | New invitations wait for old closed records to expire if this bound is reached. Existing conversations remain accessible. |
+
+These invitation limits persist across server restarts and sign-ins. A rejected
+group invitation is atomic: no participant receives a partial invitation and
+none of the sender's allowance is consumed. Blocking in either direction stops
+new invitations regardless of the time limits. These controls apply to a
+participant identity. Creating a new guest identity can bypass that identity's
+allowance; public registration and abuse prevention remain separate work.
+
+Leaving preserves the conversation for its remaining participants, including a
+single remaining member who wants to keep saved history. When nobody remains,
+the preview removes that conversation's title, memberships, messages, deliveries
+and associated reports. Guest identities that have logged out or expired cannot
+return; their memberships are retired during private activity, startup or the
+once-per-minute sweep. Saved accounts retain their memberships while signed out,
+expired or suspended because they may regain access later.
+
+A small invitation receipt retains the original conversation ID, sender,
+recipient IDs, request ID, content fingerprint and timestamps. It contains no
+message bodies or readable subject. It stays as long as the conversation exists,
+then for seven days after the last member leaves. During that period, retrying
+the original request returns its original result, marked closed if appropriate;
+it never recreates the conversation or sends another invitation. Reusing that
+request ID with different invitation content is rejected. After an expired
+closed receipt is removed, a submission is treated as a new invitation and must
+pass the current capacity, availability, blocking and invitation limits.
 
 ## Saved versus open-once delivery
 
@@ -82,9 +143,8 @@ subject and expect that subject to disappear.
 - The service still binds only to `127.0.0.1`; it is not exposed publicly.
 - No public accounts, email recovery, social sign-in, attachments, notifications,
   external email delivery, or end-to-end encryption are implemented.
-- Each database supports 200 private conversations, 20 per participant, and 200
-  retained messages per conversation. The UI shows the latest 100. A new message
-  can age out the oldest message even if it was unread. Personal export contains
+- Each conversation retains 200 messages, displayed in pages of at most 100.
+  A new message can age out the oldest message even if it was unread. Personal export contains
   up to 1,000 saved messages sent by the current participant in conversations
   they still belong to.
 - Sending is limited to one new message every two seconds across public and
@@ -94,9 +154,14 @@ subject and expect that subject to disappear.
   moderation or emergency response is available. Open-once bodies are never
   retained as report evidence.
 
-Private messaging introduced schema version 2; local accounts add version 3
-without removing public room
-history or active sessions. Keep a backup of test data before changing versions.
+Private messaging introduced schema version 2; the inbox lifecycle update uses
+**schema version 6**. It adds invitation receipts and backfills existing
+invitations before reclaiming fully left conversations or irrecoverable guest
+memberships. It preserves public room history, saved accounts, profiles and
+photos, owner configuration, and private history that still has an eligible
+member. Current preview and owner utilities preserve the newer version.
+Stop the preview and keep a backup of test data before changing versions; older
+code that does not support version 6 must not operate on the upgraded database.
 The preview refuses to use an unrelated application database.
 
 ## Public launch status
@@ -130,3 +195,27 @@ IDs, blocking, leaving, author-only withdrawal, bounded retention, and the
 version-1-to-2 database migration. Ruff and JavaScript syntax checks passed.
 The built wheel was checked outside the source checkout: private assets were
 present and a private invitation followed by one-time delivery succeeded.
+
+## Inbox history and lifecycle verification, 2026-10-05
+
+The current combined Commons, profile/photo, community, portal and connection
+suite passed **311 tests and six subtests**, including all **28 Chromium browser
+tests**, in 198.44 seconds. One existing native graphical portal handoff test
+was skipped because this environment has no graphical desktop.
+
+This update adds 26 history/API regressions, 20 invitation lifecycle regressions,
+and six browser scenarios. They exercise more than 100 unread messages, sparse
+cursor IDs, per-page saved read receipts, blocked/undelivered messages, sealed
+open-once content, fresh withdrawal/expiry checks, retention-empty pages,
+late-response cleanup, mobile layout, decline-and-block, and a lost invitation
+reply retried after closure. Lifecycle tests cover concurrency, exact hour/day/
+seven-day boundaries, weighted group invitations, bounded retry records,
+saved-account preservation, orphan guest cleanup, and schema-5 backfill.
+
+Repository-wide Ruff, JavaScript syntax and whitespace checks passed. The wheel
+was installed outside the source checkout and checked with `python -S`, without
+optional packages, for matching packaged assets, 103-message history/read
+receipts, reusable capacity, closed retries, schema version 6 and restart.
+An independent review found no material issue in the new pagination, lifecycle,
+retry or migration paths. These checks do not constitute a public-launch
+security review.

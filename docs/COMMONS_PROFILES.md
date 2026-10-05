@@ -183,8 +183,9 @@ earlier profile state.
 
 ## Database upgrade and implementation boundaries
 
-Profiles introduce Commons database schema version **5**. Opening an existing
-supported Commons database with the updated preview adds the profile table
+Profiles introduced Commons database schema version **5**; the current inbox
+lifecycle update uses **version 6**. Opening an existing supported Commons
+database with the updated preview adds the profile table
 while retaining accounts, sessions, room messages, private conversations,
 invitations, blocks, reports, and owner configuration. Existing accounts do not
 automatically receive a directory listing.
@@ -192,9 +193,14 @@ automatically receive a directory listing.
 Stop the server and back up the local database before upgrading. Continue using
 the same database path to retain the existing community. Use the updated code
 for both preview and owner commands; older releases that do not understand
-schema version 5 must not operate on the upgraded file. Current owner utilities
+schema version 6 must not operate on the upgraded file. Current owner utilities
 preserve the version instead of downgrading it. Keep databases and their private
 contents outside the source repository.
+
+Version 6 also records invitation retries and reclaims private conversations
+after their last eligible member leaves. It does not remove saved accounts or
+their profiles/photos. See the [private inbox guide](COMMONS_PRIVATE_MESSAGES.md)
+for invitation limits and guest membership expiry.
 
 Profile operations require an authenticated local session. Edits and exports
 operate only on that session's saved account. The owner console does not bypass

@@ -42,8 +42,9 @@ Keep the terminal open while testing; press Ctrl+C to stop the server.
 ## Working now
 
 The [private inbox and disappearing-message guide](COMMONS_PRIVATE_MESSAGES.md)
-covers direct conversations, invite-only groups, and open-once delivery, including
-the limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
+covers direct conversations, invite-only groups, older-message pages, reusable
+conversation capacity, invitation limits and open-once delivery, including the
+limits of browser clearing and screenshots. The [local account guide](COMMONS_ACCOUNTS.md)
 covers saved accounts, guest upgrades, password sign-in, and recovery codes. The [owner console guide](COMMONS_OWNER.md)
 covers sole-owner setup, authenticator sign-in, and moderation.
 The [profile and directory guide](COMMONS_PROFILES.md) covers private profile

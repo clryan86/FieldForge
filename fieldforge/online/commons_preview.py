@@ -145,7 +145,8 @@ class PreviewApplication(PortalApplication):
                    "owner/password": {"password", "code", "new_password"}}
         if name not in schemas:
             raise ChatError(404, "Chat endpoint not found.")
-        if set(payload) != schemas[name]:
+        optional = {"before"} if name == "private/read" else set()
+        if not schemas[name] <= set(payload) or not set(payload) <= schemas[name] | optional:
             raise ChatError(400, "Unsupported chat request fields.")
         result = {"ok": True}
         cookie = None

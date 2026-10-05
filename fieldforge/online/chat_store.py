@@ -88,7 +88,7 @@ class ChatStore:
             if ((version == 0 and (identity != 0 or tables))
                     or (version != 0 and identity != APPLICATION_ID)):
                 raise ValueError("Choose a separate Commons preview database, not an existing app database.")
-            if version not in (0, 1, 2, 3, 4, 5):
+            if version not in (0, 1, 2, 3, 4, 5, 6):
                 raise ValueError("Unsupported Commons preview database version.")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS participants (

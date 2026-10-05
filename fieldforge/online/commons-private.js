@@ -4,11 +4,15 @@ window.CommonsPrivate = class {
     this.request = request; this.notice = notice; this.failed = failed; this.refresh = refresh;
     this.active = false; this.joined = false; this.visible = false; this.busy = false;
     this.selected = null; this.threads = []; this.drafts = new Map(); this.viewEpoch = 0;
+    this.before = null; this.olderBefore = null; this.pageRevision = 0;
+    this.historyReady = false; this.historyCount = 0; this.pageScroll = "latest";
     this.el = id => document.getElementById(id);
     this.el("privateInboxButton").addEventListener("click", () => this.show(true));
     this.el("publicRoomsButton").addEventListener("click", () => this.show(false));
     this.el("privatePause").addEventListener("click", () => this.el("pauseButton").click());
     this.el("privateLeaveSession").addEventListener("click", () => this.el("leaveButton").click());
+    this.el("privateOlder").addEventListener("click", () => this.page(this.olderBefore));
+    this.el("privateLatest").addEventListener("click", () => this.page(null));
     this.el("newConversation").addEventListener("click", () => this.el("newConversationDialog").showModal());
     this.el("cancelConversation").addEventListener("click", () => this.el("newConversationDialog").close());
     this.el("newConversationForm").addEventListener("submit", event => {
@@ -19,26 +23,43 @@ window.CommonsPrivate = class {
         if (this.inviteDraft?.signature !== signature) this.inviteDraft = {signature, id: crypto.randomUUID()};
         const result = await this.request("private/create", {...draft, request_id: this.inviteDraft.id});
         this.el("newConversationDialog").close(); this.el("newConversationForm").reset(); this.inviteDraft = null;
-        this.choose(result.thread); this.notice("Invitation sent. Recipients must accept before reading."); await this.refresh();
+        if (result.closed) this.notice("That invitation was already sent and the conversation has since closed. Start a new conversation if needed.");
+        else { this.choose(result.thread); this.notice("Invitation sent. Recipients must accept before reading."); }
+        await this.refresh();
       });
     });
     this.el("acceptConversation").addEventListener("click", () => this.run(async () => {
       await this.request("private/accept", {thread: this.selected}); await this.refresh(); this.notice("Invitation accepted.");
     }));
     const leave = () => this.run(async () => {
-      if (!confirm("Leave this conversation? This preview cannot re-add your session. Messages you sent remain for the other participants.")) return;
-      await this.request("private/leave", {thread: this.selected}); this.choose(null); await this.refresh(); this.notice("You left the private conversation.");
+      const invited = this.threads.find(thread => thread.id === this.selected)?.status === "invited";
+      if (!confirm(invited ? "Decline this invitation? You will not join this conversation or receive its messages." : "Leave this conversation? To chat again, start a new conversation. Your sent messages remain for participants who stay.")) return;
+      await this.request("private/leave", {thread: this.selected}); this.choose(null); await this.refresh(); this.notice(invited ? "Invitation declined." : "You left the private conversation.");
     });
     this.el("leaveConversation").addEventListener("click", leave);
     this.el("declineConversation").addEventListener("click", leave);
+    this.el("declineBlockConversation").addEventListener("click", () => this.run(async () => {
+      const thread = this.threads.find(item => item.id === this.selected);
+      if (thread?.status !== "invited") return;
+      if (!confirm("Decline this invitation and block its sender? They will not be able to send you new private invitations while blocked.")) return;
+      const pageRevision = this.pageRevision;
+      await this.request("block", {target: thread.owner, blocked: true});
+      if (!this.active || !this.joined) return;
+      await this.request("private/leave", {thread: thread.id});
+      if (this.selected === thread.id && pageRevision === this.pageRevision) this.choose(null);
+      await this.refresh(); this.notice("Invitation declined and sender blocked. You can manage blocked participants in Community rooms.");
+    }));
     this.el("privateMessage").addEventListener("input", () => this.saveDraft());
     this.el("privateLifetime").addEventListener("change", () => { this.saveDraft(); this.lifetimeHint(); });
     this.el("privateCompose").addEventListener("submit", event => { event.preventDefault(); this.send(); });
     this.el("closeViewOnce").addEventListener("click", () => this.clearReveal());
     this.el("viewOnceDialog").addEventListener("cancel", event => { event.preventDefault(); this.clearReveal(); });
     this.el("viewOnceDialog").addEventListener("close", () => { this.el("viewOnceBody").textContent = ""; clearInterval(this.revealTimer); });
-    document.addEventListener("visibilitychange", () => { if (document.hidden) this.clearReveal(); });
-    window.addEventListener("pagehide", () => this.clearReveal());
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) { this.resetHistory(); this.controls(); }
+      else if (this.active && this.visible && this.selected) this.refresh();
+    });
+    window.addEventListener("pagehide", () => { this.resetHistory(); this.controls(); });
     this.el("privateExport").addEventListener("click", () => this.run(async () => {
       const data = await this.request("private/export");
       const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type: "application/json"}));
@@ -62,13 +83,17 @@ window.CommonsPrivate = class {
     element.addEventListener("click", () => this.run(callback)); return element;
   }
   setSession(joined, active, publicBusy) {
-    if (!active) this.clearReveal();
+    if (!active) {
+      if (this.active || this.historyReady || this.before !== null) this.resetHistory();
+      else this.clearReveal();
+    }
     if (!joined && this.joined) {
       this.choose(null); this.threads = []; this.drafts.clear(); this.el("threadList").replaceChildren();
       this.el("contactCode").value = ""; this.show(false);
       for (const id of ["newConversationDialog", "privateReportDialog"]) this.el(id).close();
     }
     this.joined = joined; this.active = active; this.publicBusy = publicBusy; this.controls();
+    if (joined && !active && this.selected) this.el("privateEmpty").textContent = "Chat is paused. Resume chat to load this conversation's latest messages.";
   }
   controls() {
     const disabled = !this.active || this.busy || this.publicBusy;
@@ -79,13 +104,16 @@ window.CommonsPrivate = class {
     this.el("privatePause").textContent = this.active ? "Pause chat" : "Resume chat";
     this.el("privateLeaveSession").disabled = !this.joined || this.busy || this.publicBusy;
     this.el("cancelConversation").disabled = false; this.el("cancelPrivateReport").disabled = false;
+    this.historyControls(disabled);
   }
   show(visible) {
     if (visible && !this.joined) return;
+    if (this.visible !== visible) this.resetHistory();
     this.visible = visible; this.clearReveal();
     this.el("publicWorkspace").hidden = visible; this.el("privateWorkspace").hidden = !visible;
     this.el("privateInboxButton").setAttribute("aria-pressed", String(visible));
     this.el("publicRoomsButton").setAttribute("aria-pressed", String(!visible));
+    this.controls();
     if (this.active) this.refresh();
   }
   async run(callback) {
@@ -93,6 +121,7 @@ window.CommonsPrivate = class {
     this.busy = true; this.controls();
     try { await callback(); }
     catch (error) {
+      if (error.name === "AbortError") return;
       if (!error.status || error.status === 401) this.failed(error);
       else this.notice(error.message, true);
     } finally { this.busy = false; this.controls(); }
@@ -104,11 +133,44 @@ window.CommonsPrivate = class {
     this.drafts.set(this.selected, {body, lifetime, id: previous?.body === body && previous?.lifetime === lifetime ? previous.id : null});
   }
   choose(thread) {
-    this.saveDraft(); this.clearReveal(); this.selected = thread;
+    this.saveDraft(); this.selected = thread; this.resetHistory();
     const draft = this.drafts.get(thread);
     this.el("privateMessage").value = draft?.body || ""; this.el("privateLifetime").value = draft?.lifetime || "saved";
-    this.el("privateMessages").replaceChildren(); this.lifetimeHint();
+    this.lifetimeHint();
     this.el("privateCompose").hidden = true; this.el("privateInvitation").hidden = true;
+    this.el("privateTitle").textContent = thread ? "Loading conversation…" : "Your conversations, in one place";
+    this.el("privateParticipants").textContent = ""; this.el("leaveConversation").hidden = true;
+    this.controls();
+  }
+  resetHistory(before = null) {
+    this.pageRevision++; this.before = before; this.olderBefore = null;
+    this.historyReady = false; this.historyCount = 0; this.pageScroll = before === null ? "latest" : "older";
+    this.clearReveal(); this.el("privateMessages").replaceChildren();
+    this.el("privateHistoryStatus").textContent = "";
+    this.el("privateHistory").hidden = true; this.el("privateLatest").hidden = before === null;
+    this.el("privateEmpty").textContent = this.selected ? "Loading this conversation's messages…" : "Start a conversation or accept an invitation. Saved messages stay here; open-once messages disappear after opening.";
+    this.el("privateEmpty").hidden = false;
+    this.el("privateScroll").scrollTop = 0;
+  }
+  historyControls(disabled = !this.active || this.busy || this.publicBusy) {
+    const thread = this.threads.find(item => item.id === this.selected);
+    const available = this.active && this.visible && !document.hidden && thread?.status === "accepted";
+    this.el("privateHistory").hidden = !available;
+    this.el("privateOlder").disabled = disabled || !available || !this.historyReady || this.olderBefore === null;
+    this.el("privateLatest").hidden = this.before === null;
+    this.el("privateLatest").disabled = disabled || !available || this.before === null;
+    if (!available) return;
+    const unread = thread.unread ? ` ${thread.unread} unread in this conversation.` : "";
+    const text = !this.historyReady ? this.before === null ? "Loading latest messages…" : "Loading older messages…"
+      : this.before !== null ? this.historyCount ? `Older messages · ${this.historyCount} shown.${unread}` : "No messages remain on this older page. Return to latest."
+        : `${this.historyCount} latest visible ${this.historyCount === 1 ? "message" : "messages"}.${unread}`;
+    if (this.el("privateHistoryStatus").textContent !== text) this.el("privateHistoryStatus").textContent = text;
+  }
+  async page(before) {
+    if (!this.active || !this.visible || document.hidden || this.busy || this.publicBusy || !this.selected) return;
+    if (before !== null && (!Number.isSafeInteger(before) || before <= 0)) return;
+    if (before === this.before) return;
+    this.resetHistory(before); this.controls(); await this.refresh();
   }
   lifetimeHint() {
     this.el("lifetimeHint").textContent = this.el("privateLifetime").value === "saved"
@@ -116,24 +178,12 @@ window.CommonsPrivate = class {
       : "Each recipient can open once, for a 30-second display. Unopened messages expire in 24 hours. Screenshots cannot be prevented. You cannot reread or export the body after sending.";
   }
   async poll(signal) {
+    const pageRevision = this.pageRevision;
     const inbox = await this.request("private/inbox", {}, signal);
     if (signal.aborted || !this.active) return;
     this.el("contactCode").value = inbox.contact_code; this.threads = inbox.threads;
-    const count = inbox.threads.reduce((total, thread) => total + (thread.status === "invited" ? 1 : thread.unread), 0);
-    this.el("inboxCount").textContent = count ? `(${count})` : "";
-    const signature = JSON.stringify(inbox.threads) + this.selected;
-    const list = this.el("threadList");
-    if (list.dataset.value !== signature) {
-      list.dataset.value = signature; list.replaceChildren();
-      for (const thread of inbox.threads) {
-        const button = this.button("", async () => { this.choose(thread.id); await this.refresh(); });
-        button.className = "thread-card"; if (thread.id === this.selected) button.setAttribute("aria-current", "page");
-        button.append(this.node("strong", thread.title), this.node("span", thread.status === "invited" ? "Invitation · choose whether to join" : `${thread.kind === "group" ? "Private group" : "Direct message"} · ${thread.unread} unread`, "hint"));
-        list.append(button);
-      }
-      if (!inbox.threads.length) list.append(this.node("p", "No invitations or conversations yet.", "hint"));
-    }
-    if (!this.visible) { this.controls(); return; }
+    this.renderThreads();
+    if (!this.visible || document.hidden || pageRevision !== this.pageRevision) { this.controls(); return; }
     const thread = this.threads.find(item => item.id === this.selected);
     if (!thread) {
       this.choose(null); this.el("privateTitle").textContent = "Your conversations, in one place";
@@ -146,11 +196,33 @@ window.CommonsPrivate = class {
     this.el("privateCompose").hidden = thread.status !== "accepted";
     this.el("leaveConversation").hidden = thread.status !== "accepted";
     if (thread.status === "accepted") {
-      const selected = this.selected; const data = await this.request("private/read", {thread: selected}, signal);
-      if (signal.aborted || selected !== this.selected || !this.active || !this.visible) return;
-      this.renderMessages(data.messages);
-    } else { this.el("privateMessages").replaceChildren(); this.el("privateEmpty").hidden = true; }
+      const selected = this.selected, before = this.before;
+      const payload = before === null ? {thread: selected} : {thread: selected, before};
+      const data = await this.request("private/read", payload, signal);
+      if (signal.aborted || pageRevision !== this.pageRevision || selected !== this.selected || before !== this.before || !this.active || !this.visible || document.hidden) return;
+      if (data.thread.id !== selected || (data.before ?? null) !== before) return;
+      this.olderBefore = Number.isSafeInteger(data.older_before) && data.older_before > 0 ? data.older_before : null;
+      this.historyReady = true; this.historyCount = data.messages.length;
+      this.threads = this.threads.map(item => item.id === selected ? data.thread : item);
+      this.renderMessages(data.messages); this.renderThreads();
+    } else { this.resetHistory(); this.el("privateEmpty").hidden = true; }
     this.controls();
+  }
+  renderThreads() {
+    const count = this.threads.reduce((total, thread) => total + (thread.status === "invited" ? 1 : thread.unread), 0);
+    this.el("inboxCount").textContent = count ? `(${count})` : "";
+    const signature = JSON.stringify(this.threads) + this.selected;
+    const list = this.el("threadList");
+    if (list.dataset.value !== signature) {
+      list.dataset.value = signature; list.replaceChildren();
+      for (const thread of this.threads) {
+        const button = this.button("", async () => { this.choose(thread.id); await this.refresh(); });
+        button.className = "thread-card"; if (thread.id === this.selected) button.setAttribute("aria-current", "page");
+        button.append(this.node("strong", thread.title), this.node("span", thread.status === "invited" ? "Invitation · choose whether to join" : `${thread.kind === "group" ? "Private group" : "Direct message"} · ${thread.unread} unread`, "hint"));
+        list.append(button);
+      }
+      if (!this.threads.length) list.append(this.node("p", "No invitations or conversations yet.", "hint"));
+    }
   }
   renderMessages(messages) {
     const log = this.el("privateMessages"), scroll = this.el("privateScroll");
@@ -187,7 +259,10 @@ window.CommonsPrivate = class {
       if (previous) previous.replaceWith(article); else log.insertBefore(article, log.children[index] || null);
     }
     this.el("privateEmpty").hidden = messages.length > 0;
-    if (nearBottom) scroll.scrollTop = scroll.scrollHeight;
+    this.el("privateEmpty").textContent = this.before === null ? "No visible messages in this conversation yet." : "No messages remain on this older page. Choose Back to latest to read recent messages.";
+    if (this.pageScroll === "older") scroll.scrollTop = 0;
+    else if (this.pageScroll === "latest" || this.before === null && nearBottom) scroll.scrollTop = scroll.scrollHeight;
+    this.pageScroll = null;
   }
   async send() {
     await this.run(async () => {
@@ -196,7 +271,7 @@ window.CommonsPrivate = class {
       draft.id ||= crypto.randomUUID(); const selected = this.selected;
       await this.request("private/send", {thread: selected, body: draft.body, lifetime: draft.lifetime, request_id: draft.id});
       this.drafts.delete(selected); this.el("privateMessage").value = "";
-      this.notice(draft.lifetime === "saved" ? "Private message saved." : "Open-once message sent. It is excluded from sent history and exports.");
+      this.notice((draft.lifetime === "saved" ? "Private message saved." : "Open-once message sent. It is excluded from sent history and exports.") + (this.before !== null ? " You are viewing older messages; choose Back to latest to see recent messages." : ""));
       await this.refresh();
     });
   }

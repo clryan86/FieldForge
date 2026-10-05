@@ -85,13 +85,20 @@ participant, clears the old identity after a cookie changes, and rejects late
 replies from earlier sessions. Public hosting and verified identity integrations
 remain unconfigured.
 
-### Other known preview work
+### Private inbox lifecycle
 
-Private conversation history currently returns the latest 100 messages from a
-200-message retained conversation. Add bounded pagination so older retained
-messages can be read. The per-participant conversation limit currently counts
-left and declined memberships as well as active ones; design lifecycle cleanup
-with invitation abuse limits so old invitations cannot exhaust usable capacity.
+The private inbox now pages through retained messages with **Older messages**
+and **Back to latest**. Each page rechecks membership, blocking, withdrawal and
+open-once state, and only returned saved messages receive read receipts.
+
+Declined and left memberships free the participant's conversation slot.
+Conversations and their content remain available to any remaining member and
+are reclaimed only when no accepted or invited member can return. Expired or
+logged-out guests are retired; saved accounts keep their inbox while signed out.
+Persistent recipient-weighted daily invitation limits, a per-contact cooldown,
+and bounded closed-conversation retry receipts prevent cleanup from bypassing
+the local invitation controls. See [private messaging](COMMONS_PRIVATE_MESSAGES.md)
+for exact limits and schema version 6 upgrade behavior.
 
 ## Community areas and resources
 

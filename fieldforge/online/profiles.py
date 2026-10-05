@@ -69,6 +69,7 @@ class ProfileStore(OwnerStore):
         super().__init__(path, **kwargs)
         self._photo_slots = threading.BoundedSemaphore(2)
         with self._db() as db:
+            version = db.execute("PRAGMA user_version").fetchone()[0]
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS profiles (
                     participant TEXT PRIMARY KEY REFERENCES accounts(participant) ON DELETE CASCADE,
@@ -82,8 +83,8 @@ class ProfileStore(OwnerStore):
                     updated REAL NOT NULL,
                     CHECK((photo_asset_id IS NULL) = (photo_png IS NULL))
                 );
-                PRAGMA user_version=5;
             """)
+            db.execute(f"PRAGMA user_version={max(5, version)}")
 
     def _profile_member(self, db, token):
         member = self._member(db, token)

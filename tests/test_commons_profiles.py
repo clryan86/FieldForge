@@ -305,7 +305,7 @@ def test_search_pages_show_only_opted_in_skill_tags_and_have_stable_order(store)
             directory(store, viewer, **filters)
 
 
-def test_migration_keeps_v4_accounts_messages_and_owner_utilities_do_not_downgrade(tmp_path):
+def test_migration_keeps_existing_accounts_messages_and_owner_utilities_do_not_downgrade(tmp_path):
     path = tmp_path / "migration.sqlite3"
     previous = OwnerStore(path)
     alice, response = previous.account_register("TEST_Existing", PASSWORD, "")
@@ -316,7 +316,7 @@ def test_migration_keeps_v4_accounts_messages_and_owner_utilities_do_not_downgra
     profile(store, alice, bio="TEST survives owner utilities")
     OwnerStore(path).reports()
     with sqlite3.connect(path) as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 5
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 6
     assert ProfileStore(path).profile_get(alice)["profile"]["bio"] == "TEST survives owner utilities"
 
 
@@ -392,8 +392,23 @@ def test_http_profile_shapes_no_store_and_endpoint_specific_upload_limit(preview
     assert api(preview_server, "/api/commons/profile/export", {}, token=alice, origin=False)[0] == 403
     valid = {"encoded": png_source(), "revision": 0}
     assert api(preview_server, "/api/commons/profile/photo/upload", valid, token=alice)[0] == 200
-    assert api(preview_server, "/api/commons/profile/photo/upload", {"encoded": "A" * PHOTO_REQUEST_BYTES, "revision": 1}, token=alice)[0] == 413
-    assert api(preview_server, "/api/commons/send", {"body": "a" * 5000}, token=alice)[0] == 413
+    # The server rejects an oversized Content-Length before reading its body.
+    # Sending megabytes after that rejection can race the connection close and
+    # raise BrokenPipeError in the test client instead of observing the 413.
+    host = f"127.0.0.1:{preview_server.server_address[1]}"
+    for path, size in (("profile/photo/upload", PHOTO_REQUEST_BYTES + 1), ("send", 4097)):
+        connection = http.client.HTTPConnection(host, timeout=5)
+        try:
+            connection.request("POST", "/api/commons/" + path, headers={
+                "Content-Type": "application/json", "Content-Length": str(size),
+                "Origin": "http://" + host, "X-FieldForge-Chat": "preview-v1",
+                "Cookie": f"{COOKIE_NAME}={alice}",
+            })
+            response = connection.getresponse()
+            assert response.status == 413
+            response.read()
+        finally:
+            connection.close()
     assert api(preview_server, "/api/commons/profile/photo/read", {"asset_id": "x"}, token=alice)[0] == 404
     assert api(preview_server, "/api/commons/profile/get", method="GET", token=alice)[0] == 403
     ordinary = PortalApplication(PortalConfig())

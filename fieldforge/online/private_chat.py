@@ -25,7 +25,13 @@ MAX_THREADS = 200
 MAX_MEMBER_THREADS = 20
 MAX_GROUP_MEMBERS = 8
 MAX_THREAD_MESSAGES = 200
+PRIVATE_HISTORY_PAGE_SIZE = 100
 VIEW_ONCE_SECONDS = 24 * 60 * 60
+INVITATION_WINDOW = 24 * 60 * 60
+MAX_DAILY_INVITATIONS = 20
+INVITATION_COOLDOWN = 60 * 60
+INVITATION_RETRY_SECONDS = 7 * 24 * 60 * 60
+MAX_INVITATION_RECEIPTS = 20_000
 
 
 def _opaque(value):
@@ -62,6 +68,7 @@ class PrivateChatStore(ChatStore):
                     participant TEXT NOT NULL REFERENCES participants(id), status TEXT NOT NULL,
                     PRIMARY KEY(thread,participant)
                 );
+                CREATE INDEX IF NOT EXISTS private_member_status ON private_members(participant,status);
                 CREATE TABLE IF NOT EXISTS private_messages (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     thread TEXT NOT NULL REFERENCES private_threads(id) ON DELETE CASCADE,
@@ -81,8 +88,27 @@ class PrivateChatStore(ChatStore):
                     reporter TEXT NOT NULL REFERENCES participants(id), reason TEXT NOT NULL,
                     created REAL NOT NULL, PRIMARY KEY(message,reporter)
                 );
+                CREATE TABLE IF NOT EXISTS private_invitation_receipts (
+                    thread TEXT PRIMARY KEY, owner TEXT NOT NULL REFERENCES participants(id),
+                    request_id TEXT NOT NULL, fingerprint TEXT NOT NULL, created REAL NOT NULL,
+                    closed REAL, UNIQUE(owner,request_id)
+                );
+                CREATE INDEX IF NOT EXISTS private_invitation_owner_created
+                    ON private_invitation_receipts(owner,created);
+                CREATE TABLE IF NOT EXISTS private_invitation_contacts (
+                    thread TEXT NOT NULL REFERENCES private_invitation_receipts(thread) ON DELETE CASCADE,
+                    recipient TEXT NOT NULL REFERENCES participants(id), PRIMARY KEY(thread,recipient)
+                );
             """)
-            db.execute(f"PRAGMA user_version={max(2, version)}")
+            # executescript commits its DDL. Backfill and cleanup must then share
+            # one transaction, including publication of the new schema version.
+            db.execute("BEGIN IMMEDIATE")
+            db.execute("INSERT OR IGNORE INTO private_invitation_receipts "
+                       "SELECT id,owner,request_id,fingerprint,created,NULL FROM private_threads")
+            db.execute("INSERT OR IGNORE INTO private_invitation_contacts "
+                       "SELECT m.thread,m.participant FROM private_members m "
+                       "JOIN private_threads t ON t.id=m.thread WHERE m.participant!=t.owner")
+            db.execute(f"PRAGMA user_version={max(6, version)}")
             self._expire(db)
 
     def _contact_available(self, db, contact):
@@ -90,11 +116,39 @@ class PrivateChatStore(ChatStore):
                           (contact, self.clock())).fetchone()
 
     def _expire(self, db):
+        now = self.clock()
+        self._retire_guest_memberships(db, now)
+        # A conversation remains available while even one accepted or invited
+        # participant can still return. Receipts outlive inaccessible content.
+        empty_threads = ("SELECT t.id FROM private_threads t WHERE NOT EXISTS "
+                         "(SELECT 1 FROM private_members m WHERE m.thread=t.id "
+                         "AND m.status IN ('accepted','invited'))")
+        db.execute("UPDATE private_invitation_receipts SET closed=? WHERE closed IS NULL "
+                   f"AND thread IN ({empty_threads})", (now,))
+        db.execute(f"DELETE FROM private_threads WHERE id IN ({empty_threads})")
+        db.execute("DELETE FROM private_invitation_receipts WHERE closed<=? AND created<=?",
+                   (now - INVITATION_RETRY_SECONDS, now - INVITATION_RETRY_SECONDS))
         db.execute("UPDATE private_messages SET body='',redacted='expired' "
-                   "WHERE lifetime='view_once' AND redacted='' AND expires<=?", (self.clock(),))
+                   "WHERE lifetime='view_once' AND redacted='' AND expires<=?", (now,))
         db.execute("UPDATE private_messages SET body='',redacted='opened' "
                    "WHERE lifetime='view_once' AND redacted='' AND NOT EXISTS "
                    "(SELECT 1 FROM private_deliveries d WHERE d.message=private_messages.id AND d.opened IS NULL)")
+
+    @staticmethod
+    def _retire_guest_memberships(db, now):
+        # Saved accounts can sign back in. A logged-out/expired guest has no
+        # recovery path and must not occupy invitation or conversation slots.
+        has_accounts = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='accounts'").fetchone()
+        account_guard = ("AND NOT EXISTS (SELECT 1 FROM accounts a WHERE a.participant=p.id)"
+                         if has_accounts else "")
+        changed = db.execute("UPDATE private_members SET status='left' WHERE status IN ('accepted','invited') "
+                             "AND participant IN (SELECT p.id FROM participants p "
+                             f"WHERE (p.token_hash IS NULL OR p.expires<=?) {account_guard})", (now,))
+        if changed.rowcount:
+            db.execute("UPDATE private_deliveries SET opened=? WHERE opened IS NULL AND EXISTS "
+                       "(SELECT 1 FROM private_messages m JOIN private_members p ON p.thread=m.thread "
+                       "WHERE m.id=private_deliveries.message AND p.participant=private_deliveries.recipient "
+                       "AND p.status='left')", (now,))
 
     def expire_private_messages(self):
         with self._db() as db:
@@ -146,12 +200,14 @@ class PrivateChatStore(ChatStore):
         fingerprint = hashlib.sha256(json.dumps([title, kind, sorted(contacts)]).encode()).hexdigest()
         with self._db() as db:
             member = self._member(db, token)
-            previous = db.execute("SELECT id,fingerprint FROM private_threads WHERE owner=? AND request_id=?",
+            self._expire(db)
+            previous = db.execute("SELECT thread,fingerprint,closed FROM private_invitation_receipts "
+                                  "WHERE owner=? AND request_id=?",
                                   (member["id"], request_id)).fetchone()
             if previous:
                 if previous["fingerprint"] != fingerprint:
                     raise ChatError(409, "That retry ID belongs to another invitation.")
-                return {"thread": previous["id"], "duplicate": True}
+                return {"thread": previous["thread"], "duplicate": True, "closed": previous["closed"] is not None}
             if member["id"] in contacts:
                 raise ChatError(400, "Enter another participant's contact code.")
             for contact in contacts:
@@ -160,15 +216,37 @@ class PrivateChatStore(ChatStore):
             if db.execute("SELECT COUNT(*) FROM private_threads").fetchone()[0] >= MAX_THREADS:
                 raise ChatError(409, "This local preview has reached its conversation limit.")
             for contact in [member["id"], *contacts]:
-                if db.execute("SELECT COUNT(*) FROM private_members WHERE participant=?",
+                if db.execute("SELECT COUNT(*) FROM private_members WHERE participant=? "
+                              "AND status IN ('accepted','invited')",
                               (contact,)).fetchone()[0] >= MAX_MEMBER_THREADS:
                     raise ChatError(409, "A participant has reached the preview's conversation limit.")
+            now = self.clock()
+            self._invitation_limits(db, member["id"], contacts, now)
             thread = secrets.token_hex(12)
             db.execute("INSERT INTO private_threads VALUES(?,?,?,?,?,?,?)",
-                       (thread, title, kind, member["id"], self.clock(), request_id, fingerprint))
+                       (thread, title, kind, member["id"], now, request_id, fingerprint))
             db.executemany("INSERT INTO private_members VALUES(?,?,?)",
                            [(thread, member["id"], "accepted"), *[(thread, contact, "invited") for contact in contacts]])
-            return {"thread": thread, "duplicate": False}
+            db.execute("INSERT INTO private_invitation_receipts VALUES(?,?,?,?,?,NULL)",
+                       (thread, member["id"], request_id, fingerprint, now))
+            db.executemany("INSERT INTO private_invitation_contacts VALUES(?,?)", [(thread, contact) for contact in contacts])
+            return {"thread": thread, "duplicate": False, "closed": False}
+
+    @staticmethod
+    def _invitation_limits(db, owner, contacts, now):
+        if db.execute("SELECT COUNT(*) FROM private_invitation_receipts").fetchone()[0] >= MAX_INVITATION_RECEIPTS:
+            raise ChatError(429, "This preview's invitation history is full. Wait for closed invitation records to expire.")
+        sent = db.execute("SELECT COUNT(*) FROM private_invitation_contacts c "
+                          "JOIN private_invitation_receipts r ON r.thread=c.thread "
+                          "WHERE r.owner=? AND r.created>?", (owner, now - INVITATION_WINDOW)).fetchone()[0]
+        if sent + len(contacts) > MAX_DAILY_INVITATIONS:
+            raise ChatError(429, "You can invite up to 20 recipients in 24 hours. Wait before sending more invitations.")
+        for contact in contacts:
+            if db.execute("SELECT 1 FROM private_invitation_contacts c "
+                          "JOIN private_invitation_receipts r ON r.thread=c.thread "
+                          "WHERE r.owner=? AND c.recipient=? AND r.created>? LIMIT 1",
+                          (owner, contact, now - INVITATION_COOLDOWN)).fetchone():
+                raise ChatError(429, "Wait one hour before inviting the same contact again, including in a different group.")
 
     def private_accept(self, token, thread):
         with self._db() as db:
@@ -178,7 +256,11 @@ class PrivateChatStore(ChatStore):
             db.execute("UPDATE private_members SET status='accepted' WHERE thread=? AND participant=?",
                        (thread, member["id"]))
 
-    def private_read(self, token, thread):
+    def private_read(self, token, thread, before=None):
+        # The cursor is only an exclusive ID boundary, never an access grant.
+        # It need not remain in storage as newer messages can age it out.
+        if before is not None:
+            before = _message_id(before)
         with self._db() as db:
             member, row = self._access(db, token, thread)
             self._expire(db)
@@ -187,9 +269,14 @@ class PrivateChatStore(ChatStore):
                 JOIN participants p ON p.id=m.author
                 LEFT JOIN private_deliveries d ON d.message=m.id AND d.recipient=?
                 WHERE m.thread=? AND (m.author=? OR d.recipient IS NOT NULL)
+                AND (? IS NULL OR m.id < ?)
                 AND NOT EXISTS (SELECT 1 FROM blocks b WHERE (b.viewer=? AND b.target=m.author)
-                    OR (b.target=? AND b.viewer=m.author)) ORDER BY m.id DESC LIMIT 100
-            """, (member["id"], thread, member["id"], member["id"], member["id"])).fetchall()
+                    OR (b.target=? AND b.viewer=m.author)) ORDER BY m.id DESC LIMIT ?
+            """, (member["id"], thread, member["id"], before, before, member["id"], member["id"],
+                  PRIVATE_HISTORY_PAGE_SIZE + 1)).fetchall()
+            has_older = len(messages) > PRIVATE_HISTORY_PAGE_SIZE
+            messages = messages[:PRIVATE_HISTORY_PAGE_SIZE]
+            older_before = messages[-1]["id"] if has_older else None
             result = []
             for message in reversed(messages):
                 own = message["author"] == member["id"]
@@ -202,7 +289,8 @@ class PrivateChatStore(ChatStore):
                 if message["lifetime"] == "saved" and not own:
                     db.execute("UPDATE private_deliveries SET opened=COALESCE(opened,?) WHERE message=? AND recipient=?",
                                (self.clock(), message["id"], member["id"]))
-            return {"thread": self._meta(db, row, member["id"]), "messages": result}
+            return {"thread": self._meta(db, row, member["id"]), "messages": result,
+                    "before": before, "older_before": older_before}
 
     def private_send(self, token, thread, body, lifetime, request_id):
         body = _text(body, MAX_MESSAGE_CHARS, multiline=True)

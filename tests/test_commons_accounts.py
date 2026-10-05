@@ -263,7 +263,7 @@ def test_upgrades_existing_database_without_losing_guest_or_private_history(tmp_
     ChatStore(path)
     PrivateChatStore(path)
     with sqlite3.connect(path) as db:
-        assert db.execute("PRAGMA user_version").fetchone()[0] == 3
+        assert db.execute("PRAGMA user_version").fetchone()[0] == 6
 
 
 def test_account_http_protections_cookie_and_recovery(preview_server):
