@@ -77,6 +77,7 @@ from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_ope
 
 from fieldforge.online.catalog import MIME_TYPES, Catalog, CatalogError, LegacyCatalog
 from fieldforge.online.models import (
+    format_family,
     text,
     validate_asset,
     validate_coordinates,
@@ -668,7 +669,7 @@ class PortalApplication:
     @staticmethod
     def wire_asset(value):
         result = validate_asset(value)
-        result.update(kind="mbtiles" if result["format"] == "mbtiles" else "image",
+        result.update(kind=format_family(result["format"]),
                       size=result["bytes"], updated=result["version"])
         result.setdefault("source", "Source not supplied; served by FieldForge")
         validate_asset(result)

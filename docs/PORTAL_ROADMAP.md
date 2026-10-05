@@ -26,6 +26,12 @@ created by this code change. Operators must configure and deploy their portal.
   24 cards so a large catalog does not build thousands of cards at once.
 - Immutable map publishing and the inventory builder use the same validator,
   hash calculation and provenance schema. They never fetch public map tiles.
+- Prepared regional `.ffmap` indexes now use that publisher and download path,
+  including compatibility catalogs, byte-range retry, and mixed download lists.
+  Browser/native filters identify them separately, and desktop opening uses the
+  regional display/search viewer. The 4 GiB, nonempty, closed-database preflight
+  preserves each file and its embedded source receipt. Available regions still
+  depend on supplied, permitted files; this change includes no state packages.
 - Browser and native desktop map lists retain up to 100 selections across
   filtering and disconnection and show their combined size. A saved JSON list
   can be imported offline and downloaded explicitly from its original portal.
@@ -40,7 +46,7 @@ source/redistribution rights, version, bytes, SHA-256 and offline instructions.
 
 | Home section | Publication work to resume |
 |---|---|
-| Maps & images | Publish licensed regional raster MBTiles and image maps; show coverage and zoom range. Add a reviewed source directory when distribution terms are established. |
+| Maps & images | Publish permitted prepared `.ffmap` regional indexes, MBTiles, and image maps; show actual coverage and useful detail. Add a reviewed source directory when distribution terms are established. |
 | Routes & address lookup | Operate permitted routing/geocoding services. Keep user requests explicit and retain provenance in offline exports. |
 | Knowledge Library & Ask Library | Build reviewed topic bundles compatible with the existing library import workflow; supply manifests and local search instructions. |
 | Foundations & Civilization Pathways | Package original lessons, activities and licensed references by subject, level and language. |
@@ -112,6 +118,7 @@ and excluded from coordinate matches; bounds are candidate extents, not verified
 tile completeness. Regional inventories should provide real numeric extents and
 document their useful zoom/detail coverage.
 
-Next engineering priority: regional map publication and usable content-pack
-import contracts. Leave the knowledge placeholders until real bundles
+Regional publication support is now implemented for prepared `.ffmap` files.
+Next work is to supply and verify actual regional inventory files and complete
+usable content-pack import contracts. Leave the knowledge placeholders until real bundles
 and their import contracts are ready; do not populate a catalog with fake files.

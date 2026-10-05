@@ -48,7 +48,8 @@ class RegionalIndexWindow(StreetSourceWindow):
         self.prepare_button = ttk.Button(actions, text='Prepare PBF…', command=self.choose_prepare)
         self.prepare_button.pack(side='left', padx=5)
         self._controls.append((self.prepare_button, 'normal'))
-        left = self.details.master
+        # ScrolledText's master is its own packed frame, not the controls pane.
+        left = self.center_button.master
         left.rowconfigure(4, weight=0)
         left.rowconfigure(5, weight=1)
         self.copy_button = ttk.Button(left, text='Copy lat, lon', command=self.copy_coordinates,

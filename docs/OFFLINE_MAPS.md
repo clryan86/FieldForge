@@ -154,8 +154,14 @@ U.S. states. ZIPs over 2 GiB and indexes over 4 GiB are rejected.
 
 These indexes are for display and local feature search. They do not contain a
 prepared routing graph, support turn-by-turn navigation, or verify road access,
-freshness, safety, or completeness. The current portal does not distribute
-`.ffmap` indexes or extract ZIP packages. See the [regional data
+freshness, safety, or completeness. An operator can now publish a completed
+`.ffmap` file through the map portal. **Online Maps → Map downloads** includes
+a **Prepared regional maps** filter, verified downloads, mixed-format download
+lists, and partial-file retry. Completed regional downloads open in this
+viewer and remain searchable after disconnecting. A browser-downloaded index
+can be opened with **Open index…**. The portal transfers prepared files directly;
+ZIP import remains a separate local operation. The repository does not include
+the four state packages or full U.S. coverage. See the [regional data
 plan](GLOBAL_MAP_DATA_PLAN.md) for provenance and acquisition gaps.
 
 Tests cover independent projection examples and round trips, TMS row reversal,

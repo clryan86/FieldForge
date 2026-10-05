@@ -1,5 +1,96 @@
 # Online map and route preparation verification
 
+## Prepared regional portal workflow — 2026-10-05
+
+Prepared `.ffmap` indexes now use the shared immutable publisher, catalog,
+canonical and compatibility download clients, and saved download lists. They
+retain a distinct `regional` family, a 4 GiB limit, their finished-file SHA-256,
+and their unchanged embedded source receipt. Both publication and installation
+validate a nonempty, closed SQLite index with the existing regional inspector.
+This increment uses local fixtures; it does not acquire or host the previously
+shared state packages or claim complete U.S. coverage.
+
+The browser and native catalog filters identify prepared regional maps, and all
+three desktop handoffs open the regional viewer. Actual Tk execution exposed an
+existing constructor defect: a copy button was gridded inside ScrolledText's
+packed internal frame. Using the established outer controls pane fixes opening
+the viewer. The native checks now open and search the completed index after
+removing its source PBF, and exercise busy cancellation, deferred close, forced
+parent destruction, late replies, and GPS ownership without starting a receiver.
+
+| Local check | Result |
+|---|---|
+| Map, portal, regional-reader, native UI, file-identity, image and route-overlay regression group, with a required working Tk display | **585 passed, 78 subtests passed**, no skips, in 64.69 seconds |
+| Actual Chromium portal workflows | **11 passed**, including the regional filter, mixed browser list export, explicit desktop installation and offline search |
+| New checks included in those totals | **18 backend/HTTP**, **28 native/lifecycle**, and **1 browser** case |
+| Repository-wide Ruff, patch whitespace, and bundled portal JavaScript syntax | Passed |
+| Main and draft-branch workflow YAML and referenced test files | Parsed successfully; all referenced test modules exist |
+| Fresh installed wheel, outside the checkout with `python -S` | Published, served, downloaded and reopened a real prepared index; all **14 modified packaged source/assets** match the reviewed source bytes |
+
+The browser round trip selects `.ffmap`, MBTiles and an image, confirms that
+filtering makes no extra requests, downloads the exact regional bytes, exports
+the list while offline, and installs it through a separately connected desktop
+client. The installed index is then inspected and searched with socket connects
+blocked. Layout assertions pass at 390 and 1280 pixels. Browser-native downloads
+display the catalog checksum but do not independently perform the desktop
+installer's verification.
+
+The native/backend group covers real HTTP and compatibility downloads,
+mixed-format inventory publication, exact remaining-byte range requests,
+checkpoint reuse, source/provenance retention, wrong or empty SQLite indexes,
+WAL/journal rejection, a source-sidecar staging race, oversize files, and
+cancellation/disconnection after inspection but before installation.
+
+The package smoke prepared the committed 9,653-byte historical PBF into an
+81,920-byte index with 51 features, then used the installed publisher, HTTP
+server and client. After deleting the inputs and published origin and blocking
+socket connects, the downloaded index still returned the expected Wellfield
+Road search result. Its bytes, embedded receipt and download provenance matched.
+Every loaded FieldForge module came from the installed wheel; Pillow and pytest
+were unavailable and unimported. This confirms regional preparation and
+download/search work without those optional packages. It is not a Windows
+standalone executable test or a claim of present-day map coverage.
+
+[Browser catalog screenshot](screenshots/regional-portal-catalog.png) shows a
+clearly labeled synthetic fixture and a three-map selection. It is a workflow
+demonstration, not a supplied regional dataset.
+[Native regional viewer capture](screenshots/regional-viewer.png) shows the
+actual offline search, selected geometry and repaired pane layout. Some Unicode
+symbols render incorrectly in this temporary Linux test environment; the image
+records that runtime limitation and is not a Windows appearance preview.
+
+The new **Map portal compatibility** workflow runs on this draft branch and PR
+base, with required Linux Tk/Chromium and Windows Tk jobs. The ordinary main CI
+also includes the new native and Chromium/WebKit modules. Hosted platform
+results are reported by GitHub Actions; local Chromium/Tk results do not imply
+a local Windows or WebKit run.
+
+Reproduce the principal checks from a source checkout with `.[dev,maps]`, Tk,
+Xvfb on headless Linux, and the existing pinned Playwright 1.57.0 browsers:
+
+```bash
+FIELDFORGE_REQUIRE_GUI=1 xvfb-run -a python -m pytest -o addopts='' -q -ra \
+  tests/test_regional_portal.py tests/test_regional_portal_ui.py \
+  tests/test_regional_index.py tests/test_online_client.py \
+  tests/test_online_compat.py tests/test_online_server.py \
+  tests/test_online_storage.py tests/test_online_resume.py \
+  tests/test_online_portal.py tests/test_online_maps_ui.py \
+  tests/test_online_compat_ui.py tests/test_online_integration.py \
+  tests/test_portal_catalog.py tests/test_portal_connection.py \
+  tests/test_map_download_list.py tests/test_gps_desktop.py \
+  tests/test_maps_ui.py tests/test_maps_integration.py \
+  tests/test_route_overlay_ui.py tests/test_image_maps_ui.py \
+  tests/test_map_file_identity.py
+
+FIELDFORGE_PORTAL_BROWSER_TESTS=1 python -m pytest -o addopts='' -q \
+  tests/test_online_portal_browser.py tests/test_regional_portal_browser.py
+```
+
+## Earlier integration checkpoints
+
+The remaining sections preserve earlier verification and runtime limitations
+from 2026-10-04; they do not describe the latest regional-map run above.
+
 Local verification date: **2026-10-04 (UTC)**. This integration reconciles the
 public portal work through `3102d0d5c1234ce647f7157dabde417cc0642ac3` with the
 optional Online Maps tab, shared hosting/client implementation, saved route

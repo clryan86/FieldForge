@@ -1,0 +1,121 @@
+name: Map portal compatibility
+
+on:
+  push:
+    branches: [chatgpt/commons-chat-preview]
+    paths:
+      - 'fieldforge/online/**'
+      - 'fieldforge/navigation/**'
+      - 'fieldforge/ui/gps.py'
+      - 'fieldforge/ui/map*.py'
+      - 'fieldforge/ui/street_source.py'
+      - 'fieldforge/ui/desktop.py'
+      - 'fieldforge/ui/regional_index.py'
+      - 'fieldforge/ui/online*.py'
+      - 'fieldforge/ui/portal_integration.py'
+      - 'fieldforge/map_portal.py'
+      - 'fieldforge/portal_web.py'
+      - 'fieldforge_gps/**'
+      - 'tests/test_*map*.py'
+      - 'tests/test_online_*.py'
+      - 'tests/test_portal*.py'
+      - 'tests/test_regional*.py'
+      - 'tests/test_osm_source.py'
+      - 'tests/test_gps_desktop.py'
+      - 'tests/map_fixture.py'
+      - 'tests/conftest.py'
+      - 'pyproject.toml'
+      - '.github/workflows/map-portal.yml'
+  pull_request:
+    branches: [chatgpt/offline-knowledge-foundation]
+    paths:
+      - 'fieldforge/online/**'
+      - 'fieldforge/navigation/**'
+      - 'fieldforge/ui/gps.py'
+      - 'fieldforge/ui/map*.py'
+      - 'fieldforge/ui/street_source.py'
+      - 'fieldforge/ui/desktop.py'
+      - 'fieldforge/ui/regional_index.py'
+      - 'fieldforge/ui/online*.py'
+      - 'fieldforge/ui/portal_integration.py'
+      - 'fieldforge/map_portal.py'
+      - 'fieldforge/portal_web.py'
+      - 'fieldforge_gps/**'
+      - 'tests/test_*map*.py'
+      - 'tests/test_online_*.py'
+      - 'tests/test_portal*.py'
+      - 'tests/test_regional*.py'
+      - 'tests/test_osm_source.py'
+      - 'tests/test_gps_desktop.py'
+      - 'tests/map_fixture.py'
+      - 'tests/conftest.py'
+      - 'pyproject.toml'
+      - '.github/workflows/map-portal.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  linux-maps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install map and browser test tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          python -m pip install -e '.[dev,maps]' 'playwright==1.57.0'
+          python -m playwright install --with-deps chromium
+      - name: Check Python source
+        run: ruff check .
+      - name: Require actual desktop map and portal workflows
+        env:
+          FIELDFORGE_REQUIRE_GUI: '1'
+        run: >-
+          xvfb-run -a python -m pytest -o addopts='' -q -ra
+          tests/test_regional_portal.py tests/test_regional_portal_ui.py
+          tests/test_regional_index.py tests/test_online_client.py
+          tests/test_online_compat.py tests/test_online_server.py
+          tests/test_online_storage.py tests/test_online_resume.py
+          tests/test_online_portal.py tests/test_online_maps_ui.py
+          tests/test_online_compat_ui.py tests/test_online_integration.py
+          tests/test_portal_catalog.py tests/test_portal_connection.py
+          tests/test_map_download_list.py tests/test_gps_desktop.py
+      - name: Require Chromium portal downloads and offline list handoff
+        env:
+          FIELDFORGE_PORTAL_BROWSER_TESTS: '1'
+          FIELDFORGE_BROWSER: chromium
+        run: >-
+          python -m pytest -o addopts='' -q -ra
+          tests/test_online_portal_browser.py tests/test_regional_portal_browser.py
+
+  windows-maps:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install map test tools
+        run: python -m pip install -e '.[dev,maps]'
+      - name: Require native Windows map and portal workflows
+        env:
+          FIELDFORGE_REQUIRE_GUI: '1'
+        # Preserve native Tcl handles across the test interpreters.
+        run: >-
+          python -m pytest -o addopts='' --capture=sys -q -ra
+          tests/test_regional_portal.py tests/test_regional_portal_ui.py
+          tests/test_regional_index.py tests/test_online_client.py
+          tests/test_online_compat.py tests/test_online_server.py
+          tests/test_online_storage.py tests/test_online_resume.py
+          tests/test_online_portal.py tests/test_online_maps_ui.py
+          tests/test_online_compat_ui.py tests/test_online_integration.py
+          tests/test_portal_catalog.py tests/test_portal_connection.py
+          tests/test_map_download_list.py tests/test_gps_desktop.py

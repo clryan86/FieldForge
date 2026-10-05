@@ -1,6 +1,6 @@
 # FieldForge global map data and purchase queue
 
-Status checked 2026-10-04. This is an acquisition and compatibility record, not a claim that these datasets are installed, licensed to FieldForge, or available from its portal.
+Acquisition status checked 2026-10-04; regional portal compatibility updated 2026-10-05. This is an acquisition and compatibility record, not a claim that these datasets are installed, licensed to FieldForge, or available from its portal.
 
 ## What “all MBTiles” means for FieldForge
 
@@ -8,7 +8,7 @@ MBTiles is a container specification, not a single global map collection. It per
 
 The active desktop readers open supported raster MBTiles (PNG, JPEG, WebP) and gzip-compressed Mapbox Vector Tile MBTiles (`format=pbf`). Vector features are drawn offline with a built-in basic preview style covering common water, land, buildings, roads, boundaries, rails, and points. The renderer places a bounded set of labels from names embedded in point, line, and area features, including basic overlap suppression. Publisher style JSON, filters, fonts, sprites, glyphs, multilingual rules, and curved-line label placement are not applied, so this is not full MapLibre cartography. A visually tiled map also is not a turn-by-turn routing graph.
 
-The user-shared Wave 5 collection contains four real OSM regional archives for Kansas, Nebraska, North Dakota, and South Dakota: 1,558,226,547 bytes of ZIP downloads (about 1.45 GiB) and 3,644,960,240 bytes expanded (about 3.40 GiB). Their prepared `.ffmap` SQLite indexes report 5,226,766 features, including 370,827 objects with address tags. The collection marks these files `verified-download`, `installed_on_device: not-checked`, and `validated_navigation: false`. They are **not MBTiles** and have no prepared road graphs. The Maps tab includes a separate local `.ffmap` viewer that imports the index from a regional ZIP package; the current portal still does not host `.ffmap` files. The four state packages do not constitute complete U.S. coverage. The South Dakota archive was independently checked here against its catalog SHA-256; the other three payload files were not independently re-downloaded in this workspace.
+The user-shared Wave 5 collection contains four real OSM regional archives for Kansas, Nebraska, North Dakota, and South Dakota: 1,558,226,547 bytes of ZIP downloads (about 1.45 GiB) and 3,644,960,240 bytes expanded (about 3.40 GiB). Their prepared `.ffmap` SQLite indexes report 5,226,766 features, including 370,827 objects with address tags. The collection marks these files `verified-download`, `installed_on_device: not-checked`, and `validated_navigation: false`. They are **not MBTiles** and have no prepared road graphs. The Maps tab includes a separate local `.ffmap` viewer that imports the index from a regional ZIP package. Operators can now publish completed `.ffmap` files through the portal, with verified desktop downloads, resumable mixed-format lists, and offline viewer handoff. These four payloads are not included in this checkout or newly hosted by that implementation. The four state packages do not constitute complete U.S. coverage. The South Dakota archive was independently checked here against its catalog SHA-256; the other three payload files were not independently re-downloaded in this workspace.
 
 ## Sources that can build real coverage
 

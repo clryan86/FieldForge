@@ -24,6 +24,8 @@ saved routes do not require a portal connection.
    format, version, and size. These filters keep working on the loaded metadata
    after disconnecting; they make no requests.
    Download it while connected, then open the completed local file.
+   **Prepared regional maps** selects `.ffmap` indexes; opening one uses the
+   regional viewer's local display and feature search.
 5. In **Routes**, request route alternatives between the chosen coordinates.
    Inspect the route and its directions, then save the selected route locally.
 6. Disconnect. Open local maps, saved places, and saved route directions as needed.
@@ -49,8 +51,12 @@ If you use the browser portal, download a route as **route JSON**, then open
 **Online Maps → Routes → Import downloaded route…** in the desktop application.
 Choose that file from Downloads. FieldForge validates it, saves a local copy,
 and opens its directions; this import also works offline and leaves the original
-download unchanged. Browser-downloaded map files can be opened through the
-existing **Maps → Open local map…** or **Navigation → Open map image…** controls.
+download unchanged. Open browser-downloaded MBTiles through **Maps → Open local
+map…**, images through **Navigation → Open map image…**, and prepared `.ffmap`
+files through **Maps → Prepared regional map… → Open index…**. A browser download
+delivers the file and displays its catalog checksum; it does not run the desktop
+installer's checksum verification. Use a saved download list in FieldForge when
+you want the managed, checked installation workflow.
 
 Typing into the search field does not send an address. Only submitting the query
 does so. The app does not infer an address from household records or obtain the
@@ -73,7 +79,8 @@ files remain available. The application does not reconnect automatically.
 | Filter and sort an already loaded catalog | No | Metadata retained in the session |
 | Prepare, save or import a map download list | No, once the catalog is loaded | Selected map metadata and file sizes |
 | Download a new map | Yes | Operator's immutable map file |
-| Reopen a completed map download | No | Local MBTiles or image file |
+| Reopen a completed map download | No | Local MBTiles, image, or prepared `.ffmap` file |
+| Search a downloaded regional map's features | No | Names and tags in the prepared `.ffmap` index |
 | Request new driving-route alternatives | Yes | Configured routing server |
 | Read saved route directions | No | Local route JSON |
 | Import a route downloaded through the browser | No | Selected portal route JSON file |
@@ -81,8 +88,9 @@ files remain available. The application does not reconnect automatically.
 | Export a saved planned route as GPX | No | Saved geometry |
 | Recalculate a route after an offline detour | Not implemented | Requires a local routing engine and graph |
 
-An image or raster MBTiles pack supplies the map picture. It is not a routing
-graph. A saved route supplies the chosen path and instructions at the time it
+Images and MBTiles supply map display; prepared regional indexes add local
+feature search. These files do not supply a routing graph. A saved route
+supplies the chosen path and instructions at the time it
 was requested. It does not update for a road closure, changing conditions,
 traffic, or a departure from that route. Alternative requests can return only
 one route if the provider has no suitable alternatives.
@@ -179,7 +187,9 @@ The existing **Navigation → Online map portal…** window also remains availab
 It supports choosing an exact destination for a map download and writes a
 `.source.json` companion beside that file. Its place CSV and planned GPX exports
 remain ordinary local files. Back up those chosen locations separately from the
-managed `online-maps` collection.
+managed `online-maps` collection. Its prepared regional downloads open in the
+same regional viewer. If that viewer is busy or closing, the file remains saved
+and the portal reports that it cannot open it yet.
 
 Inside a place editor, **Find address online…** fills the current editor for
 review and preserves its existing notes. Closing the lookup returns to that
@@ -193,7 +203,8 @@ Existing files are not silently replaced. A saved route is written as a validate
 versioned local document. GPX export creates a **planned track**, clearly labeled
 as planned route geometry; it does not fabricate receiver fixes or trip times.
 
-Supported portal map formats are raster MBTiles, PNG, JPEG, WebP, TIFF, GIF,
+Supported portal map formats are prepared regional `.ffmap`, raster MBTiles,
+PNG, JPEG, WebP, TIFF, GIF,
 BMP, ICO, PPM/PGM/PBM/PNM, TGA, JPEG 2000, and AVIF. The additional image families
 use the existing optional image decoder and require the appropriate installed codec.
 Raster MBTiles use the existing map reader's supported schema and image formats.
@@ -204,8 +215,19 @@ embedded in point, line, and area features, with basic overlap suppression. Publ
 rules are not applied. The existing viewer limits are 16 GiB for an MBTiles
 pack and 64 MiB for a map image, with at most 32 million pixels and a
 32,768-pixel side. Publication and desktop installation apply the same image
-preflight. PMTiles, raw OSM PBF, and archive extraction are not implemented in
-this portal client. Opening many image formats uses the
+preflight. Prepared regional files are limited to **4 GiB**. Publication and
+desktop installation use the existing regional inspector to check the SQLite
+schema, receipt, integrity, and nonempty feature index. The file must be a
+complete, closed, rollback-mode database with no WAL, SHM, or journal sidecar.
+Its embedded source receipt is retained unchanged; its catalog SHA-256 hashes
+the finished `.ffmap`, independently of the original PBF's source hash.
+
+The portal transfers the `.ffmap` file itself. PMTiles, raw OSM PBF, and archive
+extraction are not implemented in this portal client. A saved regional ZIP can
+still be imported locally through **Prepared regional map… → Import package
+ZIP…**; publish the resulting index to distribute it through the portal.
+Prepared regional display/search uses the existing standard-library reader.
+Opening many image formats uses the
 existing optional Pillow dependency (`pip install ".[maps]"`). An ordinary
 image remains an image reference; downloading it does not calibrate it.
 
@@ -270,6 +292,30 @@ IDs for new immutable pack versions.
 The optional `--source` records the map's provider or dataset identity alongside
 its license and attribution; `--file` identifies the file to publish.
 
+For a prepared regional map, first finish **Prepare PBF…** or **Import package
+ZIP…** in the local regional viewer, then supply the completed `.ffmap` file to
+the same publisher. For example, with your own permitted file and actual source
+information:
+
+```bash
+python -m fieldforge.online.catalog add \
+  --root ./portal-maps \
+  --file /path/to/permitted-region.ffmap \
+  --id region-search-v1 \
+  --title "Regional streets and features" \
+  --license "License applicable to this map" \
+  --attribution "Required source and creator attribution" \
+  --source "Actual PBF source and snapshot reference" \
+  --coverage "Actual indexed region and useful detail" \
+  --version "2026-10-05"
+```
+
+The catalog records `format: "ffmap"`; the compatibility protocol uses
+`kind: "regional"`, and HTTP serves the SQLite MIME type
+`application/vnd.sqlite3`. The original PBF is not needed to reopen or search
+the prepared index. This publishes only the supplied file; no regional dataset
+is acquired or included automatically.
+
 ### Prepare several maps from an inventory
 
 Copy `examples/map-catalog-inventory.json`, replace its example entries with
@@ -294,8 +340,10 @@ be a **new directory**, with an existing parent; even an empty existing director
 is refused. No other files in the asset folder are scanned or published.
 
 The inventory accepts 1–5000 maps within 8 MiB of JSON. Each map uses the same
-format limits and immutable publisher as `add`: raster MBTiles up to 16 GiB and
-supported image files up to 64 MiB, subject to decoder limits. Metadata must
+format limits and immutable publisher as `add`: prepared regional `.ffmap`
+files up to 4 GiB, MBTiles up to 16 GiB, and supported image files up to 64 MiB,
+subject to reader/decoder limits. A single inventory or saved download list may
+combine all three families. Metadata must
 include a unique ID, title, coverage, version, source, attribution and license.
 For coordinate discovery, provide inventory `coverage` as a numeric JSON array
 `[west, south, east, north]`, for example `[-80, 35, -70, 45]`; use the file's

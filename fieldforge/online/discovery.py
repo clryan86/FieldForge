@@ -3,7 +3,7 @@
 import unicodedata
 
 from fieldforge.navigation.places import coordinate
-from fieldforge.online.models import number, validate_coordinates
+from fieldforge.online.models import format_family, number, validate_coordinates
 
 
 def filter_point(latitude, longitude):
@@ -54,7 +54,7 @@ def _fold(value):
 
 def filter_maps(items, query="", kind="all", order="title", *, point=None):
     """Return original native assets or compatibility MapItems in display order."""
-    if not isinstance(query, str) or len(query) > 300 or kind not in {"all", "mbtiles", "image"}:
+    if not isinstance(query, str) or len(query) > 300 or kind not in {"all", "mbtiles", "image", "regional"}:
         raise ValueError("Use a map filter of at most 300 characters and a supported format.")
     if order not in {"title", "smallest", "largest"}:
         raise ValueError("Choose title, smallest or largest map order.")
@@ -65,10 +65,11 @@ def filter_maps(items, query="", kind="all", order="title", *, point=None):
         if point is not None and not _contains(coverage_bounds(item), point):
             continue
         format_ = _value(item, "format", _value(item, "kind"))
-        family = "mbtiles" if format_ == "mbtiles" else "image"
+        family = format_ if format_ in {"regional", "image"} else format_family(format_)
         if kind != "all" and family != kind:
             continue
-        haystack = _fold(" ".join(str(_value(item, key)) for key in ("title", "coverage", "filename", "source")) + " " + format_)
+        label = " prepared regional map local display search" if family == "regional" else ""
+        haystack = _fold(" ".join(str(_value(item, key)) for key in ("title", "coverage", "filename", "source")) + " " + format_ + label)
         if all(term in haystack for term in terms):
             selected.append(item)
     def key(item):

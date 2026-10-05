@@ -41,6 +41,15 @@ def install_online_maps(notebook, database, places, maps, gps_workspace, menu_ba
         if path.suffix.lower() == ".mbtiles":
             notebook.select(maps)
             maps.open_path(path)
+        elif path.suffix.lower() == ".ffmap":
+            window = maps.open_prepared_region()
+            if window is None or window._disposed:
+                raise ValueError("The prepared regional map window is unavailable.")
+            if window.busy or window._closing:
+                raise ValueError("Finish or cancel the current prepared regional map task before opening another map.")
+            notebook.select(maps)
+            if window.open_path(path) is False:
+                raise ValueError("The prepared regional map could not be opened while its viewer is busy or closing.")
         else:
             frame = gps_workspace.open().live_map_frame.open_image_reference()
             if frame is None:

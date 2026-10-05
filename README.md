@@ -59,6 +59,7 @@ Members can export or delete their profile without deleting their account or inb
 ### Navigation and mapping
 - Coordinates, distance, bearing, and waypoint tools
 - Local raster MBTiles and image-map viewers
+- Prepared regional `.ffmap` maps with offline feature search
 - Optional online address lookup to fill saved places and route endpoints
 - A configurable map portal with verified map downloads and saved route alternatives
 - Offline route directions, planned-route overlays, and GPX export
@@ -163,6 +164,10 @@ The application starts disconnected and does not submit addresses while typing.
 - **Map downloads:** browse the portal's actual catalog, review coverage, format,
   size and attribution, and download a selected map. Completed files are checked
   against the catalog's byte count and SHA-256 checksum before installation.
+  Prepared regional `.ffmap` indexes can be published and downloaded alongside
+  MBTiles and images, including in resumable download lists. Choose **Prepared
+  regional maps** in the format filter; completed indexes open in the regional
+  viewer for local display and feature search.
 - **Routes:** request driving-route alternatives, inspect the directions, and save
   a selected route locally. Reopen saved directions, show the planned route over
   a local MBTiles map, or export its geometry as GPX after disconnecting.
