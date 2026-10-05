@@ -365,11 +365,52 @@ def verify_education_workspace(root, directory: Path) -> None:
         tab.reveal_button.invoke()
         tab.review_button.invoke()
         report_lesson, report_question, report_work = tab.lesson, tab.question, tab.work
+        learner_a = tab.store.create_learner("Installation learner A")
+        learner_b = tab.store.create_learner("Installation learner B")
+        tab.reload_learners()
+        tab.learner_picker.current(next(i for i, p in enumerate(tab.learner_list) if p.id == learner_a.id))
+        tab.learner_picker.event_generate("<<ComboboxSelected>>")
+        _require(tab.store.learner_id == learner_a.id and tab.work.revision == 0,
+                 "Learner selector did not open a separate practice record")
+        tab.open_lesson("fraction-combine")
+        tab.hint_button.invoke()
+        tab.response.insert("1.0", "1/2")
+        tab.reasoning.insert("1.0", "Learner A renamed thirds as sixths.")
+        tab.check_button.invoke()
+        learner_lesson, learner_question, learner_a_work = tab.lesson, tab.question, tab.work
+        _require(learner_a_work.result == "correct" and learner_a_work.hints == 1, "Learner A practice failed")
+        tab.learner_picker.current(next(i for i, p in enumerate(tab.learner_list) if p.id == learner_b.id))
+        tab.learner_picker.event_generate("<<ComboboxSelected>>")
+        _require(tab.store.learner_id == learner_b.id and tab.work.hints == 0 and tab.work.response == "",
+                 "Learner B inherited another learner's answer or hint history")
+        tab.response.insert("1.0", "2/9")
+        tab.check_button.invoke()
+        learner_b_work = tab.work
+        _require(learner_b_work.result == "retry", "Learner B's independent answer was not checked")
+        learner_a = tab.store.rename_learner(learner_a, "Installation learner A renamed")
+        tab.reload_learners()
+        _require(tab.switch_learner(learner_a.id), "Could not return to learner A")
+        tab.resume()
+        _require(tab.work == learner_a_work, "Resume mixed two learners' practice records")
     finally:
         tab.destroy()
     backup = create_verified_backup(app.db.path, directory / "education.ffbackup")
     recovered = restore_verified_copy(backup, directory / "education-restored.db", active_database=app.db.path)
     store = StudyStore(recovered)
+    _require(dict(backup.counts)["Education learners"] == 3
+             and dict(backup.counts)["Additional learner practice records"] == 2,
+             "Backup preview omitted learner records")
+    _require(learner_a in store.learners() and store.preferred_learner() == learner_a.id,
+             "Learner names or remembered selection did not survive backup")
+    _require(StudyStore(recovered, learner_a.id).read(learner_lesson.id, learner_question) == learner_a_work
+             and StudyStore(recovered, learner_b.id).read(learner_lesson.id, learner_question) == learner_b_work,
+             "Learners' independent answers did not survive backup and restore")
+    learner_output = worksheet(learner_lesson,
+        tuple(StudyStore(recovered, learner_a.id).read(learner_lesson.id, q) for q in learner_lesson.questions),
+        learner=learner_a.name)
+    _require(learner_a.name in learner_output and learner_a_work.reasoning in learner_output,
+             "Worksheet did not identify its learner or include that learner's work")
+    (directory / "learner-worksheet.html").write_text(learner_output, encoding="utf-8")
     _require(store.read(fraction_lesson.id, fraction_question) == fraction_work
              and store.read(quantity_lesson.id, quantity_question) == quantity_work,
              "Fraction calculation or writing did not survive backup and restore")
@@ -405,6 +446,13 @@ def verify_education_workspace(root, directory: Path) -> None:
     (directory / "evidence-worksheet.html").write_text(evidence_output, encoding="utf-8")
     reopened = EducationTab(root, recovered)
     try:
+        _require(reopened.current_learner.id == learner_a.id, "Reopened desktop forgot the selected learner")
+        reopened.resume()
+        _require(reopened.work == learner_a_work, "Reopened learner A work is incorrect")
+        _require(reopened.switch_learner(learner_b.id), "Could not reopen learner B")
+        reopened.resume()
+        _require(reopened.work == learner_b_work, "Reopened learner B work is incorrect")
+        _require(reopened.switch_learner("default"), "Could not return to original practice")
         reopened.open_lesson(fraction_lesson.id)
         _require(reopened.work == fraction_work and reopened.response.get("1.0", "end-1c") == "3/6",
                  "Recovered fraction response is not visible")
@@ -499,7 +547,7 @@ def verify_installation() -> dict[str, object]:
         checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
         checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
         checks.append("Blueprint form, mixed-unit dimensions, edit/save/reopen, drawing exports, three makers and 439 packaged references")
-        checks.append("Education: 196 lessons; interactive fraction lab, stepped strips and number lines, numbers, measurement, literacy and evidence; feedback, self-review, backup/restore and worksheets with all diagram steps")
+        checks.append("Education: 196 lessons; independent learner profiles, remembered selection, isolated answers and hints, rename, resume, all-learner backup/restore, labeled worksheets, fraction lab and every guided course")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

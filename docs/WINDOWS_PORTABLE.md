@@ -60,9 +60,17 @@ questions, before a full backup and on normal close. Numeric answers are checked
 exactly; prose responses are self-reviewed, not AI-graded. Equivalent fractions
 and decimals are accepted, but rounded approximations are not. The saved record
 distinguishes shown hints, answer reveals and self-review. It does not measure mastery.
-This version has one personal practice record per database, not separate learner
-profiles. Export worksheet saves the current lesson and responses to a new HTML
-file with a collapsible answer key. Open it in a browser to read or print offline.
+Earlier practice remains under Original learner. Use Add learner for another
+person and choose their name in the Learner selector. Each learner has separate
+responses, hint history, checks and self-reviews. Resume saved practice returns
+to the selected learner's latest question. Rename changes their name without
+moving answers. A failed save blocks switching and keeps the draft in place.
+New windows remember the most recently selected learner; already-open windows
+keep their own selection. Full backups preserve everyone, and the preview shows
+learner and practice counts. Profiles have no passwords or access restrictions.
+Older application versions show only the original learner's practice.
+Export worksheet saves the selected learner's name, current lesson and responses
+to a new HTML file with a collapsible answer key. Open it in a browser to read or print offline.
 
 YOUR EXISTING DATA
 The default is %USERPROFILE%\.fieldforge\playground.db, matching the existing

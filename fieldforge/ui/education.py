@@ -6,7 +6,7 @@ import sqlite3
 import tkinter as tk
 from dataclasses import replace
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox, simpledialog, ttk
 from tkinter.scrolledtext import ScrolledText
 
 from fieldforge.knowledge.education import (
@@ -25,6 +25,12 @@ class EducationTab(ttk.Frame):
     def __init__(self, parent, database):
         super().__init__(parent, padding=12)
         self.store = StudyStore(database)
+        selected = self.store.preferred_learner()
+        if selected != self.store.learner_id:
+            self.store = StudyStore(database, selected)
+        self.learner_list = self.store.learners()
+        self.current_learner = next(p for p in self.learner_list if p.id == self.store.learner_id)
+        self.learner_choice = tk.StringVar(value=self.current_learner.name)
         self.catalog = lessons()
         self.by_id = {lesson.id: lesson for lesson in self.catalog}
         self.lesson = None
@@ -55,6 +61,17 @@ class EducationTab(ttk.Frame):
         detail = ttk.Frame(panes, padding=(12, 0, 0, 0))
         panes.add(browser, weight=1)
         panes.add(detail, weight=3)
+        ttk.Label(browser, text="Learner").pack(anchor="w")
+        self.learner_picker = ttk.Combobox(browser, state="readonly", textvariable=self.learner_choice,
+                                          values=[p.name for p in self.learner_list], postcommand=self.reload_learners)
+        self.learner_picker.pack(fill="x", pady=(2, 4))
+        self.learner_picker.bind("<<ComboboxSelected>>", self.select_learner)
+        learner_actions = ttk.Frame(browser)
+        learner_actions.pack(fill="x", pady=(0, 8))
+        self.add_learner_button = ttk.Button(learner_actions, text="Add learner…", command=self.add_learner)
+        self.add_learner_button.pack(side="left")
+        self.rename_learner_button = ttk.Button(learner_actions, text="Rename…", command=self.rename_learner)
+        self.rename_learner_button.pack(side="left", padx=6)
         ttk.Label(browser, text="Search title, goal or lesson text").pack(anchor="w")
         search = ttk.Entry(browser, textvariable=self.search)
         search.pack(fill="x", pady=(2, 6))
@@ -75,12 +92,13 @@ class EducationTab(ttk.Frame):
         self.tree.pack(side="left", fill="both", expand=True)
         bar.pack(side="right", fill="y")
         self.tree.bind("<<TreeviewSelect>>", self._select_lesson)
-        ttk.Label(browser, text="All practice is personal to this local database.\nExport a worksheet to keep a separate learner's copy.",
+        ttk.Label(browser, text="Profiles separate answers, but anyone using this database can open them. Full backups include every learner.",
                   wraplength=280).pack(anchor="w", pady=(8, 0))
 
         self.title = ttk.Label(detail, font=("TkDefaultFont", 14, "bold"), wraplength=650)
         self.title.pack(anchor="w")
-        ttk.Label(detail, textvariable=self.progress).pack(anchor="w", pady=(3, 6))
+        self.progress_label = ttk.Label(detail, textvariable=self.progress, wraplength=650)
+        self.progress_label.pack(anchor="w", pady=(3, 6))
         requirements = ttk.Frame(detail)
         requirements.pack(fill="x", pady=(0, 6))
         ttk.Label(requirements, text="Earlier lesson").pack(side="left", padx=(0, 6))
@@ -193,6 +211,83 @@ class EducationTab(ttk.Frame):
             self.title.configure(wraplength=max(250, self.winfo_width() - 340))
             self.notice.configure(wraplength=max(250, self.winfo_width() - 30))
             self.status_label.configure(wraplength=max(250, self.winfo_width() - 30))
+            self.progress_label.configure(wraplength=max(250, self.winfo_width() - 340))
+
+    def reload_learners(self):
+        try:
+            profiles = self.store.learners()
+            active = next(p for p in profiles if p.id == self.store.learner_id)
+        except (OSError, ValueError, sqlite3.Error, StopIteration) as exc:
+            self.status.set(f"Could not load learners: {exc}")
+            return False
+        self.learner_list, self.current_learner = profiles, active
+        self.learner_picker.configure(values=[p.name for p in profiles])
+        self.learner_choice.set(active.name)
+        if self.lesson:
+            self._progress()
+        return True
+
+    def select_learner(self, _event=None):
+        index = self.learner_picker.current()
+        if not 0 <= index < len(self.learner_list):
+            self.learner_choice.set(self.current_learner.name)
+            return False
+        return self.switch_learner(self.learner_list[index].id)
+
+    def switch_learner(self, key):
+        # Never bind an old learner's draft to the new store, even if saving fails.
+        self.learner_choice.set(self.current_learner.name)
+        if key == self.store.learner_id:
+            return True
+        if not self.save_current():
+            return False
+        try:
+            candidate = StudyStore(self.store.path, key)
+            profiles = candidate.learners()
+            active = next(p for p in profiles if p.id == key)
+            work = candidate.read(self.lesson.id, self.question) if self.lesson else None
+            candidate.remember_learner()
+        except (OSError, ValueError, sqlite3.Error, StopIteration) as exc:
+            self.status.set(f"Learner was not changed: {exc}")
+            return False
+        self.store, self.work = candidate, work
+        self.learner_list, self.current_learner = profiles, active
+        self.learner_picker.configure(values=[p.name for p in profiles])
+        self.learner_choice.set(active.name)
+        self.fraction_lab.reset()
+        if self.lesson:
+            self._show_question()
+        self.status.set(f"Working as {active.name}. Resume saved practice returns to this learner's latest saved question.")
+        return True
+
+    def add_learner(self):
+        if not self.save_current():
+            return
+        name = simpledialog.askstring("Add learner", "Name for a separate practice record (1–40 characters):", parent=self)
+        if name is None:
+            return
+        try:
+            profile = self.store.create_learner(name)
+        except (OSError, ValueError, sqlite3.Error) as exc:
+            self.status.set(f"Learner was not added: {exc}")
+            return
+        self.reload_learners()
+        self.switch_learner(profile.id)
+
+    def rename_learner(self):
+        if not self.save_current() or not self.reload_learners():
+            return
+        name = simpledialog.askstring("Rename learner", "New name (saved answers stay with this learner):",
+                                      initialvalue=self.current_learner.name, parent=self)
+        if name is None:
+            return
+        try:
+            self.store.rename_learner(self.current_learner, name)
+        except (OSError, ValueError, sqlite3.Error) as exc:
+            self.status.set(f"Learner was not renamed: {exc}")
+            return
+        self.reload_learners()
+        self.status.set(f"Learner renamed to {self.current_learner.name}. Saved work is unchanged.")
 
     def refresh(self):
         if not self.save_current():
@@ -441,7 +536,7 @@ class EducationTab(ttk.Frame):
         try:
             self.work = self.store.save(self.lesson.id, self.question, work)
             self._save_error = ""
-            self.status.set("Saved on this device. Full database backups include education work.")
+            self.status.set(f"Saved for {self.current_learner.name}. Full database backups include every learner's work.")
             self._progress()
             return True
         except (ValueError, OSError, sqlite3.Error) as exc:
@@ -466,7 +561,7 @@ class EducationTab(ttk.Frame):
 
     def _progress(self):
         try:
-            self.progress.set(self.store.summary(self.lesson) + " · Personal practice record")
+            self.progress.set(self.current_learner.name + " · " + self.store.summary(self.lesson))
         except (OSError, ValueError, sqlite3.Error) as exc:
             self.progress.set(f"Progress unavailable: {exc}")
 
@@ -504,7 +599,7 @@ class EducationTab(ttk.Frame):
             records = tuple(self._draft() if i == self.question_index else self.store.read(self.lesson.id, q)
                             for i, q in enumerate(self.lesson.questions))
             with Path(target).open("x", encoding="utf-8") as stream:
-                stream.write(worksheet(self.lesson, records))
+                stream.write(worksheet(self.lesson, records, learner=self.current_learner.name))
             self.status.set("Worksheet exported with your current text. It contains personal responses and a collapsible answer key.")
         except (OSError, ValueError, sqlite3.Error) as exc:
             messagebox.showerror("Worksheet was not exported", str(exc), parent=self)

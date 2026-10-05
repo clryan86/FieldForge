@@ -11,6 +11,8 @@ import html
 import json
 import math
 import sqlite3
+import unicodedata
+import uuid
 from contextlib import closing
 from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
@@ -136,6 +138,23 @@ class Work:
     reflection: str = ""
     revision: int = 0
     updated: str = ""
+    learner_id: str = "default"
+
+
+@dataclass(frozen=True)
+class Learner:
+    id: str
+    name: str
+    revision: int
+
+
+def learner_name(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("Use a learner name between 1 and 40 characters.")
+    name = unicodedata.normalize("NFKC", value).strip()
+    if not 1 <= len(name) <= 40 or not all(c.isprintable() for c in name):
+        raise ValueError("Use a learner name between 1 and 40 printable characters, on one line.")
+    return name
 
 
 def revise(work: Work, response: str, reasoning: str) -> Work:
@@ -179,30 +198,116 @@ def check(question: Question, work: Work) -> tuple[Work, str]:
 
 
 class StudyStore:
-    """One work record per versioned question. Full database backups include it.
+    """One learner's work, bound to a stable ID for this store's lifetime.
 
     Compare-and-swap prevents two open desktops from silently losing work.
     Changed question content gets its own record; old work remains in SQLite.
     """
 
-    def __init__(self, database: str | Path):
+    def __init__(self, database: str | Path, learner_id: str = "default"):
+        if (not isinstance(learner_id, str) or (learner_id != "default" and
+                (len(learner_id) != 32 or any(c not in "0123456789abcdef" for c in learner_id)))):
+            raise ValueError("Choose an existing learner.")
         self.path = Path(database)
+        self._learner_id = learner_id
         with closing(sqlite3.connect(self.path)) as db, db:
+            db.execute("BEGIN")
             db.execute("""CREATE TABLE IF NOT EXISTS education_work_v1 (
                 lesson TEXT NOT NULL, question TEXT NOT NULL, fingerprint TEXT NOT NULL,
                 payload TEXT NOT NULL, revision INTEGER NOT NULL,
                 PRIMARY KEY (lesson, question, fingerprint))""")
+            # Earlier work stays in its original table, including its exact payloads.
+            db.execute("""CREATE TABLE IF NOT EXISTS education_learners_v1 (
+                id TEXT PRIMARY KEY, name TEXT NOT NULL, name_key TEXT NOT NULL UNIQUE,
+                revision INTEGER NOT NULL)""")
+            db.execute("INSERT OR IGNORE INTO education_learners_v1 VALUES ('default','Original learner','original learner',1)")
+            db.execute("""CREATE TABLE IF NOT EXISTS education_learner_work_v1 (
+                learner TEXT NOT NULL REFERENCES education_learners_v1(id),
+                lesson TEXT NOT NULL, question TEXT NOT NULL, fingerprint TEXT NOT NULL,
+                payload TEXT NOT NULL, revision INTEGER NOT NULL,
+                PRIMARY KEY (learner, lesson, question, fingerprint))""")
+            db.execute("""CREATE TABLE IF NOT EXISTS education_preferences_v1 (
+                key TEXT PRIMARY KEY, learner TEXT NOT NULL REFERENCES education_learners_v1(id))""")
+            db.execute("INSERT OR IGNORE INTO education_preferences_v1 VALUES ('selected','default')")
+            if not db.execute("SELECT 1 FROM education_learners_v1 WHERE id=?", (learner_id,)).fetchone():
+                raise ValueError("This learner no longer exists. Reopen the learner list.")
+
+    @property
+    def learner_id(self) -> str:
+        return self._learner_id
+
+    def learners(self) -> tuple[Learner, ...]:
+        with closing(sqlite3.connect(self.path)) as db:
+            rows = db.execute("SELECT id,name,name_key,revision FROM education_learners_v1 "
+                              "ORDER BY id != 'default', name_key, id").fetchall()
+        result = []
+        for key, name, normalized, revision in rows:
+            if (not isinstance(key, str) or (key != "default" and
+                    (len(key) != 32 or any(c not in "0123456789abcdef" for c in key)))
+                    or learner_name(name) != name or normalized != name.casefold()
+                    or type(revision) is not int or revision < 1):
+                raise ValueError("Saved learner list is unreadable; restore a verified backup.")
+            result.append(Learner(key, name, revision))
+        if not any(learner.id == "default" for learner in result):
+            raise ValueError("The original learner is missing; restore a verified backup.")
+        return tuple(result)
+
+    def create_learner(self, name: str) -> Learner:
+        name = learner_name(name)
+        profile = Learner(uuid.uuid4().hex, name, 1)
+        with closing(sqlite3.connect(self.path)) as db, db:
+            try:
+                db.execute("INSERT INTO education_learners_v1 VALUES (?,?,?,?)",
+                           (profile.id, name, name.casefold(), profile.revision))
+            except sqlite3.IntegrityError as exc:
+                raise ValueError("That learner name is already used. Choose a distinct name.") from exc
+        return profile
+
+    def rename_learner(self, learner: Learner, name: str) -> Learner:
+        name = learner_name(name)
+        with closing(sqlite3.connect(self.path)) as db, db:
+            try:
+                changed = db.execute("UPDATE education_learners_v1 SET name=?,name_key=?,revision=revision+1 "
+                                     "WHERE id=? AND revision=?",
+                                     (name, name.casefold(), learner.id, learner.revision))
+            except sqlite3.IntegrityError as exc:
+                raise ValueError("That learner name is already used. Choose a distinct name.") from exc
+            if changed.rowcount != 1:
+                raise ValueError("This learner changed in another window. Reopen the learner list before renaming.")
+        return Learner(learner.id, name, learner.revision + 1)
+
+    def preferred_learner(self) -> str:
+        with closing(sqlite3.connect(self.path)) as db:
+            row = db.execute("SELECT learner FROM education_preferences_v1 WHERE key='selected'").fetchone()
+        key = row[0] if row else "default"
+        if key not in {learner.id for learner in self.learners()}:
+            raise ValueError("Saved learner selection is unreadable; restore a verified backup.")
+        return key
+
+    def remember_learner(self) -> None:
+        with closing(sqlite3.connect(self.path)) as db, db:
+            db.execute("PRAGMA foreign_keys=ON")
+            db.execute("INSERT INTO education_preferences_v1 VALUES ('selected',?) "
+                       "ON CONFLICT(key) DO UPDATE SET learner=excluded.learner", (self.learner_id,))
+
+    def _scope(self) -> tuple[str, str, tuple[str, ...]]:
+        if self.learner_id == "default":
+            return "education_work_v1", "", ()
+        return "education_learner_work_v1", "learner=? AND ", (self.learner_id,)
 
     def read(self, lesson: str, question: Question) -> Work:
+        table, where, prefix = self._scope()
         with closing(sqlite3.connect(self.path)) as db:
-            row = db.execute("SELECT payload, revision FROM education_work_v1 "
-                             "WHERE lesson=? AND question=? AND fingerprint=?",
-                             (lesson, question.id, question.fingerprint)).fetchone()
+            row = db.execute(f"SELECT payload, revision FROM {table} WHERE {where}"
+                             "lesson=? AND question=? AND fingerprint=?",
+                             (*prefix, lesson, question.id, question.fingerprint)).fetchone()
         if not row:
-            return Work()
+            return Work(learner_id=self.learner_id)
         try:
             work = Work(**json.loads(row[0]))
             self._validate(question, work)
+            if work.learner_id != self.learner_id:
+                raise ValueError("learner mismatch")
             if work.revision != row[1]:
                 raise ValueError("revision mismatch")
             return work
@@ -229,20 +334,28 @@ class StudyStore:
 
     def save(self, lesson: str, question: Question, work: Work) -> Work:
         self._validate(question, work)
+        if work.learner_id != self.learner_id:
+            raise ValueError("This draft belongs to a different learner. Reopen that learner before saving.")
         saved = replace(work, revision=work.revision + 1,
                         updated=datetime.now(timezone.utc).isoformat(timespec="microseconds"))
-        key = (lesson, question.id, question.fingerprint)
-        payload = json.dumps(asdict(saved), ensure_ascii=True)
+        table, where, prefix = self._scope()
+        key = (*prefix, lesson, question.id, question.fingerprint)
+        fields = asdict(saved)
+        if self.learner_id == "default":
+            del fields["learner_id"]  # Earlier apps can still read the original learner's work.
+        payload = json.dumps(fields, ensure_ascii=True)
         with closing(sqlite3.connect(self.path)) as db, db:
+            db.execute("PRAGMA foreign_keys=ON")
             if work.revision == 0:
                 try:
-                    db.execute("INSERT INTO education_work_v1 VALUES (?,?,?,?,?)",
+                    placeholders = ",".join("?" for _ in range(len(key) + 2))
+                    db.execute(f"INSERT INTO {table} VALUES ({placeholders})",
                                (*key, payload, saved.revision))
                 except sqlite3.IntegrityError as exc:
                     raise ValueError("This exercise changed in another window. Export your work before reopening it.") from exc
             else:
-                updated = db.execute("UPDATE education_work_v1 SET payload=?, revision=? "
-                                     "WHERE lesson=? AND question=? AND fingerprint=? AND revision=?",
+                updated = db.execute(f"UPDATE {table} SET payload=?, revision=? WHERE {where}"
+                                     "lesson=? AND question=? AND fingerprint=? AND revision=?",
                                      (payload, saved.revision, *key, work.revision))
                 if updated.rowcount != 1:
                     raise ValueError("This exercise changed in another window. Export your work before reopening it.")
@@ -252,15 +365,19 @@ class StudyStore:
         known = {(lesson.id, q.id, q.fingerprint): (lesson.id, index, q)
                  for lesson in lessons() for index, q in enumerate(lesson.questions)}
         matches = []
+        table, where, prefix = self._scope()
         with closing(sqlite3.connect(self.path)) as db:
             for lesson, question, fingerprint, payload in db.execute(
-                    "SELECT lesson, question, fingerprint, payload FROM education_work_v1"):
+                    f"SELECT lesson, question, fingerprint, payload FROM {table} "
+                    + ("WHERE learner=?" if where else ""), prefix):
                 key = (lesson, question, fingerprint)
                 if key in known:
                     item = known[key]
                     try:
                         work = Work(**json.loads(payload))
                         self._validate(item[2], work)
+                        if work.learner_id != self.learner_id:
+                            raise ValueError("learner mismatch")
                     except (TypeError, ValueError) as exc:
                         raise ValueError("Saved education work is unreadable; restore a verified backup.") from exc
                     matches.append((work.updated, item[0], item[1]))
@@ -321,13 +438,15 @@ def chart_svg(diagram: dict) -> str:
     return "".join(elements) + "</g></svg>"
 
 
-def worksheet(lesson: StudyLesson, records: tuple[Work, ...]) -> str:
+def worksheet(lesson: StudyLesson, records: tuple[Work, ...], *, learner: str = "") -> str:
     """Portable printable HTML; escaped user text, no scripts or remote assets."""
     escape = html.escape
     passages = {q.passage: index for index, q in enumerate(lesson.questions, 1) if q.passage}
     sections = [f"<h1>{escape(lesson.title)}</h1><p>{escape(NOTICE)}</p>",
                 f"<h2>Goal</h2><p>{escape(lesson.goal)}</p>",
                 f"<h2>Materials</h2><p>{escape(lesson.materials)}</p>"]
+    if learner:
+        sections.insert(1, f"<p><strong>Learner:</strong> {escape(learner)}</p>")
     sections.extend(f"<p class='block'>{escape(p)}</p>" for p in lesson.paragraphs
                     if p.partition("\n")[2] not in passages)
     if lesson.diagram:

@@ -32,6 +32,13 @@ All 172 original education lessons are searchable in the same workspace.
 Responses and explanations save on this device and in full database backups;
 export an offline worksheet for printing. See [Education workspace](docs/EDUCATION_STUDIO.md).
 
+**Separate learners can share Education.** Earlier practice stays under
+**Original learner**. Use **Add learner**, choose a learner in the selector,
+and use **Resume saved practice** for that learner's work. Answers, hints,
+reviews and progress stay separate; worksheets show the selected learner's name.
+Full backups include everyone. Profiles organize practice and do not restrict
+who can open it on this device.
+
 For the ready-to-run Windows program, open [Releases](https://github.com/clryan86/FieldForge/releases)
 and choose **FieldForge-Windows-x64.zip** from a tested desktop build. Extract the
 whole ZIP, then open **FieldForge.exe**. GitHub's **Code → Download ZIP** supplies

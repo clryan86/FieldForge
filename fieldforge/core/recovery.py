@@ -121,6 +121,19 @@ def _summarize(database: Path) -> tuple[tuple[tuple[str, int | None], ...], tupl
                     raise ValueError("unrecognized education practice schema in backup")
                 counts.append(("Education practice records", db.execute(
                     "SELECT COUNT(*) FROM education_work_v1").fetchone()[0]))
+            learner_tables = {
+                "education_learners_v1": ("Education learners", {"id", "name", "name_key", "revision"}),
+                "education_learner_work_v1": ("Additional learner practice records", {"learner", "lesson", "question", "fingerprint", "payload", "revision"}),
+                "education_preferences_v1": (None, {"key", "learner"}),
+            }
+            if set(learner_tables).intersection(objects):
+                if "education_work_v1" not in objects:
+                    raise ValueError("incomplete education learner schema in backup")
+                for table, (label, required) in learner_tables.items():
+                    if table not in objects or not required <= columns(table):
+                        raise ValueError("incomplete education learner schema in backup")
+                    if label:
+                        counts.append((label, db.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]))
             for table, key, expected in (("metadata", "schema_version", "2"),
                                           ("knowledge_state", "pathways_schema", "1")):
                 if table in objects:

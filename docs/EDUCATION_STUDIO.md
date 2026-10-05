@@ -144,9 +144,38 @@ Use **Resume saved practice** to return to the most recently saved question.
 If another window changed a response, export your draft and use **Reload saved
 answer** to load the current record; discarding a different draft requires confirmation.
 
-One database holds one practice record per question, not separate learner
-profiles. Exported worksheets and database backups contain personal responses.
-Hints/reveals remain recorded on that question; editing an answer clears its
+## Separate learners
+
+Earlier answers remain under **Original learner**, with no copying or resetting
+of old practice. Use **Add learner…** in the left panel for a separate record,
+then choose the learner in the **Learner** selector before writing. Names must
+be distinct and 1–40 characters. **Rename…** changes a name without changing
+that learner's answers. The selected learner is shown beside lesson progress.
+
+Answers, explanations, hints, reveals, checks and self-reviews belong to the
+selected learner. **Resume saved practice** returns to that learner's latest
+saved question. Switching retains the current lesson and question, loading
+the selected learner's answer there; use Resume for their own latest position.
+The most recently selected learner is remembered when a new window opens.
+Already-open windows keep their own learner selection until you change it.
+
+A switch saves the current draft first. A failed save, unreadable destination
+record or failed selection write leaves the existing learner and text in place.
+If two windows edit the same learner's question, revision checks prevent a stale
+window from silently replacing newer work. Different learners can answer the
+same question independently. A newly added learner starts without other learners'
+answers or hint history. The fraction lab resets its temporary example on a switch.
+
+**Export worksheet** includes the selected learner's name and responses only.
+Full database backups include all learner names, records and the remembered
+selection; the backup preview reports counts without exposing their names.
+Profiles have no passwords or access restrictions: anyone with this database
+can open them. The UI does not delete profiles, merge learners, or split earlier
+shared answers automatically. Older app versions show the original learner's
+practice; use this version to access additional learners.
+
+Exported worksheets and database backups contain personal responses.
+Hints/reveals remain recorded on each learner's question; editing an answer clears its
 current check and self-review but preserves the support history. The app cannot
 detect other help used, and it does not infer independent mastery.
 
@@ -165,8 +194,11 @@ The literacy course also draws on the IES guides for
 background. The original passages and activities are not those guides' tested
 interventions, and adaptations for older learners have not been validated.
 
-Private responses use the `education_work_v1` table in the active SQLite database.
-Full database snapshots preserve this table; article-only exports do not.
+Original practice stays in `education_work_v1`, and its payload format remains
+readable by earlier versions. Additional learners use `education_learner_work_v1`,
+with stable learner IDs kept in `education_learners_v1`. Names can change without
+moving responses. `education_preferences_v1` remembers the last selected learner.
+Full database snapshots preserve all of these tables; article-only exports do not.
 Question content fingerprints keep revised prompts from inheriting stale check
 results. Existing versions of work remain in the database. Concurrent saves use
 revision checks, so another open window cannot silently replace an older draft.
@@ -175,6 +207,7 @@ The evidence course additionally preserves all 566 fingerprints shipped before i
 The number foundations course preserves all 590 question identities shipped before it.
 The fraction course preserves all 626 identities shipped before it. The measurement
 fractions lesson now links to the fuller fraction course through its prerequisite.
+The learner-profile release preserves all 650 previously shipped question identities.
 New questions include source passages and choices in their fingerprints, so
 changed evidence or options cannot inherit a previous question's check result.
 
