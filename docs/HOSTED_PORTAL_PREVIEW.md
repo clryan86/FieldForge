@@ -822,3 +822,47 @@ use doubles while SQLite, vector parsing and the embedded worker code execute.
 
 Offline edition: **9119404f6123**, **2,115,519 bytes**. SHA-256:
 `dec7ff54d379e295a7c333af7bd3567eb3efb82f1b33584408ce2a5c7b4c440d`.
+
+
+## Visual GPX tile-check layer (October 5, 2026)
+
+Path-check results now appear directly over the local MBTiles map in both
+editions. The **GPX tile-check layer** has a text-and-colour legend: M missing,
+U unsupported size/type, ! unreadable, ? contents unchecked, and D decoded.
+Translucent cell fills, borders and labels use the existing report's exact XYZ
+coordinates. Missing cells also receive an X, unreadable cells a diagonal line,
+and unchecked cells a dashed border. GPX geometry and coordinate markers are
+drawn above this layer; it does not replace the underlying map or select a
+coordinate automatically.
+
+The layer updates as content verification records results. **Show tile-check
+layer** controls visibility independently of the GPX drawing; **Hide decoded
+tiles** focuses the view on missing, unsupported, unreadable and unchecked cells.
+The selected gap-list entry receives a white inset border when it is visible.
+The gap selector and existing **Open tile location** control remain available
+for keyboard use. Map feedback has descriptive text in addition to colours.
+
+Results are displayed only at the report's checked zoom. Browsing a different
+zoom hides the layer and explains the mismatch; **Return to checked zoom** keeps
+the current centre and restores the checked zoom. No new database check is run
+by these display controls. Date-line tiles wrap correctly, low-zoom world copies
+repeat the same result, and polar padding is omitted. Counts describe unique
+visible checked cells rather than repeated world copies.
+
+Changing inputs or starting another check clears the old layer with its report.
+Unmarked areas are not verified coverage. The layer reflects this report's
+recorded checks, so normal map viewing alone does not change an unchecked tile
+to decoded. Decoded remains a parser/bitmap result, not verified source accuracy,
+complete rendering, access or route safety. No datasets were added.
+
+Validation: **114 Node tests and 7 Python checks pass**. Geometry/Canvas checks
+cover all five states, exact XYZ matching, wrong-zoom exclusion, filtering,
+world/date-line wrapping, polar padding, labels, clipping and selected borders.
+The actual offline bundle exercises raster/vector reports, live decoding-result
+updates, show/hide, filtering, zoom restoration and replacement/clear behavior
+with network and browser storage forbidden. Hosted and offline packaging,
+module imports, label/ARIA references and worker payloads were verified.
+Native browser/phone visual QA remains pending; DOM/Canvas tests use doubles.
+
+Offline edition: **b20555462227**, **2,122,685 bytes**.
+SHA-256: `721d96f08d2d0cbc6ab8d1b85d09540e72cc3c7c05be5988bb84b621cc631cd1`.

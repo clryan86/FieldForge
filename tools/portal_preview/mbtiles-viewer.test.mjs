@@ -25,7 +25,7 @@ test("MBTiles UI collects pixels and replacement opens discard canceled reads, d
   const make=()=>({children:[],handlers:new Map(),attrs:{},setAttribute(key,value){this.attrs[key]=String(value);},_value:"",get value(){return this._value;},set value(v){this._value=String(v);},textContent:"",disabled:false,files:[],classList:{toggle(){}},append(...items){this.children.push(...items);},replaceChildren(...items){this.children=[...items];},addEventListener(type,fn){this.handlers.set(type,fn);},fire(type,extra={}){return this.handlers.get(type)?.({preventDefault(){},...extra});}});
   for(const [,key] of readFileSync(new URL("./desk.html",import.meta.url),"utf8").matchAll(/id="(mb\w+)"/g))elements.set(key,make());
   const el=key=>{assert.ok(elements.has(key),key);return elements.get(key);};
-  const ctx={clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){},save(){},restore(){},rect(){},clip(){},fill(){}};
+  const ctx={setLineDash(){},clearRect(){draws.length=0;},fillRect(){},strokeRect(){},fillText(){},drawImage(bitmap){draws.push(bitmap);},beginPath(){},arc(){},moveTo(){},lineTo(){},stroke(){},save(){},restore(){},rect(){},clip(){},fill(){}};
   el("mbCanvas").getContext=()=>ctx;el("mbCanvas").getBoundingClientRect=()=>({width:768,height:512,left:0,top:0});
   const bitmap=()=>{const b={width:256,height:256,closed:false,close(){this.closed=true;}};bitmaps.push(b);return b;};
   let decode=async blob=>{assert.equal(imageHeader(new Uint8Array(await blob.arrayBuffer())).width,256);return bitmap();};

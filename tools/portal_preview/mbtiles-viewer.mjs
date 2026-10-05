@@ -72,7 +72,7 @@ export function createMBViewer({onAddPoint,download,clientFactory=createMBClient
     for(const tile of frame.tiles) {ctx.strokeStyle="#466052";ctx.strokeRect(tile.left,tile.top,256,256);if(tile.issue){ctx.fillStyle="#b5c9bb";ctx.fillText(tile.issue,tile.left+128,tile.top+128,232);}}
     for(const item of bitmaps)ctx.drawImage(item.bitmap,item.tile.left,item.tile.top,256,256);
     if(vectors.length)drawVectorTiles(ctx,vectors,id("mbPointNames").checked);
-    route.draw(ctx,frame);
+    route?.draw(ctx,frame);
     if(target){const p=mbScreenPoint(target.lat,target.lon,frame);if(p.inside){ctx.beginPath();ctx.moveTo(p.x,p.y-10);ctx.lineTo(p.x+10,p.y);ctx.lineTo(p.x,p.y+10);ctx.lineTo(p.x-10,p.y);ctx.lineTo(p.x,p.y-10);ctx.lineWidth=5;ctx.strokeStyle="#14362e";ctx.stroke();ctx.lineWidth=2;ctx.strokeStyle="#7fe3ff";ctx.stroke();ctx.lineWidth=1;}}
     if(selected){const x=selected.column+.5,y=selected.row+.5;ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.moveTo(x-12,y);ctx.lineTo(x+12,y);ctx.moveTo(x,y-12);ctx.lineTo(x,y+12);ctx.strokeStyle="#142d22";ctx.lineWidth=4;ctx.stroke();ctx.strokeStyle="#ffe2a6";ctx.lineWidth=2;ctx.stroke();ctx.lineWidth=1;}
   }

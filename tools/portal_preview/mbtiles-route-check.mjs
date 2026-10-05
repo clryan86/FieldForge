@@ -1,8 +1,9 @@
 import {mbRouteTiles} from "./mbtiles-route-core.mjs";
+import {drawMBCheckLayer,projectMBCheckLayer} from "./mbtiles-check-layer.mjs";
 import {mbUnproject} from "./mbtiles-core.mjs";
 
-export function createMBRouteCheck({getRoute,onCheck,onVerify,onOpen,download}) {
-  const id=key=>document.getElementById(key);let report=null,gaps=[],version=0,busy=false,hasPack=false,verifying=false,stop=false;
+export function createMBRouteCheck({getRoute,onCheck,onVerify,onOpen,onRedraw,download}) {
+  const id=key=>document.getElementById(key);let report=null,gaps=[],version=0,busy=false,hasPack=false,verifying=false,stop=false,view=null;
   const scope="Checks tile presence and blob size along straight Web Mercator GPX edges, isolated points and waypoints at one zoom. Includes both sides of tile boundaries and corners; date-line edges use the shorter span. No connection between separate segments. Optional decoding results are recorded in content_check and each tile's decode_status. Map accuracy, off-path areas, other zooms and route safety are not checked.";
   const decodeScope="Raster: native bitmap decoding with matching PNG/JPEG/WebP format and 256/512 square dimensions. Vector: this viewer's bounded MVT/gzip parser. Decoded does not establish complete rendering, map accuracy, access or safe passage. Unreadable includes unsupported data and decoder limits/failures in this browser. Missing and unsupported-size/type records are not eligible for decoding.";
   const pending=()=>report?.tiles.filter(tile=>tile.status==="present"&&tile.decode_status==="not-checked")||[];
@@ -14,11 +15,14 @@ export function createMBRouteCheck({getRoute,onCheck,onVerify,onOpen,download}) 
     id("mbRouteVerify").disabled=!report||!pending().length||locked||typeof onVerify!=="function";
     id("mbRouteVerify").textContent=report?.content_check.attempted?"Continue verifying tile contents":"Verify tile contents";
     id("mbRouteVerifyPause").hidden=!verifying;id("mbRouteVerifyPause").disabled=!verifying||stop;
+    id("mbCheckLayerControls").disabled=!report||locked;id("mbCheckLayerZoom").disabled=!report||!view||locked||report.zoom===view.zoom;
+    layerStatus();
   }
   function reset(){
     version++;stop=true;verifying=false;report=null;gaps=[];id("mbRouteCheckResult").hidden=true;id("mbRouteGaps").replaceChildren();
     id("mbRouteCheckState").textContent="No path check yet. Choose a stored zoom and check the GPX against this map pack.";
-    id("mbRouteDecodeState").textContent="";id("mbRouteDecodeProgress").value=0;controls();
+    id("mbCheckLayerCard").hidden=true;id("mbCheckLayerShow").checked=true;id("mbCheckLayerHideDecoded").checked=false;
+    id("mbRouteDecodeState").textContent="";id("mbRouteDecodeProgress").value=0;controls();onRedraw();
   }
   function render(){
     if(!report)return;
@@ -33,8 +37,22 @@ export function createMBRouteCheck({getRoute,onCheck,onVerify,onOpen,download}) 
     id("mbRouteDecodeProgress").max=Math.max(1,report.present);id("mbRouteDecodeProgress").value=attempted;
     id("mbRouteDecodeProgress").setAttribute("aria-valuetext",`${attempted} of ${report.present} eligible tile contents checked`);
     id("mbRouteDecodeState").textContent=`${verifying?(stop?"Pausing after the current operation… ":"Verifying… "):""}${decoded.toLocaleString()} decoded · ${unreadable.toLocaleString()} unreadable · ${remaining.toLocaleString()} unchecked. `+(report.present===0?"No eligible tile records to decode.":remaining?"Content verification is incomplete.":"All eligible tiles have a decoding result. Missing and unsupported records remain gaps.");
-    id("mbRouteCheckResult").hidden=false;controls();
+    id("mbRouteCheckResult").hidden=false;id("mbCheckLayerCard").hidden=false;controls();onRedraw();
   }
+  function layerStatus(){
+    let message="";
+    if(report){
+      if(!view)message=`Checked zoom ${report.zoom}. Waiting for a map frame.`;
+      else if(view.zoom!==report.zoom)message=`Layer hidden: this report checks zoom ${report.zoom}, but the map shows zoom ${view.zoom}. Return to the checked zoom or run a new check.`;
+      else if(!id("mbCheckLayerShow").checked)message=`Tile-check layer hidden. The report still covers zoom ${report.zoom}.`;
+      else{const cells=projectMBCheckLayer(report,view,id("mbCheckLayerHideDecoded").checked),visible=new Set(cells.map(cell=>`${cell.x}/${cell.y}`)).size;
+        message=visible?`${visible} checked tiles visible at zoom ${report.zoom}. Labels match the legend; white inset border marks the selected gap-list entry.`:`No matching checked tiles in this view at zoom ${report.zoom}. Pan the map, change the filter or open a listed gap.`;}
+    }
+    id("mbCheckLayerState").textContent=message;
+  }
+  for(const key of ["mbCheckLayerShow","mbCheckLayerHideDecoded"])id(key).addEventListener("change",()=>{if(!busy&&!verifying){onRedraw();layerStatus();}});
+  id("mbCheckLayerZoom").addEventListener("click",()=>{if(report&&view&&!busy&&!verifying&&report.zoom!==view.zoom)return onOpen(view.lat,view.lon,report.zoom);});
+  id("mbRouteGaps").addEventListener("change",()=>{if(!busy&&!verifying)onRedraw();});
   id("mbRouteCheckZoom").addEventListener("change",()=>{if(!busy&&!verifying)reset();});
   id("mbRouteCheckRun").addEventListener("click",async()=>{
     const route=getRoute();if(!route||!hasPack||busy||verifying)return;
@@ -67,7 +85,11 @@ export function createMBRouteCheck({getRoute,onCheck,onVerify,onOpen,download}) 
     const index=Number(id("mbRouteGaps").value),tile=gaps[index];if(!report||busy||verifying||!Number.isInteger(index)||index<0||index>=100||!tile)return;
     const p=mbUnproject((tile.x+.5)*256,(tile.y+.5)*256,report.zoom);return onOpen(p.lat,p.lon,report.zoom);
   });
-  return {reset,setBusy(value,packOpen){busy=value;hasPack=packOpen;controls();},setPack(info){
+  return {reset,draw(ctx,current){
+    view=current;layerStatus();if(!report||!id("mbCheckLayerShow").checked)return;
+    const index=Number(id("mbRouteGaps").value),selected=Number.isInteger(index)&&index>=0&&index<100?gaps[index]:null;
+    drawMBCheckLayer(ctx,report,current,id("mbCheckLayerHideDecoded").checked,selected);
+  },setBusy(value,packOpen,current){busy=value;hasPack=packOpen;view=current;controls();},setPack(info){
     hasPack=!!info;id("mbRouteCheckZoom").replaceChildren();
     for(const zoom of info?.zooms||[]){const option=document.createElement("option");option.value=String(zoom);option.textContent=`Zoom ${zoom}`;id("mbRouteCheckZoom").append(option);}
     id("mbRouteCheckZoom").value=info?String(info.zooms[0]):"";reset();
