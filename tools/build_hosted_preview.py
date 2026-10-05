@@ -34,26 +34,29 @@ SCRIPT = '''"use strict";
   const id = value => document.getElementById(value);
   let enabled = false;
   function setConnection(value) {
+    value = value === true && navigator.onLine !== false;
     enabled = value;
     document.documentElement.dataset.sourcesEnabled = String(value);
-    id("connectionBadge").textContent = value ? "Source links enabled" : "Source links paused";
+    id("connectionBadge").textContent = value ? "Online services enabled" : "Online services paused";
     id("connectionBadge").classList.toggle("offline", !value);
-    id("connect").disabled = value;
+    id("connect").disabled = value || navigator.onLine === false;
     id("disconnect").disabled = !value;
     for (const link of document.querySelectorAll("[data-source-link]")) {
       link.setAttribute("aria-disabled", String(!value));
       link.classList.toggle("source-disabled", !value);
     }
     id("connectionStatus").textContent = value
-      ? "Source links are enabled. A provider is contacted only when you open its link. Address search, route calculation and hosted map downloads are not connected in this preview."
-      : "Source links are paused. The website itself is online; this control does not turn off your device’s internet.";
+      ? "Address search and source links are enabled. Photon receives an address only when you submit a search; source providers are contacted when you open their links. Routing and hosted map downloads remain unavailable."
+      : "Address search and source links are paused. This control does not turn off your device’s internet. Previously returned coordinates remain available to save.";
+    document.dispatchEvent(new Event("fieldforgeconnectionchange"));
   }
   id("connect").addEventListener("click", () => {
     if (!id("consent").checked) {
-      id("connectionStatus").textContent = "Check the consent box before enabling external source links.";
+      id("addressTab").click();
+      id("connectionStatus").textContent = "Check the consent box before enabling address search and external source links.";
       id("consent").focus(); return;
     }
-    if (window.confirm("Enable online source links?\\n\\nOpening a source link will contact its provider. Large files may begin downloading when you select a direct download. This website is already online.\\n\\nAddress search, routes and live chat are not hosted in this preview.")) setConnection(true);
+    if (window.confirm("Enable address search and source links?\\n\\nA submitted address or place search goes directly to Photon (Komoot), which receives the search text and your network request. Your local files and Saved places are not sent.\\n\\nOpening a source link contacts its provider and may download a large file. Connecting alone does not send a search.")) setConnection(true);
   });
   id("disconnect").addEventListener("click", () => setConnection(false));
   id("consent").addEventListener("change", () => { if (!id("consent").checked) setConnection(false); });
@@ -62,12 +65,15 @@ SCRIPT = '''"use strict";
       const link = event.target.closest?.("[data-source-link]");
       if (!link || enabled) return;
       event.preventDefault();
+      id("addressTab").click();
       id("connectionStatus").textContent = "Enable source links first to open an external provider.";
       id("connectionTitle").scrollIntoView({block:"center"});
       id("connect").focus();
     });
   }
   window.addEventListener("offline", () => setConnection(false));
+  window.addEventListener("online", () => setConnection(false));
+  window.addEventListener("pagehide", () => setConnection(false));
   id("previewSkills").addEventListener("click", () => {
     const selected = [...document.querySelectorAll('#skillsPreviewForm input[name="skill"]:checked')].map(input => input.value);
     id("skillsPreview").textContent = selected.length
@@ -107,14 +113,20 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     portal = replace_once(portal, "</head>", FAVICON + '<meta name="description" content="Explore the current FieldForge download portal and see the Commons chat, account and owner-console development screens."><link rel="stylesheet" href="preview.css"></head>')
     portal = replace_once(portal, "<main>", '''<main>
     <section class="preview-banner" aria-labelledby="previewTitle"><h2 id="previewTitle">Private development preview</h2>
-    <p>The preparation desk works in your browser. Map hosting, online address lookup, routing, live accounts and messaging are not connected here yet. The sections below show the rest of the portal and its current progress.</p>
+    <p>The preparation desk works in your browser. Find an address connects to Photon when you submit a search, and lets you save the returned coordinates for offline use. Map hosting, routing, live accounts and messaging are not connected here yet.</p>
     <div class="actions"><a class="button" href="commons.html">See chat &amp; owner screens</a><a class="button" href="#mapAcquisitionTitle">Explore map sources</a></div></section>''')
     portal = replace_once(portal, 'Send my entered searches and route coordinates to this portal and its configured providers.', 'Allow me to open external map and resource providers from this preview.')
     portal = replace_once(portal, 'This page is already open in your browser. Connect asks permission before enabling its online services. Disconnect stops those services; it does not switch off your device\'s internet. Download what you need before leaving.', 'This website is already online. Connect asks before enabling external source links; Go offline pauses those links. These controls do not switch your device’s internet on or off. This preview does not run background provider requests.')
-    portal = replace_once(portal, '<div class="layout">', '<p class="preview-state">Address lookup and route planning are shown below for layout review. Their online providers are not connected on this website.</p><div class="layout">')
+    portal = replace_once(portal, '<div class="layout">', '<p class="preview-state">Address lookup is available in the preparation desk. Route calculation below remains a layout preview.</p><div class="layout">')
+    connection = re.search(r'<section class="card connection-panel".*?</section>', portal, flags=re.S)
+    address = re.search(r'<section class="card" aria-labelledby="searchTitle">.*?(?=<section class="card" aria-labelledby="routeTitle">)', portal, flags=re.S)
+    if not connection or not address:
+        raise ValueError("Address/connection card changed; review hosted search integration")
+    portal = replace_once(portal, connection.group(0), '<section class="card connection-panel"><h2>Online controls</h2><p class="small muted">Connect in Find an address to enable submitted searches and source links. Go offline pauses both.</p><button id="openAddressControls" type="button">Open online controls</button></section>')
+    portal = replace_once(portal, address.group(0), '<section class="card" aria-labelledby="searchTitle"><h2 id="searchTitle">Address to coordinates</h2><p>Find an address in the preparation desk, then add the result to Saved places for map viewing and offline exports.</p><button id="openAddressSearch" type="button">Find an address</button></section>\n      ')
     # Preserve form layout while making every server-backed control inert.
     portal = re.sub(r'(<input id="(?:start|end)(?:Latitude|Longitude)"[^>]*)(>)', r'\1 disabled\2', portal)
-    for form_id in ("searchForm", "routeForm"):
+    for form_id in ("routeForm",):
         pattern = rf'(<form id="{form_id}">)(.*?)(</form>)'
         portal = re.sub(pattern, r'\1<fieldset disabled>\2</fieldset>\3', portal, flags=re.S)
     portal = replace_once(portal, 'Connect to see the published map catalog.', 'No map files are hosted in this preview. The source directory below links to external providers. All-world MBTiles have not been acquired.')
@@ -132,6 +144,10 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     # Add actual browser-local tools without changing the desktop server portal.
     assets = Path(__file__).resolve().parent / "portal_preview"
     portal = replace_once(portal, '<section class="preview-banner"', (assets / "desk.html").read_text(encoding="utf-8") + '<section class="preview-banner"')
+    portal = replace_once(portal, '<!--HOSTED_ADDRESS_TAB-->', '<button id="addressTab" type="button" aria-pressed="false" aria-controls="addressPanel">07 <span>Find an address</span></button>')
+    portal = replace_once(portal, '<a href="#libraryTitle">07 <span>Knowledge library</span></a>', '<a href="#libraryTitle">08 <span>Knowledge library</span></a>')
+    portal = replace_once(portal, '<!--HOSTED_ADDRESS_PANEL-->', (assets / "address-search.html").read_text(encoding="utf-8"))
+    portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="address-search.css"><script type="module" src="address-entry.mjs"></script></head>')
     portal = insert_mbtiles_worker(portal, assets)
     portal = replace_once(portal, '</head>', '<link rel="stylesheet" href="desk.css"><link rel="stylesheet" href="route-explorer.css"><link rel="stylesheet" href="image-viewer.css"><link rel="stylesheet" href="places.css"><link rel="stylesheet" href="vector-viewer.css"><link rel="stylesheet" href="mbtiles-viewer.css"><script type="module" src="desk.mjs"></script></head>')
     css = re.search(r'<style>(.*?)</style>', portal, flags=re.S).group(1)
@@ -156,7 +172,7 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     <section class="preview-gallery" aria-label="Development screenshots">{''.join(gallery)}</section>
     <section class="card maps-section"><h2>Current status</h2><table class="status-table"><thead><tr><th scope="col">Area</th><th scope="col">Available now</th><th scope="col">Still to connect</th></tr></thead><tbody>
     <tr><th scope="row">Website</th><td>Map source planner, download estimates, saved plans, local GPX, map-image, GeoJSON and raster/vector MBTiles inspection, saved places, offline tools and these screens</td><td>Hosted application services and a public community launch</td></tr>
-    <tr><th scope="row">Maps &amp; routes</th><td>Links to regional PBF sources, NOAA charts and paid dataset providers</td><td>Hosted map files, address provider and route provider; world MBTiles collection not acquired</td></tr>
+    <tr><th scope="row">Maps &amp; routes</th><td>Manual Photon address lookup, offline coordinate exports, local map viewers, and regional source links</td><td>Hosted map files and route calculation; world MBTiles collection not acquired</td></tr>
     <tr><th scope="row">Commons</th><td>Local rooms, inbox, accounts, profiles, search and owner controls</td><td>Online account services, email/social providers and production operations</td></tr>
     <tr><th scope="row">Library &amp; tiers</th><td>Subject areas and draft plans</td><td>Published knowledge packages, final prices and billing</td></tr>
     </tbody></table><p class="bottom-note">Open-once messages do not guarantee screenshot protection or deletion of copies. End-to-end encryption is not implemented.</p></section></main>
@@ -167,6 +183,8 @@ def export(source_root: Path, output: Path, revision: str) -> None:
     (output / "preview.css").write_text(STYLE, encoding="utf-8")
     (output / "preview.js").write_text(SCRIPT, encoding="utf-8")
     for name in ("desk.css", "desk.mjs", "desk-core.mjs", "route-explorer.css", "route-explorer.mjs", "image-core.mjs", "image-viewer.mjs", "image-viewer.css", "places-core.mjs", "places.mjs", "places.css", "field-sheet-core.mjs", "field-sheet.mjs", "vector-core.mjs", "vector-viewer.mjs", "vector-viewer.css", "mbtiles-core.mjs", "mbtiles-client.mjs", "mvt-renderer.mjs", "mbtiles-coverage.mjs", "mbtiles-route-core.mjs", "mbtiles-route-check.mjs", "mbtiles-route.mjs", "mbtiles-viewer.mjs", "mbtiles-viewer.css"):
+        shutil.copyfile(assets / name, output / name)
+    for name in ("address-core.mjs", "address-service.mjs", "address-search.mjs", "address-entry.mjs", "address-search.css"):
         shutil.copyfile(assets / name, output / name)
     offline = export_offline(assets, output, (source_root / "fieldforge/online/portal.html").read_text(encoding="utf-8"), revision, FAVICON)
     print(f"Offline desk: {offline['bytes']:,} bytes, edition {offline['edition_id']}")

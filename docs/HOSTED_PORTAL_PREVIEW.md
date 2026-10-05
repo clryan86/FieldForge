@@ -11,11 +11,14 @@ and saved-message search. The screenshots use test participants.
 
 ## What is and is not live
 
-External provider links and the device-only skill-label preview work here.
-The connection confirmation enables external source links; it does not disable
-the device's internet or turn the website into an offline application.
+The preparation desk now includes manually submitted Photon address lookup,
+local map/GPX tools and Saved places with offline collection exports. External
+provider links and the device-only skill-label preview also work here. The
+connection confirmation enables submitted address searches and source links;
+it does not disable the device's internet. Use the separately downloaded HTML
+edition to reopen saved files offline.
 
-Chat, sign-in, account/profile storage, owner authentication, geocoding, routing,
+Chat, sign-in, account/profile storage, owner authentication, routing,
 map hosting, knowledge-package hosting and billing are **not** connected to this
 website. The local application remains separate. No account database,
 credentials or third-party map collection was uploaded. No E2EE or screenshot
@@ -698,3 +701,68 @@ outstanding; DOM/Canvas and browser-worker lifecycle tests use doubles.
 Offline edition: **14bba6656297**, **2,105,416 bytes**. No real map datasets,
 route calculation, live geocoding, hosted map downloads or live Commons
 services were added in this update.
+
+
+## Online address search and offline collection handoff (October 5, 2026)
+
+**Find an address** is now a preparation-desk tool. Choose United States (the
+default) or Worldwide, enable the clearly identified online connection, and
+submit an address/place query to Photon by Komoot. Connecting, typing, changing
+scope and regaining connectivity do not submit searches. The unified Go offline
+control pauses both address lookup and external source links. Consent revocation
+and device-offline events cancel requests. This does not control the device's
+internet connection.
+
+Up to five matches show the full returned label, original latitude/longitude,
+source type, OpenStreetMap identity when available, and lookup time. **Add to
+Saved places** preserves numeric precision and attribution. Save that collection
+as JSON to reopen it in the standalone offline tools. Existing CSV, GPX,
+printable-sheet and local-MBTiles viewing paths work with the same collection.
+A match is not a verified entrance, GPS fix or route. The saved name has the
+collection's 160-character limit; CSV/GPX retain their seven-decimal rounding.
+
+The hosted-only modules use the fixed `https://photon.komoot.io/api/` endpoint.
+Requests omit browser credentials and referrers, reject redirects, and send only
+the submitted query, result limit, language and optional U.S. country filter.
+They do not send local files, saved collections or a location bias. Responses
+are bounded to 256 KiB and 15 seconds. Text and coordinates are validated before
+display; labels render as text. Cancellation and rejected responses abort the
+request, and late replies cannot restore old results. There is no automatic
+retry or alternate provider.
+
+This private preview permits one active request, at least two seconds between
+new requests and 30 new requests per rolling hour per tab. A 20-entry, 15-minute
+memory cache reuses explicitly repeated searches with their original lookup
+time. HTTP 429 honors a bounded Retry-After (at least one minute); 403 pauses
+further new searches in that tab. Disconnect preserves displayed matches for
+saving. Clear search removes query text, results and the cache, retaining the
+collection and request limits. Closing the tab clears memory; no query history
+is written to localStorage.
+
+The standalone offline build excludes the search modules, controls and provider
+endpoint and retains `connect-src 'none'`. A saved address collection reopens
+and re-exports through the actual offline HTML with network and storage forbidden.
+The desktop Python portal's provider configuration and public-demo guards remain
+unchanged.
+
+New checks exercise the actual hosted connection script, consent/confirmation,
+safe text rendering, coordinate order and precision, caching, rate/error handling,
+bounded reads, cancellation, stale results and offline transitions. Export checks
+cover hosted labels, IDs, assets and module imports, and the absence of online
+search code from the offline bundle.
+
+A live request with the actual new service module returned five results for the
+public place **Tulsa City Hall** on October 5 at 23:24 UTC. An independent HTTP
+check returned 200 and `Access-Control-Allow-Origin: *`. These are service and
+automated controller checks; native browser/phone UI QA remains pending. The
+shared Photon demo has no availability guarantee. Review dedicated geocoding
+capacity before commercial/public scale, following the
+[Photon service policy](https://github.com/komoot/photon#demo-server) and
+[official API documentation](https://github.com/komoot/photon/blob/master/docs/api-v1.md).
+Hosted map downloads, route calculation, full map coverage and live Commons
+services remain unfinished.
+
+
+Integrated verification: **105 Node tests and 7 Python checks passed**, retaining the newer complete-GPX-path tile checks. The offline edition is **56f8a61109c7**, **2,106,026 bytes**, SHA-256 `8f9075135eb5332e0476f7143e9edec6bb313367f208038694e4914f05ae511c`.
+
+This address update was published with Site source commit `379d73596d6b101d2a35dbecbbbd9c4bc213a9f4`, preserving the GPX path tile checks from `dda68e18f68ae370995573097682e4c48e996eaa`.

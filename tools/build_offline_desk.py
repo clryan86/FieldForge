@@ -80,6 +80,8 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
     catalog = re.sub(r'\bhref="([^"]+)"', r'data-source-url="\1"', catalog)
     catalog = re.sub(r' (?:target|rel)="[^"]*"| download(?=[ >])', "", catalog)
     desk = (assets / "desk.html").read_text(encoding="utf-8")
+    desk = replace_once(desk, "<!--HOSTED_ADDRESS_TAB-->", "")
+    desk = replace_once(desk, "  <!--HOSTED_ADDRESS_PANEL-->\n", "")
     desk = replace_once(desk, '<p class="eyebrow">FieldForge / preparation desk</p>', '<p class="eyebrow">FieldForge / offline edition</p>')
     desk = replace_once(desk, 'Less time online.<br>More prepared offline.', 'Your preparation desk.<br>Ready to travel.')
     desk = replace_once(desk, '<a class="desk-commons" href="commons.html">Explore Commons <span>Chat &amp; owner screen gallery</span></a>', '<a class="desk-commons" href="#offlineHelp">Using your offline copy <span>How to reopen, save and update</span></a>')

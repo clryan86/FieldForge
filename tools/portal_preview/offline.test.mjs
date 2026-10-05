@@ -9,6 +9,8 @@ import {webcrypto} from "node:crypto";
 import vm from "node:vm";
 import {mbUnproject} from "./mbtiles-core.mjs";
 import {imageHeader} from "./image-core.mjs";
+import {parseAddressResults} from "./address-core.mjs";
+import {placesJSON} from "./places-core.mjs";
 
 // Execute the actual downloadable script with a DOM double and forbidden network
 // and storage APIs. This is an integration check, not native browser/device QA.
@@ -102,6 +104,20 @@ test("downloaded desk boots without storage or network and can save/reopen a sou
   app.id("traceTab").fire("click"); assert.equal(app.id("tracePanel").hidden,false); assert.equal(app.id("packPanel").hidden,true);
   app.id("imageTab").fire("click"); assert.equal(app.id("imagePanel").hidden,false); assert.equal(app.id("tracePanel").hidden,true);
   assert.equal(app.storageTouches,0); assert.equal(app.requests,0);
+});
+
+test("a saved online address collection reopens and exports inside the real offline bundle without requests", async () => {
+  const app = boot();
+  const result = parseAddressResults({features:[{type:"Feature", geometry:{type:"Point", coordinates:[-95.9896891234567,36.1554223123456]}, properties:{name:"Example town hall", country:"United States", osm_type:"N", osm_id:12345}}]}, "2026-10-05T23:00:00.000Z")[0];
+  const json = placesJSON([result.point]), bytes = new TextEncoder().encode(json);
+  app.id("placesFile").files = [{name:"fieldforge-place-collection.json", size:bytes.length, arrayBuffer:async () => bytes.buffer}];
+  await app.id("placesFile").fire("change");
+  assert.match(app.id("placesRows").textContent, /Example town hall/);
+  assert.match(app.id("placesRows").textContent, /Photon \/ Komoot/);
+  app.id("placesSaveJSON").fire("click");
+  const saved = JSON.parse(await app.blobs[0].text());
+  assert.deepEqual(saved.places, [result.point]);
+  assert.equal(app.requests, 0); assert.equal(app.storageTouches, 0);
 });
 
 test("opening the portal requires confirmation and uses a fixed URL without local data", () => {

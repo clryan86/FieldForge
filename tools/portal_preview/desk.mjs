@@ -131,11 +131,23 @@ if (!offlineEdition) try {
 } catch { announcePlan("A saved device plan could not be restored. Open a saved plan file or start a new selection."); }
 
 function selectTool(kind) {
-  for (const [tool, tab, panel] of [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"], ["vector", "vectorTab", "vectorPanel"], ["mbtiles", "mbTab", "mbPanel"]]) {
+  const tools = [["packs", "packTab", "packPanel"], ["trace", "traceTab", "tracePanel"], ["image", "imageTab", "imagePanel"], ["places", "placesTab", "placesPanel"], ["vector", "vectorTab", "vectorPanel"], ["mbtiles", "mbTab", "mbPanel"]];
+  if (!offlineEdition) tools.push(["address", "addressTab", "addressPanel"]);
+  for (const [tool, tab, panel] of tools) {
     id(panel).hidden = kind !== tool; id(tab).setAttribute("aria-pressed", String(kind === tool));
   }
   if (kind === "image") imageViewer.refresh();
 }
+export function addOnlinePlace(point) {
+  const message = savedPlaces.add([point], "Address result");
+  selectTool("places"); id("placesTab").focus();
+  return message;
+}
+export function showAddressSearch() {
+  if (offlineEdition) return;
+  selectTool("address"); id("addressPanel").scrollIntoView({block:"start"});
+}
+if (!offlineEdition) id("addressTab").addEventListener("click", showAddressSearch);
 id("packTab").addEventListener("click", () => selectTool("packs"));
 id("traceTab").addEventListener("click", () => selectTool("trace"));
 id("imageTab").addEventListener("click", () => selectTool("image"));

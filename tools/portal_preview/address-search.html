@@ -1,0 +1,18 @@
+  <section id="addressPanel" class="address-panel" aria-labelledby="addressTab" hidden>
+    <div class="address-heading"><div><p class="eyebrow">Online search / offline places</p><h2>Find an address</h2><p>Find a place, check its coordinates, and carry it into your offline collection.</p></div><span id="addressConnectionState" class="address-state" role="status">Disconnected</span></div>
+    <section class="address-connection" aria-labelledby="connectionTitle">
+      <h3 id="connectionTitle">Connect when you are ready</h3>
+      <label for="consent"><input id="consent" type="checkbox"> Allow my submitted searches to go directly to Photon (Komoot), and enable external map-source links.</label>
+      <p class="address-note">Photon receives the search text and your network request, including your IP address. Typing and connecting do not send a search. Your files and Saved places are not sent.</p>
+      <div class="address-actions"><button id="addressEnable" type="button">Connect for search</button><button id="addressPause" type="button" class="secondary" disabled>Disconnect</button></div>
+      <p id="connectionStatus" class="address-note" role="status">Check the box, then connect to search. You can disconnect at any time.</p>
+    </section>
+    <form id="addressSearchForm" autocomplete="off">
+      <div class="address-query-row"><div><label for="addressQuery">Address or place name</label><input id="addressQuery" type="search" minlength="3" maxlength="300" placeholder="Street address, town, state or country" autocomplete="off" spellcheck="false" required disabled aria-describedby="addressQueryHint"></div><div><label for="addressScope">Search area</label><select id="addressScope" disabled><option value="US">United States</option><option value="world">Worldwide</option></select></div><button id="addressSubmit" type="submit" disabled>Find coordinates</button></div>
+      <p id="addressQueryHint" class="address-note">Up to five matches. Include the city and country, then check the full address. A result may mark a place centre rather than an entrance.</p>
+      <div class="address-actions"><button id="addressCancel" type="button" class="secondary" disabled>Cancel search</button><button id="addressClear" type="button" class="secondary">Clear search</button></div>
+    </form>
+    <p id="addressStatus" class="address-status" role="status" aria-live="polite">Connect to search for coordinates.</p>
+    <div id="addressResults" class="address-results" aria-label="Address search results"></div>
+    <footer class="address-provider"><p>Search: <a href="https://github.com/komoot/photon" target="_blank" rel="noopener noreferrer">Photon by Komoot</a>. Map data: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors · ODbL</a>. This shared preview service can be busy or unavailable.</p><p>Use <strong>Add to Saved places</strong>, then <strong>Save collection JSON</strong> to reopen coordinates in your offline tools. CSV and GPX are also available. Search results and recent-query memory are cleared when this tab closes.</p></footer>
+  </section>
