@@ -554,6 +554,24 @@ def search_index(index: PreparedIndex, query, *, limit=100, cancel=None):
         return _collect(rows, limit)
 
 
+def feature_coordinate(feature: osm.StreetFeature) -> tuple[float, float, bool] | None:
+    """Return (latitude, longitude, is_source_point) for an indexed feature.
+
+    Point features retain their source coordinate. For lines/areas, return only
+    the center of the feature bounds; that is a display aid, not an address or
+    entrance coordinate.
+    """
+    if not feature.geometry:
+        return None
+    if len(feature.geometry) == 1:
+        longitude, latitude = feature.geometry[0]
+        return latitude, longitude, True
+    longitudes = [point[0] for point in feature.geometry]
+    latitudes = [point[1] for point in feature.geometry]
+    return ((min(latitudes) + max(latitudes)) / 2,
+            (min(longitudes) + max(longitudes)) / 2, False)
+
+
 def visible_index(index: PreparedIndex, bounds, *, limit=700, cancel=None):
     """Return a bounded subset intersecting a WGS84 box. No unseen-edge routing."""
     _limit(limit)
