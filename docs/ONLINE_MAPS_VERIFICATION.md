@@ -82,6 +82,21 @@ geography and do not establish complete coverage or validated navigation.
 - Repository-wide Ruff, patch whitespace, workflow YAML and referenced test
   paths passed. Both map-platform CI jobs include the new modules.
 
+The first hosted map run for `dcfa938` passed **688 Linux/Tk tests and 78
+subtests**, plus **11 Chromium scenarios**. Its Windows job reported **685
+passed, one failed, two skipped and 78 subtests**. The failure was in the new
+malformed-backslash ZIP fixture: Windows `ZipInfo` normalized the requested
+backslash into a valid forward-slash path while creating the test archive.
+The test was therefore passing a valid adjacent receipt to the importer.
+The fixture now explicitly writes its intended filename and checks the raw
+`orig_filename` from the resulting archive before exercising the rejection.
+The rejection assertion and production validation remain intact. The two
+Windows skips are the existing POSIX named-pipe and symlink-privilege cases.
+The corrected fixture passed all **107 collection/receipt cases** locally,
+and all eight unsafe/adjacent path cases also passed with isolated Windows
+filename-normalization behavior. Hosted results for the corrective commit
+remain tracked by the map compatibility workflow.
+
 The [actual native offline view](screenshots/south-dakota-offline-map.png) shows
 Sioux Falls streets and buildings from the historical index. The window opened
 the real file, searched for Sioux Falls, centered its source city point and

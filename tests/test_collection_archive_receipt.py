@@ -62,13 +62,25 @@ def _write_alias(case, wrapper=None, *, folder='region-0', receipt_name=None,
     raw = (json.dumps(wrapper, ensure_ascii=False).encode('utf-8')
            if raw_receipt is None else raw_receipt)
     member_name = prefix + 'region.json' if receipt_name is None else receipt_name
+    if isinstance(member_name, str):
+        member = zipfile.ZipInfo(member_name)
+        # ZipInfo normalizes backslashes on Windows. These adversarial fixtures
+        # must write the requested archive name, before reader normalization.
+        member.filename = member_name
+    else:
+        member = member_name
     zip_entries(case, 0, [
         (prefix + 'map.ffmap', case.indexes[0].path.read_bytes()),
-        (member_name, raw),
+        (member, raw),
         (prefix + 'SOURCE-RIGHTS.txt', b'TEST attribution'),
         (prefix + 'source.osm.pbf', case.indexes[0].path.with_name('source.osm.pbf').read_bytes()),
         *extra,
     ])
+    path = case.archives / case.document['packs'][0]['filename']
+    with zipfile.ZipFile(path) as archive:
+        # orig_filename retains the actual name from the ZIP directory even if
+        # this platform sanitizes ZipInfo.filename while reading it.
+        assert archive.infolist()[1].orig_filename == member.filename
     return raw
 
 
