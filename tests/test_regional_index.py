@@ -73,6 +73,29 @@ def test_streamed_geometry_dense_raw_and_search_fallback(tmp_path, dense, fts):
     assert regional.inspect_index(index.path).metadata == index.metadata
 
 
+def test_explicit_address_tags_are_searchable_with_source_coordinates(tmp_path):
+    strings = ('', 'addr:housenumber', '123A', 'addr:street', 'Map Street',
+               'addr:city', 'Testville')
+    tags = packed(2, (1, 3, 5)) + packed(3, (2, 4, 6))
+    raw = header() + primitive(binary(1, node(7, -70, 40, tags)), strings)
+    index = build(tmp_path, raw)
+
+    matches = regional.search_index(index, '123A Map Street')
+    assert len(matches.features) == 1 and not matches.limited
+    feature, = matches.features
+    assert feature.kind == 'address tags'
+    assert feature.name == '123A Map Street'
+    assert index.metadata['address_features'] == 1
+    assert regional.feature_coordinate(feature) == (40.0, -70.0, True)
+    assert not regional.search_index(index, '124 Map Street').features
+
+
+def test_nonpoint_coordinate_is_only_feature_bounds_center():
+    feature = osm.StreetFeature('way/2', 'Building', 'building=yes',
+                                ((10, 20), (14, 24), (12, 22)), ())
+    assert regional.feature_coordinate(feature) == (22.0, 12.0, False)
+
+
 def test_source_may_be_out_of_order_and_missing_ways_are_not_connected(tmp_path):
     raw = header() + primitive(binary(3, way())) + primitive(
         binary(1, node(2, 10, 20)) + binary(1, node(1, 11, 21)))
