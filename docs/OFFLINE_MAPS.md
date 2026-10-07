@@ -1,45 +1,77 @@
-# Offline maps — local raster/vector MBTiles
+# Offline maps — included atlas and local raster/vector MBTiles
 
-The desktop **Maps** section opens an already-local map pack, renders its raster
-tiles or a basic styled preview from vector tiles, and provides pan, zoom, coordinate centering and an optional saved-place
-overlay. It has no network client, tile-server setting, GPS/location request,
-geocoding, road routing, travel-time estimate or current-hazard data. No map data
-is automatically downloaded, purchased or installed. A displayed map and a saved
-meeting point are not verified safe travel guidance.
+> This guide describes tested local integration `fe70c8b`. Publication is pending;
+> see [map integration status](MAP_INTEGRATION_STATUS.md).
 
-## Open a supported map
+The desktop **Maps** screen opens the included atlas or an already-local map,
+renders raster tiles or a basic vector preview, and provides pan, zoom,
+coordinate centering and optional place/route overlays. It makes no network or
+GPS request and performs no address lookup or route calculation. Separate online
+tools can prepare maps and routes when explicitly connected.
+
+## Included overview and town search
+
+Choose **Maps → Included U.S. atlas…** to open the application resource without
+a manual import or download. Its **615 tiles** provide a world overview at
+zooms 0–3 and U.S./territory overview coverage at zooms 4–6. Counts by zoom are
+1, 4, 16, 64, 62, 143 and 325. Region choices include the lower 48, Alaska,
+Hawaii, Puerto Rico / U.S. Virgin Islands, Guam / Northern Mariana Islands,
+and American Samoa.
+
+Choose **Find included U.S. towns…**, search by town or state, select a result,
+then **Show selected town on included atlas**. This opens the atlas with a
+temporary marker; **Clear town marker** removes it. No private waypoint is
+created. An empty query browses up to 100 of the **777 selected towns**;
+narrow the query to find other matches.
+
+Natural Earth's 1:50 million layers show generalized land, state outlines,
+selected city labels, rivers and lakes. The separate 1:10 million populated-places
+selection supplies the town catalogue. These resources do not include every
+settlement, every address, a full U.S. street database, terrain elevations,
+current conditions, safe-water assessments or a routing graph. Small islands
+and features may be omitted.
+
+The GPS workspace has the same **Included U.S. atlas…** and a separate
+**Find places / coordinates… → Included U.S. towns** action. A selected point
+centers its current map or coarse outline and pauses receiver following.
+See [GPS workspace](GPS_WORKSPACE.md) and [bundled atlas](BUNDLED_ATLAS.md).
+
+## Open a supported external map
 
 Choose **Maps → Open local map…**, select a trusted `.mbtiles` file and confirm
-that you trust it and have permission to use it. Both the Maps tab and GPS workspace support a
-specific MBTiles subset:
+permission to use it. Both map surfaces support these bounded layouts:
 
-- PNG, JPEG or WebP raster imagery in ordinary `metadata` and `tiles` tables, using MBTiles'
-  TMS rows and Web Mercator tile coordinates. The declared columns must be
-  `metadata(name TEXT, value TEXT)` and
+- **Flat:** ordinary `metadata(name TEXT, value TEXT)` and
   `tiles(zoom_level INTEGER, tile_column INTEGER, tile_row INTEGER, tile_data BLOB)`
-  in that order, without additional columns.
-- A unique, non-partial index on `(zoom_level, tile_column, tile_row)` in that
-  order with `BINARY` collation, plus `name` and `format=png`, `jpg`, `jpeg` or `webp`
-  metadata. Up to 128 metadata entries and 16 KiB per UTF-8 value are supported.
-  The reader never builds an index
-  or changes the supplied pack to make it compatible.
-- Gzip-compressed Mapbox Vector Tile data declared as `format=pbf`, decoded from
-  ordinary `metadata` and `tiles` tables through the same indexed read-only path.
-  FieldForge draws common land, water, building, road, boundary, rail and point
-  geometries with a built-in preview palette. It places a limited set of labels
-  from names embedded in point, line, and area features. It does not apply publisher MapLibre
-  styles, filters, sprites, font glyphs, or publisher symbol-placement rules.
-- Square 256- or 512-pixel images. A 512-pixel retina tile is subsampled to the same
-  256-screen-pixel logical footprint. There is no extra detail invented from a
-  lower zoom, no resampling fallback from another level and no remote fallback.
-- Integer zoom levels between 0 and 22. Controls use levels actually present in
-  the tiles table, not just claimed by metadata. A level's presence does NOT
-  establish that every part of the viewport or declared region is covered.
+  tables with the supported column layout.
+- **Normalized:** ordinary `metadata`, `map` and `images` tables. The map table
+  has integer tile coordinates and `tile_id`; images has the same declared
+  tile-ID type and BLOB `tile_data`. Supported ID types are TEXT, INTEGER and
+  BLOB. A `tiles` view may exist, but the reader never executes it: it uses
+  a fixed indexed join over the physical tables. Other view-only layouts,
+  virtual tables and generated/hidden columns remain unsupported.
+- Unique, non-partial, BINARY-collated coordinate indexes must already exist.
+  Normalized images also need a unique `tile_id` index. No index or conversion
+  is written. Absent coordinates are missing tiles; dangling image references
+  are bad data.
+- Tile contents may be PNG, JPEG (`format=jpg` or `jpeg`), WebP, or gzip-compressed
+  Mapbox Vector Tile data (`format=pbf`). Metadata requires `name` and `format`,
+  with up to 128 entries and 16 KiB per UTF-8 value.
+- Raster tiles must be square, 256 or 512 pixels, using Web Mercator and TMS rows.
+  A 512-pixel tile occupies the same 256-screen-pixel footprint. Animated tiles
+  are unsupported. Observed integer zooms run from 0 to 22; no alternate-zoom
+  or remote fallback invents missing detail.
+- MVT/PBF tiles receive a basic preview for common land, water, buildings, roads,
+  boundaries, rail and points, with bounded embedded point/line/area names.
+  Publisher styles, filters, fonts, sprites, glyphs and advanced symbol placement
+  are not applied. These vector tiles are different from raw OSM `.osm.pbf`
+  source snapshots.
 
-Animated tiles and normalized/view-based MBTiles layouts are **not supported**.
-Those can be valid MBTiles formats; rejection means this reader cannot display
-them, not that their files are corrupt. GPX, PDF maps and ordinary
-image files are not MBTiles. The app does not convert these formats automatically.
+The portal's MBTiles **publisher remains flat-only**. A normalized file that opens
+locally is not automatically eligible for portal publication. GPX, PDF maps,
+ordinary images and prepared `.ffmap` indexes are separate formats; the app
+does not automatically convert them into MBTiles.
+
 Open ordinary map images through **Navigation → Open map image…**; see
 [image formats and limits](GPS_WORKSPACE.md#mbtiles-and-image-files). Source users
 install `.[maps]` for JPEG/WebP and map-image decoding; native PNG tiles continue
@@ -137,9 +169,7 @@ that deadline. Workers read data and decode non-PNG tiles; Tk PNG decoding/drawi
 There is no mid-read database write to wait for when closing the application.
 Existing guards still protect unrelated unsaved editors and active write jobs.
 
-## Verification and practice pack
-
-### Prepared regional `.ffmap` indexes
+## Prepared regional `.ffmap` indexes
 
 The Maps tab also has a separate **Prepared regional map…** viewer for FieldForge
 `.ffmap` SQLite indexes. These are not MBTiles. Choose **Import package ZIP…**
@@ -158,7 +188,20 @@ freshness, safety, or completeness. The current portal does not distribute
 `.ffmap` indexes or extract ZIP packages. See the [regional data
 plan](GLOBAL_MAP_DATA_PLAN.md) for provenance and acquisition gaps.
 
-Tests cover independent projection examples and round trips, TMS row reversal,
+## Saved routes and online preparation
+
+The separate **Online Maps** tools connect to an operator-configured portal for
+address lookup, map downloads and driving-route alternatives. Completed downloads
+are verified against catalog size and checksum. Saved or imported online-planned
+routes can be reopened for directions, drawn over a local map and exported as GPX
+after disconnecting. This does not calculate new offline routes or reroute around
+closures. See [Online map portal](ONLINE_MAP_PORTAL.md).
+
+## Verification and practice resources
+
+Current headless/installed-package results and pending GUI/Windows work are listed
+in [map integration status](MAP_INTEGRATION_STATUS.md). Existing coverage includes
+independent projection examples and round trips, TMS row reversal,
 date-line wrapping, polar exclusion, no lower-zoom substitution, source metadata,
 read-only files, required indexes, invalid PNG headers/dimensions, actual Tk PNG
 decoding, missing/corrupt cells, budgets, changed files, SQL cancellation/deadlines,
@@ -184,9 +227,9 @@ Technical references consulted for implementation:
 - Python SQLite read-only URI, transactions and progress handlers:
   https://docs.python.org/3.13/library/sqlite3.html
 
-No application dependency, database schema or snapshot-format change is added.
-No native Android/iOS viewer, browser map export, route planner, reviewed map
-collection or local language model is delivered here. Update the application
-source for this screen; content JSON cannot install it and old ZIPs do not
-update automatically. Close the old app and back up its database first. Keep
-external maps backed up separately before depending on them offline.
+No native Android/iOS map application or new offline routing engine is delivered
+by this integration. Receive these features through an explicitly identified
+application build; content JSON cannot install source changes and old ZIPs do
+not update automatically. Source/data publication and GUI/Windows execution
+remain pending. Keep external maps, source documentation and rights files
+backed up separately from the household database.

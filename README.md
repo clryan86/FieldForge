@@ -6,6 +6,11 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 > FieldForge is a preparedness and reference tool. It does not replace emergency services, licensed medical care, official evacuation orders, or professional advice.
 
+> The map features below describe tested local integration `fe70c8b`.
+> Publication to the shared development branch is pending. See
+> [map integration status](docs/MAP_INTEGRATION_STATUS.md) for verified behavior,
+> remaining checks, and the source/data publication boundary.
+
 ## Design principles
 
 - **Offline first:** core features require no network connection.
@@ -42,10 +47,11 @@ It is designed to remain useful when the internet, cloud services, cellular netw
 
 ### Navigation and mapping
 - Coordinates, distance, bearing, and waypoint tools
-- Local raster MBTiles and image-map viewers
+- Included U.S. overview atlas with 615 tiles and 777 selected town reference points
+- Local flat/normalized raster MBTiles, basic vector previews, and image-map viewers
 - Optional online address lookup to fill saved places and route endpoints
 - A configurable map portal with verified map downloads and saved route alternatives
-- Offline route directions, planned-route overlays, and GPX export
+- Read saved directions offline, show planned-route overlays, and export GPX
 - Additional world map coverage and offline rerouting remain future work
 
 ### Privacy and resilience
@@ -117,21 +123,44 @@ integrations are not required for emergency operation.
 
 FieldForge is under active construction. The first goal is not a flashy demo; it is a dependable offline core with tests, reproducible calculations, durable local storage, and a clean path to a full desktop application.
 
-## Offline raster map viewer
+## Included atlas and local map viewers
 
-The main desktop also provides **Navigation → Maps, GPS & places…** for the
-combined live-receiver, local-map, offline-place and saved-trip workspace.
-It does not connect or record automatically; unsaved trips are checked before
-the application closes. See [GPS workspace](docs/GPS_WORKSPACE.md).
+The tested integration includes a **615-tile U.S. overview atlas** and **777 selected
+town reference points** from Natural Earth. These application resources open
+offline without a download or manual import. The overview shows generalized
+land, state outlines, selected city labels, rivers and lakes. It has no street
+detail or terrain elevations, and the town catalogue is not a complete
+settlement or address directory.
 
-**Maps → Open local map…** reads compatible, already-local PNG, JPEG or WebP MBTiles packs
-with pan/zoom and an optional saved-place overlay. Missing/corrupt tiles are
-labeled; no map tiles are downloaded and no GPS or safe-route guidance is implied.
-Both map viewers support flat indexed raster packs; vector tiles and view-based
-layouts are unsupported. **Navigation → Open map image…** opens local map images
-with pan/zoom and an explicit uncalibrated-reference label. Source installations
-use `pip install ".[maps,gps,pdf]"` for image, serial-receiver and PDF support. External map files are **not included in database backups**. See
-[Offline Maps](docs/OFFLINE_MAPS.md) for formats, limits, privacy and separate backups.
+In **Maps**, choose **Included U.S. atlas…** for the lower 48 states, Alaska,
+Hawaii, or the listed U.S. territory views. Choose **Find included U.S. towns…**,
+search by town or state, select a result, and choose **Show selected town on
+included atlas**. This opens the atlas with a temporary reference marker.
+**Clear town marker** removes it; no saved waypoint is created.
+
+**Navigation → Maps, GPS & places…** opens the combined receiver, local-map,
+offline-place and saved-trip workspace. Its **Included U.S. atlas…** button opens
+the same overview. Use **Find places / coordinates… → Included U.S. towns**, then
+**Show selected place on map** to center a reference point on the current map or
+coarse outline. These actions do not connect a receiver or record a trip.
+See [GPS workspace](docs/GPS_WORKSPACE.md).
+
+**Maps → Open local map…** reads supported local PNG/JPEG/WebP MBTiles in flat
+or normalized `map`/`images` storage. Both map viewers also display
+gzip-compressed MVT/PBF tiles with a basic preview style and bounded embedded-name
+labels. Arbitrary view-based layouts and publisher styles, fonts and sprites
+remain unsupported. The portal's MBTiles publisher still requires flat indexed
+packs; local normalized-file support does not expand publication compatibility.
+
+**Navigation → Open map image…** opens local images as uncalibrated references.
+Source installations use `pip install ".[maps,gps,pdf]"` for image, receiver and
+PDF support. External maps and image files need separate backups.
+
+The separate **Prepared regional map…** viewer opens local `.ffmap` indexes,
+imports the index from a supported regional ZIP, and offers **Prepare PBF…**
+for a local OSM source. These display/search indexes do not calculate routes.
+No complete U.S. street database or offline routing engine is bundled.
+See [Offline Maps](docs/OFFLINE_MAPS.md) for formats, coverage and preparation.
 
 ## Prepare maps and routes online, use them offline
 
@@ -156,14 +185,19 @@ This repository includes the **portal server and browser interface**, with adapt
 for an operator-configured Nominatim geocoder and OSRM driving router. It does
 not provision a public website, contain all world maps, or provide a default
 public geocoding/routing account. A portal operator must supply permitted map packs,
-hosting, and provider data. Saved routes do not provide live traffic or automatic
-offline rerouting. See [Online map portal](docs/ONLINE_MAP_PORTAL.md) for setup,
+hosting, and provider data. New route calculation and address lookup require a
+connected configured provider. Saved directions, planned geometry and GPX export
+remain available after disconnecting; new offline route calculation, live traffic
+and automatic offline rerouting are not implemented. See [Online map portal](docs/ONLINE_MAP_PORTAL.md) for setup,
 file locations, supported formats, and the online/offline boundary.
 
 ## Windows development application
 
-The CI-produced **FieldForge-Windows-x64** archive bundles Python, Tk, Pillow image codecs, the serial adapter and the PDF
-text parser. Extract the entire folder and run **FieldForge.exe**; no separate
+The Windows build workflow is configured to produce a **FieldForge-Windows-x64**
+archive with Python, Tk, Pillow image codecs, the serial adapter and the PDF
+text parser. Windows execution of this integration remains pending; the headless
+checks in [map integration status](docs/MAP_INTEGRATION_STATUS.md) do not establish
+a verified Windows release. Extract the entire folder and run **FieldForge.exe**; no separate
 Python installation is needed for this edition. The GUI and PDF-worker helper
 are separate executables so packaged PDF extraction and recovered-window launch
 use the correct process entry points. **Help → Build & data location** identifies

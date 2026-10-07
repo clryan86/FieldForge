@@ -1,174 +1,140 @@
-> Historical milestone notes. The workspace is now integrated into FieldForge.
-> For current launch paths, PNG/JPEG/WebP MBTiles and image-file support, see
-> [GPS workspace](../GPS_WORKSPACE.md). Older verification counts and standalone
-> packaging boundaries below describe their original milestone.
+# Saved trips over local maps
 
-# Saved trips over local maps — 0.4.0
+> This guide describes tested local integration `fe70c8b`. Publication and
+> graphical/Windows execution remain pending. See
+> [map integration status](../MAP_INTEGRATION_STATUS.md).
 
-This cumulative desktop source add-on joins the existing read-only GPX reviewer
-to a new external PNG MBTiles layer. It does not connect the receiver to the map,
-edit a GPX/map file, use a household database, or supply a route engine. A recorded
-line is not proof of a traversable road, legal access, current safety, or accuracy.
+The integrated workspace overlays a read-only saved GPX journey on the included
+overview or a supported local raster/vector MBTiles pack. A recorded line is
+not evidence of a traversable road, legal access, current safety or accuracy.
 
 ## Workflow and independent permissions
 
-Start with `Start FieldForge Local Maps.cmd` on a Python/Tk-equipped Windows
-computer, or `python -B -m fieldforge_gps.local_map_ui` from the extracted folder.
-Native Windows/macOS and physical mobile operation have not been tested here.
-Existing Review and Trips → Review launch paths now use the cumulative viewer.
-The underlying original `ReviewFrame` remains available as the coarse-only class.
+Open **Navigation → Maps, GPS & places…** in the main desktop, then
+**Show GPX controls** for saved-history review. Source users can run
+`python -m fieldforge_gps --workspace` or the existing standalone
+`python -B -m fieldforge_gps.local_map_ui` launcher.
 
-The two inherited GPX confirmations govern private-history reading. The separate
-map checkbox confirms that the selected local file is trusted and permitted for
-use. Neither permission is saved. Opening the file chooser does not bypass the
-second permission check after a modal dialog. Cancelling the chooser changes
-nothing. Selecting a new map explicitly clears the old map before checking it;
-a failed map-open does not erase the historical GPX document.
+GPX confirmations govern private-history reading. A separate checkbox governs
+trusted external map files. **Included U.S. atlas…** explicitly opens the known
+application resource without the external-file checkbox. Permissions are not
+saved. A modal file chooser rechecks permission before reading; cancelling it
+changes nothing. A failed map-open does not erase the historical GPX document.
 
-Map opening, tile reading, pan and zoom do not start receiver capture. Clearing
-GPX history leaves an independently loaded map open. Closing the map preserves
-GPX history. Revoking either permission clears only its respective workspace.
-World overview closes the raster map and returns to the coarse bundled outline.
-Map details / rights opens a read-only text window: no HTML, link following,
-script execution, browser launch, clipboard action or export is implemented.
+Map opening, pan and zoom do not start receiver capture. Clearing GPX leaves an
+independently loaded map open, and closing the map preserves GPX. Revoking an
+external-file permission clears its respective workspace. **World overview**
+closes the map pack and returns to the coarse outline. Source/rights details
+are inert text; displaying them does not fetch their URLs.
+
+## Included atlas and town actions
+
+The integration includes **615 overview tiles** in `USA-OVERVIEW.mbtiles` and
+**777 selected town reference points** in `USA-OVERVIEW-PLACES.csv`.
+**Included U.S. atlas…** offers lower-48, Alaska, Hawaii and named territory views.
+
+In the combined GPS workspace, choose **Find places / coordinates… → Included
+U.S. towns**, search, select a result, then **Show selected place on map**.
+The reference point centers the current map or coarse outline; it does not
+automatically replace the current map with the atlas. Receiver following pauses
+until explicitly re-enabled. No saved waypoint or route is created.
+
+The main Maps tab instead has **Find included U.S. towns… → Show selected town on
+included atlas**, which opens that atlas with a temporary marker.
+**Clear town marker** removes the marker.
+
+The overview uses generalized Natural Earth 1:50 million geography, including
+state outlines, selected city labels, rivers and lakes. The catalogue uses
+a separate 1:10 million populated-places selection. It is not all towns,
+street addresses, street detail, terrain, current hazards or a routing graph.
+Small islands and features may be omitted. See [bundled atlas](../BUNDLED_ATLAS.md).
+
+`FICTIONAL-MAP.mbtiles`, `FICTIONAL-REVIEW.gpx` and synthetic receiver examples
+remain separate, clearly fictional practice data.
 
 ## Supported MBTiles subset
 
-The implementation follows MBTiles 1.3's Web Mercator/TMS placement conventions,
-while deliberately supporting only an indexed, ordinary-table PNG subset:
+Both viewers accept indexed flat `metadata`/`tiles` and normalized
+`metadata`/`map`/`images` storage. Normalized files use the readers' own fixed
+join over ordinary tables; file-supplied views are never executed. Coordinate
+and image-ID indexes must be unique, non-partial and BINARY-collated.
+Other view-only layouts, virtual tables and generated columns are unsupported.
+No source repair or index creation is performed.
 
-- Ordinary `metadata(name TEXT, value TEXT)` and
-  `tiles(zoom_level INTEGER, tile_column INTEGER, tile_row INTEGER, tile_data BLOB)`
-  tables with that column ordering. Raster packs use supported image formats;
-  vector packs use gzip-compressed Mapbox Vector Tile protobuf (`format=pbf`).
-  Views/virtual tables and extra columns are
-  not accepted by this first reader. Other valid MBTiles layouts can be rejected.
-- A unique non-partial BINARY-collated index whose key columns are precisely
-  `(zoom_level, tile_column, tile_row)`. The app never repairs or builds an index.
-- Required `name` and a supported image format or `format=pbf`. An explicitly
-  supplied `scheme` must be TMS.
-  Metadata is bounded to 128 entries, 128 bytes per key and 16 KiB per value;
-  duplicate keys, non-text fields, control-bearing keys and oversized fields fail.
-- Zoom levels actually observed between 0 and 22. Metadata `minzoom`/`maxzoom`
-  does not invent levels. An observed level is not evidence of full coverage.
-- Square raster tiles, 256 or 512 pixels. The latter are subsampled to a
-  256-pixel logical footprint. PBF vector tiles receive a basic preview style
-  with limited labels from embedded point-feature names. Publisher styles, fonts,
-  sprites, filters, expressions and label-placement rules are not applied.
-  There is no lower/higher-zoom substitution or resampling beyond retina-tile
-  reduction.
-- SQLite rollback-mode header and no nonempty WAL/journal/SHM sidecars. Use a
-  completely exported, closed copy on a local drive. URL/UNC-style inputs are
-  rejected. Mapped/mounted network filesystems cannot be reliably identified.
+Contents may be square 256/512-pixel PNG/JPEG/WebP images or gzip-compressed
+MVT/PBF vector tiles. Vector previews use a basic style with bounded embedded
+point/line/area names; publisher styles, fonts, sprites and advanced label rules
+are not applied. Animated map tiles are unsupported.
 
-A valid declared center and observed zoom may supply Pack start. Otherwise, the
-center of an observed initial tile is used, with an explicit explanation. Neither
-is an inferred current location. Bounds, dates, descriptions, attribution and
-license statements remain unverified pack-supplied text. Missing information is
-not filled with claims of public-domain status, freshness or complete coverage.
-There is no full-pack integrity scan, authentication or license verification.
+Observed integer zooms must lie between 0 and 22. Required metadata includes
+`name` and the supported `format`; an explicit `scheme` must be TMS. Metadata
+is bounded to 128 entries, 128 bytes per key and 16 KiB per value. Declared
+zoom/bounds metadata is not proof of coverage.
+
+Use closed rollback-mode files with no nonempty WAL/journal/SHM sidecars.
+URL/UNC inputs are refused; mapped network filesystems cannot always be detected.
+The optional portal publisher remains **flat-only**, even though normalized
+files can be opened locally. See [schema details](../OFFLINE_MAPS.md#open-a-supported-external-map).
 
 ## Projection, overlays and missing data
 
-The raster view uses Web Mercator, not the inherited equirectangular coastline
-projection. The same coordinate conversion aligns historical points with map
-tiles. Coordinates beyond approximately ±85.05112878° latitude are not moved to
-the map edge. They remain inspectable as source points, are counted as excluded
-from the raster view, and break display runs. The full track is split on polar
-points BEFORE preview decimation, preventing a hidden polar point from being
-bridged by a simplified line. Use the world overview to review those latitudes.
+Map tiles use Web Mercator/TMS placement. Coordinates outside approximately
+±85.05112878° are not clamped onto the map. Polar points remain inspectable
+and break the displayed history runs; use the coarse world overview to view them.
 
-File-defined segments remain separate. The raster overlay is capped at 8,000
-preview samples and reports full-file counts, display-run counts, simplification
-and full-track polar exclusions. A display run may end at a projection exclusion,
-not only at a GPX segment boundary. Circles and squares mark display-run starts
-and ends; unshown runs may be omitted when the preview budget is exhausted. Full
-accepted source points remain available in the point inspector. Unknown gaps not
-represented in the original GPX still cannot be reconstructed.
+File-defined GPX segments remain separate. The preview caps history at 8,000
+samples and reports full-file counts and exclusions. Preview simplification
+does not create connections across file segments or known polar exclusions.
+Unknown gaps absent from the source cannot be reconstructed.
 
-Date-line crossings take the shorter longitude arc and are clipped at viewport
-edges. The map repeats horizontally when needed; polar rows never repeat.
-Historical markers use the nearest world copy; the polyline may appear in more
-than one visible world copy at very low zoom. Dense connected preview lines are
-batched into clipped paths, not one canvas object per source edge.
+Date-line crossings use the shorter longitude arc, with clipping at viewport
+edges. Tiles repeat horizontally; polar rows do not. Missing tiles, bad data,
+readable tiles and cells outside projection have distinct states. Visible-cell
+counts may include repeated world copies. Old imagery is cleared while a new
+frame loads and is not reused under changed coordinates.
 
-Displayed tiles, missing tiles, unreadable/unsupported PNG tiles and cells outside
-projection have distinct states. Counts describe visible cells, including repeated
-world copies, not unique installed files or global coverage. During a new view
-request, previous imagery is removed instead of reused under new coordinates.
-No partial frame is accepted. A valid tile's appearance can itself be blank or
-inaccurate; this reader cannot interpret whether its depicted geography is useful.
+**Pack start** uses a valid declared center/observed zoom, or an explained
+observed-tile fallback. Neither is the device's current location.
+Attribution, bounds, dates and rights remain source-supplied information.
+No full-pack integrity scan, license authentication or safety assessment is implied.
 
 ## File/thread safeguards and limits
 
-SQLite is opened with URI `mode=ro`, query-only mode, trusted schema disabled,
-in-memory temporary storage and a small page cache. Each viewport is read in one
-transaction. Ordinary file identity/size/modification metadata is checked before
-and after reads. Changed files fail; close and reopen to explicitly accept a new
-version. This is NOT a whole-file checksum, signature, exclusive lock or defense
-against malicious path races/restored timestamps. Stationary cached imagery is
-not continuously watched: changes are checked on the next tile read.
+SQLite is read-only and query-only, with trusted schema disabled and one
+transaction per viewport. File identity/size/modification metadata is checked
+around reads. Changed files fail; close and reopen to accept another version.
+These are ordinary change checks, not a tamper-proof snapshot or protection
+against malicious path races or restored timestamps.
 
-The map reader has one worker plus one replaceable pending request. Each request
-has cancellation and a generation token. Late results cannot replace a newer
-view or reappear after opt-out, another file, or window close. Worker arguments
-contain no Tk objects; Tk PNG decoding and all widget mutation stay on the UI
-thread. A closed worker is asked to stop, not forcibly terminated during OS I/O.
+One worker and a replaceable pending request use cancellation and generation
+tokens. Obsolete results cannot repaint a newer view or restore a closed map.
+Workers do not own Tk objects. Widget changes and Tk image drawing stay on the
+UI thread. Disk I/O and image decoding are not forcibly terminated.
 
-Limits are 16 GiB per pack, 2 MiB compressed bytes per PNG, 32 MiB unique compressed
-tile bytes per frame, 96 visible cells, and a 2560 × 1600 maximum map canvas. Map
-query work uses a four-second monotonic deadline checked every 1,000 SQLite VM
-instructions, a 20-million-instruction cap, and a 250 ms lock timeout. These are
-implementation guards, not measured support for a 16 GiB pack or guaranteed
-latency on damaged/removable storage. File I/O and Tk decoding are not forcibly
-interrupted by the SQL progress handler. Decoded images need additional memory.
+Limits are 16 GiB per pack, 2 MiB source bytes per tile, 32 MiB of unique
+source/display-PNG buffers per frame (whichever is larger for each tile),
+96 visible cells and a 2560 × 1600 canvas. SQLite uses a four-second progress
+deadline, a 20-million-instruction cap and a 250 ms lock timeout. These are
+guards, not throughput guarantees for large or damaged storage.
+Only trusted files should be opened with maintained dependencies.
 
-PNG preflight checks bounded size, signature, IHDR dimensions/encoding and header
-CRC. Tk performs actual image decoding; body errors become unreadable cells.
-This is not a complete PNG validator, malware scanner or hostile-file sandbox.
-Use trusted files and maintained Python/SQLite/Tk software. The script does not
-alter security settings, download dependencies, or obtain maps from tile servers.
+## Regional indexes and saved online routes
 
-Status and preview-message areas reserve fixed height. Their text must not resize
-the canvas and trigger an alternating read/redraw loop. Regression tests exercise
-that condition and gracefully reject oversized viewports, including during drag.
+The main Maps tab's separate **Prepared regional map…** viewer opens `.ffmap`
+indexes, imports `map.ffmap` from supported regional ZIPs, and offers
+**Prepare PBF…** for local OSM snapshots. These are display/search indexes, not
+routing graphs. The current portal does not distribute them or extract their ZIPs.
+The documented four-state Wave 5 collection is not a bundled full U.S. street database.
 
-## Included data and integration boundary
+Configured online tools can request driving-route alternatives while connected.
+Saved directions and planned geometry remain readable/exportable as GPX offline.
+Neither GPX overlays, MBTiles rendering nor `.ffmap` preparation calculates a new
+offline route. See [Offline Maps](../OFFLINE_MAPS.md) and
+[Online map portal](../ONLINE_MAP_PORTAL.md).
 
-`FICTIONAL-MAP.mbtiles` is an original test grid with deliberately missing tiles,
-not a geographic, street, terrain or nautical dataset. Four levels are present:
-0, 2, 4 and 5. `tools/build_fictional_map.py` rebuilds it into a NEW output file
-using development-only Pillow; the runtime does not invoke the generator.
-`FICTIONAL-REVIEW.gpx` remains an artificial, non-navigable test journey.
+## Verification
 
-The old coarse land outline is retained unchanged, with unknown original data
-vintage as documented in `sources/OVERVIEW-PROVENANCE.json`. No additional real
-street/city/country/water/terrain coverage or turn-by-turn guidance is delivered.
-No main FieldForge modules are vendored, no database schema is changed, and no
-newest regional-index interoperability claim is made. This subset was compared
-with the upstream documentation at commit
-`8d8a739d4357d50b27697067f82cfbe1f1d8347e`; its complete source was not available for
-local integration regression. Reading that documentation is not compatibility
-verification. The five inherited optional main-program checks remain skipped.
-
-## Reproduce
-
-From the source folder with pytest, Tk and a display:
-
-```sh
-PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 xvfb-run -a -s '-screen 0 1440x1200x24' \
-  python -m pytest -q -ra -W error tests/gps_addon
-```
-
-The portable wheel can be installed into a NEW empty directory without any index
-or dependency access. The independent installed-package smoke script is supplied
-under `verification/`; it uses trusted temporary fixtures and development-only
-Pillow for a screenshot. See `VERIFICATION.txt` for exact observed outcomes and
-limitations. Repeated runs are not additional unique tests.
-
-Technical references consulted October 2, 2026:
-- https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
-- https://sqlite.org/uri.html
-- https://sqlite.org/pragma.html#pragma_query_only
-- https://sqlite.org/pragma.html#pragma_trusted_schema
-- https://docs.python.org/3/library/sqlite3.html
+Fresh headless results, installed-package byte comparisons and socket-forbidden
+checks are recorded in [map integration status](../MAP_INTEGRATION_STATUS.md).
+GUI, Windows, receiver hardware and native mobile execution remain pending for
+this snapshot. Headless tests do not establish those operational results.
