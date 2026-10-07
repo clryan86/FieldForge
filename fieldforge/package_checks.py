@@ -153,6 +153,29 @@ def verify_gps_workspace(root) -> None:
                  "Bundled fictional place catalogue is unavailable")
         _require(receiver.session is None and not view.show_live.get()
                  and not receiver.trip_consent.get(), "GPS workspace connected or recorded automatically")
+        view.map_trust.set(False)
+        finder.permission.set(False)
+        finder.wgs84.set(False)
+        view.open_atlas("Hawaii")
+        finder.atlas_places()
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            root.update()
+            if (view.map_pack is not None and finder.catalog is not None
+                    and view._map_task is None and finder._job is None
+                    and view._draw_after is None):
+                break
+            time.sleep(.005)
+        _require(view.map_pack is not None and "Natural Earth" in view.map_pack.name
+                 and view.view.longitude == -157.5
+                 and bool(view.canvas.find_withtag("map-tile")),
+                 "Included U.S. atlas is missing from the installed application")
+        _require(finder.catalog is not None and len(finder.catalog.places) == 777,
+                 "Included U.S. town catalogue is missing from the installed application")
+        _require(not view.map_trust.get() and not finder.permission.get() and not finder.wgs84.get(),
+                 "Included data enabled permission to read external files")
+        _require(receiver.session is None and not view.show_live.get()
+                 and not receiver.trip_consent.get(), "Atlas opened a receiver or recorded automatically")
         image_view = view.open_image_reference()
         workers.append(image_view.worker)
         with tempfile.TemporaryDirectory(prefix="FieldForge image check ") as directory:
@@ -187,6 +210,56 @@ def verify_gps_workspace(root) -> None:
         for worker in workers:
             worker._thread.join(2)
             _require(not worker._thread.is_alive(), "GPS diagnostic worker did not stop")
+
+
+def verify_main_atlas(root) -> None:
+    """Exercise included-town selection through the installed main Maps screen."""
+    import tkinter as tk
+
+    from fieldforge.ui.maps import MapsTab
+
+    window = tk.Toplevel(root)
+    window.geometry("1000x700")
+    panel = MapsTab(window, None)
+    panel.pack(fill="both", expand=True)
+    finder = None
+    try:
+        finder = panel.open_atlas_search()
+        deadline = time.monotonic() + 5
+        while finder._job is not None and time.monotonic() < deadline:
+            root.update()
+            time.sleep(.005)
+        _require(finder.catalog is not None and len(finder.catalog.places) == 777,
+                 "Main Maps screen cannot load its included town index")
+        finder.query.set("Trenton")
+        finder.search_button.invoke()
+        deadline = time.monotonic() + 5
+        while finder._job is not None and time.monotonic() < deadline:
+            root.update()
+            time.sleep(.005)
+        selected = next((index for index, place in enumerate(finder._results)
+                         if place.name == "Trenton" and place.region == "New Jersey"), None)
+        _require(selected is not None, "Expanded U.S. town search is unavailable")
+        finder.table.selection_set(str(selected))
+        root.update()
+        _require(finder.show_selected(), "Main Maps screen cannot show the selected town")
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            root.update()
+            if panel.frame is not None and not panel.busy and panel._resize_id is None:
+                break
+            time.sleep(.005)
+        _require(panel._included_place is not None and panel._included_place.name == "Trenton"
+                 and bool(panel._images) and bool(panel.canvas.find_withtag("included-town-marker")),
+                 "Main Maps screen did not render the selected included town")
+        _require(not panel.overlay.get() and not panel.markers,
+                 "Included-town search enabled private saved-place reads")
+    finally:
+        window.destroy()
+        panel._worker.shutdown(wait=True, cancel_futures=True)
+        if finder is not None:
+            finder.worker._thread.join(2)
+            _require(not finder.worker._thread.is_alive(), "Included-town search worker did not stop")
 
 
 def verify_installation() -> dict[str, object]:
@@ -246,6 +319,27 @@ def verify_installation() -> dict[str, object]:
             db.execute("INSERT INTO tiles VALUES(0,0,0,?)", (sample_png(),))
         frame = read_frame(inspect_pack(map_path), Viewport(0, 0, 0, 256, 256))
         _require(any(tile.data == sample_png() for tile in frame.tiles), "MBTiles reader failed")
+        normalized_path = root_path / "normalized.mbtiles"
+        with closing(sqlite3.connect(normalized_path)) as db, db:
+            db.executescript("""
+                CREATE TABLE metadata(name TEXT,value TEXT);
+                INSERT INTO metadata VALUES('format','png');
+                CREATE TABLE map(zoom_level INTEGER,tile_column INTEGER,tile_row INTEGER,tile_id TEXT,grid_id TEXT);
+                CREATE UNIQUE INDEX coordinates ON map(zoom_level,tile_column,tile_row);
+                CREATE TABLE images(tile_data BLOB,tile_id TEXT);
+                CREATE UNIQUE INDEX image_ids ON images(tile_id);
+                CREATE VIEW tiles AS SELECT unavailable_view_function();
+                INSERT INTO map VALUES(1,1,0,'shared',NULL);
+            """)
+            db.execute("INSERT INTO images VALUES(?,?)", (sample_png(), "shared"))
+        frame = read_frame(inspect_pack(normalized_path), Viewport(-45, 90, 1, 1, 1))
+        _require(frame.tiles[0].data == sample_png(), "Normalized main MBTiles reader failed")
+        from fieldforge_gps.mbtiles import inspect_pack as gps_inspect
+        from fieldforge_gps.mbtiles import read_tiles as gps_read_tiles
+
+        gps_tiles = gps_read_tiles(gps_inspect(normalized_path, consent=True), ((1, 1, 1),))
+        _require(len(gps_tiles) == 1 and gps_tiles[0].state == "ready"
+                 and gps_tiles[0].data == sample_png(), "Normalized GPS MBTiles reader failed")
         tk_root = tk.Tk()
         try:
             tk_root.withdraw()
@@ -254,10 +348,12 @@ def verify_installation() -> dict[str, object]:
             tk_root.update()
             tk_version = str(tk_root.tk.call("info", "patchlevel"))
             verify_gps_workspace(tk_root)
+            verify_main_atlas(tk_root)
         finally:
             tk_root.destroy()
-        checks.append("Tk window and PNG decoding; synthetic MBTiles tile read")
-        checks.append("GPS workspace with fictional tiles/places, JPEG/WebP images and offline-default portal; no receiver or recording")
+        checks.append("Tk window and PNG decoding; flat and normalized MBTiles read by both map readers")
+        checks.append("Main Maps town search and GPS workspace with included U.S. atlas and 777 towns, fictional fixtures, "
+                      "JPEG/WebP image rendering and offline-default portal; no receiver or recording")
         desktop_result = "Not attempted on this source/non-Windows diagnostic"
         if packaged() and sys.platform == "win32":
             child = launch_recovered_copy(recovered)

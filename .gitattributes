@@ -1,3 +1,4 @@
 # Runtime fixtures and pinned notices are verified by their exact byte hashes.
 /fieldforge_gps/data/* -text
 /packaging/notices/** -text
+/scripts/atlas_sources/*.zip -text
