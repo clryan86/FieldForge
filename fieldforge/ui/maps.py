@@ -11,6 +11,7 @@ import base64
 import sqlite3
 import tkinter as tk
 from concurrent.futures import Future, ThreadPoolExecutor
+from dataclasses import replace
 from threading import Event
 from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
@@ -49,6 +50,9 @@ class MapsTab(ttk.Frame):
         super().__init__(parent, padding=16)
         self.database = database
         self.pack_info: MapPack | None = None
+        self._opening_start = None
+        self._included_place = None
+        self._atlas_window = self._atlas_search = None
         self.view: Viewport | None = None
         self.frame = None
         self.markers = ()
@@ -66,7 +70,7 @@ class MapsTab(ttk.Frame):
         self._worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="fieldforge-map")
         self.busy = False
         self.source = tk.StringVar(value="No map open. Choose a trusted, locally stored MBTiles pack.")
-        self.status = tk.StringVar(value="No maps are bundled or downloaded automatically. Your location is not requested.")
+        self.status = tk.StringVar(value="A U.S. overview atlas is included. Open it below, or choose your own MBTiles. Your location is not requested.")
         self.pointer = tk.StringVar(value="Pointer coordinates appear only over a loaded map view.")
         self.attribution = tk.StringVar(value="Source attribution will appear here. Map accuracy and reuse rights are not verified.")
         self.zoom_choice = tk.StringVar()
@@ -74,24 +78,42 @@ class MapsTab(ttk.Frame):
         self.longitude = tk.StringVar()
         self.overlay = tk.BooleanVar(value=False)
         self.place_choice = tk.StringVar()
+        self.public_place_status = tk.StringVar(value="Search the selected-town catalogue included with this app.")
         self.route_status = tk.StringVar(value="No planned route selected.")
         self.columnconfigure(0, weight=1)
         self.rowconfigure(6, weight=1)
         self.bind("<Destroy>", self._destroyed, add=True)
-        ttk.Label(self, text="Offline Maps", font=("TkDefaultFont", 21, "bold")).grid(row=0, column=0, sticky="w")
-        self.notice = ttk.Label(self, text=NOTICE, wraplength=1100, justify="left")
+        header = ttk.Frame(self, height=42)
+        header.grid(row=0, column=0, sticky="ew")
+        header.pack_propagate(False)
+        ttk.Label(header, text="Offline Maps", font=("TkDefaultFont", 21, "bold")).pack(side="left")
+        self.atlas_search_button = ttk.Button(header, text="Find included U.S. towns…", command=self.open_atlas_search)
+        self.atlas_search_button.pack(side="right")
+        self.clear_town_button = ttk.Button(header, text="Clear town marker", command=self.clear_included_place)
+        self.clear_town_button.pack(side="right", padx=6)
+        self.public_place_label = ttk.Label(header, textvariable=self.public_place_status,
+                                            wraplength=400, justify="left")
+        self.public_place_label.pack(side="left", fill="x", expand=True, padx=12)
+        self.public_place_label.bind("<Configure>", lambda e: self.public_place_label.configure(wraplength=max(120, e.width)))
+        self.notice = ttk.Label(self, text="Offline maps and planned routes. No GPS, route calculation or downloads here. "
+                                          "External map files need separate backups.",
+                                wraplength=1100, justify="left")
         self.notice.grid(row=1, column=0, sticky="ew", pady=(6, 10))
         files = ttk.Frame(self)
         files.grid(row=2, column=0, sticky="ew", pady=(0, 8))
         self.open_button = ttk.Button(files, text="Open local map…", command=self.choose)
         self.open_button.pack(side="left")
+        self.atlas_button = ttk.Button(files, text="Included U.S. atlas…", command=self.choose_atlas)
+        self.atlas_button.pack(side="left", padx=(6, 0))
         self.regional_button = ttk.Button(files, text="Prepared regional map…", command=self.open_prepared_region)
         self.regional_button.pack(side="left", padx=(6, 0))
         self.close_button = ttk.Button(files, text="Close map", command=self.close_map)
         self.close_button.pack(side="left", padx=6)
         self.info_button = ttk.Button(files, text="Map details / rights…", command=self.details)
         self.info_button.pack(side="left")
-        self.source_label = ttk.Label(files, textvariable=self.source, wraplength=540, justify="left")
+        # Keep five map controls visible and prevent long pack names from
+        # expanding this toolbar. Full metadata remains in Map details / rights.
+        self.source_label = ttk.Label(files, textvariable=self.source, width=1, anchor="w")
         self.source_label.pack(side="left", fill="x", expand=True, padx=(12, 0))
         nav = ttk.Frame(self)
         nav.grid(row=3, column=0, sticky="ew", pady=(0, 8))
@@ -161,14 +183,13 @@ class MapsTab(ttk.Frame):
         self.credit_label = fixed_label(8, 44, self.attribution)
         self.footer = fixed_label(9, 58, self.status)
         self.bind("<Configure>", self._wrap, add=True)
-        self._blank("Open a local MBTiles pack to begin.\n\nRaster tiles and basic vector previews work offline. Vector previews include limited labels from embedded point names; publisher styles and label rules are not applied.\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
+        self._blank("Choose Included U.S. atlas… or Open local map…\n\nRaster maps and basic vector previews work offline. Vector point labels use embedded names; publisher styles are not applied.\nNo internet, GPS or automatic download.\nDrag to pan; use + / − or the wheel to zoom.\nArrow keys pan when the map has focus.")
         self._buttons()
 
     def _wrap(self, event):
         if event.widget is self:
             for label in (self.notice, self.pointer_label, self.credit_label, self.footer):
                 label.configure(wraplength=max(400, event.width - 40))
-            self.source_label.configure(wraplength=max(230, event.width - 435))
 
     def _buttons(self):
         ready = self.pack_info is not None and self.view is not None
@@ -180,6 +201,7 @@ class MapsTab(ttk.Frame):
         self.plus.configure(state="normal" if ready and self.view.zoom < self.pack_info.zooms[-1] else "disabled")
         self.place_picker.configure(state="readonly" if ready and self.overlay.get() and self.markers else "disabled")
         self.center_button.configure(state="normal" if ready and self.overlay.get() and self.markers else "disabled")
+        self.clear_town_button.configure(state="normal" if self._included_place is not None else "disabled")
         for button in (self.clear_route_button, self.route_details_button):
             button.configure(state="normal" if self.route is not None else "disabled")
         self.route_start_button.configure(state="normal" if ready and self._route_geometry is not None
@@ -217,13 +239,19 @@ class MapsTab(ttk.Frame):
         route remains selected across close/open, missing tiles and map errors;
         only clear_route removes it. With a map open, center on the actual first
         geometry vertex at the existing zoom. With no map, retain it and prompt
-        for a local pack; the next opened map centers there. Nothing is saved,
-        transmitted or added to receiver history by this method.
+        for a local pack; an ordinary map opening centers there. Explicitly
+        choosing an included town or atlas region instead keeps that view while
+        retaining this route. Nothing is saved, transmitted or added to receiver
+        history by this method.
         """
         if self._disposed:
             return
         checked = validate_route(route)
         geometry = prepare_route(checked["geometry"])
+        if self.busy and self.pack_info is None and geometry.start is not None:
+            # The later valid route selection is the latest requested focus.
+            # Invalid routes leave a pending explicit atlas view unchanged.
+            self._opening_start = None
         self.route, self._route_geometry = checked, geometry
         self._route_drawing = self._route_drawing_view = None
         if self.pack_info is None or self.view is None:
@@ -247,7 +275,7 @@ class MapsTab(ttk.Frame):
         self._route_drawing = self._route_drawing_view = None
         self.canvas.delete("planned-route")
         if self.pack_info is None and not self.busy:
-            self._blank("No map open.\nChoose Open local map… to read a compatible raster or vector MBTiles file.")
+            self._blank("No map open.\nChoose Included U.S. atlas… or Open local map…\nRaster maps and basic vector previews work offline.")
         self.status.set("Planned route overlay cleared. No saved route file was deleted or changed.")
         self._buttons()
 
@@ -316,10 +344,80 @@ class MapsTab(ttk.Frame):
                                           filetypes=[("MBTiles map", "*.mbtiles")])
         if path:
             if messagebox.askyesno("Open a trusted offline map?", "Only open a map pack you trust and have permission to use. "
-                                   "This build supports flat, indexed PNG/JPEG/WebP raster MBTiles and PBF vector MBTiles with a basic preview style and limited labels from embedded point names. Publisher styles, sprites, fonts and label rules are not applied. "
+                                   "This build supports indexed PNG/JPEG/WebP raster MBTiles, including normalized packs, and PBF vector MBTiles with a basic preview style and limited labels from embedded point names. Publisher styles, sprites, fonts and label rules are not applied. "
                                    "No malware, accuracy or route-safety check is performed. The file stays external to your database backups. Continue?",
                                    parent=self):
                 self.open_path(path)
+
+    def choose_atlas(self):
+        from fieldforge_gps.atlas_ui import choose_atlas
+
+        return choose_atlas(self, self.open_atlas)
+
+    def open_atlas(self, region="Lower 48 states"):
+        from fieldforge_gps.bundled_atlas import REGIONS, map_path
+
+        self.open_path(map_path(), start=REGIONS[region])
+
+    def open_atlas_search(self):
+        if self._disposed:
+            return None
+        if self._atlas_window is not None and self._atlas_window.winfo_exists():
+            self._atlas_window.deiconify()
+            self._atlas_window.lift()
+            return self._atlas_search
+        from .atlas_search import AtlasSearchFrame
+
+        window = tk.Toplevel(self)
+        window.title("FieldForge · Included U.S. towns")
+        window.geometry("900x600")
+        window.minsize(800, 540)
+        self._atlas_window = window
+        self._atlas_search = AtlasSearchFrame(window, self.show_atlas_place)
+
+        def destroyed(event):
+            if event.widget is window and self._atlas_window is window:
+                self._atlas_window = self._atlas_search = None
+
+        window.bind("<Destroy>", destroyed, add=True)
+        window.protocol("WM_DELETE_WINDOW", self.close_atlas_search)
+        return self._atlas_search
+
+    def close_atlas_search(self):
+        frame, window = self._atlas_search, self._atlas_window
+        self._atlas_search = self._atlas_window = None
+        if frame is not None:
+            frame.close()
+        if window is not None and window.winfo_exists():
+            window.destroy()
+
+    def show_atlas_place(self, place):
+        """Explicit public-catalogue selection opens a map, never a saved waypoint."""
+        if self._disposed:
+            return False
+        from fieldforge_gps.bundled_atlas import map_path
+        from fieldforge_gps.places import Place, clean_text
+
+        if not isinstance(place, Place):
+            raise ValueError("Select a town from the included catalogue.")
+        lat = coordinate(place.latitude, latitude=True)
+        lon = coordinate(place.longitude, latitude=False)
+        if abs(lat) > MAX_LATITUDE:
+            raise ValueError("That town is outside the map's Web Mercator latitude extent.")
+        place = replace(place, latitude=lat, longitude=lon,
+                        name=clean_text(place.name, "Town name", required=True))
+        self.open_path(map_path(), start=(lon, lat, 6))
+        self._included_place = place
+        location = ", ".join(part for part in (place.name, place.region or place.country) if part)
+        self.public_place_status.set(f"Natural Earth reference · {location} · no street detail")
+        self._buttons()
+        return True
+
+    def clear_included_place(self):
+        self._included_place = None
+        self.public_place_status.set("Search the selected-town catalogue included with this app.")
+        self.canvas.delete("included-town-marker")
+        self._buttons()
 
     def open_prepared_region(self):
         if self._disposed:
@@ -332,11 +430,12 @@ class MapsTab(ttk.Frame):
         self._regional_window = RegionalIndexWindow(self)
         return self._regional_window
 
-    def open_path(self, path):
+    def open_path(self, path, *, start=None):
         """Called after the file picker/trust confirmation; tests use synthetic trusted packs."""
         if self._disposed:
             return
         self.close_map()
+        self._opening_start = start
         self.source.set("Opening local map…")
         self.status.set("Reading map metadata and observed zoom levels; nothing is downloaded or copied into your database.")
         self._blank("Opening trusted map pack…")
@@ -344,8 +443,11 @@ class MapsTab(ttk.Frame):
 
     def close_map(self):
         self._stop_request()
+        self._opening_start = None
         self.pack_info = self.view = None
         self.markers = ()
+        self._included_place = None
+        self.public_place_status.set("Search the selected-town catalogue included with this app.")
         self.overlay.set(False)
         self.place_picker.configure(values=())
         self.place_choice.set("")
@@ -358,7 +460,7 @@ class MapsTab(ttk.Frame):
         self.pointer.set("No map coordinates available.")
         self.status.set("Closed map view. No map file or saved-place record was deleted or changed."
                         + (" Planned route retained; open a local map to show it again." if self.route else ""))
-        self._blank("No map open.\nChoose Open local map… to read a compatible raster or vector MBTiles file.")
+        self._blank("No map open.\nChoose Included U.S. atlas… or Open local map…\nRaster maps and basic vector previews work offline.")
         self._buttons()
 
     def _dimensions(self):
@@ -399,6 +501,11 @@ class MapsTab(ttk.Frame):
         try:
             value = future.result()
             if operation == "open":
+                opening_start = self._opening_start
+                self._opening_start = None
+                if opening_start is not None:
+                    lon, lat, zoom = opening_start
+                    value = replace(value, longitude=lon, latitude=lat, zoom=zoom)
                 self.pack_info = value
                 self.zoom_picker.configure(values=tuple(str(z) for z in value.zooms))
                 tile_format = dict(value.metadata).get("format", "unknown").lower()
@@ -408,7 +515,8 @@ class MapsTab(ttk.Frame):
                 compact = " ".join(attribution.split())
                 self.attribution.set("Attribution (pack-supplied): " + compact[:200]
                                      + ("… [full text in Map details]" if len(compact) > 200 else ""))
-                if self._route_geometry is not None and self._route_geometry.start is not None:
+                if (opening_start is None and self._route_geometry is not None
+                        and self._route_geometry.start is not None):
                     self._set_view(*self._route_geometry.start, value.zoom)
                 else:
                     self.home()
@@ -424,7 +532,10 @@ class MapsTab(ttk.Frame):
             self.place_choice.set("")
             self._blank("Map view unavailable.\n" + str(exc))
             if operation == "open":
+                self._opening_start = None
                 self.pack_info = self.view = None
+                self._included_place = None
+                self.public_place_status.set("Included-town search is available; no town marker is displayed.")
                 self.source.set("Map could not be opened; no previous map is displayed.")
             self.status.set("Map operation failed: " + str(exc))
         self._buttons()
@@ -482,6 +593,15 @@ class MapsTab(ttk.Frame):
         self.place_picker.configure(values=choices)
         if self.place_choice.get() not in choices:
             self.place_choice.set(choices[0] if choices else "")
+        if self._included_place is not None:
+            place = self._included_place
+            for x, y in frame.view.locations(place.latitude, place.longitude):
+                self.canvas.create_polygon(x, y - 9, x + 9, y, x, y + 9, x - 9, y,
+                                           fill="#294c7a", outline="white", width=2,
+                                           tags=("mapcontent", "included-town-marker"))
+                self.canvas.create_text(x + 14, y - 13, anchor="sw", text="INCLUDED TOWN\n" + place.name[:70],
+                                        width=250, fill="#173452", font=("TkDefaultFont", 10, "bold"),
+                                        tags=("mapcontent", "included-town-marker"))
         self.frame = frame
         self.pointer.set(f"View center: latitude {frame.view.latitude:.7f}, longitude {frame.view.longitude:.7f} · zoom {frame.view.zoom}. "
                          "North is up. Displayed precision is not surveyed accuracy.")
@@ -599,18 +719,31 @@ class MapsTab(ttk.Frame):
     def details(self):
         if self.pack_info is None:
             return None
+        from fieldforge_gps.bundled_atlas import map_path
+
         pack = self.pack_info
+        included = pack.path == map_path().resolve()
+        heading = "INCLUDED U.S. OVERVIEW ATLAS" if included else "EXTERNAL MAP FILE"
+        storage = (
+            "This Natural Earth overview is included with FieldForge. It has no street detail. "
+            "Application resources are separate from household database backups. "
+            if included else
+            "This file is not copied into FieldForge. Back it up separately with any licenses/source files. "
+        )
         window = tk.Toplevel(self)
         window.title("FieldForge — Map source and limitations")
         window.geometry("820x680")
         text = ScrolledText(window, wrap="word", padx=16, pady=16, font=("TkDefaultFont", 11))
         text.pack(fill="both", expand=True)
-        text.insert("1.0", f"EXTERNAL MAP FILE\n{pack.path}\n{pack.signature[2]:,} bytes\n\n"
-                    "This file is not copied into FieldForge. Back it up separately with any licenses/source files. "
+        text.insert("1.0", f"{heading}\n{pack.path}\n{pack.signature[2]:,} bytes\n\n" + storage +
                     "Metadata below is supplied by the pack, not independently checked or fetched. HTML/URLs remain inert text.\n\n"
                     + "\n\n".join(f"{key}:\n{value}" for key, value in pack.metadata)
                     + "\n\nLIMITS\n" + "\n".join(pack.warnings)
-                    + "\n\nFlat/indexed raster MBTiles and gzip-compressed PBF vector MBTiles with a basic preview style and limited point-name labels; publisher styles, fonts, sprites and label rules are not applied. Normalized/views are unsupported. "
+                    + "\n\nIndexed flat or normalized PNG/JPEG/WebP MBTiles with 256/512-pixel tiles. "
+                    "Normalized map/images tables are read directly; their tiles view is not evaluated. "
+                    "PBF vector MBTiles use a basic preview style and limited point-name labels; "
+                    "publisher styles, fonts, sprites and label rules are not applied. "
+                    "Other database views are unsupported. "
                     "The file signature detects ordinary changes, not malicious tampering or full integrity. "
                     "Only open trusted data with an up-to-date Python/Tk/SQLite installation.\n\n" + NOTICE)
         text.configure(state="disabled")
@@ -657,6 +790,7 @@ class MapsTab(ttk.Frame):
     def _destroyed(self, event):
         if event.widget is self and not self._disposed:
             self._disposed = True
+            self.close_atlas_search()
             self._stop_request()
             if self._resize_id is not None:
                 self.after_cancel(self._resize_id)

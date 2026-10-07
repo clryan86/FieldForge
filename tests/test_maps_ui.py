@@ -23,6 +23,8 @@ def screen(tmp_path, monkeypatch):
     try:
         root = tk.Tk()
     except tk.TclError:
+        if os.environ.get('FIELDFORGE_REQUIRE_GUI') == '1':
+            pytest.fail('Map graphical verification requires a functioning Tk display')
         pytest.skip('Tk display unavailable; graphical CI explicitly requires Tk')
     root.geometry('1120x820')
     errors = []
@@ -74,6 +76,35 @@ def test_initial_screen_never_opens_map_or_reads_private_places(screen, monkeypa
     monkeypatch.setattr('fieldforge.ui.maps.read_markers', lambda *_: called.append(True))
     opened(root, panel, path)
     assert not called and not panel.canvas.find_withtag('private-marker')
+
+
+def test_included_atlas_opens_selected_region_and_restores_external_pack_start(screen):
+    root, panel, app, external = screen
+    before = app.db.path.read_bytes()
+    panel.open_atlas("Hawaii")
+    wait(root, panel)
+    assert panel.frame is not None and panel._images
+    assert panel.view.longitude == -157.5 and panel.view.zoom == 6
+    assert "Natural Earth" in panel.attribution.get()
+    panel.change_zoom(-1)
+    panel.home()
+    wait(root, panel)
+    assert panel.view.zoom == 6 and panel.view.latitude == 20.5
+    opened(root, panel, external)
+    assert panel.view.latitude == panel.view.longitude == 0
+    assert not panel.overlay.get() and app.db.path.read_bytes() == before
+
+
+def test_replacing_pending_atlas_does_not_apply_stale_region(screen):
+    root, panel, _, external = screen
+    panel.open_atlas("Alaska")
+    panel.open_path(external)
+    wait(root, panel)
+    assert panel.view.latitude == panel.view.longitude == 0
+    panel.open_atlas()
+    panel.close_map()
+    root.update()
+    assert panel._opening_start is None and panel.pack_info is None
 
 
 def test_prepared_regional_map_window_reuses_single_open_instance(screen, monkeypatch):
@@ -347,7 +378,9 @@ def test_minimum_geometry_and_cursor_updates_do_not_cause_resize_reload_loop(scr
     root.update()
     opened(root, panel, path)
     assert panel.canvas.winfo_height() >= 200
-    for widget in (panel.open_button, panel.reload_button, panel.center_button, panel.footer):
+    for widget in (panel.open_button, panel.atlas_button, panel.regional_button, panel.close_button,
+                   panel.info_button, panel.source_label, panel.reload_button, panel.center_button,
+                   panel.footer):
         assert widget.winfo_rootx()+widget.winfo_width() <= panel.winfo_rootx()+panel.winfo_width()
         assert widget.winfo_rooty()+widget.winfo_height() <= panel.winfo_rooty()+panel.winfo_height()
     generation = panel._generation
