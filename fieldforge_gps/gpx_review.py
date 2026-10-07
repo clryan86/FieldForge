@@ -20,6 +20,8 @@ from datetime import datetime
 from pathlib import Path
 from xml.parsers import expat
 
+from ._file_identity import path_matches_descriptor
+
 NS = "http://www.topografix.com/GPX/1/1"
 Q = "{" + NS + "}"
 MAX_BYTES = 16 * 1024 * 1024
@@ -324,9 +326,7 @@ def read_gpx(
     fd = os.open(path, flags)
     with os.fdopen(fd, "rb") as stream:
         opened = os.fstat(stream.fileno())
-        # Windows stat/fstat can report different meanings for ctime. Compare
-        # that field only within the same API, retaining both before/after checks.
-        if not stat.S_ISREG(opened.st_mode) or _signature(before)[:4] != _signature(opened)[:4]:
+        if not stat.S_ISREG(opened.st_mode) or not path_matches_descriptor(before, opened):
             raise ValueError("GPX file changed before reading. Review was not replaced.")
         chunks = []
         total = 0
@@ -340,9 +340,11 @@ def read_gpx(
             if total > MAX_BYTES:
                 raise ValueError("GPX grew beyond the 16 MiB limit. Review was not replaced.")
         after = os.fstat(stream.fileno())
+    final = path.lstat()
     if (
         _signature(opened) != _signature(after)
-        or _signature(before) != _signature(path.lstat())
+        or _signature(before) != _signature(final)
+        or not path_matches_descriptor(final, after)
         or total != opened.st_size
     ):
         raise ValueError("GPX file changed during reading. Review was not replaced.")

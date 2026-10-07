@@ -19,6 +19,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from threading import Event
 
+from ._file_identity import path_matches_descriptor
+
 MAX_BYTES = 16 * 1024 * 1024
 MAX_PLACES = 50_000
 MAX_QUERY = 160
@@ -365,13 +367,14 @@ def read_catalog(
         ".json",
     ):
         raise ValueError("Select a local .csv, .geojson, or .json place file.")
-    identity = _identity(path.stat())
+    before = path.stat()
+    identity = _identity(before)
     flags = os.O_RDONLY | getattr(os, "O_BINARY", 0) | getattr(os, "O_NONBLOCK", 0)
     descriptor = os.open(path, flags)
     try:
-        opened_identity = _identity(os.fstat(descriptor))
-        # Windows path/descriptor ctime values need not share a meaning.
-        if opened_identity[:4] != identity[:4]:
+        opened = os.fstat(descriptor)
+        opened_identity = _identity(opened)
+        if not path_matches_descriptor(before, opened):
             raise ValueError("Place file changed before reading. Reopen the intended version.")
         blocks, size = [], 0
         while True:
@@ -383,7 +386,13 @@ def read_catalog(
             if size > MAX_BYTES:
                 raise ValueError("Place file grew beyond the 16 MiB limit.")
             blocks.append(block)
-        if _identity(os.fstat(descriptor)) != opened_identity or _identity(path.stat()) != identity:
+        after = os.fstat(descriptor)
+        final = path.stat()
+        if (
+            _identity(after) != opened_identity
+            or _identity(final) != identity
+            or not path_matches_descriptor(final, after)
+        ):
             raise ValueError("Place file changed during reading. No catalogue accepted.")
     finally:
         os.close(descriptor)

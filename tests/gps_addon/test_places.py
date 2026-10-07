@@ -1,11 +1,14 @@
 import hashlib
 import json
+import os
 from dataclasses import FrozenInstanceError
 from pathlib import Path
 from threading import Event
+from types import SimpleNamespace
 
 import pytest
 
+from fieldforge_gps import _file_identity
 from fieldforge_gps import places as p
 
 CSV = b"name,latitude,longitude,country,region,aliases,source_id,source\nFictional Springs,35,-100,Testland,North,Demo Water|Spring One,a,Original test\nFictional Springs,36,-99,Testland,South,,b,Original test\nFictional Caf\xc3\xa9,34,-101,Testland,North,Test Coffee,c,Original test\n"
@@ -363,6 +366,73 @@ def test_read_only_local_snapshot_paths(tmp_path, extension):
         assert file.read_bytes() == data and set(tmp_path.iterdir()) == before
     finally:
         file.chmod(0o644)
+
+
+def simulate_catalog_clocks(monkeypatch, path, *, changed_stage=None):
+    """Keep real file identity but model distinct Windows path/descriptor clocks."""
+    original_stat, original_fstat, original_parse = Path.stat, os.fstat, p.parse_catalog
+    clock = path.stat().st_ctime_ns
+    state = {"descriptor_reads": 0, "parsed": False}
+
+    def clocked(info, *, descriptor=False):
+        fields = {
+            name: getattr(info, name)
+            for name in ("st_mode", "st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+        }
+        fields["st_ctime_ns"] = clock + (100 if descriptor else 0)
+        changed = (
+            descriptor and changed_stage == "descriptor" and state["descriptor_reads"] > 1
+        ) or (
+            not descriptor
+            and (
+                (changed_stage == "path" and state["descriptor_reads"] > 0)
+                or (changed_stage == "parsing" and state["parsed"])
+            )
+        )
+        fields["st_ctime_ns"] += int(changed)
+        return SimpleNamespace(**fields)
+
+    def path_stat(selected, *args, **kwargs):
+        info = original_stat(selected, *args, **kwargs)
+        return clocked(info) if selected == path else info
+
+    def descriptor_stat(fd):
+        state["descriptor_reads"] += 1
+        return clocked(original_fstat(fd), descriptor=True)
+
+    def parse(*args, **kwargs):
+        result = original_parse(*args, **kwargs)
+        state["parsed"] = True
+        return result
+
+    monkeypatch.setattr(Path, "stat", path_stat)
+    monkeypatch.setattr(os, "fstat", descriptor_stat)
+    monkeypatch.setattr(p, "parse_catalog", parse)
+
+
+@pytest.mark.parametrize("windows", [True, False], ids=["windows", "posix"])
+def test_catalog_path_and_descriptor_ctime_semantics(tmp_path, monkeypatch, windows):
+    path = tmp_path / "places.csv"
+    path.write_bytes(CSV)
+    simulate_catalog_clocks(monkeypatch, path)
+    monkeypatch.setattr(_file_identity, "_WINDOWS", windows)
+    if windows:
+        doc = p.read_catalog(path, consent=True, wgs84_confirmed=True)
+        assert len(doc.places) == 3 and doc.source_sha256 == hashlib.sha256(CSV).hexdigest()
+    else:
+        with pytest.raises(ValueError, match="changed before"):
+            p.read_catalog(path, consent=True, wgs84_confirmed=True)
+
+
+@pytest.mark.parametrize("changed_stage", ["descriptor", "path", "parsing"])
+def test_windows_catalog_rejects_same_api_ctime_changes(tmp_path, monkeypatch, changed_stage):
+    path = tmp_path / "places.csv"
+    path.write_bytes(CSV)
+    simulate_catalog_clocks(monkeypatch, path, changed_stage=changed_stage)
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    expected = "changed during parsing" if changed_stage == "parsing" else "changed during reading"
+    with pytest.raises(ValueError, match=expected):
+        p.read_catalog(path, consent=True, wgs84_confirmed=True)
 
 
 def test_directory_empty_and_wrong_extension(tmp_path):

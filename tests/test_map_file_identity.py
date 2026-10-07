@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 from test_raster_maps import encoded
 
-from fieldforge_gps import gpx_review, places, raster
+from fieldforge_gps import _file_identity, gpx_review, places, raster
 
 
 @pytest.fixture(params=["image", "gpx", "places"])
@@ -61,6 +61,7 @@ def test_file_identity_checks_separate_path_and_descriptor_clocks(
         return SimpleNamespace(**fields)
 
     with monkeypatch.context() as patch:
+        patch.setattr(_file_identity, "_WINDOWS", True)
         patch.setattr(os, "fstat", windows_fstat)
         if change is None:
             document = read()

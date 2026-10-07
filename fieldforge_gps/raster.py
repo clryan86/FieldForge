@@ -10,6 +10,8 @@ import stat
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ._file_identity import path_matches_descriptor, snapshot
+
 TILE_FORMATS = {"jpg": "JPEG", "jpeg": "JPEG", "webp": "WEBP"}
 REFERENCE_FORMATS = (
     "PNG",
@@ -51,10 +53,6 @@ def _png(image):
     output = io.BytesIO()
     image.save(output, format="PNG")
     return output.getvalue()
-
-
-def _signature(info):
-    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
 
 
 def tile_png(data: bytes, declared_format: str) -> bytes:
@@ -102,7 +100,7 @@ def read_reference(source, *, consent=False, cancel=None) -> ReferenceImage:
     info = path.lstat()
     if not stat.S_ISREG(info.st_mode) or not 1 <= info.st_size <= MAX_IMAGE_BYTES:
         raise ValueError("Choose a regular image file of at most 64 MiB; links are not accepted.")
-    identity = _signature(info)
+    identity = snapshot(info)
     flags = (
         os.O_RDONLY
         | getattr(os, "O_BINARY", 0)
@@ -111,9 +109,7 @@ def read_reference(source, *, consent=False, cancel=None) -> ReferenceImage:
     )
     with os.fdopen(os.open(path, flags), "rb") as stream:
         opened = os.fstat(stream.fileno())
-        # Keep path and descriptor ctime checks separate: Windows can return
-        # creation time through stat and change time through fstat.
-        if not stat.S_ISREG(opened.st_mode) or identity[:4] != _signature(opened)[:4]:
+        if not stat.S_ISREG(opened.st_mode) or not path_matches_descriptor(info, opened):
             raise ValueError("Image changed before reading; choose the intended file again.")
         chunks = []
         size = 0
@@ -128,7 +124,11 @@ def read_reference(source, *, consent=False, cancel=None) -> ReferenceImage:
                 raise ValueError("Image exceeds 64 MiB.")
         finished = os.fstat(stream.fileno())
     final = path.lstat()
-    if _signature(opened) != _signature(finished) or identity != _signature(final):
+    if (
+        snapshot(opened) != snapshot(finished)
+        or identity != snapshot(final)
+        or not path_matches_descriptor(final, finished)
+    ):
         raise ValueError("Image changed during reading; no image accepted.")
     data = b"".join(chunks)
     Image = pillow()

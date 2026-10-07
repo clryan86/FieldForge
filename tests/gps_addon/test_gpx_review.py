@@ -3,9 +3,11 @@ import os
 import threading
 from dataclasses import FrozenInstanceError
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+from fieldforge_gps import _file_identity
 from fieldforge_gps import gpx_review as g
 from fieldforge_gps.session import Session
 from fieldforge_gps.track_export import export_track
@@ -322,6 +324,103 @@ def test_regular_file_is_read_only_and_digest_matches(tmp_path):
     result = g.read_gpx(path, consent=True, wgs84_confirmed=True)
     assert result.point_count == 1
     assert {p.name: p.read_bytes() for p in tmp_path.iterdir()} == before
+
+
+def simulate_stat_clocks(monkeypatch, path, *, changed_api=None):
+    """Model Windows' distinct ctime clocks while retaining real file identities."""
+    original_lstat, original_fstat = Path.lstat, os.fstat
+    clock = path.lstat().st_ctime_ns
+    calls = {"path": 0, "descriptor": 0}
+
+    def clocked(info, api):
+        calls[api] += 1
+        fields = {
+            name: getattr(info, name)
+            for name in ("st_mode", "st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+        }
+        fields["st_ctime_ns"] = clock + (100 if api == "descriptor" else 0)
+        if changed_api == api and calls[api] > 1:
+            fields["st_ctime_ns"] += 1
+        return SimpleNamespace(**fields)
+
+    def lstat(selected, *args, **kwargs):
+        info = original_lstat(selected, *args, **kwargs)
+        return clocked(info, "path") if selected == path else info
+
+    monkeypatch.setattr(Path, "lstat", lstat)
+    monkeypatch.setattr(os, "fstat", lambda fd: clocked(original_fstat(fd), "descriptor"))
+
+
+@pytest.mark.parametrize("windows", [True, False], ids=["windows", "posix"])
+def test_gpx_path_and_descriptor_ctime_semantics(tmp_path, monkeypatch, windows):
+    path = tmp_path / "track.gpx"
+    path.write_bytes(xml())
+    simulate_stat_clocks(monkeypatch, path)
+    monkeypatch.setattr(_file_identity, "_WINDOWS", windows)
+    if windows:
+        doc = g.read_gpx(path, consent=True, wgs84_confirmed=True)
+        assert doc.point_count == 1
+    else:
+        with pytest.raises(ValueError, match="changed before"):
+            g.read_gpx(path, consent=True, wgs84_confirmed=True)
+
+
+@pytest.mark.parametrize("changed_api", ["path", "descriptor"])
+def test_windows_gpx_rejects_same_api_ctime_changes(tmp_path, monkeypatch, changed_api):
+    path = tmp_path / "track.gpx"
+    path.write_bytes(xml())
+    simulate_stat_clocks(monkeypatch, path, changed_api=changed_api)
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    with pytest.raises(ValueError, match="changed during"):
+        g.read_gpx(path, consent=True, wgs84_confirmed=True)
+
+
+def test_gpx_rejects_file_replaced_after_descriptor_read(tmp_path, monkeypatch):
+    path = tmp_path / "track.gpx"
+    replacement = tmp_path / "replacement.gpx"
+    raw = xml()
+    path.write_bytes(raw)
+    replacement.write_bytes(raw)
+    before = path.lstat()
+    os.utime(replacement, ns=(before.st_atime_ns, before.st_mtime_ns))
+    original_lstat = Path.lstat
+    calls = 0
+
+    def lstat(selected, *args, **kwargs):
+        nonlocal calls
+        if selected == path:
+            calls += 1
+            if calls == 2:
+                os.replace(replacement, path)
+        return original_lstat(selected, *args, **kwargs)
+
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    monkeypatch.setattr(Path, "lstat", lstat)
+    with pytest.raises(ValueError, match="changed during"):
+        g.read_gpx(path, consent=True, wgs84_confirmed=True)
+    assert not replacement.exists()
+
+
+def test_gpx_rejects_real_write_during_descriptor_read(tmp_path, monkeypatch):
+    path = tmp_path / "track.gpx"
+    raw = xml()
+    path.write_bytes(raw)
+    before = path.lstat()
+    original_fstat = os.fstat
+    calls = 0
+
+    def fstat(fd):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            path.write_bytes(raw.replace(b'lat="10"', b'lat="11"'))
+            os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns + 1_000_000_000))
+        return original_fstat(fd)
+
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    monkeypatch.setattr(os, "fstat", fstat)
+    with pytest.raises(ValueError, match="changed during"):
+        g.read_gpx(path, consent=True, wgs84_confirmed=True)
 
 
 def test_leaf_symlink_refused(tmp_path):

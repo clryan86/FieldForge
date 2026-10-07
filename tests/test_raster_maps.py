@@ -2,16 +2,19 @@
 
 import hashlib
 import io
+import os
 import sqlite3
 import threading
 from contextlib import closing
+from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from map_fixture import make_map
 
 from fieldforge.navigation.map_view import Viewport
 from fieldforge.navigation.mbtiles import inspect_pack, read_frame
-from fieldforge_gps import mbtiles, raster
+from fieldforge_gps import _file_identity, mbtiles, raster
 
 Image = pytest.importorskip("PIL.Image")
 
@@ -95,6 +98,103 @@ def test_multi_page_tiff_shows_first_page_only(tmp_path):
         first.save(path, save_all=True, append_images=[second])
     doc = raster.read_reference(path, consent=True)
     assert doc.pixels.getpixel((10, 10)) == (255, 0, 0, 255)
+
+
+def simulate_stat_clocks(monkeypatch, path, *, changed_api=None):
+    """Model Windows' distinct ctime clocks while retaining real file identities."""
+    original_lstat, original_fstat = Path.lstat, os.fstat
+    clock = path.lstat().st_ctime_ns
+    calls = {"path": 0, "descriptor": 0}
+
+    def clocked(info, api):
+        calls[api] += 1
+        fields = {
+            name: getattr(info, name)
+            for name in ("st_mode", "st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+        }
+        fields["st_ctime_ns"] = clock + (100 if api == "descriptor" else 0)
+        if changed_api == api and calls[api] > 1:
+            fields["st_ctime_ns"] += 1
+        return SimpleNamespace(**fields)
+
+    def lstat(selected, *args, **kwargs):
+        info = original_lstat(selected, *args, **kwargs)
+        return clocked(info, "path") if selected == path else info
+
+    monkeypatch.setattr(Path, "lstat", lstat)
+    monkeypatch.setattr(os, "fstat", lambda fd: clocked(original_fstat(fd), "descriptor"))
+
+
+@pytest.mark.parametrize("windows", [True, False], ids=["windows", "posix"])
+def test_reference_path_and_descriptor_ctime_semantics(tmp_path, monkeypatch, windows):
+    path = tmp_path / "map.png"
+    path.write_bytes(encoded("PNG", (20, 20)))
+    simulate_stat_clocks(monkeypatch, path)
+    monkeypatch.setattr(_file_identity, "_WINDOWS", windows)
+    if windows:
+        doc = raster.read_reference(path, consent=True)
+        assert doc.format == "PNG" and doc.width == doc.height == 20
+    else:
+        with pytest.raises(ValueError, match="changed before"):
+            raster.read_reference(path, consent=True)
+
+
+@pytest.mark.parametrize("changed_api", ["path", "descriptor"])
+def test_windows_reference_rejects_same_api_ctime_changes(tmp_path, monkeypatch, changed_api):
+    path = tmp_path / "map.png"
+    path.write_bytes(encoded("PNG", (20, 20)))
+    simulate_stat_clocks(monkeypatch, path, changed_api=changed_api)
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    with pytest.raises(ValueError, match="changed during"):
+        raster.read_reference(path, consent=True)
+
+
+def test_reference_rejects_file_replaced_after_descriptor_read(tmp_path, monkeypatch):
+    path = tmp_path / "map.png"
+    replacement = tmp_path / "replacement.png"
+    raw = encoded("PNG", (20, 20))
+    path.write_bytes(raw)
+    replacement.write_bytes(raw)
+    before = path.lstat()
+    os.utime(replacement, ns=(before.st_atime_ns, before.st_mtime_ns))
+    original_lstat = Path.lstat
+    calls = 0
+
+    def lstat(selected, *args, **kwargs):
+        nonlocal calls
+        if selected == path:
+            calls += 1
+            if calls == 2:
+                os.replace(replacement, path)
+        return original_lstat(selected, *args, **kwargs)
+
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    monkeypatch.setattr(Path, "lstat", lstat)
+    with pytest.raises(ValueError, match="changed during"):
+        raster.read_reference(path, consent=True)
+    assert not replacement.exists()
+
+
+def test_reference_rejects_real_write_during_descriptor_read(tmp_path, monkeypatch):
+    path = tmp_path / "map.png"
+    raw = encoded("PNG", (20, 20))
+    path.write_bytes(raw)
+    before = path.lstat()
+    original_fstat = os.fstat
+    calls = 0
+
+    def fstat(fd):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            path.write_bytes(raw[:-1] + bytes([raw[-1] ^ 1]))
+            os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns + 1_000_000_000))
+        return original_fstat(fd)
+
+    monkeypatch.setattr(_file_identity, "_WINDOWS", True)
+    monkeypatch.setattr(os, "fstat", fstat)
+    with pytest.raises(ValueError, match="changed during"):
+        raster.read_reference(path, consent=True)
 
 
 def test_reference_permission_cancellation_and_byte_pixel_limits(tmp_path, monkeypatch):
