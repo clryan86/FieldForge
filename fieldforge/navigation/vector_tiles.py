@@ -12,6 +12,7 @@ from __future__ import annotations
 import gzip
 import io
 import struct
+import zlib
 
 MAX_TILE_BYTES = 2 * 1024**2
 MAX_UNCOMPRESSED_BYTES = 8 * 1024**2
@@ -198,7 +199,7 @@ def _layers(data: bytes):
         try:
             with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
                 data = stream.read(MAX_UNCOMPRESSED_BYTES + 1)
-        except (OSError, EOFError) as exc:
+        except (OSError, EOFError, zlib.error) as exc:
             raise ValueError("Vector tile gzip data is unreadable.") from exc
         if len(data) > MAX_UNCOMPRESSED_BYTES:
             raise ValueError("Expanded vector tile exceeds the 8 MiB limit.")
@@ -383,6 +384,7 @@ def render_vector_tile(data: bytes) -> bytes:
                    "road-major": ("#fffdf7", "#dc9954", 5, 2),
                    "boundary": ("#aa819b", "#aa819b", 1, 0),
                    "rail": ("#8b8380", "#f7f3ec", 2, 1),
+                   "water": ("#89bcd1", "#89bcd1", 2, 0),
                    "line": ("#89bcd1", "#89bcd1", 2, 0),
                    "minor": ("#b4afa4", "#b4afa4", 1, 0)}
         for kind, geom_type, paths in parsed:
@@ -400,7 +402,9 @@ def render_vector_tile(data: bytes) -> bytes:
         draw = ImageDraw.Draw(image)
         for kind, geom_type, paths in parsed:
             if geom_type == 2:
-                casing, color, casing_width, width = strokes[kind]
+                # Layer names do not constrain geometry: area/label layers can
+                # contain lines too, even without a dedicated line style.
+                casing, color, casing_width, width = strokes.get(kind, strokes["minor"])
                 for path in paths:
                     if len(path) >= 2:
                         if casing_width:

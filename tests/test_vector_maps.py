@@ -102,6 +102,25 @@ def test_vector_tile_renders_polygon_and_styled_major_road():
         assert image.getpixel((128, 120))[:3] == (168, 207, 224)
 
 
+@pytest.mark.parametrize("layer", ["river", "water", "waterway"])
+def test_water_lines_render_blue_for_common_layer_names(layer):
+    line = [9, _zigzag(512), _zigzag(2048), 10, _zigzag(3072), 0]
+    rendered = render_vector_tile(_bytes(3, _layer(layer, 2, line)))
+    with _image(rendered) as image:
+        assert image.size == (256, 256)
+        assert image.getpixel((128, 128))[:3] == (137, 188, 209)
+        assert image.getpixel((128, 120))[:3] == (233, 230, 220)
+
+
+@pytest.mark.parametrize("layer", ["park", "building", "place"])
+def test_line_geometry_in_area_or_label_layers_uses_neutral_preview_style(layer):
+    line = [9, _zigzag(512), _zigzag(2048), 10, _zigzag(3072), 0]
+    rendered = render_vector_tile(_bytes(3, _layer(layer, 2, line)))
+    with _image(rendered) as image:
+        assert image.getpixel((128, 128))[:3] == (180, 175, 164)
+        assert image.getpixel((128, 120))[:3] == (233, 230, 220)
+
+
 def test_vector_tile_draws_bounded_source_name_labels():
     labeled = render_vector_tile(named_place_tile())
     unlabeled = render_vector_tile(named_place_tile(""))
@@ -142,6 +161,14 @@ def test_overlapping_vector_labels_are_suppressed(monkeypatch):
 @pytest.mark.parametrize("bad", [b"", b"bad", b"\x1f\x8bcorrupt", b"\x1a\x05abc"])
 def test_invalid_or_empty_vector_tiles_are_rejected(bad):
     with pytest.raises(ValueError):
+        render_vector_tile(bad)
+
+
+def test_invalid_gzip_deflate_is_reported_as_unreadable_vector_data():
+    # A complete gzip header followed by reserved DEFLATE block type 3 reaches
+    # the decompressor; malformed gzip headers exercise a different error path.
+    bad = b"\x1f\x8b\x08\x00" + b"\x00" * 6 + b"\x07" + b"\x00" * 8
+    with pytest.raises(ValueError, match="Vector tile gzip data is unreadable"):
         render_vector_tile(bad)
 
 
