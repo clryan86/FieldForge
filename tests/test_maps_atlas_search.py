@@ -198,22 +198,22 @@ def test_included_town_and_region_override_retained_route_without_clearing_it(to
     wait(root, panel)
     assert panel.view.latitude == pytest.approx(place.latitude)
     assert panel.view.longitude == pytest.approx(place.longitude)
-    assert panel._route == route and panel._included_place == place
+    assert panel.route == route and panel._included_place == place
     panel.route_start_button.invoke()
     wait(root, panel)
     assert panel.view.longitude == pytest.approx(place.longitude - .2)
     assert panel._included_place == place
     panel.clear_route()
-    assert panel._route is None
+    assert panel.route is None
     assert panel.canvas.find_withtag("included-town-marker")
     panel.show_route(route)
     wait(root, panel)
     panel.clear_included_place()
-    assert panel._route == route and panel._included_place is None
+    assert panel.route == route and panel._included_place is None
     panel.open_atlas("Hawaii")
     wait(root, panel)
     assert panel.view.latitude == 20.5 and panel.view.longitude == -157.5
-    assert panel._route == route
+    assert panel.route == route
     opened(root, panel, external)
     assert panel.view.longitude == pytest.approx(place.longitude - .2)
     assert app.db.path.read_bytes() == before
@@ -251,7 +251,7 @@ def test_route_selected_during_atlas_open_applies_only_after_validation(
     assert panel.view.latitude == pytest.approx(10 if valid else place.latitude)
     assert panel.view.longitude == pytest.approx(30 if valid else place.longitude)
     assert panel._included_place == place
-    assert panel._route == (route if valid else None)
+    assert panel.route == (route if valid else None)
 
 
 @pytest.mark.parametrize("close", ["finder", "maps"])
@@ -326,4 +326,3 @@ def test_town_controls_fit_minimum_windows_and_marker_status_does_not_reload(tow
     panel.clear_included_place()
     wait(root, panel)
     assert panel._generation == generation
-

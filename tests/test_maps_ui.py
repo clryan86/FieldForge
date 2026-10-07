@@ -18,7 +18,12 @@ from fieldforge.navigation.places import PlaceStore, make_place
 @pytest.fixture
 def screen(tmp_path, monkeypatch):
     gc.collect()
-    tk = pytest.importorskip('tkinter')
+    try:
+        import tkinter as tk
+    except ImportError:
+        if os.environ.get('FIELDFORGE_REQUIRE_GUI') == '1':
+            pytest.fail('Map graphical verification requires tkinter')
+        pytest.skip('tkinter is unavailable')
     from fieldforge.ui.maps import MapsTab
     try:
         root = tk.Tk()

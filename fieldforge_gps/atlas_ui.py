@@ -9,8 +9,8 @@ from .bundled_atlas import NOTICE, REGIONS
 def choose_atlas(parent, callback):
     window = tk.Toplevel(parent)
     window.title("FieldForge · Included U.S. overview atlas")
-    window.geometry("640x300")
-    window.minsize(560, 300)
+    window.geometry("640x400")
+    window.minsize(560, 400)
     panel = ttk.Frame(window, padding=20)
     panel.pack(fill="both", expand=True)
     ttk.Label(panel, text="Included U.S. overview atlas",
