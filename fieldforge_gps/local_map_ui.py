@@ -27,6 +27,7 @@ from .review_ui import ReviewFrame
 class LocalMapReviewFrame(ReviewFrame):
     def __init__(self, parent):
         self.map_pack = None
+        self._map_is_bundled = False
         self._map_reader = None
         self._map_after = None
         self._map_loading = False
@@ -51,7 +52,16 @@ class LocalMapReviewFrame(ReviewFrame):
         panel.grid(row=6, column=0, sticky="ew", pady=(7, 0))
         self.map_trust = tk.BooleanVar(value=False)
         self.map_status = tk.StringVar(
-            value="No local map selected. Bundled coastline overview only."
+            value="No map selected. Open the included U.S. atlas or a trusted local map file."
+        )
+        included = ttk.Frame(panel)
+        included.pack(fill="x", pady=(0, 4))
+        self.included_map_button = ttk.Button(
+            included, text="Included U.S. atlas…", command=self.open_atlas
+        )
+        self.included_map_button.pack(side="left", padx=(0, 8))
+        ttk.Label(included, text="Natural Earth overview · works offline · no street detail").pack(
+            side="left"
         )
         self.map_trust_check = ttk.Checkbutton(
             panel,
@@ -126,9 +136,12 @@ class LocalMapReviewFrame(ReviewFrame):
         )
 
     def _map_permission_changed(self, *_):
-        if not self.map_trust.get():
+        if not self._map_permitted():
             self.close_map()
         self._map_buttons()
+
+    def _map_permitted(self):
+        return self._map_is_bundled or self.map_trust.get()
 
     def choose_map(self):
         if not self.map_trust.get():
@@ -144,16 +157,36 @@ class LocalMapReviewFrame(ReviewFrame):
     def example_map(self):
         return self.start_map(Path(__file__).parent / "data" / "FICTIONAL-MAP.mbtiles")
 
+    def open_atlas(self, region=None):
+        if self._closed:
+            return False
+        from .atlas_ui import choose_atlas
+        from .bundled_atlas import REGIONS, map_path
+
+        if region is None:
+            return choose_atlas(self, self.open_atlas)
+        if region not in REGIONS:
+            raise ValueError("Choose an included U.S. atlas region.")
+        return self._start_map(map_path(), start=REGIONS[region], included=True)
+
     def start_map(self, path):
-        if self._closed or not self.map_trust.get():
+        return self._start_map(path)
+
+    def _start_map(self, path, *, start=None, included=False):
+        if self._closed or (not included and not self.map_trust.get()):
             if not self._closed:
                 self.map_status.set("Confirm map trust and permission first. Nothing was read.")
             return False
         self.close_map()
+        self._map_is_bundled = included
         self._map_loading = True
         token = self._map_reader.submit("open", path)
-        self._map_task = (token, "open", None)
-        self.map_status.set("Reading selected local map. Previous map cleared; no network request.")
+        self._map_task = (token, "open", start)
+        self.map_status.set(
+            "Reading the included U.S. atlas. No network request or location access."
+            if included else
+            "Reading selected local map. Previous map cleared; no network request."
+        )
         self._map_buttons()
         return True
 
@@ -161,6 +194,7 @@ class LocalMapReviewFrame(ReviewFrame):
         if self._map_reader:
             self._map_reader.cancel()
         self.map_pack = None
+        self._map_is_bundled = False
         self._map_task = None
         self._map_loading = False
         self._frame_key = self._requested_key = None
@@ -180,7 +214,7 @@ class LocalMapReviewFrame(ReviewFrame):
         if self._closed:
             return
         result = self._map_reader.poll()
-        if result and self._map_task and result[0] == self._map_task[0] and self.map_trust.get():
+        if result and self._map_task and result[0] == self._map_task[0] and self._map_permitted():
             _, kind, value, error = result
             task = self._map_task
             self._map_task = None
@@ -190,7 +224,7 @@ class LocalMapReviewFrame(ReviewFrame):
                 self.map_status.set("Local map unavailable: " + error)
             elif kind == "open":
                 self.map_pack = value
-                self.view = MercatorView(*value.start)
+                self.view = MercatorView(*(task[2] if task[2] is not None else value.start))
                 self._frame_key = self._requested_key = None
                 self.map_status.set(f"Opened {value.name[:120]}. {value.start_notice}")
                 self.base_label.configure(
@@ -199,7 +233,7 @@ class LocalMapReviewFrame(ReviewFrame):
                     + dict(value.metadata).get("attribution", "not supplied")[:400]
                     + " · Full metadata: Map details / rights."
                 )
-                if self._points:
+                if self._points and task[2] is None:
                     self.fit()
                 self._map_buttons()
                 self.request_draw()
@@ -519,6 +553,7 @@ class LocalMapReviewFrame(ReviewFrame):
         self._images = {}
         self._tiles = {}
         self.map_pack = None
+        self._map_is_bundled = False
         self._map_task = None
         super().close()
 

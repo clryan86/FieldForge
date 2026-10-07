@@ -36,6 +36,7 @@ def collect_destroyed_test_interpreters(request):
         "test_live_map_ui.py",
         "test_places_ui.py",
         "test_workspace_ui.py",
+        "test_bundled_atlas_ui.py",
     }
     if graphical:
         request.getfixturevalue("gps_display")

@@ -17,6 +17,7 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
         self.pack(fill="both", expand=True)
         self.map_frame = map_frame
         self.catalog = None
+        self._included_catalog = False
         self._results = ()
         self._job = None
         self._closed = False
@@ -49,6 +50,13 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
         ).grid(row=1, column=0, sticky="w", pady=(4, 9))
         consent = ttk.Frame(self)
         consent.grid(row=2, column=0, sticky="ew")
+        included = ttk.Frame(consent)
+        included.pack(fill="x", pady=(0, 7))
+        self.included_button = ttk.Button(
+            included, text="Included U.S. towns", command=self.atlas_places
+        )
+        self.included_button.pack(side="left", padx=(0, 8))
+        ttk.Label(included, text="Natural Earth reference points · works offline").pack(side="left")
         self.permission_check = ttk.Checkbutton(
             consent,
             text="I trust this place file, have permission to use it, and consent to reading its contents in memory.",
@@ -143,11 +151,14 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
     def _permitted(self):
         return self.permission.get() and self.wgs84.get()
 
+    def _catalog_permitted(self):
+        return self._included_catalog or self._permitted()
+
     def _buttons(self):
         permitted = self._permitted()
         for button in (self.open_button, self.demo_button):
             button.configure(state="normal" if permitted else "disabled")
-        searchable = permitted and self.catalog is not None
+        searchable = self._catalog_permitted() and self.catalog is not None
         self.query_entry.configure(state="normal" if searchable else "disabled")
         self.search_button.configure(state="normal" if searchable else "disabled")
         self.show_button.configure(
@@ -156,7 +167,7 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
         self.clear_button.configure(state="normal" if self.catalog or self._job else "disabled")
 
     def _permissions(self, *_):
-        if not self._permitted():
+        if not self._catalog_permitted():
             self.clear()
         self._buttons()
 
@@ -192,17 +203,33 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
     def example(self):
         return self.start_read(Path(__file__).parent / "data" / "FICTIONAL-PLACES.csv")
 
+    def atlas_places(self):
+        return self.open_included()
+
+    def open_included(self):
+        if self._closed:
+            return False
+        from .bundled_atlas import places_path
+
+        return self._start_read(places_path(), included=True)
+
     def start_read(self, path):
-        if self._closed or not self._permitted():
+        return self._start_read(path)
+
+    def _start_read(self, path, *, included=False):
+        if self._closed or (not included and not self._permitted()):
             if not self._closed:
                 self.status.set(
                     "Confirm file permission/privacy and WGS84 first. Nothing was read."
                 )
             return False
         self.clear()
+        self._included_catalog = included
         token = self.worker.submit("load", path)
         self._job = (token, "load", None)
         self.status.set(
+            "Reading the included U.S. town catalogue. No downloads or address lookup."
+            if included else
             "Reading the selected place file. Old catalogue and file marker cleared; no downloads."
         )
         self._buttons()
@@ -214,6 +241,7 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
         self.worker.cancel()
         self._job = None
         self.catalog = None
+        self._included_catalog = False
         self._clear_results()
         self.query.set("")
         self.map_frame.clear_place_marker(file_only=True)
@@ -224,7 +252,7 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
         self._buttons()
 
     def search(self):
-        if self._closed or not self._permitted() or self.catalog is None:
+        if self._closed or not self._catalog_permitted() or self.catalog is None:
             return False
         self._clear_results()
         query = self.query.get()
@@ -239,11 +267,13 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
         if self._closed:
             return
         result = self.worker.poll()
-        if result and self._job and result[0] == self._job[0] and self._permitted():
+        if result and self._job and result[0] == self._job[0] and self._catalog_permitted():
             task = self._job
             self._job = None
             _, kind, value, error = result
             if error:
+                if kind == "load":
+                    self._included_catalog = False
                 self.status.set("Place operation failed: " + error)
             elif kind == "load":
                 self.catalog = value
@@ -284,7 +314,7 @@ class PlaceSearchFrame(TkCleanupMixin, ttk.Frame):
 
     def _selected_place(self):
         selected = self.table.selection()
-        if not selected or not self.catalog or not self._permitted():
+        if not selected or not self.catalog or not self._catalog_permitted():
             return None
         try:
             index = int(selected[0])

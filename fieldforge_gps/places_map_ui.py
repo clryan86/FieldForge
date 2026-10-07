@@ -36,7 +36,7 @@ class PlacesMapReviewFrame(LocalMapReviewFrame):
             box, text="Open map image…", command=self.open_image_reference
         )
         self.image_button.pack(side="left", padx=(0, 7))
-        ttk.Label(box, text="Local files only · no bundled real place index").pack(side="left")
+        ttk.Label(box, text="Included U.S. towns and local files · offline reference points").pack(side="left")
         self.place_notice = tk.StringVar(
             value="No place marker. Place-file search is separate from GPX history and live receiver tools."
         )
