@@ -82,3 +82,15 @@ test("grid-crossing coverage matches an independent segment/rectangle intersecti
     assert.deepEqual(mbRouteTiles(route([[gridPoint(ax,ay),gridPoint(bx,by)]]),4),expected,JSON.stringify([ax,ay,bx,by]));
   }
 });
+
+test("GPX trace length measures each segment independently and uses the short date-line span",()=>{
+  const trace=route([[p(0,0),p(0,1)],[p(0,10),p(0,11)]]);
+  assert.ok(Math.abs(trace.traceLengthMeters-222390.16)<2);
+  const forward=route([[p(10,179),p(10,-179)]]).traceLengthMeters;
+  const reverse=route([[p(10,-179),p(10,179)]]).traceLengthMeters;
+  assert.ok(Math.abs(forward-reverse)<1e-6);
+  assert.ok(forward<220000);
+  assert.equal(route([[p(0,0)],[p(1,1)]]).traceLengthMeters,null);
+  assert.equal(route([[p(0,0),p(0,0)]]).traceLengthMeters,0);
+});
+
