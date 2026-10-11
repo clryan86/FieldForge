@@ -1,0 +1,203 @@
+{
+  "format": "fieldforge-regional-collection-real-data-check-v1",
+  "checked_utc": "2026-10-05T14:21:52.956274+00:00",
+  "scope": "display/search",
+  "user_device_installation": "not-checked",
+  "validated_navigation": false,
+  "runtime": "3.12.14",
+  "python_no_site": true,
+  "steps": {
+    "installed_prepare_collection_cli": {
+      "status": "passed",
+      "seconds": 6.159
+    },
+    "installed_build_cli": {
+      "status": "passed",
+      "seconds": 4.8
+    },
+    "installed_http_download_list": {
+      "status": "passed",
+      "seconds": 4.764
+    },
+    "verified_local_retry": {
+      "status": "passed",
+      "seconds": 0.251
+    },
+    "offline_reopen_search_after_inputs_removed": {
+      "status": "passed",
+      "seconds": 4.702
+    }
+  },
+  "archive": {
+    "filename": "FieldForge-USA-South-Dakota-2026-10-02.zip",
+    "bytes": 194212607,
+    "sha256": "66c2a7ed66ab3c37a770db097038513670254e6f73878142cb0503288c3f324e"
+  },
+  "collection": {
+    "filename": "FieldForge-USA-Wave5-Collection.json",
+    "bytes": 4339,
+    "sha256": "28e9f29df71acb608ebd025cf19f44eb49c7404a4e486c76c4055f2578965a2a"
+  },
+  "preparation_receipt": {
+    "collection": {
+      "bytes": 4339,
+      "checked_utc": "2026-10-03T04:16:46.569301+00:00",
+      "filename": "FieldForge-USA-Wave5-Collection.json",
+      "notice": "Verified downloaded ZIPs, not an installation audit or complete geographic coverage. Counts describe source objects, not unique addresses. A prepared road model is not validated driving directions. Checksums are unsigned integrity checks. Keep the listed ZIPs; this JSON does not contain maps.",
+      "sha256": "28e9f29df71acb608ebd025cf19f44eb49c7404a4e486c76c4055f2578965a2a"
+    },
+    "format": "fieldforge-map-collection-preparation-v1",
+    "maps": [
+      {
+        "address_features": 17522,
+        "archive": {
+          "bytes": 194212607,
+          "filename": "FieldForge-USA-South-Dakota-2026-10-02.zip",
+          "sha256": "66c2a7ed66ab3c37a770db097038513670254e6f73878142cb0503288c3f324e"
+        },
+        "archive_receipt": {
+          "bytes": 1377,
+          "filename": "region.json",
+          "format": "fieldforge-region-install-v1",
+          "map": {
+            "bytes": 384290816,
+            "sha256": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a"
+          },
+          "region_id": "68c750d78ef64ace823014a2dc87dc7b",
+          "sha256": "280d2adae94173fdb32d036669ec3e54967a3a622bd5a81d64ed855d43f7d062",
+          "source": {
+            "bytes": 49414046,
+            "embedded_name": "source.osm.pbf",
+            "name": "south-dakota-latest.osm.pbf",
+            "replication_timestamp": 1790972494,
+            "sha256": "43ee4e5a620dc050735a6ab224cda5dc049e83f42bded062e1539e389a81d643",
+            "verification": "receipt-declaration-only"
+          },
+          "verification": "archive-member-bound-to-measured-map-and-source-receipts"
+        },
+        "attribution": "\u00a9 OpenStreetMap contributors \u2022 ODbL 1.0 \u2022 https://www.openstreetmap.org/copyright",
+        "coverage": [
+          -105.5310248,
+          40.3387377,
+          -95.0817848,
+          47.3719077
+        ],
+        "declared_road_preparation": {
+          "reason": "Road preparation refused or failed: Unsupported turn restriction 3419293; no graph prepared.",
+          "state": "unavailable"
+        },
+        "features": 626562,
+        "id": "regional-68c750d78ef64ace823014a2dc87dc7b",
+        "license": "ODbL-1.0",
+        "map": {
+          "bytes": 384290816,
+          "filename": "68c750d78ef64ace823014a2dc87dc7b.ffmap",
+          "sha256": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a"
+        },
+        "missing_node_ways": 0,
+        "region_id": "68c750d78ef64ace823014a2dc87dc7b",
+        "source": {
+          "bytes": 49414046,
+          "declared_name": "south-dakota-latest.osm.pbf",
+          "name": "source.osm.pbf",
+          "replication_timestamp": 1790972494,
+          "sha256": "43ee4e5a620dc050735a6ab224cda5dc049e83f42bded062e1539e389a81d643",
+          "verification": "archive-wrapper-matched-collection"
+        },
+        "title": "South Dakota - OSM 2026-10-02",
+        "version": "2026-10-02T20:21:34Z"
+      }
+    ],
+    "notice": "Only selected archive bytes and prepared display/search indexes were verified. Source fingerprints and road preparation are receipt declarations; no source PBF, routing, device installation or navigation validation was performed.",
+    "scope": "display/search"
+  },
+  "catalog_asset": {
+    "id": "regional-68c750d78ef64ace823014a2dc87dc7b",
+    "title": "South Dakota - OSM 2026-10-02",
+    "filename": "regional-68c750d78ef64ace823014a2dc87dc7b.ffmap",
+    "format": "ffmap",
+    "download_path": "/api/v1/maps/regional-68c750d78ef64ace823014a2dc87dc7b/download",
+    "bytes": 384290816,
+    "sha256": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a",
+    "attribution": "\u00a9 OpenStreetMap contributors \u2022 ODbL 1.0 \u2022 https://www.openstreetmap.org/copyright",
+    "license": "ODbL-1.0",
+    "coverage": [
+      -105.5310248,
+      40.3387377,
+      -95.0817848,
+      47.3719077
+    ],
+    "version": "2026-10-02T20:21:34Z",
+    "source": "south-dakota-latest.osm.pbf"
+  },
+  "offline_searches": {
+    "Sioux Falls": {
+      "returned": 100,
+      "limited": true,
+      "sample": [
+        {
+          "id": "node/151394207",
+          "name": "Sioux Falls Junction"
+        },
+        {
+          "id": "node/151584076",
+          "name": "East Sioux Falls"
+        },
+        {
+          "id": "node/151734278",
+          "name": "Sioux Falls"
+        }
+      ]
+    },
+    "Rapid City": {
+      "returned": 100,
+      "limited": true,
+      "sample": [
+        {
+          "id": "node/357089672",
+          "name": "KOTA-AM (Rapid City)"
+        },
+        {
+          "id": "node/585371258",
+          "name": "Rapid City Quarry"
+        },
+        {
+          "id": "node/585371270",
+          "name": "Rapid City Lime Plant"
+        }
+      ]
+    }
+  },
+  "downloaded_map": {
+    "filename": "regional-68c750d78ef64ace823014a2dc87dc7b.ffmap",
+    "bytes": 384290816,
+    "sha256": "1f34bd020350eb72f2ec6cf24059cd15c6b80c0184988eb5209f89c81df8a91a"
+  },
+  "offline_network_attempts": [],
+  "loaded_source_files_match_wheel": {
+    "fieldforge/__init__.py": "8af13acced20c532feb9d374490feacb17ff30bb01c9f47da58466dbf42b707f",
+    "fieldforge/navigation/__init__.py": "9401cdda37eab020656e40eae8a29a912e74b6a6d95f299d61e83b311f444a2a",
+    "fieldforge/navigation/atlas.py": "1a9f5b1927879fa6067bc51f30fc27d6c50771abada7b1d06b6cf71b66b17705",
+    "fieldforge/navigation/geo.py": "70017c881195af311fd1c740dcccf220159a0d4dcecf134b3ec9e575b5c34c98",
+    "fieldforge/navigation/map_view.py": "f6a335aa05d9cc02baae914ac0bf5a008e2639a63aa90e08c5fe0f0e82e420ea",
+    "fieldforge/navigation/mbtiles.py": "a1a320b28f7a389b0892a1dc2b0c468406df3043e58603bb5c7d156fc6a8e397",
+    "fieldforge/navigation/osm_source.py": "b52d5f8175202f6c0b445513dff4f271f8cd84e677392b5d86ac7fd6f33434d3",
+    "fieldforge/navigation/pbf_stream.py": "ebab09fe4c5ae1ce85f4b6c23b4b6e876d3651c99789dc50887da5bea9a7ed9c",
+    "fieldforge/navigation/places.py": "acc0b99d45c767c1bc231236fbbd1301c756e438a398d567f376688791ca2e32",
+    "fieldforge/navigation/regional_index.py": "fbe7c8d6b2b9878eb7809fb7357d347b72afc46440dc1bd453c4241916d369c5",
+    "fieldforge/online/__init__.py": "dd39e30531e8cf75e4590caa3151f38e793f3e1057f0512dfa6f6e1edc90fbb0",
+    "fieldforge/online/catalog.py": "70c72ad46a0a8cd33096bb12c6d316053214b7262a5d53a1cb060cb3d6eb5429",
+    "fieldforge/online/client.py": "9df2175b86eece81472eb6b9cde5c7e538d0db82621a62359fbe866a63a2e5a9",
+    "fieldforge/online/compat.py": "d72375d6ae68ff0561b859139cf56f56c6c67d10fd4340ba28a934803a6353b7",
+    "fieldforge/online/download_list.py": "98bbf6d069a0d51128af94135bccc0f9b1afe9ad20ff1467a32bc7ec8754c36e",
+    "fieldforge/online/map_validation.py": "0e286e1d289adf8eeb0c01204d281888f866e29933ba5b0257e4f23ee359ac42",
+    "fieldforge/online/models.py": "ba29b58084291be2a93e06d0c3e400d003c0fee1bf32e7d19a382d8d1bf4d66c",
+    "fieldforge/online/partial_download.py": "c5c8aa4081e11707f189a1a0615a8be908384cdf8c3a9a362f72b2b55107162c",
+    "fieldforge/online/server.py": "2ce01dfaadafa932537a034403346d102ec9659ec9dcaaf8fec38ce2237d0cbf",
+    "fieldforge/online/storage.py": "13f7ee4b064df9b6f78da1547840b079f403412f4aaa0195bedc15a3cca637f4"
+  },
+  "all_checks_passed": true,
+  "parent_commit": "f3f4b145d8edfeac3a6eaffa3b1608ec0c4b6f72",
+  "packaged_source_and_assets_verified": 161,
+  "verification_note": "Exact historical ZIP and embedded map verified; no raw source regeneration. A selected package passed independent installed CLI preparation/build, HTTP download/list retry, and offline search after test inputs and origin were removed."
+}

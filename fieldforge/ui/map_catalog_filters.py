@@ -24,7 +24,8 @@ class CatalogFilters(TkCleanupMixin, ttk.Frame):
         ttk.Label(self, text="Order").grid(row=0, column=2, sticky="w")
         self.entry = ttk.Entry(self, textvariable=self.query)
         self.entry.grid(row=1, column=0, sticky="ew", pady=5)
-        self.kind_box = ttk.Combobox(self, textvariable=self.kind, width=14, values=("All formats", "MBTiles", "Images"))
+        self.kind_box = ttk.Combobox(self, textvariable=self.kind, width=23,
+                                    values=("All formats", "MBTiles", "Prepared regional maps", "Images"))
         self.kind_box.grid(row=1, column=1, padx=8)
         self.order_box = ttk.Combobox(self, textvariable=self.order, width=14, values=("Title", "Smallest first", "Largest first"))
         self.order_box.grid(row=1, column=2)
@@ -53,7 +54,8 @@ class CatalogFilters(TkCleanupMixin, ttk.Frame):
             widget.configure(state="normal" if loaded else "disabled")
         for widget in (self.kind_box, self.order_box):
             widget.configure(state="readonly" if loaded else "disabled")
-        kind = {"All formats": "all", "MBTiles": "mbtiles", "Images": "image"}.get(self.kind.get(), "invalid")
+        kind = {"All formats": "all", "MBTiles": "mbtiles", "Images": "image",
+                "Prepared regional maps": "regional"}.get(self.kind.get(), "invalid")
         order = {"Title": "title", "Smallest first": "smallest", "Largest first": "largest"}.get(self.order.get(), "invalid")
         try:
             point = filter_point(self.latitude.get(), self.longitude.get()) if self.point_filter else None

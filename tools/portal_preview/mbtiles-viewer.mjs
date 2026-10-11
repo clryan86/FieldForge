@@ -1,0 +1,161 @@
+import {MAX_MB_BYTES, MB_LAT_LIMIT, checkMBHeader, mbFrame, mbUnproject, mbScreenPoint} from "./mbtiles-core.mjs";
+import {createMBClient, createMBFileRead} from "./mbtiles-client.mjs";
+import {createMBRasterDecode} from "./mbtiles-raster.mjs";
+import {vectorLabel} from "./vector-core.mjs";
+import {drawVectorTiles} from "./mvt-renderer.mjs";
+import {createMBCoverage} from "./mbtiles-coverage.mjs";
+import {validatePlace,placeCoordinateText} from "./places-core.mjs";
+import {createMBRoute} from "./mbtiles-route.mjs";
+
+export function createMBViewer({onAddPoint,download,clientFactory=createMBClient}) {
+  const id=key=>document.getElementById(key),canvas=id("mbCanvas"),ctx=canvas.getContext("2d");
+  let client=null,fileRead=null,rasterRead=null,info=null,frame=null,selected=null,bitmaps=[],vectors=[],generation=0,busy=false,filename="",coverage=null,target=null,route=null;
+  const status=(text,error=false)=>{id("mbStatus").textContent=text;id("mbStatus").classList.toggle("error",error);};
+  const node=(tag,text)=>{const element=document.createElement(tag);if(text!==undefined)element.textContent=text;return element;};
+  const decodedAt=(x,y)=>[...bitmaps.map(item=>item.tile),...vectors].find(tile=>x>=tile.left&&x<tile.left+256&&y>=tile.top&&y<tile.top+256);
+  function updateTarget(){
+    id("mbTargetCard").hidden=!target;id("mbTargetCentre").disabled=!target||!info||busy;id("mbTargetClear").disabled=!target||busy;
+    id("mbTargetName").textContent=target?.name||"";id("mbTargetCoordinates").textContent=target?`${placeCoordinateText(target.lat)}, ${placeCoordinateText(target.lon)}`:"";
+    let message="";
+    if(target){if(busy)message="Map operation in progress…";else if(!frame)message="Choose a local MBTiles pack to view this coordinate.";else{const p=mbScreenPoint(target.lat,target.lon,frame);message=!p.inside?"Saved coordinate is outside this view. Use Centre on place to return.":decodedAt(p.x,p.y)?`Saved coordinate is within a decoded tile at zoom ${frame.zoom}. Map accuracy has not been verified.`:`No decoded tile at this coordinate at zoom ${frame.zoom}. Try another stored zoom or a different pack.`;}}
+    id("mbTargetState").textContent=message;
+  }
+  function controls() {id("mbControls").disabled=!info||busy;id("mbAddPlace").disabled=!selected||busy;id("mbPixelControls").disabled=!frame||busy;coverage?.setBusy(busy);updateTarget();route?.update(frame,decodedAt,busy,!!info);}
+  function dispose() {for(const item of bitmaps)item.bitmap.close();bitmaps=[];vectors=[];frame=null;selected=null;id("mbSelected").textContent="No tile pixel selected";id("mbTileSummary").textContent="No frame loaded";id("mbIssues").textContent="";ctx?.clearRect(0,0,768,512);controls();}
+  function clear(message="Map pack closed. Collected places and your original file are unchanged.",{keepOverlays=false}={}) {
+    generation++;rasterRead?.cancel();rasterRead=null;fileRead?.cancel();fileRead=null;client?.close();client=null;info=null;busy=false;filename="";if(!keepOverlays){target=null;route?.clear();}coverage?.reset();route?.setPack(null);dispose();
+    id("mbFile").value="";id("mbClose").disabled=true;id("mbName").textContent="Local MBTiles map";id("mbAttribution").textContent="Attribution will appear here from your map pack.";
+    id("mbDescription").textContent="";id("mbZoom").replaceChildren();id("mbLatitude").value="";id("mbLongitude").value="";id("mbColumn").value="384";id("mbRow").value="256";
+    id("mbVectorNote").hidden=true;id("mbPointNames").checked=true;status(message);
+  }
+  if(!ctx) {id("mbFile").disabled=true;const unavailable=()=>{status("This browser cannot draw the local map canvas.",true);return false;};unavailable();return {viewPlace:unavailable,viewGPX:unavailable,clearRoute(){}};}
+  route=createMBRoute({onCentre:p=>show(p.lat,p.lon,frame?.zoom??info.initial.zoom,false),onAddPoint,onRedraw:()=>{draw();controls();},download,onVerify:verifyContents,onOpen:(lat,lon,zoom)=>show(lat,lon,zoom,false),onCheck:async(zoom,tiles)=>{
+    if(!client||!info||busy)return null;
+    const token=generation;busy=true;controls();
+    try{
+      const result=await client.request("route-tiles",{zoom,tiles});if(token!==generation)return null;
+      return {...result,map_file:vectorLabel(filename,"map pack",160),map_name:vectorLabel(info.name,"Local map pack",160),map_format:info.format};
+    }catch(error){if(token===generation){clear();status(error.message||"Could not check the path tile records.",true);}return null;}
+    finally{if(token===generation){busy=false;controls();}}
+  }});
+  coverage=createMBCoverage({onOpen:show,onScan:async zoom=>{
+    if(!client||!info||busy)return;
+    if(!info.zooms.includes(zoom)){status("Choose a stored zoom level to inspect coverage.",true);return;}
+    const token=generation;busy=true;controls();coverage.reading(zoom);
+    try {const report=await client.request("coverage",{zoom});if(token!==generation)return;coverage.show(report);}
+    catch(error){if(token===generation){clear();status(error.message||"Could not inspect the tile index.",true);}}
+    finally{if(token===generation){busy=false;controls();}}
+  }});
+  async function verifyContents(zoom,tiles,onTile,shouldStop) {
+    if(!client||!info||busy)return;
+    if(!Array.isArray(tiles)||tiles.length>128)throw new Error("Verify up to 128 tiles per batch.");
+    const token=generation,deadline=Date.now()+30000;busy=true;controls();
+    try{
+      for(const {x,y} of tiles){
+        if(token!==generation||shouldStop()||Date.now()>=deadline)break;
+        const result=await client.request("tile-content",{zoom,x,y});if(token!==generation||shouldStop())break;
+        if(result.data){
+          const job=createMBRasterDecode(result.data,info.format);rasterRead=job;
+          try{const bitmap=await job.promise;bitmap.close();result.decode_status="decoded";}
+          catch(error){result.decode_status="unreadable";result.decode_issue=error.message||"Raster tile could not be decoded.";}
+          finally{delete result.data;if(rasterRead===job)rasterRead=null;}
+        }
+        if(token!==generation||shouldStop())break;
+        onTile(result);
+      }
+    }catch(error){if(token===generation){clear();status(error.message||"Tile verification stopped. Reopen the map pack.",true);}}
+    finally{if(token===generation){busy=false;controls();}}
+  }
+  function draw() {
+    ctx.clearRect(0,0,768,512);if(!frame)return;
+    ctx.fillStyle="#102c23";ctx.fillRect(0,0,768,512);ctx.font="13px system-ui";ctx.textAlign="center";
+    for(const tile of frame.tiles) {ctx.strokeStyle="#466052";ctx.strokeRect(tile.left,tile.top,256,256);if(tile.issue){ctx.fillStyle="#b5c9bb";ctx.fillText(tile.issue,tile.left+128,tile.top+128,232);}}
+    for(const item of bitmaps)ctx.drawImage(item.bitmap,item.tile.left,item.tile.top,256,256);
+    if(vectors.length)drawVectorTiles(ctx,vectors,id("mbPointNames").checked);
+    route?.draw(ctx,frame);
+    if(target){const p=mbScreenPoint(target.lat,target.lon,frame);if(p.inside){ctx.beginPath();ctx.moveTo(p.x,p.y-10);ctx.lineTo(p.x+10,p.y);ctx.lineTo(p.x,p.y+10);ctx.lineTo(p.x-10,p.y);ctx.lineTo(p.x,p.y-10);ctx.lineWidth=5;ctx.strokeStyle="#14362e";ctx.stroke();ctx.lineWidth=2;ctx.strokeStyle="#7fe3ff";ctx.stroke();ctx.lineWidth=1;}}
+    if(selected){const x=selected.column+.5,y=selected.row+.5;ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.moveTo(x-12,y);ctx.lineTo(x+12,y);ctx.moveTo(x,y-12);ctx.lineTo(x,y+12);ctx.strokeStyle="#142d22";ctx.lineWidth=4;ctx.stroke();ctx.strokeStyle="#ffe2a6";ctx.lineWidth=2;ctx.stroke();ctx.lineWidth=1;}
+  }
+  function select(column,row) {
+    if(!frame||busy)return;
+    if(!Number.isInteger(column)||!Number.isInteger(row)||column<0||column>=768||row<0||row>=512)throw new Error("Choose a pixel column 0–767 and row 0–511.");
+    const hit=decodedAt(column+.5,row+.5);
+    selected=null;
+    if(hit){const point=mbUnproject(frame.left+column+.5,frame.top+row+.5,frame.zoom);selected={...point,column,row};id("mbSelected").textContent=`${point.lat.toFixed(7)}, ${point.lon.toFixed(7)} · tile ${frame.zoom}/${hit.x}/${hit.y} (XYZ)`;}
+    else id("mbSelected").textContent="No decoded tile under this pixel; no coordinate selected.";
+    id("mbColumn").value=column;id("mbRow").value=row;draw();controls();
+  }
+  async function show(lat,lon,zoom,selectCentre=true) {
+    if(!client||!info||busy)return;
+    try {mbFrame(lat,lon,zoom);if(!info.zooms.includes(zoom))throw new Error("Choose an available zoom from this pack.");}catch(error){status(error.message,true);return;}
+    busy=true;const token=generation;dispose();controls();status("Reading map tiles on this device…");
+    const loaded=[];
+    try {
+      const result=await client.request("frame",{lat,lon,zoom});if(token!==generation)return;
+      for(const tile of result.tiles) {
+        if(!tile.data)continue;
+        let bitmap=null;
+        try {
+          const job=createMBRasterDecode(tile.data,info.format);rasterRead=job;
+          try{bitmap=await job.promise;}finally{if(rasterRead===job)rasterRead=null;}
+          if(token!==generation){bitmap.close();return;}
+          loaded.push({bitmap,tile});bitmap=null;
+        } catch(error) {bitmap?.close();tile.issue="Unreadable / unsupported tile";}
+        delete tile.data;
+        if(token!==generation)return;
+      }
+      if(token!==generation)return;
+      frame=result;bitmaps=loaded.splice(0);vectors=result.tiles.filter(tile=>tile.vector);busy=false;
+      id("mbLatitude").value=String(lat);id("mbLongitude").value=String(lon);id("mbZoom").value=String(zoom);
+      id("mbTileSummary").textContent=`Zoom ${zoom} · ${bitmaps.length+vectors.length} decoded / ${frame.tiles.length} view slots`+(result.vectorStats?` · ${result.vectorStats.features.toLocaleString()} features in view slots · basic vector style`:"");
+      id("mbIssues").textContent=[...new Set(frame.tiles.filter(tile=>tile.issue).map(tile=>tile.issue))].join(" · ");
+      if(selectCentre)select(384,256);else draw();status("Map tiles read locally. Missing tiles or undrawn details do not indicate safe or empty terrain. No routing, GPS or current-condition checks.");
+    } catch(error) {if(token===generation){clear();status(error.message||"Could not read this map frame.",true);}}
+    finally {for(const item of loaded)item.bitmap.close();if(token===generation){busy=false;controls();}}
+  }
+  id("mbFile").addEventListener("change",async()=> {
+    const file=id("mbFile").files[0];if(!file)return;clear("Opening your MBTiles pack locally…",{keepOverlays:true});const token=generation;busy=true;id("mbClose").disabled=false;controls();
+    try {
+      if(token!==generation)return;
+      if(!file.size||file.size>MAX_MB_BYTES||!file.name.toLowerCase().endsWith(".mbtiles"))throw new Error("Choose a .mbtiles export no larger than 64 MiB. Compatible larger packs can use the desktop map viewer.");
+      const read=createMBFileRead(file);fileRead=read;let bytes;
+      try {bytes=await read.promise;}finally{if(fileRead===read)fileRead=null;}
+      if(token!==generation)return;checkMBHeader(new Uint8Array(bytes));client=clientFactory();
+      const result=await client.request("open",{bytes},[bytes]);if(token!==generation)return;
+      if(result.format!=="pbf"&&typeof createImageBitmap!=="function")throw new Error("This browser needs ImageBitmap support to decode raster map tiles.");
+      info=result;filename=file.name;busy=false;
+      coverage.setPack(info);route.setPack(info);
+      id("mbVectorNote").hidden=info.format!=="pbf";
+      id("mbName").textContent=vectorLabel(info.name,"Local map pack",160);id("mbAttribution").textContent=info.attribution;id("mbDescription").textContent=info.description;
+      id("mbZoom").replaceChildren();for(const z of info.zooms){const option=node("option",`Zoom ${z}`);option.value=String(z);id("mbZoom").append(option);}
+      const anchor=target||route.anchor()||info.initial;
+      await show(anchor.lat,anchor.lon,info.initial.zoom,!target&&!route.anchor());
+    } catch(error) {if(token===generation){clear();status(error.message||"The pack could not be opened.",true);}}
+  });
+  id("mbClose").addEventListener("click",()=>clear());
+  id("mbTargetCentre").addEventListener("click",()=>{if(target&&info&&!busy)return show(target.lat,target.lon,frame?.zoom??info.initial.zoom,false);});
+  id("mbTargetClear").addEventListener("click",()=>{if(busy)return;target=null;draw();controls();});
+  id("mbPointNames").addEventListener("change",()=>draw());
+  id("mbGo").addEventListener("submit",event=> {event.preventDefault();if(!info||busy)return;try {const lat=id("mbLatitude").value.trim(),lon=id("mbLongitude").value.trim();if(!lat||!lon)throw new Error("Enter both latitude and longitude; a blank field is not zero.");return show(Number(lat),Number(lon),Number(id("mbZoom").value));}catch(error){status(error.message,true);}});
+  id("mbHome").addEventListener("click",()=> {if(info&&!busy)show(info.initial.lat,info.initial.lon,info.initial.zoom);});
+  for(const [key,dx,dy] of [["mbLeft",-384,0],["mbRight",384,0],["mbUp",0,-256],["mbDown",0,256]])id(key).addEventListener("click",()=> {if(!frame||busy)return;const p=mbUnproject(frame.left+384+dx,frame.top+256+dy,frame.zoom);show(Math.max(-MB_LAT_LIMIT,Math.min(MB_LAT_LIMIT,p.lat)),p.lon,frame.zoom);});
+  id("mbPixelForm").addEventListener("submit",event=> {event.preventDefault();try{const col=id("mbColumn").value.trim(),row=id("mbRow").value.trim();if(!col||!row)throw new Error("Enter a pixel column and row.");select(Number(col),Number(row));}catch(error){status(error.message,true);}});
+  canvas.addEventListener("click",event=> {if(!frame||busy)return;const rect=canvas.getBoundingClientRect();if(rect.width&&rect.height){const col=Math.floor((event.clientX-rect.left)/rect.width*768),row=Math.floor((event.clientY-rect.top)/rect.height*512);if(col>=0&&col<768&&row>=0&&row<512)select(col,row);}});
+  id("mbAddPlace").addEventListener("click",()=> {if(!selected||busy)return;try{onAddPoint({name:`Map pixel ${selected.column}, ${selected.row}`,lat:selected.lat,lon:selected.lon,source:`User-supplied ${info.format==="pbf"?"vector MBTiles, basic preview style":"raster MBTiles"}; Web Mercator pixel centre; not independently verified; file: ${vectorLabel(filename,"map pack",160)}`});}catch(error){status(error.message,true);}});
+  clear("No pack opened. Choose a trusted, closed raster or vector MBTiles export.");
+  return {clearRoute(){route.clear();draw();controls();},viewGPX(data,name){
+    try{
+      if(busy)throw new Error("A map operation is still running. Wait for it or use Close / cancel, then choose the GPX overlay again.");
+      const first=route.load(data,name);target=null;controls();
+      if(info)return show(first.lat,first.lon,frame?.zoom??info.initial.zoom,false);
+      status("GPX overlay selected. Choose a local MBTiles pack; no map will be downloaded automatically.");return true;
+    }catch(error){status(error.message||"Could not show this GPX overlay.",true);return false;}
+  },viewPlace(value){
+    try{
+      if(busy)throw new Error("A map operation is still running. Wait for it or use Close / cancel, then choose the place again.");
+      const place=validatePlace(value);mbFrame(place.lat,place.lon,0);target=place;controls();
+      if(info)return show(place.lat,place.lon,frame?.zoom??info.initial.zoom,false);
+      status("Saved coordinate selected. Choose a local MBTiles pack to view it; no map will be downloaded automatically.");return true;
+    }catch(error){status(error.message||"Could not view this saved place.",true);return false;}
+  }};
+}

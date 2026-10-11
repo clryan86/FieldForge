@@ -1,0 +1,65 @@
+name: Commons chat preview
+
+on:
+  push:
+    paths:
+      - 'fieldforge/online/chat_store.py'
+      - 'fieldforge/online/accounts.py'
+      - 'fieldforge/online/account_lifecycle.py'
+      - 'fieldforge/online/owner*.py'
+      - 'fieldforge/online/private_chat.py'
+      - 'fieldforge/online/profiles.py'
+      - 'fieldforge/online/profile_photos.py'
+      - 'fieldforge/online/commons*'
+      - 'fieldforge/online/community.py'
+      - 'fieldforge/online/server.py'
+      - 'tests/test_commons_*'
+      - 'tests/test_profile_photos.py'
+      - 'pyproject.toml'
+      - '.github/workflows/commons-chat.yml'
+  pull_request:
+    paths:
+      - 'fieldforge/online/chat_store.py'
+      - 'fieldforge/online/accounts.py'
+      - 'fieldforge/online/account_lifecycle.py'
+      - 'fieldforge/online/owner*.py'
+      - 'fieldforge/online/private_chat.py'
+      - 'fieldforge/online/profiles.py'
+      - 'fieldforge/online/profile_photos.py'
+      - 'fieldforge/online/commons*'
+      - 'fieldforge/online/community.py'
+      - 'fieldforge/online/server.py'
+      - 'tests/test_commons_*'
+      - 'tests/test_profile_photos.py'
+      - 'pyproject.toml'
+      - '.github/workflows/commons-chat.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  local-chat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test tools
+        run: python -m pip install -e '.[dev,maps,commons]' 'playwright==1.57.0'
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Check chat source
+        run: |
+          ruff check fieldforge/online/owner.py fieldforge/online/owner_setup.py fieldforge/online/accounts.py fieldforge/online/account_lifecycle.py fieldforge/online/chat_store.py fieldforge/online/private_chat.py fieldforge/online/commons_preview.py fieldforge/online/profiles.py fieldforge/online/profile_photos.py tests/test_commons_*.py tests/test_profile_photos.py
+          node --check fieldforge/online/commons.js
+          node --check fieldforge/online/commons-private.js
+          node --check fieldforge/online/commons-search.js
+          node --check fieldforge/online/commons-accounts.js
+          node --check fieldforge/online/commons-owner.js
+          node --check fieldforge/online/commons-profiles.js
+      - name: Exercise real local chat and portal compatibility
+        env:
+          FIELDFORGE_PORTAL_BROWSER_TESTS: '1'
+        run: python -m pytest -o addopts='' -q -ra tests/test_commons_*.py tests/test_profile_photos.py tests/test_community_profile.py tests/test_online_portal.py tests/test_online_integration.py tests/test_portal_connection.py

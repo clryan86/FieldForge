@@ -1,10 +1,11 @@
-"""Shared bounded image preflight for portal publishing and desktop downloads.
+"""Shared map preflight for portal publishing and desktop downloads.
 
 This reads file structures and dimensions without loading pixel buffers or
 requiring Pillow. Actual rendering still uses the existing trusted-image reader.
 Both ends enforce the same 64 MiB file, 32-million-pixel, 32,768-pixel-side limits.
 The checks are a format preflight, not a full image decoder or malicious-file
 sandbox. No source bytes are changed and no network operations are performed.
+Prepared regional maps use the same bounded inspector as their offline reader.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import struct
 import zlib
 from pathlib import Path
 
-from fieldforge.online.models import MAX_IMAGE_BYTES
+from fieldforge.online.models import MAX_IMAGE_BYTES, format_byte_limit
 from fieldforge_gps.raster import MAX_IMAGE_PIXELS, MAX_IMAGE_SIDE
 
 CHUNK_BYTES = 64 * 1024
@@ -33,6 +34,42 @@ class RasterCancelled(ValueError):
 def _cancelled(cancel):
     if cancel is not None and cancel.is_set():
         raise RasterCancelled("Map image verification cancelled.")
+
+
+def regional_file_preflight(path: Path, cancel=None) -> tuple:
+    """Check a complete single-file regional database before opening SQLite."""
+    from fieldforge.navigation.mbtiles import MapCancelled
+    from fieldforge.navigation.pbf_stream import signature
+
+    if cancel is not None and cancel.is_set():
+        raise MapCancelled("Prepared regional map verification cancelled.")
+    path = Path(path).absolute()
+    before = signature(path)
+    if not 0 < before[2] <= format_byte_limit("ffmap"):
+        raise ValueError("Prepared regional maps must be regular files up to 4 GiB.")
+    for suffix in ("-wal", "-shm", "-journal"):
+        sidecar = Path(str(path) + suffix)
+        if sidecar.exists() or sidecar.is_symlink():
+            raise ValueError("Prepared regional map has a SQLite sidecar; close/export its writer first.")
+    with path.open("rb") as stream:
+        header = stream.read(100)
+    if not header.startswith(b"SQLite format 3\x00") or header[18:20] != b"\x01\x01":
+        raise ValueError("Use a closed, rollback-mode prepared regional database.")
+    if signature(path) != before:
+        raise ValueError("Prepared regional map changed during verification.")
+    return before
+
+
+def validate_regional_map(path: Path, cancel=None) -> None:
+    """Verify a nonempty prepared index without changing its embedded receipt."""
+    from fieldforge.navigation.regional_index import inspect_index
+
+    before = regional_file_preflight(path, cancel)
+    index = inspect_index(path, cancel=cancel)
+    if index.metadata["features"] == 0:
+        raise ValueError("An empty prepared regional index is not a downloadable map.")
+    if index.fingerprint != before or regional_file_preflight(path, cancel) != before:
+        raise ValueError("Prepared regional map changed during verification.")
 
 
 def _dimensions(width, height):
