@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import tkinter as tk
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
@@ -17,8 +18,51 @@ from fieldforge.navigation.route_overlay import fit_route, route_segments
 from fieldforge.ui.map_tasks import MapTaskWindow
 
 MAX_DRAW_SEGMENTS = 20000
+MAX_DRAW_MARKERS = 1500
+MAX_SELECTED_SEGMENTS = 5000
 MAX_LABELS = 80
+MAX_LABEL_CANDIDATES = 500
+PROJECTION_CHUNK_POINTS = 2000
 EXAMPLE_SHA256 = '40a25059d31a82521dcf49e3f1c9df385f1759b574d9bb1ca4ea37db91416992'
+
+
+@dataclass
+class _DrawBudget:
+    segments: int
+    markers: int
+    limited: bool = False
+
+
+def _layer(feature):
+    # Rendering order is not a claim about bridge/tunnel levels or traversability.
+    # Draw source points and area outlines below roads even if they occur later
+    # in the file; reserve the topmost geometry layer for the selection.
+    if len(feature.geometry) == 1:
+        return 2
+    if feature.kind.startswith('highway='):
+        return 4 if feature.kind.split('=', 1)[1] in {
+            'motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary',
+            'primary_link', 'secondary', 'secondary_link', 'tertiary', 'tertiary_link',
+        } else 3
+    if feature.kind.startswith(('waterway=', 'natural=water')):
+        return 1
+    return 0
+
+
+def _overlap(a, b):
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
+def _padded(box, padding=3):
+    return box[0] - padding, box[1] - padding, box[2] + padding, box[3] + padding
+
+
+def _visible_lines(geometry, view):
+    # Shared chunk endpoints preserve every original segment, including clipped
+    # and date-line segments. Never sample nonadjacent nodes or bridge a gap.
+    # Chunking also avoids constructing a huge Tk coordinate argument at once.
+    for offset in range(0, len(geometry) - 1, PROJECTION_CHUNK_POINTS - 1):
+        yield from route_segments(geometry[offset:offset + PROJECTION_CHUNK_POINTS], view)
 
 def _load_example(path, *, cancel=None, progress=None):
     result = read_street_source(path, cancel=cancel, progress=progress)
@@ -37,6 +81,7 @@ class StreetSourceWindow(MapTaskWindow):
         self.view = None
         self.matches = ()
         self.selected_id = None
+        self._geometry_limited = False
         self._resize_id = None
         self._drag = None
         self.query = tk.StringVar()
@@ -150,10 +195,10 @@ class StreetSourceWindow(MapTaskWindow):
         date = 'Unknown snapshot date' if source.replication_timestamp is None else 'Source reports ' + datetime.fromtimestamp(source.replication_timestamp, timezone.utc).isoformat()
         prefix = 'HISTORICAL FORMAT SAMPLE — not current coverage. ' if is_example else ''
         self.credit.set(prefix + '© OpenStreetMap contributors • ODbL 1.0 • openstreetmap.org/copyright • ' + date)
+        self.status.set(f'Read {source.nodes:,} nodes, {source.ways:,} ways, {source.relations:,} relations. {source.missing_node_ways} ways omitted for missing nodes; {source.polar_features} polar features omitted. No routing graph was installed.')
         self.query.set('')
         self.filter()
         self.fit()
-        self.status.set(f'Read {source.nodes:,} nodes, {source.ways:,} ways, {source.relations:,} relations. {source.missing_node_ways} ways omitted for missing nodes; {source.polar_features} polar features omitted. No routing graph was installed.')
 
     def filter(self):
         if not self.source or self._disposed:
@@ -219,44 +264,180 @@ class StreetSourceWindow(MapTaskWindow):
         if self._disposed or self.view is None or self.source is None:
             return
         self.canvas.delete('all')
-        used, labels, omitted = (0, [], 0)
-        features = sorted(self.source.features, key=lambda f: f.id == self.selected_id)
-        for feature in features:
-            selected = feature.id == self.selected_id
-            color = '#9f4c16' if feature.kind.startswith('highway=') else '#647b69'
-            if feature.kind.startswith(('waterway=', 'natural=water')):
-                color = '#287fac'
-            if selected:
-                color = '#6336a2'
+        background = _DrawBudget(MAX_DRAW_SEGMENTS, MAX_DRAW_MARKERS)
+        selection = _DrawBudget(MAX_SELECTED_SEGMENTS, 16)
+        selected = self.selected()
+        selected_anchor = None
+        invalid = 0
+        if selected is not None:
+            selected_anchor, failed = self._draw_geometry(selected, selection, selected=True)
+            invalid += failed
+        candidates = []
+        labels_limited = False
+        # Spend the ordinary geometry budget on roads first. Canvas layers below
+        # restore the visual order independently of feature/file/query order.
+        for feature in sorted(self.source.features, key=_layer, reverse=True):
+            if feature.id == self.selected_id:
+                continue
+            anchor, failed = self._draw_geometry(feature, background)
+            invalid += failed
+            if anchor is not None and feature.name != feature.id:
+                if len(candidates) < MAX_LABEL_CANDIDATES:
+                    candidates.append((feature, anchor))
+                else:
+                    labels_limited = True
+
+        self._geometry_limited = background.limited or selection.limited or bool(invalid)
+        caption = self.canvas.create_text(12, 12, anchor='nw', text=self._caption_text(),
+            fill='#193a30', width=max(30, self.view.width - 30), tags=('caption', 'caption-overlay'))
+        caption_background = self.canvas.create_rectangle(*_padded(self.canvas.bbox(caption)),
+            fill='#f0f3ee', outline='', tags='caption-overlay')
+        self.canvas.tag_lower(caption_background, caption)
+        occupied = [_padded(self.canvas.bbox(caption))]
+        # The selection gets its own bounded geometry budget and the first label
+        # placement; ordinary labels cannot consume its slot or cover its text.
+        if selected_anchor is not None:
+            box = self._draw_label(selected, selected_anchor, occupied, selected=True)
+            if box is not None:
+                occupied.append(box)
+        labels = 0
+        for feature, anchor in candidates:
+            if labels >= MAX_LABELS:
+                labels_limited = True
+                break
+            box = self._draw_label(feature, anchor, occupied)
+            if box is not None:
+                labels += 1
+                occupied.append(box)
+
+        for layer in range(5):
+            self.canvas.tag_raise(f'geometry-layer-{layer}')
+        self.canvas.tag_raise('ordinary-label')
+        self.canvas.tag_raise('selected-geometry')
+        self.canvas.tag_raise('caption-overlay')
+        self.canvas.tag_raise('selected-label')
+        limitations = []
+        if background.limited:
+            limitations.append('background drawing limit reached; some geometry may be omitted')
+        if selection.limited:
+            limitations.append('selected feature is only partly drawn')
+        if invalid:
+            limitations.append(f'{invalid} feature(s) could not be projected')
+        if labels_limited:
+            limitations.append('label limit reached; more names are available by search')
+        if limitations:
+            self.status.set('Display limited: ' + '; '.join(limitations) +
+                            '. Zoom in for detail. Source data remains loaded.')
+        elif self.status.get().startswith(('Display budget reached:', 'Display limited:')):
+            self.status.set('Preview redrawn within its display budgets. Labels avoid overlap. Not navigation.')
+
+    def _caption_text(self):
+        return 'SOURCE GEOMETRY • NO ROUTING\n' + (
+            'DRAW LIMITED — some source geometry is not drawn; zoom in.' if self._geometry_limited else
+            'Blank space is not proof that nothing is there.')
+
+    def _draw_geometry(self, feature, budget, *, selected=False):
+        layer = _layer(feature)
+        tags = ('feature', feature.id, 'map-geometry',
+                'selected-geometry' if selected else f'geometry-layer-{layer}')
+        color = '#ac7040' if feature.kind.startswith('highway=') else '#a8b8a5'
+        if feature.kind.startswith(('waterway=', 'natural=water')):
+            color = '#478dac'
+        if selected:
+            color = '#6336a2'
+        anchor, span = None, -1
+        try:
             if len(feature.geometry) == 1:
                 lon, lat = feature.geometry[0]
                 for x, y in self.view.locations(lat, lon):
-                    self.canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill=color, outline='white', tags=('feature', feature.id))
-            else:
-                try:
-                    lines = route_segments(feature.geometry, self.view)
-                except ValueError:
-                    omitted += 1
-                    continue
-                for line in lines:
-                    if used + len(line) > MAX_DRAW_SEGMENTS:
-                        omitted += 1
-                        continue
-                    used += len(line)
-                    self.canvas.create_line(*[v for p in line for v in p], fill=color, width=5 if selected else 2, tags=('feature', feature.id))
-            if feature.name != feature.id and len(labels) < MAX_LABELS:
-                lon, lat = feature.geometry[len(feature.geometry) // 2]
-                visible = self.view.locations(lat, lon)
-                if visible:
-                    x, y = visible[0]
-                    if selected or all((abs(x - a) > 95 or abs(y - b) > 18 for a, b in labels)):
-                        self.canvas.create_text(x + 5, y - 9, text=feature.name[:65], anchor='sw', fill='#1c322d', font=('TkDefaultFont', 9), tags=('feature', feature.id))
-                        labels.append((x, y))
-        self.canvas.create_text(12, 12, anchor='nw', text='SOURCE GEOMETRY • NO ROUTING\nBlank space is not proof that nothing is there.', fill='#193a30', width=max(150, self.view.width - 30), tags='caption')
-        if not omitted and self.status.get().startswith('Display budget reached:'):
-            self.status.set('Preview redrawn within its display budget. Not navigation; no source changed.')
-        if omitted:
-            self.status.set(f'Display budget reached: {omitted} line pieces not drawn. Zoom/search a smaller extract. Data remains loaded.')
+                    if budget.markers <= 0:
+                        budget.limited = True
+                        break
+                    budget.markers -= 1
+                    radius = 5 if selected else 2
+                    self.canvas.create_oval(x - radius, y - radius, x + radius, y + radius,
+                        fill=color, outline='white' if selected else color, tags=tags)
+                    if anchor is None or abs(x - self.view.width / 2) < abs(anchor[0] - self.view.width / 2):
+                        anchor = (x, y)
+                return anchor, False
+            if len(feature.geometry) < 2:
+                return None, False
+            if budget.segments <= 0:
+                budget.limited = True
+                return None, False
+            for line in _visible_lines(feature.geometry, self.view):
+                count = min(len(line) - 1, budget.segments)
+                if count <= 0:
+                    budget.limited = True
+                    break
+                drawn = line[:count + 1]
+                budget.segments -= count
+                self.canvas.create_line(*[v for point in drawn for v in point], fill=color,
+                    width=5 if selected else (2.5 if layer == 4 else 1.5), tags=tags)
+                # Anchor labels to a real visible segment, including when the
+                # source's middle node is outside the viewport.
+                extent = (max(p[0] for p in drawn) - min(p[0] for p in drawn) +
+                          max(p[1] for p in drawn) - min(p[1] for p in drawn))
+                if extent > span:
+                    middle = len(drawn) // 2
+                    a, b = drawn[middle - 1], drawn[middle]
+                    anchor, span = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2), extent
+                if count < len(line) - 1:
+                    budget.limited = True
+                    break
+        except ValueError:
+            return anchor, True
+        return anchor, False
+
+    def _draw_label(self, feature, point, occupied, *, selected=False):
+        name = ' '.join(feature.name.split()) or feature.id
+        if len(name) > 65:
+            name = name[:64] + '…'
+        group = 'selected-label' if selected else 'ordinary-label'
+        tags = ('feature', feature.id, group)
+        item = self.canvas.create_text(*point, text=name, anchor='sw',
+            fill='#482075' if selected else '#24392f', font=('TkDefaultFont', 9),
+            width=max(20, min(360, self.view.width - 24)), tags=tags + ('map-label',))
+        x, y = point
+        chosen = None
+        for px, py, anchor in ((x + 7, y - 8, 'sw'), (x - 7, y - 8, 'se'),
+                               (x + 7, y + 8, 'nw'), (x - 7, y + 8, 'ne')):
+            self.canvas.itemconfigure(item, anchor=anchor)
+            self.canvas.coords(item, px, py)
+            box = _padded(self.canvas.bbox(item))
+            if (box[0] >= 4 and box[1] >= 4 and box[2] <= self.view.width - 4 and
+                    box[3] <= self.view.height - 4 and
+                    not any(_overlap(box, other) for other in occupied)):
+                chosen = box
+                break
+        if chosen is None and selected:
+            # A selected edge feature must retain a readable on-canvas label.
+            # Its text is an annotation, never substituted map geometry.
+            self.canvas.itemconfigure(item, anchor='nw')
+            self.canvas.coords(item, 0, 0)
+            box = self.canvas.bbox(item)
+            # At an unusually small canvas a wrapped name can exceed the whole
+            # viewport. Shorten only the annotation; details retain the full name.
+            while len(name) > 1 and (box[2] - box[0] > self.view.width - 16 or
+                                    box[3] - box[1] > self.view.height - 16):
+                name = name[:-2] + '…'
+                self.canvas.itemconfigure(item, text=name)
+                box = self.canvas.bbox(item)
+            width, height = box[2] - box[0], box[3] - box[1]
+            px = max(8, min(x + 7, self.view.width - width - 8))
+            py = max(8, min(y + 8, self.view.height - height - 8))
+            if occupied[0][3] + height + 16 <= self.view.height:
+                py = max(occupied[0][3] + 8, py)
+            self.canvas.coords(item, px - box[0], py - box[1])
+            chosen = _padded(self.canvas.bbox(item))
+        if chosen is None:
+            self.canvas.delete(item)
+            return None
+        background = self.canvas.create_rectangle(*chosen,
+            fill='#f5efff' if selected else '#f0f3ee',
+            outline='#b99bcf' if selected else '', tags=tags + ('label-background',))
+        self.canvas.tag_lower(background, item)
+        return chosen
 
     def drag_start(self, event):
         self.canvas.focus_set()

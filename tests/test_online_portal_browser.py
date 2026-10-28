@@ -281,7 +281,7 @@ def test_browser_downloads_import_offline_and_mobile_layout(operated_portal, tmp
     failures, calls = [], []
     with sync_playwright() as playwright:
         browser_type = getattr(playwright, os.environ.get("FIELDFORGE_BROWSER", "chromium"))
-        browser = browser_type.launch()
+        browser = browser_type.launch(executable_path=os.environ.get("FIELDFORGE_BROWSER_EXECUTABLE"))
         context = browser.new_context(viewport={"width": 1280, "height": 900}, accept_downloads=True)
         page = context.new_page()
         page.on("dialog", _accept_connection)
@@ -416,7 +416,7 @@ def offline_route_download_page(operated_portal):
     failures = []
     with sync_playwright() as playwright:
         browser_type = getattr(playwright, os.environ.get("FIELDFORGE_BROWSER", "chromium"))
-        browser = browser_type.launch()
+        browser = browser_type.launch(executable_path=os.environ.get("FIELDFORGE_BROWSER_EXECUTABLE"))
         context = browser.new_context(viewport={"width": 1280, "height": 900}, accept_downloads=True)
         page = context.new_page()
         page.on("dialog", _accept_connection)
@@ -565,7 +565,7 @@ def portal_page(operated_portal):
     errors, calls = [], []
     with sync_playwright() as playwright:
         browser_type = getattr(playwright, os.environ.get("FIELDFORGE_BROWSER", "chromium"))
-        browser = browser_type.launch()
+        browser = browser_type.launch(executable_path=os.environ.get("FIELDFORGE_BROWSER_EXECUTABLE"))
         context = browser.new_context(accept_downloads=True, viewport={"width": 1280, "height": 900})
         page = context.new_page()
         page.on("dialog", _accept_connection)

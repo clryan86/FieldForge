@@ -1,4 +1,4 @@
-"""Publish explicitly supplied, licensed MBTiles and map images into a portal.
+"""Publish supplied, licensed MBTiles, prepared regional maps and map images.
 
 Example (the operator must have permission to redistribute the source file)::
 
@@ -34,13 +34,18 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import BinaryIO
 
-from fieldforge.online.map_validation import RasterValidationError, validate_raster_image
+from fieldforge.online.map_validation import (
+    RasterValidationError,
+    regional_file_preflight,
+    validate_raster_image,
+    validate_regional_map,
+)
 from fieldforge.online.models import (
     FORMATS as MODEL_FORMATS,
 )
 from fieldforge.online.models import (
-    MAX_IMAGE_BYTES,
-    MAX_MBTILES_BYTES,
+    format_byte_limit,
+    format_family,
     text,
     validate_asset,
 )
@@ -53,7 +58,8 @@ ID_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,79}\Z", re.ASCII)
 HASH_PATTERN = re.compile(r"[a-f0-9]{64}\Z", re.ASCII)
 FORMATS = {suffix: kind for kind, suffixes in MODEL_FORMATS.items() for suffix in suffixes}
 MIME_TYPES = {
-    "mbtiles": "application/vnd.sqlite3", "png": "image/png", "jpeg": "image/jpeg",
+    "mbtiles": "application/vnd.sqlite3", "ffmap": "application/vnd.sqlite3",
+    "png": "image/png", "jpeg": "image/jpeg",
     "webp": "image/webp", "tiff": "image/tiff", "gif": "image/gif", "bmp": "image/bmp",
     "ico": "image/vnd.microsoft.icon", "ppm": "image/x-portable-anymap", "tga": "image/x-tga",
     "jpeg2000": "image/jp2", "avif": "image/avif",
@@ -100,11 +106,11 @@ def _asset(value, *, legacy=False):
         raise CatalogError("Map filename must be a safe ASCII basename.")
     kind = value.get("format")
     if not isinstance(kind, str) or kind not in MIME_TYPES or FORMATS.get(Path(filename).suffix.lower()) != kind:
-        raise CatalogError("Map filename/format must identify a supported MBTiles file or raster image.")
+        raise CatalogError("Map filename/format must identify MBTiles, a prepared regional map or a raster image.")
     size, digest = value.get("bytes"), value.get("sha256")
-    maximum = MAX_MBTILES_BYTES if kind == "mbtiles" else MAX_IMAGE_BYTES
+    maximum = format_byte_limit(kind)
     if type(size) is not int or not 0 < size <= maximum:
-        raise CatalogError("Published maps are limited to 16 GiB for MBTiles or 64 MiB for images.")
+        raise CatalogError("Published maps are limited to 16 GiB for MBTiles, 4 GiB for prepared regional maps or 64 MiB for images.")
     if not isinstance(digest, str) or not HASH_PATTERN.fullmatch(digest):
         raise CatalogError("Published map SHA-256 must be 64 lowercase hexadecimal characters.")
     download_path = f"/api/v1/maps/{map_id}/download"
@@ -145,7 +151,13 @@ def _image_format(header):
 
 
 def inspect_raster(path: Path, kind: str) -> None:
-    """Check declared format and a bounded sample; never treat vector data as raster."""
+    """Check the declared map format through its supported offline readers."""
+    if kind == "ffmap":
+        try:
+            validate_regional_map(path)
+        except (ValueError, TimeoutError, sqlite3.Error) as exc:
+            raise CatalogError("Prepared regional map is not supported: " + str(exc)) from None
+        return
     with path.open("rb") as stream:
         header = stream.read(100)
     if kind != "mbtiles":
@@ -328,7 +340,7 @@ class LegacyCatalog:
                 raise CatalogError("Legacy map entries must be objects.")
             filename = _text(entry.get("filename"), "filename", 180)
             kind = FORMATS.get(Path(filename).suffix.lower())
-            if kind is None or entry.get("kind") != ("mbtiles" if kind == "mbtiles" else "image"):
+            if kind is None or entry.get("kind") != format_family(kind):
                 raise CatalogError("Legacy map kind and file format disagree.")
             map_id = entry.get("id")
             asset = _asset({
@@ -419,7 +431,7 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
     extension = source.suffix.lower()
     kind = FORMATS.get(extension)
     if kind is None:
-        raise CatalogError("Choose a supported MBTiles or raster image format; archives/vector packs are unsupported.")
+        raise CatalogError("Choose MBTiles, a prepared .ffmap regional map or a raster image; archives and raw source packs are unsupported.")
     # Validate before doing a potentially large file copy.
     metadata = {
         "id": map_id, "title": title, "filename": f"{map_id}{extension}", "format": kind,
@@ -429,6 +441,12 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
     if source_name is not None:
         metadata["source"] = source_name
     prospective = _asset(metadata)
+    regional_source = None
+    if kind == "ffmap":
+        try:
+            regional_source = regional_file_preflight(source)
+        except ValueError as exc:
+            raise CatalogError(str(exc)) from None
     for suffix in ("-wal", "-shm", "-journal"):
         sidecar = Path(str(source) + suffix)
         if kind == "mbtiles" and sidecar.exists() and sidecar.stat().st_size:
@@ -452,9 +470,9 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
                                  | getattr(os, "O_BINARY", 0))
             with os.fdopen(descriptor, "rb") as input_stream:
                 before = os.fstat(input_stream.fileno())
-                maximum = MAX_MBTILES_BYTES if kind == "mbtiles" else MAX_IMAGE_BYTES
+                maximum = format_byte_limit(kind)
                 if not stat.S_ISREG(before.st_mode) or not 0 < before.st_size <= maximum:
-                    raise CatalogError("Use a regular MBTiles file up to 16 GiB or image up to 64 MiB.")
+                    raise CatalogError("Use a regular MBTiles file up to 16 GiB, prepared regional map up to 4 GiB or image up to 64 MiB.")
                 digest, size = hashlib.sha256(), 0
                 with tempfile.NamedTemporaryFile(dir=objects, suffix=extension, delete=False) as output:
                     temporary = Path(output.name)
@@ -469,6 +487,12 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
                 if _signature(before) != _signature(os.fstat(input_stream.fileno())) or size != before.st_size:
                     raise CatalogError("Map changed during publishing; retry with a completed export.")
             inspect_raster(temporary, kind)
+            if regional_source is not None:
+                try:
+                    if regional_file_preflight(source) != regional_source:
+                        raise CatalogError("Prepared regional source changed during publication.")
+                except ValueError as exc:
+                    raise CatalogError(str(exc)) from None
             digest = digest.hexdigest()
             prospective.update(bytes=size, sha256=digest)
             storage_path = f"objects/{digest}{extension}"
@@ -516,7 +540,7 @@ def publish_map(root: str | Path, source: str | Path, *, map_id: str, title: str
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     subparsers = parser.add_subparsers(dest="command", required=True)
-    add = subparsers.add_parser("add", help="Publish a licensed local MBTiles pack or map image.")
+    add = subparsers.add_parser("add", help="Publish a licensed local MBTiles pack, prepared regional map or map image.")
     for flag in ("root", "file", "id", "title", "attribution", "license", "coverage", "version"):
         add.add_argument("--" + flag, required=True)
     add.add_argument("--source", dest="source_name", help="Actual source or provider reference for this map.")
@@ -525,6 +549,12 @@ def main(argv=None) -> int:
     build = subparsers.add_parser("build", help="Prepare all maps in an explicit inventory as one new catalog.")
     build.add_argument("--root", required=True, help="New catalog directory; must not already exist.")
     build.add_argument("--inventory", required=True, help="JSON inventory with approved maps and their provenance.")
+    collection = subparsers.add_parser("prepare-collection", help="Verify selected collection ZIPs as a new map inventory.")
+    collection.add_argument("--collection", required=True, help="Local fieldforge-map-collection-v1 JSON record.")
+    collection.add_argument("--archives", required=True, help="Existing folder containing the selected ZIPs.")
+    collection.add_argument("--output", required=True, help="New inventory directory; must not already exist.")
+    collection.add_argument("--select", action="append", required=True, dest="filenames",
+                            help="Exact collection ZIP basename; repeat for each explicit selection.")
     args = parser.parse_args(argv)
     try:
         if args.command == "list":
@@ -532,13 +562,18 @@ def main(argv=None) -> int:
         elif args.command == "build":
             from fieldforge.online.inventory import publish_inventory
             result = {"maps": publish_inventory(args.root, args.inventory)}
+        elif args.command == "prepare-collection":
+            from fieldforge.online.collection import prepare_collection
+            result = prepare_collection(args.collection, args.archives, args.output, filenames=args.filenames)
         else:
             result = publish_map(args.root, args.file, map_id=args.id, title=args.title,
                                  attribution=args.attribution, license=args.license,
                                  coverage=args.coverage, version=args.version, source_name=args.source_name)
         print(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False))
         return 0
-    except (CatalogError, OSError) as exc:
+    except (ValueError, OSError) as exc:
+        # Under python -m, imported APIs use the canonical catalog error class,
+        # distinct from __main__.CatalogError; all validation errors are ValueErrors.
         parser.exit(2, f"Map publishing failed: {exc}\n")
 
 
