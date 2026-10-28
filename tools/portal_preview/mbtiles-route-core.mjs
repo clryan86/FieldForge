@@ -1,30 +1,29 @@
-import {MAX_POINTS,MAX_WAYPOINTS} from "./desk-core.mjs";
+import {MAX_POINTS,MAX_WAYPOINTS,pointDistance} from "./desk-core.mjs";
 import {MB_LAT_LIMIT,MAX_MB_ROUTE_TILES,mbScreenPoint} from "./mbtiles-core.mjs";
 
 function routeText(value,fallback) {return (typeof value==="string"?[...value.replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069\ufffe\uffff\ud800-\udfff]/gu," ").replace(/\s+/g," ").trim()].slice(0,160).join(""):"")||fallback;}
-const EARTH_RADIUS_METERS=6371008.8;
-function traceLength(segments) {
-  let meters=0,hasEdge=false;
-  for(const part of segments)for(let i=1;i<part.length;i++){
-    hasEdge=true;const a=part[i-1],b=part[i],radians=Math.PI/180;
-    const lat1=a.lat*radians,lat2=b.lat*radians,dLat=lat2-lat1;
-    const dLon=((b.lon-a.lon+540)%360-180)*radians;
-    const h=Math.sin(dLat/2)**2+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
-    meters+=2*EARTH_RADIUS_METERS*Math.asin(Math.sqrt(Math.max(0,Math.min(1,h))));
-  }
-  return hasEdge?meters:null;
-}
 export function prepareMBRoute(data,filename) {
   if(!data||!Array.isArray(data.segments)||!Array.isArray(data.waypoints)||data.segments.length>MAX_POINTS||data.waypoints.length>MAX_WAYPOINTS)throw new Error("Unsupported GPX overlay structure.");
-  const points=[],segments=[];
+  const points=[],segments=[],groups=[];let traceLengthMeters=null;
   function copy(point,kind,segment,index){
     if(points.length>=MAX_POINTS)throw new Error("GPX overlay exceeds 25,000 points.");
     if(!point||!Number.isFinite(point.lat)||!Number.isFinite(point.lon)||Math.abs(point.lat)>MB_LAT_LIMIT||Math.abs(point.lon)>180)throw new Error("Every overlay point needs Web Mercator latitude within ±85.05112878° and longitude within ±180°. The GPX inspector can still show polar files.");
-    const p={lat:point.lat,lon:point.lon,name:routeText(point.name,""),kind,segment,index,u:(point.lon+180)/360,v:(1-Math.asinh(Math.tan(point.lat*Math.PI/180))/Math.PI)/2};points.push(p);return p;
+    const p={lat:point.lat,lon:point.lon,name:routeText(point.name,""),kind,segment,index,group:groups.length,legMeters:null,segmentMeters:null,u:(point.lon+180)/360,v:(1-Math.asinh(Math.tan(point.lat*Math.PI/180))/Math.PI)/2};points.push(p);return p;
   }
-  for(const [i,part] of data.segments.entries()){if(!Array.isArray(part)||part.length>MAX_POINTS)throw new Error("Unsupported GPX segment.");const copied=part.map((p,j)=>copy(p,"track",i,j));if(copied.length)segments.push(copied);}
-  const waypoints=data.waypoints.map((p,i)=>copy(p,"waypoint",-1,i));if(!points.length)throw new Error("The GPX overlay has no points.");
-  return {filename:routeText(filename,"GPX file"),segments,waypoints,points,traceLengthMeters:traceLength(segments)};
+  for(const [i,part] of data.segments.entries()){
+    if(!Array.isArray(part)||part.length>MAX_POINTS)throw new Error("Unsupported GPX segment.");
+    const start=points.length,copied=part.map((p,j)=>copy(p,"track",i,j));if(!copied.length)continue;
+    let meters=0;
+    for(let j=0;j<copied.length;j++){
+      const p=copied[j];if(j){p.legMeters=pointDistance(copied[j-1],p);meters+=p.legMeters;}p.segmentMeters=meters;
+    }
+    const lengthMeters=copied.length>1?meters:null;
+    if(lengthMeters!==null)traceLengthMeters=(traceLengthMeters??0)+lengthMeters;
+    groups.push({kind:"track",segment:i,start,count:copied.length,lengthMeters});segments.push(copied);
+  }
+  const start=points.length,waypoints=data.waypoints.map((p,i)=>copy(p,"waypoint",-1,i));if(!points.length)throw new Error("The GPX overlay has no points.");
+  if(waypoints.length)groups.push({kind:"waypoint",segment:-1,start,count:waypoints.length,lengthMeters:null});
+  return {filename:routeText(filename,"GPX file"),segments,waypoints,points,groups,traceLengthMeters};
 }
 
 // Conservative supercover of the same straight Mercator edges as the overlay.

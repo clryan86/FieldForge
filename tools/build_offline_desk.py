@@ -12,6 +12,7 @@ import html
 import json
 import re
 from pathlib import Path
+
 from build_mbtiles_worker import insert_mbtiles_worker
 
 FILENAME = "fieldforge-offline.html"
@@ -100,7 +101,8 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
         shell = replace_once(shell, marker, value)
     fingerprint = hashlib.sha256((shell + style + script).encode()).hexdigest()[:12]
     shell = replace_once(shell, "OFFLINE_EDITION_ID", fingerprint)
-    digest = lambda value: base64.b64encode(hashlib.sha256(value.encode("utf-8")).digest()).decode("ascii")
+    def digest(value):
+        return base64.b64encode(hashlib.sha256(value.encode("utf-8")).digest()).decode("ascii")
     policy = f"default-src 'none'; script-src 'sha256-{digest(script)}'; style-src 'sha256-{digest(style)}'; img-src data: blob:; connect-src 'none'; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'"
     document = f'''<!doctype html>
 <html lang="en" data-edition="offline" data-sources-enabled="false"><head>

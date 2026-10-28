@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import base64
 import contextlib
-import io
 import hashlib
+import io
 import json
 import re
 import tempfile
@@ -12,8 +12,8 @@ import unittest
 from html.parser import HTMLParser
 from pathlib import Path
 
-from build_offline_desk import MODULES, bundle_modules, export_offline
 from build_hosted_preview import FAVICON, export
+from build_offline_desk import MODULES, bundle_modules, export_offline
 
 ROOT = Path(__file__).resolve().parent
 

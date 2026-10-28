@@ -189,6 +189,11 @@ hosting, and provider data. Saved routes do not provide live traffic or automati
 offline rerouting. See [Online map portal](docs/ONLINE_MAP_PORTAL.md) for setup,
 file locations, supported formats, and the online/offline boundary.
 
+The browser preparation desk also opens local GPX and MBTiles files. Jump
+directly between GPX segments and waypoints and inspect approximate distances
+within the selected segment, with gaps excluded. See the
+[browser preparation desk guide](docs/BROWSER_PREPARATION_DESK.md).
+
 ## Windows development application
 
 The CI-produced **FieldForge-Windows-x64** archive bundles Python, Tk, Pillow image codecs, the serial adapter and the PDF

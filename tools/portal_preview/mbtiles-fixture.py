@@ -16,8 +16,10 @@ def varint(value):
 
 
 def field(number, value):
-    if isinstance(value, int): return varint(number << 3) + varint(value)
-    if isinstance(value, str): value = value.encode()
+    if isinstance(value, int):
+        return varint(number << 3) + varint(value)
+    if isinstance(value, str):
+        value = value.encode()
     return varint(number << 3 | 2) + varint(len(value)) + value
 
 
@@ -46,24 +48,30 @@ def fixture(mode="valid"):
     if mode != "unindexed":
         db.execute('CREATE UNIQUE INDEX "tile index" ON tiles(zoom_level,tile_column,tile_row)')
     meta = [("name", "Synthetic test fixture"), ("format", "pbf" if mode.startswith("vector") else "png"), ("attribution", "<b>Fixture credit</b>"), ("center", "0,0,22")]
-    if mode == "xyz": meta.append(("scheme", "xyz"))
-    if mode == "duplicate": meta.append(("name", "Duplicate"))
+    if mode == "xyz":
+        meta.append(("scheme", "xyz"))
+    if mode == "duplicate":
+        meta.append(("name", "Duplicate"))
     db.executemany("INSERT INTO metadata VALUES (?,?)", meta)
-    if mode == "oversize-metadata": db.execute("INSERT INTO metadata VALUES ('description',?)", ("x" * 16385,))
+    if mode == "oversize-metadata":
+        db.execute("INSERT INTO metadata VALUES ('description',?)", ("x" * 16385,))
     db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", [(1, 0, 0, png((255, 0, 0))), (1, 0, 1, png((0, 0, 255))), (2, 1, 1, png((0, 255, 0)))])
     if mode.startswith("vector"):
         vector = vector_tile()
         db.execute("UPDATE tiles SET tile_data=?", (vector,))
         db.execute("UPDATE tiles SET tile_data=? WHERE tile_row=0", (gzip.compress(vector, mtime=0),))
-        if mode == "vector-mixed": db.execute("UPDATE tiles SET tile_data=? WHERE tile_row=1", (b'\x1a\xff',))
-    if mode == "oversize-tile": db.execute("UPDATE tiles SET tile_data=zeroblob(2097153) WHERE zoom_level=1 AND tile_row=0")
+        if mode == "vector-mixed":
+            db.execute("UPDATE tiles SET tile_data=? WHERE tile_row=1", (b'\x1a\xff',))
+    if mode == "oversize-tile":
+        db.execute("UPDATE tiles SET tile_data=zeroblob(2097153) WHERE zoom_level=1 AND tile_row=0")
     if mode == "route-batch":
         db.execute("DELETE FROM tiles")
         tile = png((40, 90, 120))
         db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", [(9, x, 501, tile) for x in range(129)])
     if mode == "route-types":
         db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", [(2, 0, 0, None), (2, 0, 1, 'not a blob'), (2, 0, 2, b''), (2, 0, 3, b'not an image')])
-    if mode == "bad-coordinate": db.execute("UPDATE tiles SET tile_column=-1 WHERE zoom_level=1")
+    if mode == "bad-coordinate":
+        db.execute("UPDATE tiles SET tile_column=-1 WHERE zoom_level=1")
     if mode == "coverage-invalid":
         db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", [(1, 1, 99, b'x'), (1, 'invalid', 0, b'x'), (1, 1, -1, b'x')])
     if mode in ("coverage-limit", "coverage-exact"):
@@ -73,11 +81,13 @@ def fixture(mode="valid"):
         db.execute("DELETE FROM tiles")
         rows = [(0, 0, 0, b'x')] if mode == "coverage-world" else [(8, 0, 0, b'x'), (8, 255, 255, b'x')]
         db.executemany("INSERT INTO tiles VALUES (?,?,?,?)", rows)
-    if mode == "view": db.executescript("ALTER TABLE tiles RENAME TO source_tiles; CREATE VIEW tiles AS SELECT * FROM source_tiles;")
+    if mode == "view":
+        db.executescript("ALTER TABLE tiles RENAME TO source_tiles; CREATE VIEW tiles AS SELECT * FROM source_tiles;")
     db.commit()
     data = db.serialize()
     db.close()
-    if mode == "wal": data = data[:18] + b"\x02\x02" + data[20:]
+    if mode == "wal":
+        data = data[:18] + b"\x02\x02" + data[20:]
     return data
 
 

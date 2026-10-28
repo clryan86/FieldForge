@@ -64,7 +64,7 @@ export function parseGPX(text, Parser = globalThis.DOMParser) {
 }
 
 export function pointDistance(a, b) {
-  const dLat = radians(b.lat - a.lat), dLon = radians(b.lon - a.lon);
+  const dLat = radians(b.lat - a.lat), dLon = radians((b.lon - a.lon + 540) % 360 - 180);
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(radians(a.lat)) * Math.cos(radians(b.lat)) * Math.sin(dLon / 2) ** 2;
   return 6371008.8 * 2 * Math.asin(Math.sqrt(Math.max(0, Math.min(1, h))));
 }

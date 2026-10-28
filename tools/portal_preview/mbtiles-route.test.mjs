@@ -94,3 +94,41 @@ test("GPX trace length measures each segment independently and uses the short da
   assert.equal(route([[p(0,0),p(0,0)]]).traceLengthMeters,0);
 });
 
+test("segment navigation distances exclude gaps and waypoints and preserve original input",()=>{
+  const source={segments:[[p(0,0),p(0,1),p(0,3)],[],[p(0,170),p(0,171)]],waypoints:[p(70,-80)]};
+  const original=structuredClone(source),data=prepareMBRoute(source,"segments.gpx"),degree=6371008.8*Math.PI/180;
+  assert.deepEqual(source,original);
+  assert.deepEqual(data.groups.map(g=>[g.kind,g.segment,g.start,g.count]),[["track",0,0,3],["track",2,3,2],["waypoint",-1,5,1]]);
+  assert.deepEqual(data.points.map(p=>p.group),[0,0,0,1,1,2]);
+  assert.equal(data.points[0].legMeters,null);assert.equal(data.points[3].legMeters,null);
+  for(const [i,expected] of [[0,0],[1,degree],[2,3*degree],[3,0],[4,degree]])assert.ok(Math.abs(data.points[i].segmentMeters-expected)<1e-6);
+  assert.ok(Math.abs(data.points[2].legMeters-2*degree)<1e-6);
+  assert.ok(Math.abs(data.groups[0].lengthMeters-3*degree)<1e-6);
+  assert.ok(Math.abs(data.groups[1].lengthMeters-degree)<1e-6);
+  assert.ok(Math.abs(data.traceLengthMeters-4*degree)<1e-6);
+  assert.equal(data.waypoints[0].legMeters,null);assert.equal(data.waypoints[0].segmentMeters,null);
+  assert.equal(data.groups[2].lengthMeters,null);
+});
+
+test("isolated and duplicate points keep absent distances distinct from a zero-length trace",()=>{
+  const data=route([[],[p(0,0)],[p(10,10),p(10,10)]],[p(0,0),p(10,10)]);
+  assert.deepEqual(data.groups.map(g=>g.lengthMeters),[null,0,null]);
+  assert.equal(data.points[0].legMeters,null);assert.equal(data.points[1].legMeters,null);
+  assert.equal(data.points[2].legMeters,0);assert.equal(data.points[2].segmentMeters,0);
+  assert.equal(data.traceLengthMeters,0);
+  const alone=route([[p(0,0)],[p(80,100)]]);
+  assert.equal(alone.traceLengthMeters,null);assert.ok(alone.groups.every(g=>g.lengthMeters===null));
+  assert.ok(route([],[p(0,0),p(70,100)]).points.every(p=>p.segmentMeters===null));
+});
+
+test("segment distances use the short date-line arc in either direction",()=>{
+  const degree=6371008.8*Math.PI/180;
+  for(const pair of [[179,-179],[-179,179]]){
+    const data=route([[p(0,pair[0]),p(0,pair[1])]]);
+    assert.ok(Math.abs(data.points[1].legMeters-2*degree)<1e-6);
+    assert.equal(data.points[1].segmentMeters,data.groups[0].lengthMeters);
+    assert.equal(data.traceLengthMeters,data.groups[0].lengthMeters);
+  }
+  assert.equal(route([[p(10,180),p(10,-180)]]).traceLengthMeters,0);
+});
+

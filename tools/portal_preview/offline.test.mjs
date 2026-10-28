@@ -146,6 +146,27 @@ class FixtureXMLParser {
   }
 }
 const overlayGPX='<gpx xmlns="http://www.topografix.com/GPX/1/1"><wpt lat="0" lon="100"><name>Camp &lt;b&gt;name&lt;/b&gt;</name></wpt><trk><trkseg><trkpt lat="38.12345678901234" lon="-90.12345678901234"/><trkpt lat="38.2" lon="-90"/></trkseg><trkseg><trkpt lat="-38" lon="-90"/><trkpt lat="-38.1" lon="-89.9"/></trkseg></trk></gpx>';
+test("offline GPX segment jumps and point distances work before opening a map and reset with the overlay",async()=>{
+  const app=boot({gpxParser:FixtureXMLParser});
+  const text='<gpx><wpt lat="60" lon="100"/><trk><trkseg><trkpt lat="0" lon="0"/><trkpt lat="0" lon="1"/><trkpt lat="0" lon="3"/></trkseg><trkseg><trkpt lat="0" lon="170"/></trkseg><trkseg><trkpt lat="0" lon="-10"/><trkpt lat="0" lon="-10"/></trkseg></trk></gpx>';
+  const load=async value=>{app.id("deskGpx").files=[{name:"segments.gpx",size:value.length,text:async()=>value}];await app.id("deskGpx").fire("change");await app.id("deskViewMap").fire("click");};
+  await load(text);
+  assert.equal(app.id("mbRouteControls").disabled,false);assert.equal(app.id("mbRouteCentre").disabled,true);
+  assert.equal(app.id("mbRouteGroup").children.length,4);assert.match(app.id("mbRouteGroup").children[0].textContent,/Segment 1 · 3 points · approximately 333.6 km/);
+  assert.match(app.id("mbRouteDistance").textContent,/0.00 km \/ 0.00 mi from start · 333.6 km/);
+  app.id("mbRoutePoint").value="1";app.id("mbRoutePoint").fire("input");
+  assert.match(app.id("mbRouteDistance").textContent,/111.2 km.*from start · 222.4 km/);assert.match(app.id("mbRouteDistance").textContent,/Previous recorded leg: 111.2 km/);
+  app.id("mbRouteGroup").value="1";app.id("mbRouteGroup").fire("change");
+  assert.equal(app.id("mbRoutePoint").value,"3");assert.equal(app.id("mbRouteCoordinates").textContent,"0, 170");assert.match(app.id("mbRouteDistance").textContent,/Isolated GPX point/);
+  app.id("mbRouteNext").fire("click");assert.equal(app.id("mbRouteGroup").value,"2");assert.match(app.id("mbRouteDistance").textContent,/0.00 km.*from start · 0.00 km/);
+  app.id("mbRouteGroup").value="3";app.id("mbRouteGroup").fire("change");
+  assert.equal(app.id("mbRoutePoint").value,"6");assert.match(app.id("mbRouteDistance").textContent,/Separate waypoint/);assert.equal(app.id("mbRouteNext").disabled,true);
+  for(const invalid of ["","-1","1.5","99","NaN"]){app.id("mbRouteGroup").value=invalid;app.id("mbRouteGroup").fire("change");assert.equal(app.id("mbRoutePoint").value,"6");}
+  app.id("mbRoutePrevious").fire("click");assert.equal(app.id("mbRouteGroup").value,"2");assert.match(app.id("mbRouteDistance").textContent,/Previous recorded leg: 0.00 km/);
+  app.id("mbRouteClear").fire("click");assert.equal(app.id("mbRouteGroup").children.length,0);assert.equal(app.id("mbRouteDistance").textContent,"");assert.equal(app.id("mbRouteCard").hidden,true);
+  await load('<gpx><wpt lat="0" lon="0"/></gpx>');assert.equal(app.id("mbRouteGroup").children.length,1);assert.match(app.id("mbRouteDistance").textContent,/Separate waypoint/);assert.equal(app.id("mbRouteGroup").value,"0");
+  assert.equal(app.requests,0);assert.equal(app.storageTouches,0);assert.deepEqual(app.opened,[]);
+});
 for(const mode of ["valid","vector","vector-mixed"])test(`offline GPX overlays connect the inspector to ${mode} MBTiles while preserving gaps and original point coordinates`,{timeout:5000},async()=>{
   const app=boot({mbtiles:true,gpxParser:FixtureXMLParser}),raw=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",[resolve(root,"portal_preview/mbtiles-fixture.py"),mode]);
   const loadGPX=async(text=overlayGPX)=>{app.id("deskGpx").files=[{name:"track.gpx",size:text.length,text:async()=>text}];await app.id("deskGpx").fire("change");};

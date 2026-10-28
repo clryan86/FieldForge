@@ -27,6 +27,7 @@ on:
       - 'tests/map_fixture.py'
       - 'tests/conftest.py'
       - 'pyproject.toml'
+      - 'tools/**'
       - '.github/workflows/map-portal.yml'
   pull_request:
     branches: [chatgpt/offline-knowledge-foundation]
@@ -54,12 +55,29 @@ on:
       - 'tests/map_fixture.py'
       - 'tests/conftest.py'
       - 'pyproject.toml'
+      - 'tools/**'
       - '.github/workflows/map-portal.yml'
 
 permissions:
   contents: read
 
 jobs:
+  offline-desk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check hosted and standalone offline exports
+        run: python -m unittest discover -s tools -p 'test_*.py'
+      - name: Require preparation desk and embedded offline worker regressions
+        run: node --test tools/portal_preview/*.test.mjs
+
   linux-maps:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -98,6 +116,7 @@ jobs:
         run: >-
           python -m pytest -o addopts='' -q -ra
           tests/test_online_portal_browser.py tests/test_regional_portal_browser.py
+          tools/test_offline_desk_browser.py
 
   windows-maps:
     runs-on: windows-latest
