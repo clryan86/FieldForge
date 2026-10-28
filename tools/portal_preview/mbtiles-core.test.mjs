@@ -74,12 +74,14 @@ test("saved-coordinate markers keep exact centres, use the nearest date-line cop
   assert.equal(mbScreenPoint(84,0,mbFrame(0,0,10)).inside,false);assert.equal(mbScreenPoint(0,120,mbFrame(0,0,10)).inside,false);
   assert.throws(()=>mbScreenPoint(90,0,mbFrame(0,0,0)),/Mercator/);
 });
-test("built SQLite worker starts and reads a pack with network, eval and WebAssembly disabled",async()=> {
+for(const wasm of [false,true])test(`built SQLite worker reads raster/vector packs without network or string eval, WebAssembly ${wasm?"enabled":"disabled"}`,async()=> {
   const root=fileURLToPath(new URL("../",import.meta.url));
   const source=execFileSync(process.env.FIELDFORGE_TEST_PYTHON||"python",["-c","from pathlib import Path; from build_mbtiles_worker import worker_source; print(worker_source(Path('portal_preview')))"],{cwd:root,maxBuffer:4*1024*1024,encoding:"utf8"});
   let reply,requests=0;const forbidden=()=>{requests++;throw new Error("Network forbidden");};
-  const sandbox={self:{postMessage:value=>reply(value)},crypto:webcrypto,Blob,DecompressionStream,TextDecoder,TextEncoder,setTimeout,clearTimeout,console:{log(){},error(){},warn(){}},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden};
-  vm.createContext(sandbox,{codeGeneration:{strings:false,wasm:false}});vm.runInContext(source,sandbox,{timeout:5000});
+  const sandbox={self:{postMessage:value=>reply(value)},crypto:webcrypto,Blob,DecompressionStream,TextDecoder,TextEncoder,atob,setTimeout,clearTimeout,console:{log(){},error(){},warn(){}},fetch:forbidden,XMLHttpRequest:forbidden,WebSocket:forbidden};
+  let instantiations=0;
+  if(wasm)sandbox.WebAssembly=new Proxy(WebAssembly,{get(target,key){return key==="instantiate"?(...args)=>{instantiations++;return target.instantiate(...args);}:Reflect.get(target,key);}});
+  vm.createContext(sandbox,{codeGeneration:{strings:false,wasm}});vm.runInContext(source,sandbox,{timeout:5000});
   const send=data=>new Promise(resolve=>{reply=resolve;sandbox.self.onmessage({data});});
   const data=fixture(),opened=await send({id:1,kind:"open",bytes:data.buffer});assert.equal(opened.error,undefined);assert.equal(opened.result.name,"Synthetic test fixture");
   const frame=await send({id:2,kind:"frame",lat:opened.result.initial.lat,lon:-90,zoom:1});assert.equal(frame.error,undefined);assert.ok(frame.result.tiles.some(tile=>tile.data));assert.equal(requests,0);
@@ -91,7 +93,9 @@ test("built SQLite worker starts and reads a pack with network, eval and WebAsse
   const vectorFrame=await send({id:4,kind:"frame",lat:vector.result.initial.lat,lon:-90,zoom:1});assert.equal(vectorFrame.error,undefined);assert.ok(vectorFrame.result.tiles.some(tile=>tile.vector?.features.length===3));assert.ok(vectorFrame.result.tiles.some(tile=>tile.issue?.includes("Truncated protobuf")));assert.ok(vectorFrame.result.tiles.every(tile=>!tile.data));assert.equal(requests,0);
   const vectorContent=await send({id:12,kind:"tile-content",zoom:1,x:0,y:1});assert.equal(vectorContent.result.decode_status,"decoded");assert.equal(vectorContent.result.vector_features,3);assert.equal(vectorContent.result.data,undefined);assert.equal(vectorContent.result.vector,undefined);
   const corruptContent=await send({id:13,kind:"tile-content",zoom:1,x:0,y:0});assert.equal(corruptContent.result.decode_status,"unreadable");assert.match(corruptContent.result.decode_issue,/Truncated protobuf/);assert.equal(corruptContent.result.data,undefined);assert.equal(requests,0);
-  const provenance=JSON.parse(readFileSync(new URL("./vendor/sql.js-provenance.json",import.meta.url)));assert.equal(createHash("sha256").update(readFileSync(new URL("./vendor/sql-asm-1.14.2.js",import.meta.url))).digest("hex"),provenance.sha256);
+  assert.equal(instantiations>0,wasm);
+  const provenance=JSON.parse(readFileSync(new URL("./vendor/sql.js-provenance.json",import.meta.url)));
+  for(const receipt of [provenance,provenance.wasm_loader,provenance.wasm_binary])assert.equal(createHash("sha256").update(readFileSync(new URL("./vendor/"+receipt.file,import.meta.url))).digest("hex"),receipt.sha256);
 });
 
 test("path records distinguish present, missing and unsupported without retrieving tile blobs",()=>{

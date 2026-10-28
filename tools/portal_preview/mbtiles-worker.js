@@ -1,6 +1,19 @@
 // Runs only inside a dedicated, disposable worker, after the pinned SQL.js and core.
 let mbPack=null;
-const mbSQL=initSqlJs({print:()=>{},printErr:()=>{}});
+async function mbInitializeSQL() {
+  const options={print:()=>{},printErr:()=>{}};
+  if(typeof WebAssembly==="object"){
+    try{
+      // Probe policy as well as API presence. The JavaScript fallback remains
+      // usable when a browser or the containing page disables WebAssembly.
+      new WebAssembly.Module(new Uint8Array([0,97,115,109,1,0,0,0]));
+      const bytes=Uint8Array.from(atob(mbWasmBase64),c=>c.charCodeAt(0));
+      return await mbInitWasm({...options,wasmBinary:bytes});
+    }catch(error){/* Use the separately verified JavaScript build below. */}
+  }
+  return mbInitAsm(options);
+}
+const mbSQL=mbInitializeSQL();
 self.onmessage=async event=> {
   const {id,kind,bytes,lat,lon,zoom,tiles,x,y}=event.data;
   try {

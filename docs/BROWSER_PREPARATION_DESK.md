@@ -56,6 +56,14 @@ waypoints and cleanup, and checks page errors, network requests and overflow.
 Set `FIELDFORGE_OFFLINE_SCREENSHOT_DIR` to retain screenshots. An existing local
 browser executable can be supplied with `FIELDFORGE_BROWSER_EXECUTABLE`.
 
+The embedded reader prefers the pinned SQL.js 1.14.2 WebAssembly build and
+includes its binary in the same HTML. This avoids the first-query stack overflow
+reproduced with that release's JavaScript build in Chromium 143. A separate
+JavaScript build remains available when WebAssembly is disabled; both engines
+have raster/vector and no-network regressions. Builds verify all three upstream
+asset hashes. The offline CSP permits WebAssembly compilation while continuing
+to block JavaScript string evaluation, external resources and network requests.
+
 The map-portal workflow runs the export and JavaScript suites in its offline-desk
 job and requires the native browser test in its Linux map job. Changes under
 `tools/` trigger that workflow.

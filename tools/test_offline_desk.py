@@ -7,12 +7,14 @@ import hashlib
 import io
 import json
 import re
+import shutil
 import tempfile
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
 
 from build_hosted_preview import FAVICON, export
+from build_mbtiles_worker import worker_source
 from build_offline_desk import MODULES, bundle_modules, export_offline
 
 ROOT = Path(__file__).resolve().parent
@@ -98,8 +100,9 @@ class OfflineDeskTests(unittest.TestCase):
             self.assertIn(f"{kind}-src 'sha256-{digest}'", policy)
         self.assertIn("connect-src 'none'", policy)
         self.assertIn("worker-src blob:", policy)
+        self.assertIn("'wasm-unsafe-eval'", policy)
         self.assertNotIn("unsafe-inline", policy)
-        self.assertNotIn("unsafe-eval", policy)
+        self.assertNotIn("'unsafe-eval'", policy)
 
     def test_download_metadata_matches_the_exact_file(self):
         metadata = json.loads((self.output / "offline-download.json").read_text())
@@ -109,7 +112,7 @@ class OfflineDeskTests(unittest.TestCase):
         self.assertFalse(metadata["contains_user_data"])
         self.assertFalse(metadata["includes_map_datasets"])
         self.assertIn(metadata["edition_id"], self.text)
-        self.assertLess(len(self.raw), 3 * 1024 * 1024)  # Includes pinned offline SQLite worker.
+        self.assertLess(len(self.raw), 4 * 1024 * 1024)  # Includes both pinned offline SQLite builds.
         self.assertIn('download="FieldForge-Offline-Desk.html"', (ROOT / "portal_preview/desk.html").read_text())
 
     def test_build_uses_current_shared_sources_and_rejects_unknown_imports(self):
@@ -122,6 +125,16 @@ class OfflineDeskTests(unittest.TestCase):
                 (assets / "offline.mjs").write_text(statement)
                 with self.assertRaises(ValueError):
                     bundle_modules(assets)
+
+    def test_worker_build_rejects_changed_sqlite_assets(self):
+        for filename in ("sql-asm-1.14.2.js", "sql-wasm-1.14.2.js", "sql-wasm-1.14.2.wasm"):
+            with tempfile.TemporaryDirectory() as folder:
+                assets = Path(folder)
+                shutil.copytree(ROOT / "portal_preview/vendor", assets / "vendor")
+                target = assets / "vendor" / filename
+                target.write_bytes(target.read_bytes() + b"changed")
+                with self.assertRaisesRegex(ValueError, "checksum differs"):
+                    worker_source(assets)
 
 
 if __name__ == "__main__":

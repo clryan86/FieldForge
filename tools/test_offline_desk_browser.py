@@ -79,6 +79,9 @@ class OfflineDeskBrowserTests(unittest.TestCase):
                 expect(page.locator("#mbRouteCentre")).to_be_disabled()
                 # Opening a local pack retains the snapshot and selected segment.
                 page.locator("#mbFile").set_input_files(str(self.pack))
+                expect(page.locator("#mbStatus")).to_contain_text(
+                    "Map tiles read locally.", timeout=30000,
+                )
                 expect(page.locator("#mbRouteCentre")).to_be_enabled()
                 expect(group).to_have_value("1")
                 group.select_option("0")

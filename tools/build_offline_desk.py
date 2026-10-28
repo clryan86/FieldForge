@@ -103,7 +103,7 @@ def export_offline(assets: Path, output: Path, original_portal: str, revision: s
     shell = replace_once(shell, "OFFLINE_EDITION_ID", fingerprint)
     def digest(value):
         return base64.b64encode(hashlib.sha256(value.encode("utf-8")).digest()).decode("ascii")
-    policy = f"default-src 'none'; script-src 'sha256-{digest(script)}'; style-src 'sha256-{digest(style)}'; img-src data: blob:; connect-src 'none'; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'"
+    policy = f"default-src 'none'; script-src 'sha256-{digest(script)}' 'wasm-unsafe-eval'; style-src 'sha256-{digest(style)}'; img-src data: blob:; connect-src 'none'; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'"
     document = f'''<!doctype html>
 <html lang="en" data-edition="offline" data-sources-enabled="false"><head>
 <meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="{html.escape(policy, quote=True)}">
